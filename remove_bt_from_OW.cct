@@ -1,0 +1,8 @@
+begin >
+
+group(main)
+"\bt" > store(junk) set(bt)
+
+"\" > endstore "\"
+
+endfile > endstore nl endfile

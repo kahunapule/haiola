@@ -1,0 +1,132 @@
+begin > utf8
+
+store(sp) " " nl
+endstore
+
+store(preid)
+
+use(main,c)
+
+define(fig1) >
+  store(desc,cat,size,loc,copy,cap,ref) endstore
+
+group(main)
+nl nl > nl back
+nl > " "
+nl "\" > dup back
+
+"\_"  > use(junk)
+"\b" any(sp) > "\b" nl
+"\c" any(sp) > "\c "
+"\h" any(sp) > "\h "
+"\m" any(sp) > "\m" nl
+"\m2" any(sp) > "\m2" nl
+"\mt" any(sp) > "\mt "
+"\p" any(sp) > "\p" nl
+"\pi" any(sp) > "\pi" nl
+"\q" any(sp) > "\q" nl
+"\q2" any(sp) > "\q2" nl
+"\q3" any(sp) > "\q3" nl
+"\qc" any(sp) > "\qc" nl
+"\r" any(sp) > "\r "
+"\rcrd" any(sp) > "\rem RCRD: "    c use(junk)
+"\s" any(sp) > "\s1 "
+"\s1" any(sp) > "\s1 "
+"\s2" any(sp) > "\s2 "
+"\v" any(sp) > "\v "
+"\z" any(sp) > use(junk)
+
+
+
+"\bt" > "\note BT:" use(notes)
+
+"\vt" any(sp) > ""
+
+"\st" any(sp) > "\mt2 "
+
+"\cf" any(sp) > "\x + \xo " use(x,c)
+
+"\ft" any(sp) > "\f + \fr " use(f,c)
+
+"\cat" any(sp) > dup back(5) do(fig1) use(fig,c)    c use(catdelete)     c   "\fig " store(cat) use(cat)
+"\cap" any(sp) > dup back(5) do(fig1) use(fig,c)     c use(junk)
+"\ref" any(sp) > dup back(5) do(fig1) use(fig,c)     c use(junk)
+"\des" any(sp) > dup back(5) do(fig1) use(fig,c)     c use(junk)
+ 
+"\id" any(sp) > endstore dup use(id,c)
+
+c  HCE unique
+"\hist" fol(sp) > "\rem HIST: "    c HCE
+c Notes
+"\ov" any(sp) > "\note OV: " use(notes)    c Old version
+"\t" any(sp) > "\note T: " use(notes)
+"\nt" fol(sp) > "\note NT: " use(notes)
+"\ntgk" fol(sp) > "\note NTGK: " use(notes)
+c "\g" any(sp) > use(junk)
+"\dt" fol(sp) > "\note DT: " use(notes)
+"\ud" fol(sp) > "\note UD: " use(notes)
+"\dtb" fol(sp) > "\note DTB: "  use(notes)
+c "\ud" any(sp) > use(junk)
+"\chk" fol(sp) > "\note CHK: " use(notes)
+c "\rf" any(sp) > use(junk)
+c "\z" any(sp) > use(junk)
+"\qh" any(sp) > "\li" nl
+
+"\" > "***\"
+
+
+group(notes)
+nl "\" > next
+"\" > "\note*" nl "\" back use(main)
+
+group(fig)
+c nl "\" > endstore "\fig "                "\" back use(c,main)
+nl > " "
+"\cat" any(sp) > store(cat) use(c,fig)
+"\ref" any(sp) > store(size) use(c,fig)
+"\cap" any(sp) > store(cap) use(c,fig)
+"\des" any(sp) > store(desc) use(c,fig)
+
+c nl require to avoid \ in path
+
+endfile > next
+"\" > endstore nl "\fig " out(desc) "|" out(cat) "|" out(size) "|" out(loc) "|" out(copy) "|" out(cap) "|" out(ref)
+    " \fig*" nl dup back use(c,main) do(fig1) 
+
+group(cat)
+"\" > "/"
+endfile > next
+nl "\" > dup back use(fig,c)
+
+group(catdelete)
+"\ref" > use(junk)
+"\cap" > use(junk)
+endfile > nl endfile
+
+"" > omit
+
+
+group(f)
+":" any(sp) > " \ft "
+"\" > "\f*" nl "\" back use(main,c)
+
+group(x)
+":" any(sp) > " \xt "
+"\" > "\x*" nl "\" back use(main,c)
+
+group(id)
+nl "\" > endstore
+    " Hawaii Creole English (HCE, from 07/01 OurWord)"    c added for HCE conversion
+     nl out(preid) dup back use(main,c)
+
+group(junk)
+"\" > dup back use(main,c)
+endfile > nl endfile
+
+"" > omit
+
+group(c)
+"<" > u2018 c d145
+">" > u2019 c d146
+"<<" > u201C  c d147
+">>" > u201D  c d148
