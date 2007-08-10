@@ -171,6 +171,11 @@ class XMLNode:
         # Ed's insertion/mod:
         # Close XML remark. We stored the actual remark text in parmText
         elif self.tagName == ("!--"):
+            # JohnT: double-hyphens are illegal in XML comments, this is a bit crude but three passes will condense
+            # any reasonable number.
+            parmText = parmText.replace('--', '-')
+            parmText = parmText.replace('--', '-')
+            parmText = parmText.replace('--', '-')
             self.outputTag(self.tagName + parmText + "--")    
         else:
             self.outputTag(self.tagName + parmText + "/")

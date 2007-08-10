@@ -1,11 +1,13 @@
 begin > utf8
 
+c Chabgetable to convert OW formatted file to USFM v.2, jd 20070725
+
 store(sp) " " nl
 endstore
 
 store(preid)
 
-use(main,c)
+use(c,main)
 
 define(fig1) >
   store(desc,cat,size,loc,copy,cap,ref) endstore
@@ -30,44 +32,44 @@ nl "\" > dup back
 "\qc" any(sp) > "\qc" nl
 "\r" any(sp) > "\r "
 "\rcrd" any(sp) > "\rem RCRD: "    c use(junk)
-"\s" any(sp) > "\s1 "
-"\s1" any(sp) > "\s1 "
+"\s" any(sp) > next
+"\s1" any(sp) > store(s1) use(c,s2)
 "\s2" any(sp) > "\s2 "
 "\v" any(sp) > "\v "
 "\z" any(sp) > use(junk)
 
 
 
-"\bt" > "\note BT:" use(notes)
+"\bt" > "\note BT:" use(c,notes)
 
 "\vt" any(sp) > ""
 
 "\st" any(sp) > "\mt2 "
 
-"\cf" any(sp) > "\x + \xo " use(x,c)
+"\cf" any(sp) > "\x + \xo " use(c,x)
 
-"\ft" any(sp) > "\f + \fr " use(f,c)
+"\ft" any(sp) > "\f + \fr " use(c,f)
 
-"\cat" any(sp) > dup back(5) do(fig1) use(fig,c)    c use(catdelete)     c   "\fig " store(cat) use(cat)
-"\cap" any(sp) > dup back(5) do(fig1) use(fig,c)     c use(junk)
-"\ref" any(sp) > dup back(5) do(fig1) use(fig,c)     c use(junk)
-"\des" any(sp) > dup back(5) do(fig1) use(fig,c)     c use(junk)
+"\cat" any(sp) > dup back(5) do(fig1) use(c,fig)    c use(catdelete)     c   "\fig " store(cat) use(cat)
+"\cap" any(sp) > dup back(5) do(fig1) use(c,fig)     c use(junk)
+"\ref" any(sp) > dup back(5) do(fig1) use(c,fig)     c use(junk)
+"\des" any(sp) > dup back(5) do(fig1) use(c,fig)     c use(junk)
  
-"\id" any(sp) > endstore dup use(id,c)
+"\id" any(sp) > endstore dup use(c,id)
 
 c  HCE unique
 "\hist" fol(sp) > "\rem HIST: "    c HCE
 c Notes
-"\ov" any(sp) > "\note OV: " use(notes)    c Old version
-"\t" any(sp) > "\note T: " use(notes)
-"\nt" fol(sp) > "\note NT: " use(notes)
-"\ntgk" fol(sp) > "\note NTGK: " use(notes)
+"\ov" any(sp) > "\note OV: " use(c,notes)    c Old version
+"\t" any(sp) > "\note T: " use(c,notes)
+"\nt" fol(sp) > "\note NT: " use(c,notes)
+"\ntgk" fol(sp) > "\note NTGK: " use(c,notes)
 c "\g" any(sp) > use(junk)
-"\dt" fol(sp) > "\note DT: " use(notes)
-"\ud" fol(sp) > "\note UD: " use(notes)
-"\dtb" fol(sp) > "\note DTB: "  use(notes)
+"\dt" fol(sp) > "\note DT: " use(c,notes)
+"\ud" fol(sp) > "\note UD: " use(c,notes)
+"\dtb" fol(sp) > "\note DTB: "  use(c,notes)
 c "\ud" any(sp) > use(junk)
-"\chk" fol(sp) > "\note CHK: " use(notes)
+"\chk" fol(sp) > "\note CHK: " use(c,notes)
 c "\rf" any(sp) > use(junk)
 c "\z" any(sp) > use(junk)
 "\qh" any(sp) > "\li" nl
@@ -75,9 +77,16 @@ c "\z" any(sp) > use(junk)
 "\" > "***\"
 
 
+group(s2)
+"[\s2]" > endstore "\s2 " out(s1) use(c,main)
+"\" > endstore "\s1 " out(s1) "\" back use(c,main)
+endfile > endstore "\s1 " out(s1) endfile
+
 group(notes)
+"[\s2]" > "[s2]"
+
 nl "\" > next
-"\" > "\note*" nl "\" back use(main)
+"\" > "\note*" nl "\" back use(c,main)
 
 group(fig)
 c nl "\" > endstore "\fig "                "\" back use(c,main)
@@ -96,7 +105,7 @@ endfile > next
 group(cat)
 "\" > "/"
 endfile > next
-nl "\" > dup back use(fig,c)
+nl "\" > dup back use(c,fig)
 
 group(catdelete)
 "\ref" > use(junk)
@@ -108,19 +117,19 @@ endfile > nl endfile
 
 group(f)
 ":" any(sp) > " \ft "
-"\" > "\f*" nl "\" back use(main,c)
+"\" > "\f*" nl "\" back use(c,main)
 
 group(x)
 ":" any(sp) > " \xt "
-"\" > "\x*" nl "\" back use(main,c)
+"\" > "\x*" nl "\" back use(c,main)
 
 group(id)
 nl "\" > endstore
     " Hawaii Creole English (HCE, from 07/01 OurWord)"    c added for HCE conversion
-     nl out(preid) dup back use(main,c)
+     nl out(preid) dup back use(c,main)
 
 group(junk)
-"\" > dup back use(main,c)
+"\" > dup back use(c,main)
 endfile > nl endfile
 
 "" > omit
@@ -130,3 +139,5 @@ group(c)
 ">" > u2019 c d146
 "<<" > u201C  c d147
 ">>" > u201D  c d148
+"<<<" > u201C u2018
+">>>" > u2019 u201D

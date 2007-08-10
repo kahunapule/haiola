@@ -56,11 +56,19 @@ namespace sepp
 		}
 
 		/// <summary>
+		/// In case of bridge, this returns just the first part. Otherwise, the whole thing.
+		/// </summary>
+		public string FirstVerse
+		{
+			get { return m_verse.Split('-')[0]; }
+		}
+		/// <summary>
 		/// The offset into the context string where the occurrence occurs.
 		/// </summary>
 		public int Offset
 		{
 			get { return m_offset; }
+			set { m_offset = value; }
 		}
 
 		/// <summary>
