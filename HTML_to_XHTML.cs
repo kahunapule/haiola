@@ -4,7 +4,8 @@ using System.Text;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Diagnostics;  // For Process class.
+using System.Diagnostics;
+using System.Collections;  // For Process class.
 
 namespace sepp
 {
@@ -32,17 +33,26 @@ namespace sepp
 		/// <summary>
 		/// Run the algorithm (on all files).
 		/// </summary>
-		public void Run()
+		public void Run(IList files)
 		{
 			string[] inputFileNames = Directory.GetFiles(m_inputDirName, "*.htm");
+			Progress status = new Progress(files.Count);
+			status.Show();
+			int count = 0;
 			foreach (string inputFile in inputFileNames)
 			{
-				Convert(inputFile);
+				string filename = Path.GetFileName(inputFile);
+				if (files.Contains(Path.ChangeExtension(filename, "xml")))
+				{
+					status.File = filename;
+					Convert(inputFile);
+					count++;
+					status.Value = count;
+				}
 			}
 
-			MessageBox.Show("Done");
+			status.Close();
 		}
-
 		/// <summary>
 		/// Convert one file.
 		/// </summary>
@@ -53,8 +63,11 @@ namespace sepp
 			string outputFileName = Path.ChangeExtension(Path.GetFileName(inputFilePath), "xml");
 			string outputFilePath = Path.Combine(m_outputDirName, outputFileName);
 			string tidyPath = Path.GetFullPath(@"..\..\tidy.exe");
-			string args = "-asxhtml -raw -o \"" + outputFilePath + "\" \"" + inputFilePath + "\"";
-			Process proc = Process.Start(tidyPath, args);
+			string args = "-asxhtml -utf8 -o \"" + outputFilePath + "\" \"" + inputFilePath + "\"";
+			ProcessStartInfo info = new ProcessStartInfo(tidyPath, args);
+			info.WindowStyle = ProcessWindowStyle.Minimized;
+			//info.RedirectStandardError = 
+			Process proc = Process.Start(info);
 			proc.WaitForExit();
 		}
 

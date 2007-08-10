@@ -4,7 +4,8 @@ using System.Text;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Diagnostics;  // For Process class.
+using System.Diagnostics;
+using System.Collections;  // For Process class.
 
 namespace sepp
 {
@@ -32,15 +33,25 @@ namespace sepp
 		/// <summary>
 		/// Run the algorithm (on all files).
 		/// </summary>
-		public void Run()
+		public void Run(IList files)
 		{
 			string[] inputFileNames = Directory.GetFiles(m_inputDirName, "*.ptx");
+			Progress status = new Progress(files.Count);
+			status.Show();
+			int count = 0;
 			foreach (string inputFile in inputFileNames)
 			{
-				Convert(inputFile);
+				string filename = Path.GetFileName(inputFile);
+				if (files.Contains(Path.ChangeExtension(filename, "xml")))
+				{
+					status.File = filename;
+					Convert(inputFile);
+					count++;
+					status.Value = count;
+				}
 			}
 
-			MessageBox.Show("Done");
+			status.Close();
 		}
 
 		/// <summary>
@@ -54,7 +65,10 @@ namespace sepp
 			string outputFilePath = Path.Combine(m_outputDirName, outputFileName);
 			string scriptPath = Path.GetFullPath(@"..\..\JohnOsisBP.py");
 			string args = "\"" + scriptPath + "\" \"" + inputFilePath + "\" \"" + outputFilePath + "\"";
-			Process proc = Process.Start("python", args);
+			ProcessStartInfo info = new ProcessStartInfo("python", args);
+			info.WindowStyle = ProcessWindowStyle.Minimized;
+			//info.RedirectStandardError = 
+			Process proc = Process.Start(info);
 			proc.WaitForExit();
 		}
 

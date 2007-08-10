@@ -34,6 +34,9 @@ namespace sepp
 			this.m_buttonOSIS_to_HTML = new System.Windows.Forms.Button();
 			this.m_buttonHTML_to_XHTML = new System.Windows.Forms.Button();
 			this.m_buttonChapIndex = new System.Windows.Forms.Button();
+			this.m_filesList = new System.Windows.Forms.CheckedListBox();
+			this.m_buttonCheckAll = new System.Windows.Forms.Button();
+			this.m_buttonUncheckAll = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// m_runButton
@@ -96,11 +99,42 @@ namespace sepp
 			this.m_buttonChapIndex.UseVisualStyleBackColor = true;
 			this.m_buttonChapIndex.Click += new System.EventHandler(this.m_buttonChapIndex_Click);
 			// 
+			// m_filesList
+			// 
+			this.m_filesList.FormattingEnabled = true;
+			this.m_filesList.Location = new System.Drawing.Point(204, 17);
+			this.m_filesList.Name = "m_filesList";
+			this.m_filesList.Size = new System.Drawing.Size(209, 169);
+			this.m_filesList.TabIndex = 6;
+			// 
+			// m_buttonCheckAll
+			// 
+			this.m_buttonCheckAll.Location = new System.Drawing.Point(213, 199);
+			this.m_buttonCheckAll.Name = "m_buttonCheckAll";
+			this.m_buttonCheckAll.Size = new System.Drawing.Size(89, 32);
+			this.m_buttonCheckAll.TabIndex = 7;
+			this.m_buttonCheckAll.Text = "Check all";
+			this.m_buttonCheckAll.UseVisualStyleBackColor = true;
+			this.m_buttonCheckAll.Click += new System.EventHandler(this.m_buttonCheckAll_Click);
+			// 
+			// m_buttonUncheckAll
+			// 
+			this.m_buttonUncheckAll.Location = new System.Drawing.Point(308, 199);
+			this.m_buttonUncheckAll.Name = "m_buttonUncheckAll";
+			this.m_buttonUncheckAll.Size = new System.Drawing.Size(91, 31);
+			this.m_buttonUncheckAll.TabIndex = 8;
+			this.m_buttonUncheckAll.Text = "Uncheck all";
+			this.m_buttonUncheckAll.UseVisualStyleBackColor = true;
+			this.m_buttonUncheckAll.Click += new System.EventHandler(this.m_buttonUncheckAll_Click);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(292, 266);
+			this.ClientSize = new System.Drawing.Size(476, 266);
+			this.Controls.Add(this.m_buttonUncheckAll);
+			this.Controls.Add(this.m_buttonCheckAll);
+			this.Controls.Add(this.m_filesList);
 			this.Controls.Add(this.m_buttonChapIndex);
 			this.Controls.Add(this.m_buttonHTML_to_XHTML);
 			this.Controls.Add(this.m_buttonOSIS_to_HTML);
@@ -121,6 +155,9 @@ namespace sepp
 		private System.Windows.Forms.Button m_buttonOSIS_to_HTML;
 		private System.Windows.Forms.Button m_buttonHTML_to_XHTML;
 		private System.Windows.Forms.Button m_buttonChapIndex;
+		private System.Windows.Forms.CheckedListBox m_filesList;
+		private System.Windows.Forms.Button m_buttonCheckAll;
+		private System.Windows.Forms.Button m_buttonUncheckAll;
 	}
 }
 

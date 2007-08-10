@@ -4,6 +4,7 @@ using System.Text;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Collections;
 
 namespace sepp
 {
@@ -32,15 +33,25 @@ namespace sepp
 		/// <summary>
 		/// Run the algorithm (on all files).
 		/// </summary>
-		public void Run()
+		public void Run(IList files)
 		{
 			string[] inputFileNames = Directory.GetFiles(m_inputDirName, "*.db");
+			Progress status = new Progress(files.Count);
+			status.Show();
+			int count = 0;
 			foreach (string inputFile in inputFileNames)
 			{
-				Convert(inputFile);
+				string filename = Path.GetFileName(inputFile);
+				if (files.Contains(Path.ChangeExtension(filename, "xml")))
+				{
+					status.File = filename;
+					Convert(inputFile);
+					count++;
+					status.Value = count;
+				}
 			}
 
-			MessageBox.Show("Done");
+			status.Close();
 		}
 
 		/// <summary>
@@ -53,16 +64,33 @@ namespace sepp
 			string outputFileName = Path.ChangeExtension(Path.GetFileName(inputFilePath), "ptx");
 			string outputFilePath = Path.Combine(m_outputDirName, outputFileName);
 			string[] tablePaths = new string[] {
+				// remove spaces at end of line. They can end up between end of sentence and note marker.
+				@"..\..\cleanup_EOL_spaces.cct", 
 				// removes btX fields, which (when converted to \note: btX....\note* by current OW_to_PT cause
 				// Nathan's USFM->OSIS to drop the rest of the verse after a footnote.
 				@"..\..\remove_bt_from_OW.cct", 
+				// removes \ov fields, which otherwise tend to result in a newline before various notes,
+				// which becomes an unwanted space after following stages.
+				@"..\..\remove_ov_from_OW.cct", 
+				// Strip all the \ntX fields. JohnD's file makes of all these markers that don't translate into \note.
+				// The OSIS converter discards them, but the resulting blank lines mess up spacing of note markers.
+				@"..\..\remove_nt_from_OW.cct",
 				// OW_to_PT.cct does not seem to get the quotes quite right. Kupang makes use of <<< and >>> which
 				// are ambiguous; OW_to_PT converts << and >> and < and >, but >>> is therefore interpreted as >> >
 				// and closes the double first, which is (usually) wrong.
 				// This version removes any space in >> > etc, and interprets >>> as > >>.
+				// This change may be redundant with the latest version of JohnD's OW_to_PT.cct
 				@"..\..\fix_quotes.cct", 
+				// Main conversion by John Duerkson implemented in these two files.
 				@"..\..\OW_to_PT.cct",
-				@"..\..\move_footnote_to_fn.cct"
+				@"..\..\move_footnote_to_fn.cct",
+				// Strip all the \note fields that JohnD's file makes of all the markers that don't translate.
+				// The OSIS converter discards them, but the resulting blank lines mess up spacing of note markers.
+				// Didn't work...strips the whole file content after the first \note
+				//@"..\..\remove_note_from_USFM.cct",
+				// Final cleanup strips remnants of s2 markers at end of field, and puts cross-ref notes inline so
+				// we don't get a spurious space before the <note> in the OSIS and beyond.
+				@"..\..\cleanup_OW_to_USFM.cct"
 			};
 			ConvertFileCC(inputFilePath, tablePaths, outputFilePath);
 		}
@@ -126,8 +154,58 @@ namespace sepp
 			// Convert the output back to a file
 			StreamWriter output = new StreamWriter(outputPath);
 			string outputString = Encoding.UTF8.GetString(outBuffer, 0, nOutLen);
+			outputString = FixEmphasis(outputString);
 			output.Write(outputString);
 			output.Close();
+		}
+
+		int startEmphasis;
+		int endEmphasis;
+		int missingEnd;
+		int missingStart;
+		int broken;
+
+		private string FixEmphasis(string outputString)
+		{
+			int state = 0; // 0 = normal, 1 = seen |i
+			char prev = '\0';
+			StringBuilder bldr = new StringBuilder(outputString.Length);
+			for (int i = 0; i < outputString.Length; i++)
+			{
+				char c = outputString[i];
+				bldr.Append(c);
+				if (c == '\\' && state == 1)
+				{
+					broken++;
+					missingEnd++;
+					state = 0;
+				}
+				if (prev == '|')
+				{
+					if (c == 'i')
+					{
+						if (state == 0)
+							state = 1;
+						else
+							missingEnd++;
+						startEmphasis++;
+						bldr.Remove(bldr.Length - 2, 2); // remove the |i
+						bldr.Append("\\em ");
+					}
+					else if (c == 'r')
+					{
+						if (state == 1)
+							state = 0;
+						else
+							missingStart++;
+						endEmphasis++;
+						bldr.Remove(bldr.Length - 2, 2); // remove the |r
+						bldr.Append("\\em*");
+					}
+				}
+				prev = c;
+			}
+			return bldr.ToString();
 		}
 		protected bool IsFileLoaded()
 		{

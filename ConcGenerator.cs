@@ -4,6 +4,7 @@ using System.Text;
 using System.Xml;
 using System.IO;
 using System.Windows.Forms;
+using System.Collections;
 
 namespace sepp
 {
@@ -59,6 +60,7 @@ namespace sepp
 		// uppercase version.
 		// If we encounter two uppercase versions which map to the same LC wordform we arbitrarily use the one that occurs first.
 		Dictionary<string, string> m_uppercaseForms = new Dictionary<string, string>();
+		string m_bookChapText; // text for the 'Books and Chapters' hot link, from options file.
 
 		private string AttVal(XmlNode node, string name, string defVal)
 		{
@@ -105,6 +107,9 @@ namespace sepp
 					case "files":
 						BuildFileList(node);
 						break;
+					case "bookChap":
+						m_bookChapText = node.InnerText;
+						break;
 				}
 			}
 		}
@@ -120,12 +125,20 @@ namespace sepp
 			}
 		}
 
-		public void Run()
+		public void Run(IList files)
 		{
-			foreach (string inputFilePath in m_files)
+			Progress status = new Progress(files.Count);
+			status.Text = "Parsing";
+			status.Show();
+			int count = 0;
+			foreach (string inputFilePath in files)
 			{
+				status.File = inputFilePath;
 				Parse(Path.Combine(m_inputDirName, inputFilePath));
+				count++;
+				status.Value = count;
 			}
+			status.Close();
 			List<WordformInfo> sortedOccurrences = new List<WordformInfo>(m_occurrences.Count);
 			foreach (WordformInfo info in m_occurrences.Values)
 			{
@@ -136,15 +149,26 @@ namespace sepp
 				sortedOccurrences.Add(info);
 			}
 			sortedOccurrences.Sort();
-
+			status = new Progress(sortedOccurrences.Count);
+			status.Text = "Generating";
+			status.Show();
+			count = 0;
 			// Must do this before making index files, it sets FileNumber property in each item.
 			foreach (WordformInfo item in sortedOccurrences)
+			{
 				MakeOccurrenceFile(item);
+				if (count % 10 == 0)
+				{
+					status.File = item.Form;
+					status.Value = count;
+				}
+				count++;
+			}
 
 			MakeIndexFiles(sortedOccurrences);
 			MakeTreeIndex(sortedOccurrences);
 
-			MessageBox.Show("Done");
+			status.Close();
 		}
 
 		private void MakeIndexFiles(List<WordformInfo> sortedOccurrences)
@@ -186,7 +210,9 @@ namespace sepp
 			int iStartGroup = 0;
 			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n"
 				+ "<head>\n\t<link rel=\"stylesheet\" type=\"text/css\" href=\"mktree.css\">\n\t"
-				+ "<script type=\"text/javascript\" src=\"mktree.js\"></script>\n</head>\n<body>\n<ul class=\"mktree\">\n";
+				+ "<script type=\"text/javascript\" src=\"mktree.js\"></script>\n</head>\n<body>\n"
+				+ "<p><a target=\"_top\" href=\"Root.htm\">" + m_bookChapText + "</a></p>\n"
+				+"<ul class=\"mktree\">\n";
 
 			string trailer = "</ul>\n</body>\n</html>\n";
 			string pathMain = Path.Combine(m_outputDirName, "concTreeIndex.htm");
@@ -251,6 +277,7 @@ namespace sepp
 			m_chapter = -1;
 			m_verse = "";
 			m_context.Remove(0, m_context.Length);
+			m_saveContext = "";
  			XmlReaderSettings settings = new XmlReaderSettings();
 			settings.ConformanceLevel = ConformanceLevel.Fragment;
 			settings.IgnoreComments = true;
@@ -333,7 +360,7 @@ namespace sepp
 				writer.Write(": ");
 				WritePrecedingContext(writer, item.Context.Substring(0, item.Offset));
 				writer.Write("<a href=\"{0}#C{1}V{2}\" target=\"main\" onclick='sel(\"{3}\",\"{4}\")'>{3}</a>",
-					new object[] { item.FileName, item.Chapter, item.Verse, MakeSafeXml(item.Form), flags });
+					new object[] { item.FileName, item.Chapter, item.FirstVerse, MakeSafeXml(item.Form), flags });
 				//writer.Write(item.Context.Substring(item.Offset + key.Length, item.Context.Length - item.Offset - key.Length));
 				WriteFollowingContext(writer, item.Context.Substring(item.Offset + info.Form.Length, item.Context.Length - item.Offset - info.Form.Length));
 				writer.Write("<br/>\n");
@@ -483,6 +510,8 @@ namespace sepp
 			return added;
 		}
 
+		string m_saveContext = "";
+
 		/// <summary>
 		/// We've just added end-of-sentence punctuation to the context.
 		/// Set it as the context of any pending wordforms, and reset it.
@@ -490,9 +519,40 @@ namespace sepp
 		private void ProcessEndOfSentence()
 		{
 			string context = m_context.ToString();
-			m_context.Remove(0, m_context.Length);
+			m_context.Remove(0, m_context.Length); // reset for next time
+			int cInitialPunct = 0;
+			// This loop strips from the start of context trailing punctuation from the previous sentence.
+			// The loop terminates when it finds a non-punctuation non-white character.
+			// The correction is made only if we find a white space character following some punctuation
+			// before the first non-white.
+			// The bit to strip from this context is everything up to the last white space character before
+			// the first non-white non-punct.
+			for (int i = 0; i < context.Length; i++)
+			{
+				if (Char.IsWhiteSpace(context[i]))
+				{
+					cInitialPunct = i + 1;
+					continue;
+				}
+				if (!Char.IsPunctuation(context[i]))
+					break;
+			}
+			string nextSave = "";
+			if (cInitialPunct > 0)
+			{
+				// Save for next context stuff up to and including character cSave
+				int cSave = cInitialPunct - 1;
+				while (cSave > 0 && Char.IsWhiteSpace(context[cSave + 1]))
+					cSave--;
+				nextSave = context.Substring(0, cSave);
+			}
+			context = context.Substring(cInitialPunct) + m_saveContext;
+			m_saveContext = nextSave;
 			foreach (WordOccurrence w in m_pendingOccurrences)
+			{
 				w.Context = context;
+				w.Offset = w.Offset - cInitialPunct;
+			}
 			m_pendingOccurrences.Clear();
 		}
 
