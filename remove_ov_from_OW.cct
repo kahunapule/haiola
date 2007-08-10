@@ -1,0 +1,8 @@
+begin >
+
+group(main)
+"\ov" > store(junk) set(ov)
+
+"\" > endstore "\"
+
+endfile > endstore nl endfile
