@@ -1,0 +1,51 @@
+Things to do on Concordance
+1. Finish getting cross-references to work. (done)
+2. Get top-level index file working. (done)
+4. Proofread comparing with Chuck's sample (formatting roughly matched, detailed proof-read assigned to Sharon)
+5. Try to make it faster to highlight, especially avoid changing when not needed. (done)
+15. Handle multiple level 2 titles, even if out of expected order. (done)
+16. Parallel passage subheadings should be centered. (done)
+9. Build comprehensive set of strings to translate/improve. (done)
+12. Integrate introductions. (done)
+18. Make line spacing uniform.
+3. Research CD auto-load. (done, not tested)
+6. Check in (including FilesToCopy) (of course needs doing again occasionally)
+
+
+Chuck's list:
+A. Alphabet option for word tree
+B. Visit counter
+C. Color references in concordance. (Maybe make whole line hot?)
+D. Go to top (of Scripture) button somewhere...proposing row of controls at bottom. Kembali ke bagian awal buku.
+E. Rework Introduction wording as reaquested in detailed messsage. (and follow-up message)
+F. Insert logo and "strip of cloth" graphic into Introduction.
+G. (For web site only. Omit occurrences of pung dia dong sang deng ko beta kasi ju bosong bilang sonde ada su itu bekin ma dari tu jadi pi mau kotong satu lu te)
+H. Tweak stylesheet for preferred fonts (Gentium/TNR for body, Andika DR AuSIL/Tahoma/Arial for headings...to be confirmed. 12/14 pt for body, 10/12 for notes.
+I. Fonts folder on CD, possibly add Font install instructions to opening screen.
+J. Increase max context slightly, and make more willing to shorten to word boundary.
+K. (Optional...tweak sorting, n..ng..ny..o. TBC: sorting of glottal)
+L. Option to include header and footnote text in concordance (somehow distinguished).
+M. Make longer chapter lists collapsible.
+N. Verse numbers in body text and references in concordance in dark red.
+O. Increase space between back reference and body of notes.
+P. Hover window or separate pane for footnotes.
+Q. Note marker sequence restarts each chapter. Separate sequences for footnotes and xrefs.
+R. Save Doc intro files as HTML and link in that form.
+S. Generate complete set of anchors for bridges.
+T. Check footnote backrefs to bridges.
+
+7. Go over JohnW's list again
+	- possibly make chapter indexes collapsible
+8. Go over emails to Chuck, make list of further questions.
+10. Send a new draft (of a subset).
+11. Review all FilesToCopy for improved naming and text.
+13. Write doc for running program.
+14. Change intermediate form to \it...it* rather than using \em.
+17. Drop caps don't work in IE .
+
+Possible to do:
+- Research printing CD labels. - NA
+- enhance program to build complete files
+	- copy stuff from FilesToCopy
+- Allow root directory to be configured. (partly done, one variable in program)
+11. Consider making back-to-verse link in footnotes a superscript. (decided no)
