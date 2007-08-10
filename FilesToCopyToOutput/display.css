@@ -1,0 +1,33 @@
+/* stylesheet for use with osis2html.xsl */
+/* Dave van Grootheest, Netherlands Bible Society */
+/* last updated: 2007-07-12 */
+
+
+div.maintitle        { display: block; text-align: center; font-family: "Arial"; font-size: 18pt; font-weight: bold; margin-top: 10pt; margin-bottom: 10pt }
+div.maintitle1       { display: block; text-align: center; font-family: "Arial"; font-size: 18pt; font-weight: bold; margin-top: 2pt }
+div.maintitle2       { display: block; text-align: center; font-family: "Arial"; font-size: 14pt; font-weight: bold; font-style: italic; margin-bottom: 2pt }
+
+div.sectionheading   { display: block; text-align: center; font-weight: bold; margin-top: 12pt }
+div.sectionsubheading   { display: block; text-align: center; font-weight: bold; font-style: italic; margin-top: 6pt; margin-left: 12pt } /* JohnT */
+div.parallel		 { display: block; text-align: center; font-style: italic; margin-top: 0pt; font-size:x-small } /* JohnT */
+div.parallelSub		 { display: block; text-align: center; font-style: italic; margin-top: 0pt; margin-left: 12pt; font-size:x-small } /* JohnT */
+
+
+div.prose            { display: block; margin-top: 5pt; line-height: -16pt}
+div.proseblock       { display: block }
+div.proseblockindent { display: block; margin-left: 1cm }
+div.poetry           { display: block; margin-left: 1.5cm; text-indent: -0.5cm }
+div.list             { margin-left: 1cm; text-indent: -0.5cm }
+
+span.chapter         { font-family: "Arial"; font-size: 36pt; font-weight: bold; float:left; margin-right: 4pt; line-height: 30pt; padding-top: 1pt }
+span.verse           { font-family: "Arial"; vertical-align: super; font-size: 7pt; margin-right: 2pt }
+span.smallcaps       { font-size: smaller }
+span.notemark        { font-size: 7pt; vertical-align: super; margin-left: 2pt}
+
+td.text              { line-height: 18pt }
+
+/* JohnT, for chapter index */
+div.BookChapIndex	{ }
+p.IndexChapterList	{ margin-left: 18pt; margin-top: 0pt; margin-bottom: 0pt }
+p.IndexIntroduction	{ margin-left: 18pt; margin-top: 0pt; margin-bottom: 0pt; padding-bottom: 0pt}
+p.IndexBookName		{ margin-bottom: 0pt; margin-top: 3pt }
