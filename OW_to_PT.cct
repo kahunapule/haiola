@@ -1,6 +1,6 @@
 begin > utf8
 
-c Chabgetable to convert OW formatted file to USFM v.2, jd 20070725
+c Changetable to convert OW formatted file to USFM v.2, jd 200803
 
 store(sp) " " nl
 endstore
@@ -91,7 +91,7 @@ nl "\" > next
 group(fig)
 c nl "\" > endstore "\fig "                "\" back use(c,main)
 nl > " "
-"\cat" any(sp) > store(cat) use(c,fig)
+"\cat" any(sp) > store(cat) use(c,cat)
 "\ref" any(sp) > store(size) use(c,fig)
 "\cap" any(sp) > store(cap) use(c,fig)
 "\des" any(sp) > store(desc) use(c,fig)
@@ -141,3 +141,9 @@ group(c)
 ">>" > u201D  c d148
 "<<<" > u201C u2018
 ">>>" > u2019 u201D
+
+"|i" > "\it " set(italic)                         c **** replace \it with \em for Empahsis
+"|b" > "\bd " set(bold)
+"|r" >  if(italic) "\it* " clear(italic) endif    c **** if \em used above, then use \em* here
+        if(bold) "\bd* " clear(bold) endif
+  

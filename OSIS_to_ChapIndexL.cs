@@ -66,7 +66,7 @@ namespace sepp
 				+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">"
 				+ "<head>"
 				+ "</head>\n<body>\n"
-				+ "<p><a target=\"_top\" href=\"treemaster.htm\">" + m_concLinkText + "</a></p>\n";
+				+ "<p><a target=\"body\" href=\"treemaster.htm\">" + m_concLinkText + "</a></p>\n";
 			string trailer = "</body>\n</html>\n";
 			string path = Path.Combine(m_outputDirName, "ChapterIndex.htm");
 			TextWriter writer = new StreamWriter(path, false, Encoding.UTF8);

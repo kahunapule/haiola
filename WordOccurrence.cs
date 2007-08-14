@@ -15,6 +15,8 @@ namespace sepp
 		int m_offset;
 		string m_context;
 		string m_form; // actual form, may be a case variant.
+		string m_anchor;
+		bool m_fCanonical; // true for canonical text
 
 		/// <summary>
 		/// Make one.
@@ -22,15 +24,24 @@ namespace sepp
 		/// <param name="file"></param>
 		/// <param name="chapter"></param>
 		/// <param name="verse"></param>
-		public WordOccurrence(string file, int chapter, string verse, int offset, string form)
+		public WordOccurrence(string file, int chapter, string verse, string anchor, int offset, string form, bool canonical)
 		{
 			m_file = file;
 			m_chapter = chapter;
 			m_verse = verse;
 			m_offset = offset;
 			m_form = form;
+			m_anchor = anchor;
+			m_fCanonical = canonical;
 		}
 
+		/// <summary>
+		/// True if text is canonical.
+		/// </summary>
+		public bool Canonical
+		{
+			get { return m_fCanonical; }
+		}
 		/// <summary>
 		/// The file it occurs in.
 		/// </summary>
@@ -53,6 +64,14 @@ namespace sepp
 		public string Verse
 		{
 			get { return m_verse; }
+		}
+
+		/// <summary>
+		/// The anchor most recently seen before the occurrence.
+		/// </summary>
+		public string Anchor
+		{
+			get { return m_anchor; }
 		}
 
 		/// <summary>

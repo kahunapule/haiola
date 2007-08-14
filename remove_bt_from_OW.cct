@@ -3,6 +3,6 @@ begin >
 group(main)
 "\bt" > store(junk) set(bt)
 
-"\" > endstore "\"
+nl "\" > endstore nl "\"
 
 endfile > endstore nl endfile
