@@ -10,29 +10,64 @@ Things to do on Concordance
 18. Make line spacing uniform.
 3. Research CD auto-load. (done, not tested)
 6. Check in (including FilesToCopy) (of course needs doing again occasionally)
-
-
-Chuck's list:
-A. Alphabet option for word tree
-B. Visit counter
 C. Color references in concordance. (Maybe make whole line hot?)
-D. Go to top (of Scripture) button somewhere...proposing row of controls at bottom. Kembali ke bagian awal buku.
-E. Rework Introduction wording as reaquested in detailed messsage. (and follow-up message)
-F. Insert logo and "strip of cloth" graphic into Introduction.
-G. (For web site only. Omit occurrences of pung dia dong sang deng ko beta kasi ju bosong bilang sonde ada su itu bekin ma dari tu jadi pi mau kotong satu lu te)
-H. Tweak stylesheet for preferred fonts (Gentium/TNR for body, Andika DR AuSIL/Tahoma/Arial for headings...to be confirmed. 12/14 pt for body, 10/12 for notes.
+D. Go to top (of Scripture) button somewhere...proposing row of controls at top Kembali ke bagian awal buku.
+B. Visit counter (investigated...can't do more till ready to put online)
+G. (For web site only. Omit occurrences of pung dia dong sang deng ko beta kasi ju bosong bilang sonde ada su itu bekin ma dari tu jadi pi mau kotong satu lu te) - postpone till web site version
 I. Fonts folder on CD, possibly add Font install instructions to opening screen.
 J. Increase max context slightly, and make more willing to shorten to word boundary.
-K. (Optional...tweak sorting, n..ng..ny..o. TBC: sorting of glottal)
-L. Option to include header and footnote text in concordance (somehow distinguished).
-M. Make longer chapter lists collapsible.
 N. Verse numbers in body text and references in concordance in dark red.
 O. Increase space between back reference and body of notes.
-P. Hover window or separate pane for footnotes.
-Q. Note marker sequence restarts each chapter. Separate sequences for footnotes and xrefs.
+U. Include Copyright notice in printout footer and if possible in text copied.
+A. Alphabet option for word tree
+Since last report:
+E. Rework Introduction wording as reaquested in detailed messsage. (and follow-up message)
+F. Insert logo and "strip of cloth" graphic into Introduction.
+L. Option to include header and footnote text in concordance (somehow distinguished).
 R. Save Doc intro files as HTML and link in that form.
+W. Check out odd *** in 2Tim 2:11 (done...but not solved. Awaiting JohnD's comments)
+H. Tweak stylesheet for preferred fonts (Gentium/TNR for body, Andika DR AuSIL/Tahoma/Arial for headings...to be confirmed. 12/14 pt for body, 10/12 for notes.
+P. Hover window or separate pane for footnotes.
+Since Monday report:
+Q. Note marker sequence restarts each chapter. Separate sequences for footnotes and xrefs. (xrefs use smaller, lighter letters.
 S. Generate complete set of anchors for bridges.
-T. Check footnote backrefs to bridges.
+AD. Use * (asterisk or star), † (dagger), ‡ (double dagger),  § (section mark) and doubling for footnotes.
+T. Check footnote backrefs to bridges. (yes, a problem...e.g. C27V55-56)
+AA. Insert copyright notice (Tahoma, red) after each title block.
+AC. Non-canonical stuff should use jud for titles and cat for footnotes.
+Y. Solve *** problems (awaiting JohnD's input)
+Z. Get \bt etc deletion working right (new version in C# does not seem to work)
+Since Monday evening report
+AJ. RandyH says callers are being separated from text again.
+
+Important list:
+AB. Replace Intro screen and move logo above cloth image.
+
+AF. Figure way to do alternate style sheet for IE, and use to fix drop caps.
+AE. Make startup application.
+X. Add Creed hot link (and possibly Acrobat installer).
+AG.  Copyright (unbold, regular, -2pt) –and add parentheses (?) that ought to be sufficient with the bright red.
+AH. Pastel green for \ft popups.
+AI. Restore size of cf callers (and remove bold from ft callers)
+
+
+Lower priority
+M. Make longer chapter lists collapsible.
+K. (Optional...tweak sorting, n..ng..ny..o. TBC: sorting of glottal)
+AF. Make copyright watermark/background.
+
+Notes on hover window:
+- Without DocType, FF underlines popup and won't turn it off, even with text-decoration: none.
+- With DocType, IE underlines by default but allows override. But, FF then drops the underline to the baseline.
+- Found a technique, involving a comment starting [if IE], for applying different style rules to IE.
+- IE always puts note below right of target, even if that causes it to be clipped.
+- FF does the same with relative positioning (a a {position: relative;}; span has top, left specified). However its default puts the popup on the far left, which is usually less pretty but always reasonable. Decided to go with this. Nothing seems to make either do consistently reasonable positioning.
+- Heading blocks show through in IE (and in FF till I added z-index: 1).
+
+NB: check that adding DocType does not mess up Tidy or concgenerator.
+
+Kalo kotong tarima, bilang, Kristus mati ganti sang kotong,
+itu sama ke kotong ju mati kasi tenga idop yang lama, ***
 
 7. Go over JohnW's list again
 	- possibly make chapter indexes collapsible
@@ -49,3 +84,42 @@ Possible to do:
 	- copy stuff from FilesToCopy
 - Allow root directory to be configured. (partly done, one variable in program)
 11. Consider making back-to-verse link in footnotes a superscript. (decided no)
+
+Frame organization:
+Initially:
+index
+	navigation (navigation.htm)
+	body (root.htm)
+		index: ChapterIndex.htm
+		main: Introduction.htm
+individual book HTMs go in pane main.
+treemaster replaces root:
+
+treemaster.htm:
+	outer: concTreeIndex.htm
+
+Notes:
+window.open(href, windowname, 'width=400,height=150,location=yes,scrollbars=yes');
+
+try top.frames['framename']
+
+Forcing frames if inner doc opened.
+http://www.webreference.com/js/column36/forcing.html
+
+onclick="parent.body.main.location = parent.body.main.location.pathname"
+	concholder: treeMain.htm
+		conc: treeConc.htm
+		main: treeText.htm
+wl files replace treeConc.htm in pane conc
+book files replace treeText.htm in pane main
+
+
+window.clipboardData.setData("Text", "some text for the clipboard");
+(also getData)
+
+Closest I've gotten is
+window.clipboardData.setText('Text',parent.body.main.window.getSelection() + ' copyright')
+
+getting the selection works in FF, not sure in IE.
+FF says clipboardData has no properties.
+IE says some unspecified object does not support some unspecified function. Apparently clipboardData is specific to IE and getSelection() is specific to FF.

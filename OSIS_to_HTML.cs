@@ -77,7 +77,7 @@ namespace sepp
 				if (files.Contains(Path.ChangeExtension(filename, "xml")))
 				{
 					status.File = filename;
-					Convert(inputFile);
+					ConvertFile(inputFile);
 					count++;
 					status.Value = count;
 				}
@@ -90,7 +90,7 @@ namespace sepp
 		/// Convert one file.
 		/// </summary>
 		/// <param name="inputFilePath">full path name to the file to convert.</param>
-		private void Convert(string inputFilePath)
+		private void ConvertFile(string inputFilePath)
 		{
 			// Name of output file (without path)
 			string outputFileName = Path.ChangeExtension(Path.GetFileName(inputFilePath), "htm");
@@ -104,7 +104,11 @@ namespace sepp
 			Process proc = Process.Start(info);
 			proc.WaitForExit();
 
-			MakeCrossRefLinkInfo(outputFilePath);
+
+			string input = ReadFileToString(outputFilePath);
+			input = CreateSymbolCrossRefs(input);
+
+			MakeCrossRefLinkInfo(input, outputFilePath);
 
 			// And copy to the main output directory
 			if (m_finalOutputDir != null)
@@ -113,29 +117,52 @@ namespace sepp
 			}
 		}
 
+		string[] m_symbols; // shared with delegate
+
+		private string CreateSymbolCrossRefs(string input)
+		{
+			string[] basicSymbols = { "*", "†", "‡", "§" }; // enhance JohnT: could come from options
+			// Total set of symbols is formed of original group, originals doubled, then all other combinations. Total # is n-squared plus n
+			int totalSymbols = basicSymbols.Length * basicSymbols.Length + basicSymbols.Length;
+			m_symbols = new string[totalSymbols];
+			int next = basicSymbols.Length * 2; // start of subsequent symbols
+			for (int i = 0; i < basicSymbols.Length; i++)
+			{
+				m_symbols[i] = basicSymbols[i];
+				m_symbols[i + basicSymbols.Length] = basicSymbols[i] + basicSymbols[i];
+				for (int j = 0; j < basicSymbols.Length; j++)
+				{
+					if (i != j) // those already used
+						m_symbols[next++] = basicSymbols[i] + basicSymbols[j];
+				}
+			}
+			Regex re = new Regex("<span class=\"notemark\">(.[^<]*)</span>");
+			string output = re.Replace(input, new MatchEvaluator(ReplaceFootnote));
+			return output;
+		}
+
+		/// <summary>
+		/// Replace each footnote with the appropriate special marker
+		/// </summary>
+		/// <param name="m"></param>
+		/// <returns></returns>
+		public string ReplaceFootnote(Match m)
+		{
+			string notemark = m.Groups[1].Value;
+			int index = Convert.ToInt32(notemark[0]) - Convert.ToInt32('a');
+			if (notemark.Length == 1 && index >= 0 && index < m_symbols.Length)
+				notemark = m_symbols[index];
+			return "<span class=\"notemark\">" + notemark + "</span>";
+		}
+
 		/// <summary>
 		/// This looks for scripture references in the file and inserts info to allow the correct
 		/// hot links to be made.
 		/// </summary>
-		/// <param name="outputFilePath"></param>
-		private void MakeCrossRefLinkInfo(string filePath)
+		/// <param name="input">input text to process</param>
+		/// <param name="filePath">file to write to (often source of input also)</param>
+		private void MakeCrossRefLinkInfo(string input, string filePath)
 		{
-			TextReader reader = null;
-			for (int attempt = 0; reader == null && attempt < 5; attempt++)
-			{
-				try
-				{
-					reader = new StreamReader(filePath, Encoding.UTF8);
-				}
-				catch (FileNotFoundException f)
-				{
-					// Since another process just created this file, it seems we sometimes don't see it at once.
-					reader = null;
-					System.Threading.Thread.Sleep(500);
-				}
-			}
-			string input = reader.ReadToEnd();
-			reader.Close();
 			TextWriter output = new StreamWriter(filePath, false, Encoding.UTF8);
 			int start = 0;
 			// Strings identifying elements that should be converted
@@ -216,6 +243,27 @@ namespace sepp
 			//    XmlWriter writer = new XmlTextWriter(outputFilePath, Encoding.UTF8);
 			//    doc.WriteTo(writer);
 			//}
+		}
+
+		private static string ReadFileToString(string filePath)
+		{
+			TextReader reader = null;
+			for (int attempt = 0; reader == null && attempt < 5; attempt++)
+			{
+				try
+				{
+					reader = new StreamReader(filePath, Encoding.UTF8);
+				}
+				catch (FileNotFoundException f)
+				{
+					// Since another process just created this file, it seems we sometimes don't see it at once.
+					reader = null;
+					System.Threading.Thread.Sleep(500);
+				}
+			}
+			string input = reader.ReadToEnd();
+			reader.Close();
+			return input;
 		}
 
 		/// <summary>

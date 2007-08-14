@@ -3,6 +3,6 @@ begin >
 group(main)
 "\nt" > store(junk) set(nt)
 
-"\" > endstore "\"
+nl "\" > endstore nl "\"
 
 endfile > endstore nl endfile

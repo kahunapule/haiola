@@ -1,0 +1,79 @@
+/* stylesheet for use with osis2html.xsl */
+/* Dave van Grootheest, Netherlands Bible Society */
+/* last updated: 2007-07-12 */
+
+/* JohnT: global defaults */
+body				{ font-family: Gentium, Times New Roman, Serif; font-size: 12pt }
+
+div.maintitle        { display: block; text-align: center; font-family: Tahoma, Arial; font-size: 18pt; font-weight: bold; margin-top: 10pt; margin-bottom: 10pt }
+div.maintitle1       { display: block; text-align: center; font-family: Tahoma, Arial; font-size: 18pt; font-weight: bold; margin-top: 2pt }
+div.maintitle2       { display: block; text-align: center; font-family: Tahoma, Arial; font-size: 14pt; font-weight: bold; font-style: italic; margin-bottom: 2pt }
+div.copyright       { display: block; text-align: center; font-family: Tahoma, Arial; font-size: 14pt; font-weight: bold; color: red; font-style: italic; margin-bottom: 2pt }
+
+div.sectionheading   { display: block; text-align: center; font-family: Tahoma, Arial; font-weight: bold; margin-top: 12pt }
+div.sectionsubheading   { display: block; text-align: center; font-family: Tahoma, Arial; font-weight: bold; font-style: italic; margin-top: 6pt; margin-left: 12pt } /* JohnT */
+div.parallel		 { display: block; text-align: center; font-style: italic; margin-top: 0pt; font-size:x-small } /* JohnT */
+div.parallelSub		 { display: block; text-align: center; font-style: italic; margin-top: 0pt; margin-left: 12pt; font-size:x-small } /* JohnT */
+
+
+/* JohnT: based on a recommendation in http://www.xs4all.nl/~sbpoley/webmatters/superscripts.html,  to make line spacing
+as nearly as possible uniform despite superscripts, especially in FF, we set block elements that contain them to a line-height
+of 1.4 em, and the actual superscript elements have a line-height of zero.*/
+div.prose            { display: block; margin-top: 5pt; line-height: 1.4em}
+div.proseblock       { display: block; line-height: 1.4em }
+div.proseblockindent { display: block; margin-left: 1cm; line-height: 1.4em }
+div.poetry           { display: block; margin-left: 1.5cm; text-indent: -0.5cm; line-height: 1.4em }
+div.list             { margin-left: 1cm; text-indent: -0.5cm; line-height: 1.4em }
+
+span.chapter         { font-family: Tahoma,Arial; font-size: 36pt; font-weight: bold; float:left; margin-right: 4pt; line-height: 30pt; padding-top: 1pt }
+span.verse           { font-family: Tahoma,Arial; vertical-align: super; font-size: 7pt; margin-right: 2pt; color:Maroon; line-height:  0 }
+span.smallcaps       { font-size: smaller }
+span.notemark        { font-size: 7pt; font-weight:bold; vertical-align: super; margin-left: 2pt; line-height: 0}
+span.crmark        { font-size: 6pt; vertical-align: super; margin-left: 2pt; line-height: 0}
+
+/* JohnT: for tooltips */
+a span.popup {display:none}
+a:hover {
+  background-color: #dbe4f2;
+  }
+ 
+a:hover span.popup {
+  position: absolute;
+  display: block;
+  background: #ff8;
+  border: 1px solid black;
+  color: black;
+  margin-left:2pt;
+  padding-left: 3pt;
+  padding-right: 3pt;
+  text-decoration: none;
+  text-indent: 0pt;
+  z-index: 1;
+  max-width: 3in;
+  }
+
+td.text              { line-height: 18pt }
+
+a.noteBackRef		{margin-right: 4pt}
+
+/* JohnT, for chapter index */
+div.BookChapIndex	{ }
+p.IndexChapterList	{ margin-left: 18pt; margin-top: 0pt; margin-bottom: 0pt }
+p.IndexIntroduction	{ margin-left: 18pt; margin-top: 0pt; margin-bottom: 0pt; padding-bottom: 0pt}
+p.IndexBookName		{ margin-bottom: 0pt; margin-top: 3pt }
+
+/* JohnT, for word occurrence files */
+span.OccRef			{color:Maroon}
+span.special		{color:Gray}
+
+/* JohnT: for print footer. Note there should be only one in doc, with ID (not class) print-footer.
+This does not work well...not at all in IE (the footer div is hidden on screen, appears inline in print).
+In Firefox it sort of works, but the footer is in addition to the standard one and prints too close to
+other text, sometimes on top of it. Currently I am not using these styles. */
+@media print {
+	div#print-footer {display: block; position: fixed; bottom: 0; padding-top: 10pt}
+}
+@media screen {
+	div#print-footer {display: none;}
+}
+

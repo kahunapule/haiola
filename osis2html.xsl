@@ -1,8 +1,10 @@
 <xsl:stylesheet version="1.0"
                 xmlns:osis="http://www.bibletechnologies.net/2003/OSIS/namespace"
-                xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-
-<xsl:output method="html" encoding="UTF-8"/>
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+				xmlns:msxsl="urn:schemas-microsoft-com:xslt"
+				xmlns:user="urn:nowhere">
+	
+<xsl:output method="html" encoding="UTF-8" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
 
 
 <!-- XSLT stylesheet for Bible text in OSIS format (output to HTML, with display.css file) -->
@@ -25,8 +27,7 @@
 
 
 <xsl:template match="/">
-
-  <html>
+	<html>
     <head>
       <link rel="stylesheet" href="display.css" type="text/css"/>
 	  <script src="TextFuncs.js" type="text/javascript"></script>
@@ -35,7 +36,8 @@
 
       <xsl:apply-templates select="//osis:div[@type='book']"/>
 		<div class="footnotes">
-			<xsl:apply-templates select="//osis:note" mode="endnotes"/>
+			<xsl:apply-templates select="//osis:note[not(@type='crossReference')]" mode="endnotes"/>
+			<xsl:apply-templates select="//osis:note[@type='crossReference']" mode="endnotes"/>
 		</div>
 
     </body>
@@ -78,7 +80,7 @@
       <div class="maintitle2"><xsl:value-of select="osis:title/osis:title[@level='2']"/></div>
 		-->
 		  <xsl:apply-templates select="osis:title/osis:title" mode="title"/>
-
+		  <div class="copyright">©2007 UBB-GMIT</div>
 	  </xsl:when>
       <xsl:otherwise>
 
@@ -356,7 +358,15 @@
 
 </xsl:template>
 
-
+	<msxsl:script language="JScript" implements-prefix="user">
+		<![CDATA[
+		function anchors(firstVerse, lastVerse, chapter) {
+			result = "";
+			for (i = firstVerse; i <= lastVerse; i++)
+				result = result + "<a name=\"C" + chapter + "V" + i + "\"/>";
+			return result;		}
+		]]>
+	</msxsl:script>
 
 <xsl:template match="osis:verse[@sID]">
 
@@ -370,6 +380,7 @@
 
 	<!-- JohnT: insert chapter/verse anchor-->
 	<!-- JohnT: insert chapter anchor-->
+
 	<xsl:if test="@n = '1' or starts-with(@n, '1-')">
 		<xsl:variable name="anchorC" select="concat('C', $chapter)"/>
 		<a name="{$anchorC}"/>
@@ -381,8 +392,10 @@
 		</xsl:when>
 		<xsl:otherwise>
 			<xsl:variable name="firstVerse" select="substring-before(@n,'-')"/>
-			<xsl:variable name="anchor" select="concat('C', $chapter, 'V', $firstVerse)"/>
-			<a name="{$anchor}"/>
+			<xsl:variable name="lastVerse" select="substring-after(@n, '-')"/>
+			<xsl:value-of select="user:anchors($firstVerse, $lastVerse, $chapter)" disable-output-escaping="yes"/>
+			<!--xsl:variable name="anchor" select="concat('C', $chapter, 'V', $firstVerse)"/>
+			<a name="{$anchor}"/-->
 		</xsl:otherwise>
 	</xsl:choose>
 
@@ -423,17 +436,29 @@
 </xsl:template>
 
 
-
+	<!-- JohnT modified this note handling, to restart at chapters and add notes at end. -->
 <xsl:template match="osis:note">
 
 	<a>
 		<xsl:attribute name="href">#FN<xsl:number format="a" level="any"/></xsl:attribute>
-		<span class="notemark"><xsl:number format="a" level="any"/></span>
+		<xsl:if test="@type='crossReference'">
+			<span class="crmark">
+				<xsl:number count="osis:note[@type='crossReference']" format="a" level="any" from="osis:chapter"/>
+			</span>
+		</xsl:if>
+		<xsl:if test="not(@type='crossReference')">
+			<span class="notemark">
+				<xsl:number count="osis:note[not(@type='crossReference')]" format="a" level="any" from="osis:chapter"/>
+			</span>
+		</xsl:if>
+		<span class="popup">
+			<xsl:apply-templates mode="tooltip"/>
+		</span>
 	</a>
 
 </xsl:template>
 
-	<!-- JohnT added this note handling. -->
+
 <xsl:template match="osis:note" mode="endnotes">
 
 	<p>
@@ -444,22 +469,62 @@
 			<xsl:attribute name="class">footnote</xsl:attribute>
 		</xsl:if>
 		<a><xsl:attribute name="name">FN<xsl:number format="a" level="any"/></xsl:attribute></a>
-		<span class="notemark"><xsl:number format="a" level="any"/> </span>
+		<xsl:if test="@type='crossReference'">
+			<span class="crmark">
+				<xsl:number count="osis:note[@type='crossReference']" format="a" level="any" from="osis:chapter"/>
+			</span>
+		</xsl:if>
+		<xsl:if test="not(@type='crossReference')">
+			<span class="notemark">
+				<xsl:number count="osis:note[not(@type='crossReference')]" format="a" level="any" from="osis:chapter"/>
+			</span>
+		</xsl:if>
 		<xsl:apply-templates mode="endnotes"/>
 	</p>
 
 </xsl:template>
+	<xsl:template match="osis:note[@type='crossReference']" mode="endnotes">
+
+		<p>
+			<xsl:if test="@type='crossReference'">
+				<xsl:attribute name="class">crossRefNote</xsl:attribute>
+			</xsl:if>
+			<xsl:if test="not(@type='crossReference')">
+				<xsl:attribute name="class">footnote</xsl:attribute>
+			</xsl:if>
+			<a>
+				<xsl:attribute name="name">FN<xsl:number format="a" level="any"/></xsl:attribute>
+			</a>
+			<span class="crmark">
+				<xsl:number count="osis:note[@type='crossReference']" format="a" level="any" from="osis:chapter"/>
+			</span>
+			<xsl:apply-templates mode="endnotes"/>
+		</p>
+
+	</xsl:template>
 
 <xsl:template match="osis:reference" mode="endnotes">
 	<!--<xsl:variable name="sID" select="preceding::verse[@sID]"/> -->
 	<xsl:variable name="sID" select="string(.)"/>
 	<xsl:variable name="chapter" select="substring-before($sID, ':')"/>
 	<xsl:variable name="verse" select="substring-after($sID, ':')"/>
-	<xsl:variable name="anchor" select="concat('C', $chapter, 'V', $verse)"/>
-	<a href="#{$anchor}"><xsl:apply-templates/></a>:
+	
+	<xsl:choose>
+		<xsl:when test="substring-before($verse,'-') = ''">
+			<xsl:variable name="anchor" select="concat('C', $chapter, 'V', $verse)"/>
+			<a class="noteBackRef" href="#{$anchor}"><xsl:apply-templates/>:</a>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:variable name="firstVerse" select="substring-before($verse,'-')"/>
+			<xsl:variable name="anchor" select="concat('C', $chapter, 'V', $firstVerse)"/>
+			<a class="noteBackRef" href="#{$anchor}"><xsl:apply-templates/>:</a>
+		</xsl:otherwise>
+	</xsl:choose>
 	<xsl:text> </xsl:text>
 
 </xsl:template>
+	<xsl:template match="osis:reference" mode="tooltip">
+	</xsl:template>
 
 <xsl:template match="osis:foreign">
 

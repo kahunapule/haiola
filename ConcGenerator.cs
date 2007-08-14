@@ -27,6 +27,12 @@ namespace sepp
 	/// </summary>
 	public class ConcGenerator
 	{
+		enum IndexTypes
+		{
+			rangeTree, // a tree where the roots are ranges of words, equal in length.
+			alphaTree, // a tree where the roots are initial letters of the alphabet.
+			twoLevelRange // a top-level index using equal word ranges, with multiple second-level files for individual words
+		}
 		string m_inputDirName;
 		string m_outputDirName;
 
@@ -38,6 +44,7 @@ namespace sepp
 		string m_inputFile;
 		int m_chapter;
 		string m_verse;
+		string m_anchor; // full text of last anchor seen
 		string m_htmlFile; // input file without path and with htm extension.
 
 		int m_wordListFileCount = 1;
@@ -50,11 +57,19 @@ namespace sepp
 		string m_wordformingChars; // overrides, list of characters that should be considered word-forming in defiance of Unicode.
 		int m_maxFrequency = Int32.MaxValue; // exclude words occurring more often than this.
 		Dictionary<string, bool> m_excludeWords = new Dictionary<string,bool>(); // key is words to exclude, ignore value
-		Dictionary<string, bool> m_excludeClasses = new Dictionary<string, bool>(); // exclude elements with these names
+		Dictionary<string, bool> m_excludeClasses = new Dictionary<string, bool>(); // exclude elements with these classes
+		Dictionary<string, bool> m_nonCanonicalClasses = new Dictionary<string, bool>(); // elements with these classes are not canonical
 		List<string> m_files = new List<string>(); // Files to process in desired order.
 		Dictionary<string, string> m_abbreviations = new Dictionary<string,string>(); // Key is file name, value is abbreviation to use in refs.
+		int m_maxContextLength = 50;
+		int m_minContextLength = 35;
+		IndexTypes m_indexType = IndexTypes.alphaTree;
+		string m_notesClass; // element with this class contains footnotes; references should not be output.
+		string m_notesRef; // use this string as the 'reference' for words within notesClass.
+		string m_headingRef; // use this string as the 'reference' for other non-Canonical words.
 
 		List<string> m_pendingExclusions = new List<string>(); // names of elemenents opened that must close before we restart.
+		List<string> m_pendingNonCanonical = new List<string>(); // names of open elemenents that indicate non-canonical text.
 		// Entries represent wordforms in lower case (wordform.ToLower()) where we have not yet encountered a lowercase version
 		// of the word in the text, but have encountered an other-case version. Key is the lowercase version, value is the
 		// uppercase version.
@@ -67,6 +82,23 @@ namespace sepp
 			XmlAttribute att = node.Attributes[name];
 			if (att != null)
 				return att.Value;
+			return defVal;
+		}
+
+		private int IntAttVal(XmlNode node, string name, int defVal)
+		{
+			XmlAttribute att = node.Attributes[name];
+			if (att != null)
+			{
+				try
+				{
+					return Int32.Parse(att.Value);
+				}
+				catch(Exception)
+				{
+					// if anything goes wrong use the default.
+				}
+			}
 			return defVal;
 		}
 
@@ -95,6 +127,21 @@ namespace sepp
 					case "options":
 						m_mergeCase = AttVal(node, "mergeCase", "false") == "true";
 						m_wordformingChars = AttVal(node, "wordFormingCharacters", "");
+						m_maxContextLength = IntAttVal(node, "maxContext", m_maxContextLength);
+						m_minContextLength = IntAttVal(node, "minContext", m_minContextLength);
+						string indexType = AttVal(node, "indexType", "alphaTree");
+						switch (indexType)
+						{
+							case "alphaTree":
+								m_indexType = IndexTypes.alphaTree;
+								break;
+							case "rangeTree":
+								m_indexType = IndexTypes.rangeTree;
+								break;
+							case "twoLevelRange":
+								m_indexType = IndexTypes.twoLevelRange;
+								break;
+						}
 						break;
 					case "excludeWords":
 						string maxFreq = AttVal(node, "moreFrequentThan", "unlimited");
@@ -103,6 +150,12 @@ namespace sepp
 						break;
 					case "excludeClasses":
 						BuildDictionary(m_excludeClasses,node.InnerText);
+						break;
+					case "specialClasses":
+						m_notesClass = AttVal(node, "notesClass", "");
+						m_notesRef = MakeSafeXml(AttVal(node, "notesRef", "-----") + ": ");
+						m_headingRef = MakeSafeXml(AttVal(node, "headingRef", "-----") + ": ");
+						BuildDictionary(m_nonCanonicalClasses, node.InnerText);
 						break;
 					case "files":
 						BuildFileList(node);
@@ -165,8 +218,18 @@ namespace sepp
 				count++;
 			}
 
-			MakeIndexFiles(sortedOccurrences);
-			MakeTreeIndex(sortedOccurrences);
+			switch (m_indexType)
+			{
+				case IndexTypes.twoLevelRange:
+					MakeIndexFiles(sortedOccurrences);
+					break;
+				case IndexTypes.rangeTree:
+					MakeTreeRangeIndex(sortedOccurrences);
+					break;
+				case IndexTypes.alphaTree:
+					MakeAlphaIndex(sortedOccurrences);
+					break;
+			}
 
 			status.Close();
 		}
@@ -203,21 +266,29 @@ namespace sepp
 			writerMain.Close();
 		}
 
-		private void MakeTreeIndex(List<WordformInfo> sortedOccurrences)
+		const string indexHeader = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n"
+				+ "<head>\n\t<link rel=\"stylesheet\" type=\"text/css\" href=\"mktree.css\">\n\t"
+				+ "<script type=\"text/javascript\" src=\"mktree.js\"></script>\n</head>\n<body>\n"
+				+ "<p><a target=\"body\" href=\"Root.htm\">";
+		const string indexHeader2 = "</a></p>\n"
+				+ "<ul class=\"mktree\">\n";
+		const string indexTrailer = "</ul>\n</body>\n</html>\n";
+
+		/// <summary>
+		/// Make tree-organization index with equal ranges of words as the roots.
+		/// </summary>
+		/// <param name="sortedOccurrences"></param>
+		private void MakeTreeRangeIndex(List<WordformInfo> sortedOccurrences)
 		{
 			double count = sortedOccurrences.Count;
 			int groupSize = Convert.ToInt32(Math.Sqrt(count));
 			int iStartGroup = 0;
-			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n"
-				+ "<head>\n\t<link rel=\"stylesheet\" type=\"text/css\" href=\"mktree.css\">\n\t"
-				+ "<script type=\"text/javascript\" src=\"mktree.js\"></script>\n</head>\n<body>\n"
-				+ "<p><a target=\"_top\" href=\"Root.htm\">" + m_bookChapText + "</a></p>\n"
-				+"<ul class=\"mktree\">\n";
 
-			string trailer = "</ul>\n</body>\n</html>\n";
 			string pathMain = Path.Combine(m_outputDirName, "concTreeIndex.htm");
 			TextWriter writerMain = new StreamWriter(pathMain, false, Encoding.UTF8);
-			writerMain.Write(header);
+			writerMain.Write(indexHeader);
+			writerMain.Write(m_bookChapText);
+			writerMain.Write(indexHeader2);
 
 			int groupIndex = 1;
 			for (int cGroupsRemaining = groupSize; cGroupsRemaining > 0; cGroupsRemaining--)
@@ -230,17 +301,48 @@ namespace sepp
 					WordformInfo lastItemInGroup = sortedOccurrences[iStartGroup + cThisGroup - 1];
 					writerMain.Write("<li>{0} - {1}<ul>\n",
 						new object[] { MakeSafeXml(firstItemInGroup.Form), MakeSafeXml(lastItemInGroup.Form) });
-					WriteInnerIndexItems(writerMain, sortedOccurrences, groupIndex, iStartGroup, cThisGroup);
+					WriteInnerIndexItems(writerMain, sortedOccurrences, iStartGroup, cThisGroup);
 					writerMain.Write("</ul></li>\n");
 				}
 				iStartGroup += cThisGroup;
 				groupIndex++;
 			}
-			writerMain.Write(trailer);
+			writerMain.Write(indexTrailer);
 			writerMain.Close();
 		}
+		/// <summary>
+		/// Make tree-organization index with letters of alphabet as roots.
+		/// </summary>
+		/// <param name="sortedOccurrences"></param>
+		private void MakeAlphaIndex(List<WordformInfo> sortedOccurrences)
+		{
+			int iStartGroup = 0;
 
-		private void WriteInnerIndexItems(TextWriter writer, List<WordformInfo> sortedOccurrences, int groupIndex,
+			string pathMain = Path.Combine(m_outputDirName, "concTreeIndex.htm");
+			TextWriter writerMain = new StreamWriter(pathMain, false, Encoding.UTF8);
+			writerMain.Write(indexHeader);
+			writerMain.Write(m_bookChapText);
+			writerMain.Write(indexHeader2);
+
+			while (iStartGroup < sortedOccurrences.Count)
+			{
+				string keyLetter = sortedOccurrences[iStartGroup].Form.Substring(0, 1).ToUpper();
+				// Enhance JohnT: handle surrogate pair or multigraph.
+				int iLimGroup = iStartGroup + 1;
+				while (iLimGroup < sortedOccurrences.Count &&
+					sortedOccurrences[iLimGroup].Form.Substring(0, keyLetter.Length).ToUpper() == keyLetter)
+				{
+					iLimGroup++;
+				}
+				writerMain.Write("<li><span class=\"indexKeyLetter\">{0}</span><ul>\n", MakeSafeXml(keyLetter));
+				WriteInnerIndexItems(writerMain, sortedOccurrences, iStartGroup, iLimGroup - iStartGroup);
+				writerMain.Write("</ul></li>\n");
+				iStartGroup = iLimGroup;
+			}
+			writerMain.Write(indexTrailer);
+			writerMain.Close();
+		}
+		private void WriteInnerIndexItems(TextWriter writer, List<WordformInfo> sortedOccurrences,
 			int iStartGroup, int cThisGroup)
 		{
 			for (int i = iStartGroup; i < iStartGroup + cThisGroup; i++)
@@ -276,6 +378,9 @@ namespace sepp
 			m_htmlFile = Path.ChangeExtension(Path.GetFileName(inputFile), "htm");
 			m_chapter = -1;
 			m_verse = "";
+			m_anchor = "";
+			m_pendingNonCanonical.Clear();
+			m_pendingExclusions.Clear();
 			m_context.Remove(0, m_context.Length);
 			m_saveContext = "";
  			XmlReaderSettings settings = new XmlReaderSettings();
@@ -341,7 +446,8 @@ namespace sepp
 			List<WordOccurrence> items = info.Occurrences;
 			string flags = info.MixedCase ? "i" : "";
 			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n"
-				+ "<head><script src=\"ConcFuncs.js\" type=\"text/javascript\"></script>"
+				+ "<head><script src=\"ConcFuncs.js\" type=\"text/javascript\"></script>\n"
+				+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"display.css\">\n"
 				+ string.Format("<script type=\"text/javascript\">var curWord = \"{0}\"; var curFlags = \"{1}\"</script>", MakeSafeXml(info.Form), flags)
 				+ "</head>\n<body>\n";
 			string trailer = "</body>\n</html>\n";
@@ -352,34 +458,49 @@ namespace sepp
 			writer.Write(header);
 			foreach (WordOccurrence item in items)
 			{
-				writer.Write(m_abbreviations[item.FileName]);
-				writer.Write(" ");
-				writer.Write(item.Chapter);
-				writer.Write(".");
-				writer.Write(MakeSafeXml(item.Verse));
-				writer.Write(": ");
+				writer.Write("<span class=\"OccRef\">");
+				if (item.Canonical)
+				{
+					writer.Write(m_abbreviations[item.FileName]);
+					writer.Write(" ");
+					writer.Write(item.Chapter);
+					writer.Write(".");
+					writer.Write(MakeSafeXml(item.Verse));
+					writer.Write(": ");
+				}
+				else if (item.Verse == "")
+					writer.Write(m_notesRef); // in Notes area.
+				else
+					writer.Write(m_headingRef); // other option for now is some sort of heading.
+				writer.Write("</span>");
+				if (!item.Canonical)
+				{
+					writer.Write("<span class=\"special\">");
+				}
 				WritePrecedingContext(writer, item.Context.Substring(0, item.Offset));
-				writer.Write("<a href=\"{0}#C{1}V{2}\" target=\"main\" onclick='sel(\"{3}\",\"{4}\")'>{3}</a>",
-					new object[] { item.FileName, item.Chapter, item.FirstVerse, MakeSafeXml(item.Form), flags });
+				writer.Write("<a href=\"{0}#{1}\" target=\"main\" onclick='sel(\"{2}\",\"{3}\")'>{2}</a>",
+					new object[] { item.FileName, item.Anchor, MakeSafeXml(item.Form), flags });
 				//writer.Write(item.Context.Substring(item.Offset + key.Length, item.Context.Length - item.Offset - key.Length));
 				WriteFollowingContext(writer, item.Context.Substring(item.Offset + info.Form.Length, item.Context.Length - item.Offset - info.Form.Length));
+				if (!item.Canonical)
+				{
+					writer.Write("</span>");
+				}
 				writer.Write("<br/>\n");
 			}
 			writer.Write(trailer);
 			writer.Close();
 		}
 
-		const int kMaxContextLength = 40;
-		const int kMinContextLength = 35;
-		private static void WritePrecedingContext(TextWriter writer, string context)
+		private void WritePrecedingContext(TextWriter writer, string context)
 		{
-			if (context.Length < kMaxContextLength)
+			if (context.Length < m_maxContextLength)
 			{
 				writer.Write(MakeSafeXml(context));
 				return;
 			}
 			int iWhiteSpace = -1;
-			for (int i = context.Length - kMaxContextLength; i < context.Length - kMinContextLength; i++)
+			for (int i = context.Length - m_maxContextLength; i < context.Length - m_minContextLength; i++)
 			{
 				if (Char.IsWhiteSpace(context[i]))
 				{
@@ -396,19 +517,19 @@ namespace sepp
 			else
 			{
 				writer.Write("...");
-				writer.Write(MakeSafeXml(context.Substring(context.Length - kMaxContextLength + 3, kMaxContextLength - 3)));
+				writer.Write(MakeSafeXml(context.Substring(context.Length - m_maxContextLength + 3, m_maxContextLength - 3)));
 			}
 		}
 
-		private static void WriteFollowingContext(TextWriter writer, string context)
+		private void WriteFollowingContext(TextWriter writer, string context)
 		{
-			if (context.Length < kMaxContextLength)
+			if (context.Length < m_maxContextLength)
 			{
 				writer.Write(MakeSafeXml(context));
 				return;
 			}
 			int iWhiteSpace = -1;
-			for (int i = kMaxContextLength - 1; i >= kMinContextLength; i--)
+			for (int i = m_maxContextLength - 1; i >= m_minContextLength; i--)
 			{
 				if (Char.IsWhiteSpace(context[i]))
 				{
@@ -424,7 +545,7 @@ namespace sepp
 			}
 			else
 			{
-				writer.Write(MakeSafeXml(context.Substring(0, kMaxContextLength - 3)));
+				writer.Write(MakeSafeXml(context.Substring(0, m_maxContextLength - 3)));
 				writer.Write("...");
 			}
 		}
@@ -542,7 +663,7 @@ namespace sepp
 			{
 				// Save for next context stuff up to and including character cSave
 				int cSave = cInitialPunct - 1;
-				while (cSave > 0 && Char.IsWhiteSpace(context[cSave + 1]))
+				while (cSave > 0 && (cSave >= context.Length - 1 || Char.IsWhiteSpace(context[cSave + 1])))
 					cSave--;
 				nextSave = context.Substring(0, cSave);
 			}
@@ -626,7 +747,7 @@ namespace sepp
 					m_occurrences[wordform] = info;
 				}
 			}
-			WordOccurrence item = new WordOccurrence(m_htmlFile, m_chapter, m_verse, m_context.Length, wordform);
+			WordOccurrence item = new WordOccurrence(m_htmlFile, m_chapter, m_verse, m_anchor, m_context.Length, wordform, m_pendingNonCanonical.Count == 0);
 			info.Occurrences.Add(item);
 			m_pendingOccurrences.Add(item);
 		}
@@ -658,6 +779,8 @@ namespace sepp
 			if (reader.Name == "a")
 			{
 				string name = reader.GetAttribute("name");
+				if (name != null && name != "") // don't clear anchor when we hit a link
+					m_anchor = name;
 				if (name != null && name.StartsWith("C"))
 				{
 					string refSource = name.Substring(1, name.Length - 1); // strip of 'C'
@@ -669,13 +792,25 @@ namespace sepp
 					}
 				}
 			}
-			else
+			string className = reader.GetAttribute("class");
+			if (className != null)
 			{
-				string className = reader.GetAttribute("class");
-				if (className != null && m_excludeClasses.ContainsKey(className))
+				if (m_excludeClasses.ContainsKey(className))
 				{
 					// Prevents processing wordforms until we find the corresponding end marker.
 					m_pendingExclusions.Add(reader.Name);
+				}
+				else if (m_nonCanonicalClasses.ContainsKey(className))
+				{
+					if (m_pendingNonCanonical.Count == 0)
+						ProcessEndOfSentence();
+					m_pendingNonCanonical.Add(reader.Name);
+				}
+				if (className == m_notesClass)
+				{
+					// Output no refs till we see another CV anchor
+					m_verse = "";
+					m_chapter = 0;
 				}
 			}
 		}
@@ -684,6 +819,12 @@ namespace sepp
 		{
 			if (m_pendingExclusions.Count > 0 && reader.Name == m_pendingExclusions[m_pendingExclusions.Count - 1])
 				m_pendingExclusions.RemoveAt(m_pendingExclusions.Count - 1);
+			if (m_pendingNonCanonical.Count > 0 && reader.Name == m_pendingNonCanonical[m_pendingNonCanonical.Count - 1])
+			{
+				m_pendingNonCanonical.RemoveAt(m_pendingNonCanonical.Count - 1);
+				if (m_pendingNonCanonical.Count == 0)
+					ProcessEndOfSentence();
+			}
 		}
 	}
 }

@@ -68,25 +68,34 @@ namespace sepp
 				@"..\..\cleanup_EOL_spaces.cct", 
 				// removes btX fields, which (when converted to \note: btX....\note* by current OW_to_PT cause
 				// Nathan's USFM->OSIS to drop the rest of the verse after a footnote.
-				@"..\..\remove_bt_from_OW.cct", 
+				//@"..\..\remove_bt_from_OW.cct", 
+				"bt",
 				// removes \ov fields, which otherwise tend to result in a newline before various notes,
 				// which becomes an unwanted space after following stages.
-				@"..\..\remove_ov_from_OW.cct", 
+				//@"..\..\remove_ov_from_OW.cct", 
+				"ov",
 				// Strip all the \ntX fields. JohnD's file makes of all these markers that don't translate into \note.
 				// The OSIS converter discards them, but the resulting blank lines mess up spacing of note markers.
-				@"..\..\remove_nt_from_OW.cct",
+				//@"..\..\remove_nt_from_OW.cct",
+				"nt",
+				// Several more fields that are not wanted and not handled by the OW_to_PT.
+				"al ",
+				"e",
+				"chk2",
+
 				// OW_to_PT.cct does not seem to get the quotes quite right. Kupang makes use of <<< and >>> which
 				// are ambiguous; OW_to_PT converts << and >> and < and >, but >>> is therefore interpreted as >> >
 				// and closes the double first, which is (usually) wrong.
 				// This version removes any space in >> > etc, and interprets >>> as > >>.
 				// This change may be redundant with the latest version of JohnD's OW_to_PT.cct
-				@"..\..\fix_quotes.cct", 
+				//@"..\..\fix_quotes.cct", 
 				// Main conversion by John Duerkson implemented in these two files.
 				@"..\..\OW_to_PT.cct",
 				@"..\..\move_footnote_to_fn.cct",
 				// Strip all the \note fields that JohnD's file makes of all the markers that don't translate.
 				// The OSIS converter discards them, but the resulting blank lines mess up spacing of note markers.
-				// Didn't work...strips the whole file content after the first \note
+				// Didn't work...strips the whole file content after the first \note. Also not needed, now have
+				// \nt being deleted properly.
 				//@"..\..\remove_note_from_USFM.cct",
 				// Final cleanup strips remnants of s2 markers at end of field, and puts cross-ref notes inline so
 				// we don't get a spurious space before the <note> in the OSIS and beyond.
@@ -118,43 +127,94 @@ namespace sepp
 			int nOutLen = inputBytes.Length;
 			foreach (string tablePath in tablePaths)
 			{
-				// allocate a new buffer
-				nOutLen = Math.Max(10000, cbyteInput * 6);
-				outBuffer = new byte[nOutLen];
-				fixed (byte* lpOutBuffer = outBuffer)
+				if (tablePath.EndsWith(".cct"))
 				{
-					lpOutBuffer[0] = lpOutBuffer[1] = lpOutBuffer[2] = lpOutBuffer[3] = 0;
-					fixed (byte* lpInBuffer = inputBytes)
+					// allocate a new buffer
+					nOutLen = Math.Max(10000, cbyteInput * 6);
+					outBuffer = new byte[nOutLen];
+					fixed (byte* lpOutBuffer = outBuffer)
 					{
-						// Do the conversion
-
-						try
+						lpOutBuffer[0] = lpOutBuffer[1] = lpOutBuffer[2] = lpOutBuffer[3] = 0;
+						fixed (byte* lpInBuffer = inputBytes)
 						{
-							Load(tablePath);
-							// call the wrapper sub-classes' DoConvert to let them do it.
-							int* pnOut = &nOutLen;
+							// Do the conversion
+
+							try
 							{
-								status = CCProcessBuffer(m_hTable, lpInBuffer, cbyteInput, lpOutBuffer, pnOut);
+								Load(tablePath);
+								// call the wrapper sub-classes' DoConvert to let them do it.
+								int* pnOut = &nOutLen;
+								{
+									status = CCProcessBuffer(m_hTable, lpInBuffer, cbyteInput, lpOutBuffer, pnOut);
+								}
+							}
+							finally
+							{
+								Unload();
 							}
 						}
-						finally
+						if (status != 0)
 						{
-							Unload();
+							TranslateErrStatus(status);
 						}
+						// if we iterate, starting point is current output
+						cbyteInput = nOutLen;
+						inputBytes = outBuffer;
 					}
-					if (status != 0)
+				}
+				else
+				{
+					// Simple strings are interpreted as markers to be deleted.
+					outBuffer = new byte[cbyteInput]; // deletes only
+					int cbyteOut = 0;
+					string markerS = @"\" + tablePath;
+					byte[] marker = Encoding.UTF8.GetBytes(markerS);
+					int i = 0;
+					byte[] matchEnd = new byte[] {10, 92}; // cr, lf, backslash
+					byte[] target = marker; // initially searching for marker
+					while (i < cbyteInput - target.Length)
 					{
-						TranslateErrStatus(status);
+						bool gotIt = true;
+						for (int j = 0; j < target.Length; j++)
+						{
+							if (inputBytes[i + j] != target[j])
+							{
+								gotIt = false;
+								break;
+							}
+						}
+						if (gotIt)
+						{
+							if (target == marker)
+							{
+								target = matchEnd;
+								i++;
+								continue;
+							}
+							else
+							{
+								target = marker;
+								// i is pointing at the newline before the end marker. We don't want to copy that.
+								// but, we do want to consider the terminating backslash as a possible start of another
+								// match.
+								i += 1; // the backslash is the current character (skip the nl)
+								continue;
+							}
+						}
+						if (target != matchEnd)
+						{
+							outBuffer[cbyteOut] = inputBytes[i];
+							cbyteOut++;
+						}
+						i++;
 					}
-					// if we iterate, starting point is current output
-					cbyteInput = nOutLen;
 					inputBytes = outBuffer;
 				}
 			}
 			// Convert the output back to a file
 			StreamWriter output = new StreamWriter(outputPath);
 			string outputString = Encoding.UTF8.GetString(outBuffer, 0, nOutLen);
-			outputString = FixEmphasis(outputString);
+			//outputString = FixEmphasis(outputString);
 			output.Write(outputString);
 			output.Close();
 		}
