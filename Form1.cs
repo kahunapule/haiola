@@ -85,7 +85,8 @@ namespace sepp
 		private void m_buttonChapIndex_Click(object sender, EventArgs e)
 		{
 			OSIS_to_ChapIndex generator = new OSIS_to_ChapIndex(Path.Combine(m_rootDir, @"OSIS"), Path.Combine(m_rootDir, @"Conc"),
-				Path.Combine(m_rootDir, @"Intro"), Path.Combine(m_rootDir, @"Sepp Options.xml"));
+				Path.Combine(m_rootDir, @"Intro"), Path.Combine(m_rootDir, @"Extras"),
+				Path.Combine(m_rootDir, @"Sepp Options.xml"));
 			generator.Run(m_filesList.CheckedItems);
 
 		}

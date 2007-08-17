@@ -30,7 +30,10 @@
 	<html>
     <head>
       <link rel="stylesheet" href="display.css" type="text/css"/>
-	  <script src="TextFuncs.js" type="text/javascript"></script>
+		<xsl:comment><![CDATA[[if IE]>
+			<link href="display-ie.css" rel="stylesheet" type="text/css" />
+			<![endif]]]></xsl:comment>
+		<script src="TextFuncs.js" type="text/javascript"></script>
 	</head>
 	<body onload="onLoad()">
 
@@ -80,7 +83,7 @@
       <div class="maintitle2"><xsl:value-of select="osis:title/osis:title[@level='2']"/></div>
 		-->
 		  <xsl:apply-templates select="osis:title/osis:title" mode="title"/>
-		  <div class="copyright">©2007 UBB-GMIT</div>
+		  <div class="copyright">(©2007 UBB-GMIT)</div>
 	  </xsl:when>
       <xsl:otherwise>
 
@@ -362,7 +365,9 @@
 		<![CDATA[
 		function anchors(firstVerse, lastVerse, chapter) {
 			result = "";
-			for (i = firstVerse; i <= lastVerse; i++)
+			var start = Number(firstVerse); // alphabeticaly "9" > "10"
+			var finish = Number(lastVerse);
+			for (i = start; i <= finish; i++)
 				result = result + "<a name=\"C" + chapter + "V" + i + "\"/>";
 			return result;		}
 		]]>
@@ -445,15 +450,18 @@
 			<span class="crmark">
 				<xsl:number count="osis:note[@type='crossReference']" format="a" level="any" from="osis:chapter"/>
 			</span>
+			<span class="crpopup">
+				<xsl:apply-templates mode="tooltip"/>
+			</span>
 		</xsl:if>
 		<xsl:if test="not(@type='crossReference')">
 			<span class="notemark">
 				<xsl:number count="osis:note[not(@type='crossReference')]" format="a" level="any" from="osis:chapter"/>
 			</span>
+			<span class="popup">
+				<xsl:apply-templates mode="tooltip"/>
+			</span>
 		</xsl:if>
-		<span class="popup">
-			<xsl:apply-templates mode="tooltip"/>
-		</span>
 	</a>
 
 </xsl:template>

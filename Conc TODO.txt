@@ -39,22 +39,32 @@ Y. Solve *** problems (awaiting JohnD's input)
 Z. Get \bt etc deletion working right (new version in C# does not seem to work)
 Since Monday evening report
 AJ. RandyH says callers are being separated from text again.
-
-Important list:
-AB. Replace Intro screen and move logo above cloth image.
-
 AF. Figure way to do alternate style sheet for IE, and use to fix drop caps.
+AB. Replace Intro screen and move logo above cloth image.
 AE. Make startup application.
-X. Add Creed hot link (and possibly Acrobat installer).
+AQ. Check that startup has error checking wherever needed.
+AP. Make startup localizable and send to Chuck for all translations.
+AL. Graphical layout enhancements requested by Chuck.
+AM. Add progress bar to startup app.
+AN. Create file to make startup run automatically and test
 AG.  Copyright (unbold, regular, -2pt) –and add parentheses (?) that ought to be sufficient with the bright red.
 AH. Pastel green for \ft popups.
 AI. Restore size of cf callers (and remove bold from ft callers)
+AJ. CV anchors are not being generated for ranges like 9-10 (single to double digit).
+X. Add Creed hot link. Convert DOC to HTML.
+AS. 'Install Details' still needs translation
+AR. Look at Chuck's TB stylesheet and try to figure out fonts.
+AU. Fix alignment in introductions. (And made outline have hotlinks)
+AF. Make copyright watermark/background.
 
+Important list:
+AT. Awaiting Chuck's input...should we warn if font already installed? Should we overwrite?
 
 Lower priority
 M. Make longer chapter lists collapsible.
 K. (Optional...tweak sorting, n..ng..ny..o. TBC: sorting of glottal)
-AF. Make copyright watermark/background.
+AO. Investigate whether we can do anything to improve failure mode when no DotNet on startup.
+AV. Make watermark print
 
 Notes on hover window:
 - Without DocType, FF underlines popup and won't turn it off, even with text-decoration: none.
@@ -123,3 +133,43 @@ window.clipboardData.setText('Text',parent.body.main.window.getSelection() + ' c
 getting the selection works in FF, not sure in IE.
 FF says clipboardData has no properties.
 IE says some unspecified object does not support some unspecified function. Apparently clipboardData is specific to IE and getSelection() is specific to FF.
+
+Notes on hacking IE:
+
+Tan Hack:
+Any rules starting * html target only IE browsers.
+Any rule with property name containing escaped non-hex letter apply uniquely to IE5.
+
+Note need to put IE6 and above in 'standards' mode not quirks mode. Use DocType, don't know how yet.
+
+Commented Backslash hack targets IE5 Mac.
+
+  <link href="mainstyles.css" rel="stylesheet" type="text/css" />
+ 
+<!--[if IE]>
+  <link href="all-ie.css" rel="stylesheet" type="text/css" />
+<![endif]-->
+ 
+<!--[if lte IE 6]>
+  <link href="lte-ie6.css" rel="stylesheet" type="text/css" />
+<![endif]-->
+ 
+<!--[if lt IE 6]>
+  <link href="ie5.5.css" rel="stylesheet" type="text/css" />
+<![endif]-->
+
+Set CurrentUICulture before InitializeComponent is called. (Would it work to call it again?)
+
+<body background="drkrainbow.gif" bgproperties="fixed">
+
+<style>
+<!--
+body {
+background-image: url(image.gif);
+background-repeat: no-repeat;
+background-attachment: fixed;
+}
+//-->
+</style>
+
+If you want to place the watermark in a specific location on your Web page (say, the middle of the page), add the background-position property to your style to place the image.
