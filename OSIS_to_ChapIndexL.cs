@@ -19,23 +19,26 @@ namespace sepp
 		string m_inputDirName;
 		string m_outputDirName;
 		string m_introDirName; // directory contains corresponding introduction files.
+		string m_extraDirName; // directory contains extra files to make links to at end.
 		List<string> m_files = new List<string>(); // Files to process in desired order.
 		Dictionary<string, string> m_abbreviations = new Dictionary<string, string>(); // Key is HTM file name, value is abbreviation to use in refs.
 		Dictionary<string, string> m_introFiles = new Dictionary<string, string>(); // Key is XML file name, value is corresponding intro file.
 		XslCompiledTransform m_xslt = new XslCompiledTransform();
 		string m_introText; // text for the 'Introduction' hot link, from options file.
 		string m_concLinkText; // text for the 'Concordance' hot link, from options file.
+		XmlNode m_extraFiles; // from  options file, easier to process as needed.
 
 		/// <summary>
 		/// initialize one.
 		/// </summary>
 		/// <param name="inputDirName"></param>
 		/// <param name="outputDirName"></param>
-		public OSIS_to_ChapIndex(string inputDirName, string outputDirName, string introDirName, string optionsPath)
+		public OSIS_to_ChapIndex(string inputDirName, string outputDirName, string introDirName, string extraDirName, string optionsPath)
 		{
 			m_inputDirName = inputDirName;
 			m_outputDirName = outputDirName;
 			m_introDirName = introDirName;
+			m_extraDirName = extraDirName;
 			XmlDocument optionsDoc = new XmlDocument();
 			optionsDoc.Load(optionsPath);
 			XmlNode root = optionsDoc.DocumentElement;
@@ -51,6 +54,9 @@ namespace sepp
 						break;
 					case "concordance":
 						m_concLinkText = node.InnerText;
+						break;
+					case "extraFiles":
+						m_extraFiles = node;
 						break;
 				}
 			}
@@ -114,6 +120,28 @@ namespace sepp
 					writer.WriteLine(fragment);
 					count++;
 					status.Value = count;
+				}
+			}
+			if (m_extraFiles != null)
+			{
+				foreach (XmlNode fileNode in m_extraFiles)
+				{
+					if (fileNode.Attributes["name"] == null)
+						continue;
+					if (fileNode.Attributes["linkText"] == null)
+						continue;
+					string fileName = fileNode.Attributes["name"].Value;
+					string linkText = fileNode.Attributes["linkText"].Value;
+					string filePath = Path.Combine(m_extraDirName, fileName);
+					if (!File.Exists(filePath))
+					{
+						MessageBox.Show(String.Format("File {0} requested as link but not found.", filePath), "Warning");
+						continue;
+					}
+
+					writer.Write("<p class=\"extraLink\"><a target=\"main\" href=\""
+					+ fileName + ">" + linkText + "</a></p>\n");
+					File.Copy(filePath, Path.Combine(m_outputDirName, fileName), true);
 				}
 			}
 			writer.Write(trailer);
