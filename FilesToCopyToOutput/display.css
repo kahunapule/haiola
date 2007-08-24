@@ -35,7 +35,7 @@ p.footnote, p.crossRefNote
 					{display: block; font-family:GentiumAlt, Times New Roman; margin-top: 3pt; font-size: 10pt; text-align: justify}
 
 span.chapter         { font-family: Times New Roman, Serif; font-size: 32pt; font-weight: bold; float:left; margin-right: 4pt; line-height: 30pt; padding-top: 1pt }
-span.verse           { font-family: Times New Roman, Serif; vertical-align: super; font-size: 7pt; margin-right: 2pt; color:Maroon; line-height:  0 }
+span.verse           { white-space:nowrap; font-family: Times New Roman, Serif; vertical-align: super; font-size: 7pt; margin-right: 2pt; color:Maroon; line-height:  0 }
 span.smallcaps       { font-size: smaller }
 span.notemark        { font-family: Times New Roman, Serif; font-size: 9pt; vertical-align: super; margin-left: 2pt; line-height: 0}
 span.crmark			 { font-family: Times New Roman, Serif; font-size: 9pt; vertical-align: super; margin-left: 2pt; line-height: 0}
