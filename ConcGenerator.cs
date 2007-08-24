@@ -31,6 +31,7 @@ namespace sepp
 		{
 			rangeTree, // a tree where the roots are ranges of words, equal in length.
 			alphaTree, // a tree where the roots are initial letters of the alphabet.
+			alphaTreeMf, // Looks like alphaTree, but done with multiple files for faster loading.
 			twoLevelRange // a top-level index using equal word ranges, with multiple second-level files for individual words
 		}
 		string m_inputDirName;
@@ -141,6 +142,9 @@ namespace sepp
 							case "twoLevelRange":
 								m_indexType = IndexTypes.twoLevelRange;
 								break;
+							case "alphaTreeMf":
+								m_indexType = IndexTypes.alphaTreeMf;
+								break;
 						}
 						break;
 					case "excludeWords":
@@ -228,6 +232,9 @@ namespace sepp
 					break;
 				case IndexTypes.alphaTree:
 					MakeAlphaIndex(sortedOccurrences);
+					break;
+				case IndexTypes.alphaTreeMf:
+					MakeAlphaMfIndex(sortedOccurrences);
 					break;
 			}
 
