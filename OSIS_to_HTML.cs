@@ -70,6 +70,8 @@ namespace sepp
 			string[] inputFileNames = Directory.GetFiles(m_inputDirName, "*.xml");
 			Progress status = new Progress(files.Count);
 			status.Show();
+			ConcGenerator.EnsureDirectory(m_outputDirName);
+			ConcGenerator.EnsureDirectory(m_finalOutputDir);
 			int count = 0;
 			foreach (string inputFile in inputFileNames)
 			{
@@ -211,7 +213,7 @@ namespace sepp
 			int start = 0;
 			// Strings identifying elements that should be converted
 			string[] starts = new string[] {
-				"<p class=\"crossRefNote\">",
+				"<p class=\"crossRefNote\"",
 				"<div class=\"parallel\">",
 				"<div class=\"parallelSub\">"
 				};
@@ -249,14 +251,16 @@ namespace sepp
 				}
 				// This is crude, but good enough for what we're doing. In all current cases, the bit we want to
 				// convert is the body of the element, and comes after anything else. So the preceding > is the
-				// start of what we want to work on. This must be findable, because all our 'start' strings have
-				// a closing angle bracket. (Maintain this property!)
+				// start of what we want to work on.
 				int startChunk = input.LastIndexOf(">", endChunk) + 1;
-				// Copy everything we haven't processed up to the start of our chunk.
-				output.Write(input.Substring(start, startChunk - start));
-				start = endChunk; // Continue from here.
-				string chunk = input.Substring(startChunk, endChunk - startChunk);
-				output.Write(ConvertRefs(chunk));
+				if (startChunk >= 0 && startChunk > start)
+				{
+					// Copy everything we haven't processed up to the start of our chunk.
+					output.Write(input.Substring(start, startChunk - start));
+					start = endChunk; // Continue from here.
+					string chunk = input.Substring(startChunk, endChunk - startChunk);
+					output.Write(ConvertRefs(chunk));
+				} // otherwise it's a bizarre match to an unterminated element, don't mess with it.
 				offsets[which] = input.IndexOf(starts[which], start + ends[which].Length);
 			}
 			output.Write(input.Substring(start)); // anything left over
@@ -298,7 +302,7 @@ namespace sepp
 				{
 					reader = new StreamReader(filePath, Encoding.UTF8);
 				}
-				catch (FileNotFoundException f)
+				catch (FileNotFoundException)
 				{
 					// Since another process just created this file, it seems we sometimes don't see it at once.
 					reader = null;

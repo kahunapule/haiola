@@ -35,6 +35,7 @@ namespace sepp
 		/// </summary>
 		public void Run(IList files)
 		{
+			ConcGenerator.EnsureDirectory(m_outputDirName);
 			string[] inputFileNames = Directory.GetFiles(m_inputDirName, "*.htm");
 			Progress status = new Progress(files.Count);
 			status.Show();

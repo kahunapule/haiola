@@ -181,10 +181,30 @@ namespace sepp
 				m_abbreviations[Path.ChangeExtension(fileName, "htm")] = abbr;
 			}
 		}
-
+		/// Create the directory if it does not exist already. Return true if a problem occurs.
+		/// </summary>
+		/// <param name="destinationPath"></param>
+		/// <returns></returns>
+		internal static bool EnsureDirectory(string destinationPath)
+		{
+			if (!File.Exists(destinationPath))
+			{
+				try
+				{
+					Directory.CreateDirectory(destinationPath);
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show(String.Format("Unable to create directory {0}. Details: {1}", destinationPath, ex.Message), "Error");
+					return true;
+				}
+			}
+			return false;
+		}
 		public void Run(IList files)
 		{
 			Progress status = new Progress(files.Count);
+			EnsureDirectory(m_outputDirName);
 			status.Text = "Parsing";
 			status.Show();
 			int count = 0;
@@ -196,6 +216,7 @@ namespace sepp
 				status.Value = count;
 			}
 			status.Close();
+			
 			List<WordformInfo> sortedOccurrences = new List<WordformInfo>(m_occurrences.Count);
 			foreach (WordformInfo info in m_occurrences.Values)
 			{
@@ -351,6 +372,77 @@ namespace sepp
 			writerMain.Write(indexTrailer);
 			writerMain.Close();
 		}
+		const string indexMfHeader = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n"
+				+ "<head>\n\t<link rel=\"stylesheet\" type=\"text/css\" href=\"mktree.css\">\n\t"
+				+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">\n"
+				+ "</head>\n"
+				+ "<body class=\"ConcIndex\">\n"
+				+ "<p><a target=\"body\" href=\"Root.htm\">";
+		const string indexMfHeader2 = "</a></p>\n"
+				+ "<ul class=\"mktree\">\n";
+		/// <summary>
+		/// Make tree-organization index with letters of alphabet as roots.
+		/// </summary>
+		/// <param name="sortedOccurrences"></param>
+		private void MakeAlphaMfIndex(List<WordformInfo> sortedOccurrences)
+		{
+			string pathMain = Path.Combine(m_outputDirName, "concTreeIndex.htm");
+			MakeAlphaMfIndexItem(sortedOccurrences, pathMain, pathMain, null);
+		}
+
+		/// <summary>
+		/// Write one of the indexes that together make up the multi-file alphabetic index.
+		/// If expandLetter is null, also write the subfiles. Otherwise, expand that one letter.
+		/// </summary>
+		/// <param name="sortedOccurrences"></param>
+		/// <param name="pathMain"></param>
+		/// <param name="expandLetter"></param>
+		private void MakeAlphaMfIndexItem(List<WordformInfo> sortedOccurrences, string pathMain, string pathRoot, string expandLetter)
+		{
+			int iStartGroup = 0;
+			TextWriter writerMain = new StreamWriter(pathMain, false, Encoding.UTF8);
+			writerMain.Write(indexMfHeader);
+			writerMain.Write(m_bookChapText);
+			writerMain.Write(indexHeader2);
+
+			while (iStartGroup < sortedOccurrences.Count)
+			{
+				string keyLetter = sortedOccurrences[iStartGroup].Form.Substring(0, 1).ToUpper();
+				// Enhance JohnT: handle surrogate pair or multigraph. (See keyLetterFileSuffix below, too.)
+				int iLimGroup = iStartGroup + 1;
+				while (iLimGroup < sortedOccurrences.Count &&
+					sortedOccurrences[iLimGroup].Form.Substring(0, keyLetter.Length).ToUpper() == keyLetter)
+				{
+					iLimGroup++;
+				}
+				// We want a predictable file suffix but not one that might be some non-Roman character.
+				// This needs enhancing for surrogate pairs, too.
+				string keyLetterFileSuffix = Convert.ToInt32(keyLetter[0]).ToString();
+				string keyLetterPath = Path.Combine(m_outputDirName, "Index" + keyLetterFileSuffix + ".htm");
+				if (expandLetter == keyLetter)
+				{
+					writerMain.Write("<li class=\"liOpen\"><span id=\"open\" class=\"indexKeyLetter\"><span class=\"bullet\" onclick=\"location='{1}#open'\">&nbsp;</span><a href=\"{1}\">{0}</a></span><ul>\n",
+						MakeSafeXml(keyLetter), Path.GetFileName(pathRoot));
+					WriteInnerIndexItems(writerMain, sortedOccurrences, iStartGroup, iLimGroup - iStartGroup);
+					writerMain.Write("</ul></li>\n");
+				}
+				else
+				{
+					// write an element that looks like a closed node, but is actually a hotlink to another index file.
+					// (And do NOT write the subitems!)
+					writerMain.Write("<li class=\"liClosed\"><span class=\"indexKeyLetter\"><span class=\"bullet\"onclick=\"location='{1}'\">&nbsp;</span><a href=\"{1}#open\">{0}</a></span></li>\n",
+						MakeSafeXml(keyLetter), Path.GetFileName(keyLetterPath));
+				}
+				if (expandLetter == null)
+				{
+					MakeAlphaMfIndexItem(sortedOccurrences, keyLetterPath, pathRoot, keyLetter);
+				}
+				iStartGroup = iLimGroup;
+			}
+			writerMain.Write(indexTrailer);
+			writerMain.Close();
+		}
+
 		private void WriteInnerIndexItems(TextWriter writer, List<WordformInfo> sortedOccurrences,
 			int iStartGroup, int cThisGroup)
 		{
@@ -454,11 +546,13 @@ namespace sepp
 		{
 			List<WordOccurrence> items = info.Occurrences;
 			string flags = info.MixedCase ? "i" : "";
+			string infoForm = MakeSafeXml(info.Form);
+			string fixQuoteInfoForm = infoForm.Replace("'", "&#39"); // apostrophe in word can close onclick quote.
 			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n"
 				+ "<head><script src=\"ConcFuncs.js\" type=\"text/javascript\"></script>\n"
 				+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"display.css\">\n"
-				+ string.Format("<script type=\"text/javascript\">var curWord = \"{0}\"; var curFlags = \"{1}\"</script>", MakeSafeXml(info.Form), flags)
-				+ "</head>\n<body>\n";
+				+ string.Format("<script type=\"text/javascript\">var curWord = \"{0}\"; var curFlags = \"{1}\"</script>", infoForm, flags)
+				+ string.Format("</head>\n<body onload='sel(\"{0}\",\"{1}\")'>\n", fixQuoteInfoForm, flags);
 			string trailer = "</body>\n</html>\n";
 			string path = Path.Combine(m_outputDirName, "wl" + m_wordListFileCount.ToString() + ".htm");
 			info.FileNumber = m_wordListFileCount;
@@ -489,7 +583,7 @@ namespace sepp
 				WritePrecedingContext(writer, item.Context.Substring(0, item.Offset));
 				string form = MakeSafeXml(item.Form);
 				string fixQuoteForm = form.Replace("'", "&#39"); // apostrophe in word can close onclick quote.
-				writer.Write("<a href=\"{0}#{1}\" target=\"main\" onclick='sel(\"{2}\",\"{3}\")'>{4}</a>",
+				writer.Write("<a href=\"{0}#{1}\" target=\"main\">{4}</a>",
 					new object[] { item.FileName, item.Anchor, fixQuoteForm, flags, form});
 				//writer.Write(item.Context.Substring(item.Offset + key.Length, item.Context.Length - item.Offset - key.Length));
 				WriteFollowingContext(writer, item.Context.Substring(item.Offset + info.Form.Length, item.Context.Length - item.Offset - info.Form.Length));

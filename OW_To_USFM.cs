@@ -38,6 +38,7 @@ namespace sepp
 			string[] inputFileNames = Directory.GetFiles(m_inputDirName, "*.db");
 			Progress status = new Progress(files.Count);
 			status.Show();
+			ConcGenerator.EnsureDirectory(m_outputDirName);
 			int count = 0;
 			foreach (string inputFile in inputFileNames)
 			{
