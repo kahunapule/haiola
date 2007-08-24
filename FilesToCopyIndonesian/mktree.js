@@ -114,6 +114,7 @@ function convertTrees() {
 			}
 		}
 	}
+	if(parent.parent.navigation) parent.parent.navigation.SetBookName(' ');
 }
 
 function treeNodeOnclick() {

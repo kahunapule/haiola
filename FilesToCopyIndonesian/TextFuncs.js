@@ -1,9 +1,21 @@
 ﻿// JavaScript functions to highlight text in main window of concordance.
 
+var hilitedElt = "";
+var oldBackground;
+
 function onLoad()
 {
+	hilitedElt = "";
 	if (parent.conc && parent.conc.curWord)
 		selectWord(parent.conc.curWord, parent.conc.curFlags);
+}
+function onLoadBook(bookName)
+{
+	onLoad();
+	if (parent && parent.parent && parent.parent.navigation)
+		parent.parent.navigation.SetBookName(bookName);
+	if (parent && parent.parent && parent.parent.parent && parent.parent.parent.navigation)
+		parent.parent.parent.navigation.SetBookName(bookName);
 }
 function selectWord(text, flags) {
 	if (parent.main.curWord == text)
@@ -94,4 +106,24 @@ function appendSpan(input, offset, len, parent, before)
 	else
 		parent.insertBefore(span, before);
 	span.setAttribute("class", "concHighlight");
+}
+
+function hilite(eltId)
+{
+	if (hilitedElt != "")
+	{
+		var prev = document.getElementById(hilitedElt);
+		if (prev)
+		{
+			prev.style.background = oldBackground;
+		}
+		hilitedElt = "";
+	}
+	var target = document.getElementById(eltId);
+	if (target)
+	{
+		hilitedElt = eltId;
+		oldBackground = target.style.background;
+		target.style.background = "rgb(128,255,255)";
+	}
 }

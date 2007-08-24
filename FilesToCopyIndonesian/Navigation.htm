@@ -6,12 +6,12 @@
          body {margin-top:2pt; margin-left:2pt; background:gray}
          input {font-weight:bold}
       </style>
+      <script src="Navigation.js" type="text/javascript"></script>
 </head>
 <body>
       <input type="button" value="Kembali ke bagian awal buku" title="Kembali ke bagian awal buku"
          onclick="if (parent.body.main) parent.body.main.location = parent.body.main.location.pathname; else parent.body.concholder.main.location = parent.body.concholder.main.location.pathname;"/>
-      <input type="button" value="Copy" title="Copy"
-         onclick="window.clipboardData.setData('Text',parent.body.main.window.getSelection() + ' copyright');"/>
+		<span id="book" class="NavBookName" style="background: lightgreen; padding-left:3pt; padding-right:3pt" > </span>
 </body>
 </html>
 
