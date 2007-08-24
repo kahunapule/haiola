@@ -55,16 +55,72 @@ X. Add Creed hot link. Convert DOC to HTML.
 AS. 'Install Details' still needs translation
 AR. Look at Chuck's TB stylesheet and try to figure out fonts.
 AU. Fix alignment in introductions. (And made outline have hotlinks)
+----RC1.
 AF. Make copyright watermark/background.
+AZ. Do something to make it easy to tell the current book. (but: not for introductions yet)
+AX. Fix English layout of installer.
+AW. Very pale yellow background for left pane.
+BA. Icon copied to disk by install so it shows up for shortcuts even after removing the CD.
+BB. Fixed missing quote that prevented CREED link working in IE.
+BC. Enlarge footnote font to 9 pt.
+BD. Add subheadings to non-canonical list.
+BE. Fix duplicate anchors generated for subheadings.
+BL. Added empty line at end of each book to solve problem where IE does not scroll far enough.
+BM. Added pass to clean up duplicate anchors in HTML. This allows words in duplicate Mark 16:9-10 to be concorded properly.
+BN. Cleaned up various errors I introduced in converting introduction outlines to be tables with hot links.
+BO. Made footnotes in introductions more like Scripture style.
+BP. Used table format for list in Mark intro, preventing IE from overlaying lines.
+BQ. Tracked down and fixed faulty backref from footnote
+BR. Made footnote backrefs use correct href even if <reference> contents are not right.
+BS. Cleaned up problem where footnotes in headings were not handled properly, embedding footnote text in heading.
+BT. Got current book display to work in IE(7)
+AT. Awaiting Chuck's input...should we warn if font already installed? Should we overwrite?
+BH. > 10. The footnote reference markers in the book intros and the Creed 
+> are quite different from the footnote reference markers in the 
+> scriptures themselves. Any way of making these more consistent 
+> (match the scripture pattern)?
+BV. Added recommendation to use FireFox.
+BJ. Catastrophic problems with IE: v7 crashes, v6 mis-renders with badly overlapping text.
+	- override style to prevent footnote popups and watermark. (done, needs testing)
+AO. Investigate whether we can do anything to improve failure mode when no DotNet on startup.
+Report 22 August (RC3)
+BY. In IE, some links purple even though not visited.-- can't fix
+CA. Handle \qm for Genesis
+CB. Solve not always seeing progress bar for installation and/or add a 'Finished' dialog?
+BZ. Navigation bar is not high enough for IE6 or when FF uses larger font size. (Made it bigger, and forbade showing scroll bars.
+CC: Force popups not to be bold and centered (which could previously be inherited from caller in section heading).
 
 Important list:
-AT. Awaiting Chuck's input...should we warn if font already installed? Should we overwrite?
+
+BF. > 5. For “knowing where you are”, your wondering about highlighting 
+> the active concordance selection (the whole line) I think is a very 
+> good idea. When I’ve selected a passage, it goes there, but when I 
+> glance back up to the top pane, I’m not sure which one I last 
+> selected. So if it were highlighted, that would be very helpful.
+BG. > 6. Again, for “knowing where you are”, when we actually select a \cf
+> (not just hover) and it jumps to the end of the book, it would be 
+> helpful if the \cf or \ft that we selected to go to (e.g. to get the
+> active links) could be highlighted. Several times I’ve jumped there,
+> and haven’t been able to figure out which one I was supposed to be 
+> at. In my mind I was wanting to follow the links, but not paying 
+> enough attention to either where I started from or where I was 
+> going. I think highlighting the target footnote would deal with that
+> type of recurring senior moment. If possible.
+BI. > 8. The font sizes in the book intros and the Creed are internally 
+> uneven (e.g. list of book themes smaller than main text) on my 3 
+> test computers.
+BK. Implement language chooser in startup.
+BU. "return to top" button gives error in IE on Vista
+BX. Startup green button fails on IE6 machine
 
 Lower priority
 M. Make longer chapter lists collapsible.
 K. (Optional...tweak sorting, n..ng..ny..o. TBC: sorting of glottal)
-AO. Investigate whether we can do anything to improve failure mode when no DotNet on startup.
 AV. Make watermark print
+BW. Installer looks a little odd at 120DPI.
+
+ZA. Make Sepp smart about creating missing directories.
+
 
 Notes on hover window:
 - Without DocType, FF underlines popup and won't turn it off, even with text-decoration: none.
@@ -173,3 +229,56 @@ background-attachment: fixed;
 </style>
 
 If you want to place the watermark in a specific location on your Web page (say, the middle of the page), add the background-position property to your style to place the image.
+
+
+On the new ConcStartup:
+Implement buttons:
+	Browse
+	Install
+	Fonts
+	Browser
+	Run
+Implement background picture
+Localization
+Icon
+http://www.codeguru.com/cpp/controls/editctrl/backgroundcolor/article.php/c9047__1
+
+run 128, 255, 128
+255, 255, 128 middle
+exit 255, 192, 192
+
+  // Call the base class implementation first! Otherwise, it may
+   // undo what we're trying to accomplish here.
+   HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
+	pDC->SetTextColor(RGB(255, 0, 0));
+
+   // Are we painting the IDC_MYSTATIC control? We can use
+   // CWnd::GetDlgCtrlID() to perform the most efficient test.
+   if (pWnd->GetDlgCtrlID() != IDCANCEL)
+   {
+      // Set the background color to pink
+      pDC->SetBkColor(RGB(255, 192, 192));
+
+      // Return handle to our CBrush object
+      hbr = m_brush;
+   }
+   return hbr;
+
+HBRUSH CConcStartupDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor) 
+{
+ 
+}
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+
+Checklist for assembling RC:
+Generate all -> Conc folder
+Copy FilesToCopyIndonesian to Conc folder
+Move index.htm from Conc folder to root.
+Add Release build of ConcStartup.exe
+Add Resources folder (master copy is in debug directory of ConcSetup)
+	- Fonts
+	- Firefox installer (not for upload)
+	- Cloth.ico
+	- Splash.jpg
+Add autorun.inf from ConcStartup debug directory.
+Possibly add Indonesian.loc

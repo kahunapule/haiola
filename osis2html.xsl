@@ -33,17 +33,25 @@
 		<xsl:comment><![CDATA[[if IE]>
 			<link href="display-ie.css" rel="stylesheet" type="text/css" />
 			<![endif]]]></xsl:comment>
+		<xsl:comment><![CDATA[[if lte IE 6]>
+			<link href="display-ie6.css" rel="stylesheet" type="text/css" />
+			<![endif]]]></xsl:comment>
 		<script src="TextFuncs.js" type="text/javascript"></script>
 	</head>
-	<body onload="onLoad()">
+	<xsl:variable name="book" select="//osis:title[@level='1']"/>
+	<body onload="onLoadBook('{$book}')" class="mainDoc">
 
       <xsl:apply-templates select="//osis:div[@type='book']"/>
 		<div class="footnotes">
 			<xsl:apply-templates select="//osis:note[not(@type='crossReference')]" mode="endnotes"/>
 			<xsl:apply-templates select="//osis:note[@type='crossReference']" mode="endnotes"/>
 		</div>
+		<!--JohnT: IE seems to cut off the last line; insert a blank.-->
+		<div>
+			<br/>
+		</div>
 
-    </body>
+	</body>
   </html>
 
 </xsl:template>
@@ -92,7 +100,6 @@
             <xsl:with-param name="skip-note">yes</xsl:with-param>
           </xsl:apply-templates>
         </div>
-
       </xsl:otherwise>
     </xsl:choose>
 
@@ -194,12 +201,12 @@
     </xsl:otherwise>
   </xsl:choose>	
 
-  <xsl:if test="osis:p | osis:list | osis:lg | osis:lb | osis:milestone | osis:speaker | osis:div[@type='x-highLevelPoetryDivision'] | text()[.!='&#10;']">
+  <xsl:if test="osis:p | osis:list | osis:lg | osis:lb | osis:milestone | osis:speaker | osis:q | osis:div[@type='x-highLevelPoetryDivision'] | text()[.!='&#10;']">
     <div class="text">
 	  <!-- JohnT: in the original this had no select. But then if the 'if' succeeds all the main sections get included twice!
 	  This if appears to be to insert anything that precedes the main sections. I'm not sure how to get whatever might be matched by
 	  the text()[.!='&#10;']-->
-      <xsl:apply-templates select="osis:p | osis:list | osis:lg | osis:lb | osis:milestone | osis:speaker | osis:div[@type='x-highLevelPoetryDivision']"/>
+      <xsl:apply-templates select="osis:p | osis:list | osis:lg | osis:lb | osis:milestone | osis:speaker | osis:q | osis:div[@type='x-highLevelPoetryDivision']"/>
     </div>
   </xsl:if>
 
@@ -244,7 +251,7 @@
 
   <!-- <xsl:if test="osis:title and starts-with(@scope, concat($startId, '-')) or osis:title and preceding::osis:verse[@sID = $startId]"> -->
   <xsl:if test="osis:title">
-    <div class="sectionheading"><a name="{position()}"><xsl:value-of select="osis:title"/></a></div>
+    <div class="sectionheading"><a name="{position()}"/><xsl:apply-templates select="osis:title"/></div>
   </xsl:if>
 	<xsl:if test="osis:title[@type='parallel']">
 		<div class="parallel">
@@ -254,19 +261,23 @@
 
   <div class="text">
     <!-- <xsl:apply-templates select="osis:p[not(following::osis:verse[@sID = $startId] or preceding::osis:verse[@eID = $endId])] | osis:list[not(following::osis:verse[@sID = $startId] or preceding::osis:verse[@eID = $endId])] | osis:lg[not(following::osis:verse[@sID = $startId] or preceding::osis:verse[@eID = $endId])] | osis:milestone[not(following::osis:verse[@sID = $startId] or preceding::osis:verse[@eID = $endId])] | osis:lb[not(following::osis:verse[@sID = $startId] or preceding::osis:verse[@eID = $endId])]"/> -->
-    <xsl:apply-templates select="osis:p | osis:list | osis:lg | osis:lb | osis:milestone | osis:speaker | osis:div[@type='x-highLevelPoetryDivision'] | text()[.!='&#10;']"/>
+    <xsl:apply-templates select="osis:p | osis:list | osis:lg | osis:lb | osis:milestone | osis:speaker | osis:q | osis:div[@type='x-highLevelPoetryDivision'] | text()[.!='&#10;']"/>
   </div>
 	<!-- JohnT: This allows handling subsections embedded in divisions.-->
 	<xsl:apply-templates select="osis:div"/>
 
 </xsl:template>
+	<!--Suppress display of parallel title as PART of the main section heading line.-->
+	<xsl:template match="osis:title[@type='parallel']"/>
 
 <xsl:template match="osis:div[@type='subSection']">
 
 	<!-- <xsl:if test="osis:title and starts-with(@scope, concat($startId, '-')) or osis:title and preceding::osis:verse[@sID = $startId]"> -->
 	<xsl:if test="osis:title">
 		<div class="sectionsubheading">
-			<a name="{position()}">
+			<!--JohnT: this doesn't generate exactly what I'd like but at least they're unique. position() on its own
+			repeats in each section.-->
+			<a name="{count(preceding::osis:div[@type='section'])}.{position()}">
 				<xsl:value-of select="osis:title"/>
 			</a>
 		</div>
@@ -279,7 +290,7 @@
 
 	<div class="text">
 		<!-- <xsl:apply-templates select="osis:p[not(following::osis:verse[@sID = $startId] or preceding::osis:verse[@eID = $endId])] | osis:list[not(following::osis:verse[@sID = $startId] or preceding::osis:verse[@eID = $endId])] | osis:lg[not(following::osis:verse[@sID = $startId] or preceding::osis:verse[@eID = $endId])] | osis:milestone[not(following::osis:verse[@sID = $startId] or preceding::osis:verse[@eID = $endId])] | osis:lb[not(following::osis:verse[@sID = $startId] or preceding::osis:verse[@eID = $endId])]"/> -->
-		<xsl:apply-templates select="osis:p | osis:list | osis:lg | osis:lb | osis:milestone | osis:speaker | osis:div[@type='x-highLevelPoetryDivision'] | text()[.!='&#10;']"/>
+		<xsl:apply-templates select="osis:p | osis:list | osis:lg | osis:lb | osis:milestone | osis:q | osis:speaker | osis:q | osis:div[@type='x-highLevelPoetryDivision'] | text()[.!='&#10;']"/>
 	</div>
 	<!-- JohnT: if we have sub-sub-sections do something here.-->
 </xsl:template>
@@ -321,7 +332,15 @@
 
 </xsl:template>
 
-
+	<!--JohnT: embedded quote. Following the pattern of osis:lg, if there are two adjacent ones
+	insert a break.-->
+	<xsl:template match="osis:q">
+		<xsl:if test="name(preceding-sibling::*[1])='q'">
+			<br/>
+		</xsl:if>
+		
+		<xsl:apply-templates/>
+	</xsl:template>
 
 <xsl:template match="osis:lg">
 
@@ -337,9 +356,19 @@
 
 <xsl:template match="osis:l">
 
-  <div class="poetry">
-    <xsl:apply-templates/>
-  </div>
+	<xsl:choose>
+		<xsl:when test="name(../..)='q'">
+			<div class="embeddedPoetry">
+				<xsl:apply-templates/>
+			</div>
+
+		</xsl:when>
+		<xsl:otherwise>
+			<div class="poetry">
+				<xsl:apply-templates/>
+			</div>
+		</xsl:otherwise>
+	</xsl:choose>
 
 </xsl:template>
 
@@ -446,6 +475,7 @@
 
 	<a>
 		<xsl:attribute name="href">#FN<xsl:number format="a" level="any"/></xsl:attribute>
+		<xsl:attribute name="onclick">hilite('FN<xsl:number format="a" level="any"/>')</xsl:attribute>
 		<xsl:if test="@type='crossReference'">
 			<span class="crmark">
 				<xsl:number count="osis:note[@type='crossReference']" format="a" level="any" from="osis:chapter"/>
@@ -467,31 +497,7 @@
 </xsl:template>
 
 
-<xsl:template match="osis:note" mode="endnotes">
-
-	<p>
-		<xsl:if test="@type='crossReference'">
-			<xsl:attribute name="class">crossRefNote</xsl:attribute>
-		</xsl:if>
-		<xsl:if test="not(@type='crossReference')">
-			<xsl:attribute name="class">footnote</xsl:attribute>
-		</xsl:if>
-		<a><xsl:attribute name="name">FN<xsl:number format="a" level="any"/></xsl:attribute></a>
-		<xsl:if test="@type='crossReference'">
-			<span class="crmark">
-				<xsl:number count="osis:note[@type='crossReference']" format="a" level="any" from="osis:chapter"/>
-			</span>
-		</xsl:if>
-		<xsl:if test="not(@type='crossReference')">
-			<span class="notemark">
-				<xsl:number count="osis:note[not(@type='crossReference')]" format="a" level="any" from="osis:chapter"/>
-			</span>
-		</xsl:if>
-		<xsl:apply-templates mode="endnotes"/>
-	</p>
-
-</xsl:template>
-	<xsl:template match="osis:note[@type='crossReference']" mode="endnotes">
+	<xsl:template match="osis:note" mode="endnotes">
 
 		<p>
 			<xsl:if test="@type='crossReference'">
@@ -500,32 +506,67 @@
 			<xsl:if test="not(@type='crossReference')">
 				<xsl:attribute name="class">footnote</xsl:attribute>
 			</xsl:if>
-			<a>
-				<xsl:attribute name="name">FN<xsl:number format="a" level="any"/></xsl:attribute>
-			</a>
-			<span class="crmark">
-				<xsl:number count="osis:note[@type='crossReference']" format="a" level="any" from="osis:chapter"/>
-			</span>
+				<xsl:attribute name="id">FN<xsl:number format="a" level="any"/></xsl:attribute>
+
+			<xsl:if test="@type='crossReference'">
+				<span class="crmark">
+					<xsl:number count="osis:note[@type='crossReference']" format="a" level="any" from="osis:chapter"/>
+				</span>
+			</xsl:if>
+			<xsl:if test="not(@type='crossReference')">
+				<span class="notemark">
+					<xsl:number count="osis:note[not(@type='crossReference')]" format="a" level="any" from="osis:chapter"/>
+				</span>
+			</xsl:if>
 			<xsl:apply-templates mode="endnotes"/>
 		</p>
-
 	</xsl:template>
 
 <xsl:template match="osis:reference" mode="endnotes">
-	<!--<xsl:variable name="sID" select="preceding::verse[@sID]"/> -->
-	<xsl:variable name="sID" select="string(.)"/>
-	<xsl:variable name="chapter" select="substring-before($sID, ':')"/>
-	<xsl:variable name="verse" select="substring-after($sID, ':')"/>
-	
+	<!--This select was very hard to discover. It finds the value of the sID attribute on the nearest preceding
+	verse element that has one (note that typically half the verse elements have eID instead).
+	preceding::osis:verse[@sID] finds the verse elements before the current position that have sID attributes.
+	The [1] selects just the closest...without that it seems to prefer the first in the whole document.
+	Finally the additional /@sID obtains the value of the attribute (the first @sID is just part of the pattern
+	that selects the element we want).-->
+	<xsl:variable name="sID" select="preceding::osis:verse[@sID][1]/@sID"/>
 	<xsl:choose>
-		<xsl:when test="substring-before($verse,'-') = ''">
-			<xsl:variable name="anchor" select="concat('C', $chapter, 'V', $verse)"/>
-			<a class="noteBackRef" href="#{$anchor}"><xsl:apply-templates/>:</a>
+		<xsl:when test="substring-after($sID,'.')=''">
+			<!-- rarely, typicallly in a heading, our the select from our apply-templates doesn't include a preceding verse.
+			In that case, take the less reliable approach of using the contents of the back reference.-->
+			<xsl:variable name="xID" select="string(.)"/>
+			<xsl:variable name="chapter" select="substring-before($xID, ':')"/>
+			<xsl:variable name="verse" select="substring-after($xID, ':')"/>
+
+			<xsl:choose>
+				<xsl:when test="substring-before($verse,'-') = ''">
+					<xsl:variable name="anchor" select="concat('C', $chapter, 'V', $verse)"/>
+					<a class="noteBackRef" href="#{$anchor}"><xsl:apply-templates/>:</a>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:variable name="firstVerse" select="substring-before($verse,'-')"/>
+					<xsl:variable name="anchor" select="concat('C', $chapter, 'V', $firstVerse)"/>
+					<a class="noteBackRef" href="#{$anchor}"><xsl:apply-templates/>:</a>
+				</xsl:otherwise>
+			</xsl:choose>
 		</xsl:when>
 		<xsl:otherwise>
-			<xsl:variable name="firstVerse" select="substring-before($verse,'-')"/>
-			<xsl:variable name="anchor" select="concat('C', $chapter, 'V', $firstVerse)"/>
-			<a class="noteBackRef" href="#{$anchor}"><xsl:apply-templates/>:</a>
+			<!--<xsl:variable name="sID" select="string(.)"/> fails if ref content does not exactly match, e.g., 6:23b tries to find C6V23b but no b in the anchor-->
+			<xsl:variable name="chapter" select="substring-before(substring-after($sID, '.'), '.')"/>
+			<xsl:variable name="verse" select="preceding::osis:verse[@sID][1]/@n"/>
+
+			<xsl:choose>
+				<xsl:when test="substring-before($verse,'-') = ''">
+					<xsl:variable name="anchor" select="concat('C', $chapter, 'V', $verse)"/>
+					<a class="noteBackRef" href="#{$anchor}"><xsl:apply-templates/>:</a>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:variable name="firstVerse" select="substring-before($verse,'-')"/>
+					<xsl:variable name="anchor" select="concat('C', $chapter, 'V', $firstVerse)"/>
+					<a class="noteBackRef" href="#{$anchor}"><xsl:apply-templates/>:</a>
+				</xsl:otherwise>
+			</xsl:choose>
+
 		</xsl:otherwise>
 	</xsl:choose>
 	<xsl:text> </xsl:text>

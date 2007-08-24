@@ -26,6 +26,7 @@ namespace sepp
 		XslCompiledTransform m_xslt = new XslCompiledTransform();
 		string m_introText; // text for the 'Introduction' hot link, from options file.
 		string m_concLinkText; // text for the 'Concordance' hot link, from options file.
+		string m_loading;
 		XmlNode m_extraFiles; // from  options file, easier to process as needed.
 
 		/// <summary>
@@ -58,6 +59,9 @@ namespace sepp
 					case "extraFiles":
 						m_extraFiles = node;
 						break;
+					case "loading":
+						m_loading = node.InnerText;
+						break;
 				}
 			}
 		}
@@ -71,8 +75,9 @@ namespace sepp
 			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n"
 				+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">"
 				+ "<head>"
-				+ "</head>\n<body>\n"
-				+ "<p><a target=\"body\" href=\"treemaster.htm\">" + m_concLinkText + "</a></p>\n";
+				+ "</head>\n<body class=\"BookChapIndex\">\n"
+				+ "<p><a target=\"body\" href=\"treemaster.htm\" onclick=\"if(parent.parent.navigation) parent.parent.navigation.SetBookName('" + m_loading
+				+"')\">" + m_concLinkText + "</a></p>\n";
 			string trailer = "</body>\n</html>\n";
 			string path = Path.Combine(m_outputDirName, "ChapterIndex.htm");
 			TextWriter writer = new StreamWriter(path, false, Encoding.UTF8);
@@ -140,7 +145,7 @@ namespace sepp
 					}
 
 					writer.Write("<p class=\"extraLink\"><a target=\"main\" href=\""
-					+ fileName + ">" + linkText + "</a></p>\n");
+					+ fileName + "\">" + linkText + "</a></p>\n");
 					File.Copy(filePath, Path.Combine(m_outputDirName, fileName), true);
 				}
 			}

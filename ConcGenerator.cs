@@ -268,7 +268,9 @@ namespace sepp
 
 		const string indexHeader = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n"
 				+ "<head>\n\t<link rel=\"stylesheet\" type=\"text/css\" href=\"mktree.css\">\n\t"
-				+ "<script type=\"text/javascript\" src=\"mktree.js\"></script>\n</head>\n<body>\n"
+				+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">\n\t"
+				+ "<script type=\"text/javascript\" src=\"mktree.js\"></script>\n</head>\n"
+				+ "<body class=\"ConcIndex\">\n"
 				+ "<p><a target=\"body\" href=\"Root.htm\">";
 		const string indexHeader2 = "</a></p>\n"
 				+ "<ul class=\"mktree\">\n";
@@ -478,8 +480,10 @@ namespace sepp
 					writer.Write("<span class=\"special\">");
 				}
 				WritePrecedingContext(writer, item.Context.Substring(0, item.Offset));
-				writer.Write("<a href=\"{0}#{1}\" target=\"main\" onclick='sel(\"{2}\",\"{3}\")'>{2}</a>",
-					new object[] { item.FileName, item.Anchor, MakeSafeXml(item.Form), flags });
+				string form = MakeSafeXml(item.Form);
+				string fixQuoteForm = form.Replace("'", "&#39"); // apostrophe in word can close onclick quote.
+				writer.Write("<a href=\"{0}#{1}\" target=\"main\" onclick='sel(\"{2}\",\"{3}\")'>{4}</a>",
+					new object[] { item.FileName, item.Anchor, fixQuoteForm, flags, form});
 				//writer.Write(item.Context.Substring(item.Offset + key.Length, item.Context.Length - item.Offset - key.Length));
 				WriteFollowingContext(writer, item.Context.Substring(item.Offset + info.Form.Length, item.Context.Length - item.Offset - info.Form.Length));
 				if (!item.Canonical)
