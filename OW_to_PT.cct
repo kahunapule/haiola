@@ -30,12 +30,14 @@ nl "\" > dup back
 "\q2" any(sp) > "\q2" nl
 "\q3" any(sp) > "\q3" nl
 "\qc" any(sp) > "\qc" nl
+"\qm" any(sp) > "\qm" nl
 "\r" any(sp) > "\r "
 "\rcrd" any(sp) > "\rem RCRD: "    c use(junk)
 "\s" any(sp) > next
 "\s1" any(sp) > store(s1) use(c,s2)
 "\s2" any(sp) > "\s2 "
 "\v" any(sp) > "\v "
+"\e" any(sp) > use(junk)
 "\z" any(sp) > use(junk)
 
 
@@ -60,10 +62,13 @@ nl "\" > dup back
 c  HCE unique
 "\hist" fol(sp) > "\rem HIST: "    c HCE
 c Notes
+"\al" any(sp) > "\note Alternate: " use(c,notes)    c alternate
 "\ov" any(sp) > "\note OV: " use(c,notes)    c Old version
 "\t" any(sp) > "\note T: " use(c,notes)
 "\nt" fol(sp) > "\note NT: " use(c,notes)
 "\ntgk" fol(sp) > "\note NTGK: " use(c,notes)
+"\ntck" fol(sp) > "\note NTCK: " use(c,notes)
+"\chk2" fol(sp) > "\note CHK2: " use(c,notes)
 c "\g" any(sp) > use(junk)
 "\dt" fol(sp) > "\note DT: " use(c,notes)
 "\ud" fol(sp) > "\note UD: " use(c,notes)
@@ -84,6 +89,14 @@ endfile > endstore "\s1 " out(s1) endfile
 
 group(notes)
 "[\s2]" > "[s2]"
+"[\q3]" > "[q3]"
+"\va" any(sp) > "variant "
+"\ant" any(sp) > "antonym "
+"\mr" any(sp) > "morphology"
+"\mr)" > "morphology)"
+"\lf" any(sp) > "lexical function "
+"\ov)" > "older version)"
+"\ov]" > "older version]"
 
 nl "\" > next
 "\" > "\note*" nl "\" back use(c,main)

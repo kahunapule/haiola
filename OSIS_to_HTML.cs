@@ -107,8 +107,9 @@ namespace sepp
 
 			string input = ReadFileToString(outputFilePath);
 			input = CreateSymbolCrossRefs(input);
+			string stage2 = FixDuplicateAnchors(input);
 
-			MakeCrossRefLinkInfo(input, outputFilePath);
+			MakeCrossRefLinkInfo(stage2, outputFilePath);
 
 			// And copy to the main output directory
 			if (m_finalOutputDir != null)
@@ -153,6 +154,49 @@ namespace sepp
 			if (notemark.Length == 1 && index >= 0 && index < m_symbols.Length)
 				notemark = m_symbols[index];
 			return "<span class=\"notemark\">" + notemark + "</span>";
+		}
+
+		/// <summary>
+		/// If there are duplicate anchors in the file, disambguate by adding _1, etc.
+		/// </summary>
+		/// <param name="input"></param>
+		/// <returns></returns>
+		private string FixDuplicateAnchors(string input)
+		{
+			StringBuilder bldr = new StringBuilder(input.Length * 10 / 9 + 100);
+			Hashtable anchors = new Hashtable();
+			int prev = 0;
+			string prefix = "<a name=\"";
+			int start = input.IndexOf(prefix);
+			while (start != -1)
+			{
+				start += prefix.Length; // character after prefix (after opening quote of name attr)
+				bldr.Append(input.Substring(prev, start - prev)); // copy everything up to (and including) the opening quote
+				int next = input.IndexOf("\"", start);
+				if (next == -1)
+				{
+					// ouch! no end quote!
+					next = input.Length;
+				}
+				string anchor = input.Substring(start, next - start); // actual text of anchor
+				if (anchors.ContainsKey(anchor))
+				{
+					// bother! duplicate.
+					string root = anchor;
+					for (int i = 1; ;i++ )
+					{
+						anchor = root + "_" + i;
+						if (!anchors.ContainsKey(anchor))
+							break; // we must eventually find a non-duplicate!
+					}
+				}
+				anchors[anchor] = true;
+				bldr.Append(anchor);
+				prev = next;
+				start = input.IndexOf(prefix, next + 1);
+			}
+			bldr.Append(input.Substring(prev));
+			return bldr.ToString();
 		}
 
 		/// <summary>
