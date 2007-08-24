@@ -17,8 +17,8 @@ div.copyright       { display: block; text-align: center; font-family: Georgia,T
 
 div.sectionheading   { display: block; text-align: center; font-family: Georgia, Tahoma, Arial; font-weight: bold; margin-top: 12pt }
 div.sectionsubheading   { display: block; text-align: center; font-family: Georgia, Tahoma, Arial; font-weight: bold; font-style: italic; margin-top: 6pt; margin-left: 12pt } /* JohnT */
-div.parallel		 { font-family: Andika DR AuSIL, Times New Roman, Serif; display: block; text-align: center; font-style: italic; margin-top: 0pt; font-size:x-small } /* JohnT */
-div.parallelSub		 { font-family: Andika DR AuSIL, Times New Roman, Serif; display: block; text-align: center; font-style: italic; margin-top: 0pt; margin-left: 12pt; font-size:x-small } /* JohnT */
+div.parallel		 { font-family: Andika DR AuSIL, Times New Roman, Serif; display: block; text-align: center; font-style: italic; margin-top: 0pt; font-size:9pt } /* JohnT */
+div.parallelSub		 { font-family: Andika DR AuSIL, Times New Roman, Serif; display: block; text-align: center; font-style: italic; margin-top: 0pt; margin-left: 12pt; font-size:9pt } /* JohnT */
 
 
 /* JohnT: based on a recommendation in http://www.xs4all.nl/~sbpoley/webmatters/superscripts.html,  to make line spacing
@@ -28,6 +28,7 @@ div.prose            { display: block; margin-bottom: 6pt; line-height: 1.4em; t
 div.proseblock       { display: block; line-height: 1.4em; text-align:justify}
 div.proseblockindent { display: block; margin-left: 1cm; line-height: 1.4em; text-align:justify }
 div.poetry           { display: block; margin-left: 1.5cm; text-indent: -0.5cm; line-height: 1.4em }
+div.embeddedPoetry   { display: block; margin-left: 1.5cm; text-indent: -0.5cm; line-height: 1.4em; margin-right: 1.0cm; text-align:justify }
 div.list             { margin-left: 1cm; text-indent: -0.5cm; line-height: 1.4em }
 
 p.footnote, p.crossRefNote
@@ -36,8 +37,8 @@ p.footnote, p.crossRefNote
 span.chapter         { font-family: Times New Roman, Serif; font-size: 32pt; font-weight: bold; float:left; margin-right: 4pt; line-height: 30pt; padding-top: 1pt }
 span.verse           { font-family: Times New Roman, Serif; vertical-align: super; font-size: 7pt; margin-right: 2pt; color:Maroon; line-height:  0 }
 span.smallcaps       { font-size: smaller }
-span.notemark        { font-family: Times New Roman, Serif; font-size: 8pt; vertical-align: super; margin-left: 2pt; line-height: 0}
-span.crmark			 { font-family: Times New Roman, Serif; font-size: 8pt; vertical-align: super; margin-left: 2pt; line-height: 0}
+span.notemark        { font-family: Times New Roman, Serif; font-size: 9pt; vertical-align: super; margin-left: 2pt; line-height: 0}
+span.crmark			 { font-family: Times New Roman, Serif; font-size: 9pt; vertical-align: super; margin-left: 2pt; line-height: 0}
 
 /* JohnT: for tooltips. The dummy font-size rule is a trick to make IE 'notice' the hover on the span, which apparently it otherwise ignores. */
 a span.popup {display:none}
@@ -61,6 +62,8 @@ a:hover span.popup
   text-indent: 0pt;
   z-index: 1;
   max-width: 3in;
+  font-weight:normal;
+  text-align:left;
   }
   a:hover span.crpopup {
   font-family: GentiumAlt, Times New Roman;
@@ -76,6 +79,8 @@ a:hover span.popup
   text-indent: 0pt;
   z-index: 1;
   max-width: 3in;
+  font-weight:normal;
+  text-align:left;
   }
 
 td.text              { line-height: 18pt }
@@ -83,6 +88,7 @@ td.text              { line-height: 18pt }
 a.noteBackRef		{margin-right: 4pt}
 
 /* JohnT, for chapter index */
+body.BookChapIndex, body.ConcIndex	{background: #ff8}
 div.BookChapIndex	{ }
 p.IndexChapterList	{ margin-left: 18pt; margin-top: 0pt; margin-bottom: 0pt }
 p.IndexIntroduction	{ margin-left: 18pt; margin-top: 0pt; margin-bottom: 0pt; padding-bottom: 0pt}
