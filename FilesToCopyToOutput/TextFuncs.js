@@ -21,7 +21,7 @@ function selectWord(text, flags) {
 	if (parent.main.curWord == text)
 		return false;
 	var para = document.getElementsByTagName("body")[0];
-	var pattern = new RegExp("\\b" + text +"\\b", flags);
+	var pattern = new RegExp("(^|\\W)" + text +"($|\\W)", flags);
 	selectWordIn(para, text, pattern);
 	parent.main.curWord = text;
 }
@@ -65,6 +65,18 @@ function selectWordIn(para, text, pattern)
 		var offset = input.search(pattern);
 		if (offset < 0)
 			continue;
+		if (offset == 0)
+		{
+			// We need to figure out whether we matched ^ or \W
+			var temp = input.substring(0, len);
+			if (temp.search(pattern) < 0)
+				offset++; // must have matched on initial \W
+		}
+		else
+		{
+			// We must have matched \W
+			offset++; // to start of actual word.
+		}
 		mytext.data = input.substring(0, offset);
 		appendSpan(input, offset, len, para, before); ichild++;
 		do
@@ -76,6 +88,7 @@ function selectWordIn(para, text, pattern)
 				appendText(input, 0, input.length, para, before); ichild++; // add the tail end
 				break;
 			}
+			offset++; // this time we MUST be matching initial \W
 			appendText(input, 0, offset, para, before); ichild++; // append text between occurrences
 			appendSpan(input, offset, len, para, before); ichild++ // append another occurrence.		
 		} while (true)
