@@ -37,12 +37,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BookNamePageGenerator.cs" />
     <Compile Include="ConcGenerator.cs" />
-    <Compile Include="Form1.cs">
+    <Compile Include="Master.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Master.Designer.cs">
+      <DependentUpon>Master.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProblemReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProblemReport.Designer.cs">
+      <DependentUpon>ProblemReport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProjectManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProjectManager.Designer.cs">
+      <DependentUpon>ProjectManager.cs</DependentUpon>
     </Compile>
     <Compile Include="HTML_to_XHTML.cs" />
     <Compile Include="OSIS_to_ChapIndexL.cs" />
@@ -60,9 +73,17 @@
       <DependentUpon>Progress.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form1.resx">
+    <EmbeddedResource Include="Master.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>Form1.cs</DependentUpon>
+      <DependentUpon>Master.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProblemReport.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ProblemReport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProjectManager.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ProjectManager.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Progress.resx">
       <SubType>Designer</SubType>

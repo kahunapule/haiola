@@ -37,13 +37,20 @@
 			<link href="display-ie6.css" rel="stylesheet" type="text/css" />
 			<![endif]]]></xsl:comment>
 		<script src="TextFuncs.js" type="text/javascript"></script>
+		<script type="text/javascript">var curBook="<xsl:value-of select="//osis:title[@level='1']"/>"</script>
 	</head>
-	<xsl:variable name="book" select="//osis:title[@level='1']"/>
-	<body onload="onLoadBook('{$book}')" class="mainDoc">
+	<!--xsl:variable name="book" select="//osis:title[@level='1']"/-->
+	<body onload="onLoadBook(curBook)" class="mainDoc">
 
       <xsl:apply-templates select="//osis:div[@type='book']"/>
 		<div class="footnotes">
+			<xsl:if test="//osis:note[not(@type='crossReference')]">
+				<hr/>
+			</xsl:if>
 			<xsl:apply-templates select="//osis:note[not(@type='crossReference')]" mode="endnotes"/>
+			<xsl:if test="//osis:note[@type='crossReference']">
+				<hr/>
+			</xsl:if>
 			<xsl:apply-templates select="//osis:note[@type='crossReference']" mode="endnotes"/>
 		</div>
 		<!--JohnT: IE seems to cut off the last line; insert a blank.-->

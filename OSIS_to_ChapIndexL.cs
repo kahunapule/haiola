@@ -77,8 +77,7 @@ namespace sepp
 				+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">"
 				+ "<head>"
 				+ "</head>\n<body class=\"BookChapIndex\">\n"
-				+ "<p><a target=\"body\" href=\"treemaster.htm\" onclick=\"if(parent.parent.navigation) parent.parent.navigation.SetBookName('" + m_loading
-				+"')\">" + m_concLinkText + "</a></p>\n";
+				+ "<p><a target=\"body\" href=\"treeMaster.htm\">" + m_concLinkText + "</a></p>\n";
 			string trailer = "</body>\n</html>\n";
 			string path = Path.Combine(m_outputDirName, "ChapterIndex.htm");
 			TextWriter writer = new StreamWriter(path, false, Encoding.UTF8);
