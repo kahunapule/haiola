@@ -407,11 +407,11 @@ namespace sepp
 
 			while (iStartGroup < sortedOccurrences.Count)
 			{
-				string keyLetter = sortedOccurrences[iStartGroup].Form.Substring(0, 1).ToUpper();
+				string keyLetter = GetSortLetter(sortedOccurrences[iStartGroup].Form);
 				// Enhance JohnT: handle surrogate pair or multigraph. (See keyLetterFileSuffix below, too.)
 				int iLimGroup = iStartGroup + 1;
 				while (iLimGroup < sortedOccurrences.Count &&
-					sortedOccurrences[iLimGroup].Form.Substring(0, keyLetter.Length).ToUpper() == keyLetter)
+					GetSortLetter(sortedOccurrences[iLimGroup].Form) == keyLetter)
 				{
 					iLimGroup++;
 				}
@@ -441,6 +441,33 @@ namespace sepp
 			}
 			writerMain.Write(indexTrailer);
 			writerMain.Close();
+		}
+
+		// Get a string representing the leading letter for a sort group.
+		// Todo: handle surrogate pairs.
+		private string GetSortLetter(string form)
+		{
+			//return form.Substring(0, 1).ToUpper()
+			for (int i = 0; i < form.Length; i++)
+			{
+				System.Globalization.UnicodeCategory[] goodCategories = new System.Globalization.UnicodeCategory[]
+				{
+					System.Globalization.UnicodeCategory.LowercaseLetter,
+					System.Globalization.UnicodeCategory.OtherLetter,
+					// probably wordforming, but probably mess up sorting. Better to leave out than break groups,
+					// until we have a better sort algorithm.
+					//System.Globalization.UnicodeCategory.PrivateUse, 
+					System.Globalization.UnicodeCategory.TitlecaseLetter,
+					System.Globalization.UnicodeCategory.UppercaseLetter
+				};
+				char c = form[i];
+				for (int j = 0; j < goodCategories.Length; j++)
+				{
+					if (Char.GetUnicodeCategory(c) == goodCategories[j])
+						return c.ToString().ToUpper();
+				}
+			}
+			return form[0].ToString().ToUpper(); // desperate resort!
 		}
 
 		private void WriteInnerIndexItems(TextWriter writer, List<WordformInfo> sortedOccurrences,
@@ -552,7 +579,7 @@ namespace sepp
 				+ "<head><script src=\"ConcFuncs.js\" type=\"text/javascript\"></script>\n"
 				+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"display.css\">\n"
 				+ string.Format("<script type=\"text/javascript\">var curWord = \"{0}\"; var curFlags = \"{1}\"</script>", infoForm, flags)
-				+ string.Format("</head>\n<body onload='sel(\"{0}\",\"{1}\")'>\n", fixQuoteInfoForm, flags);
+				+ string.Format("</head>\n<body onload='sel(curWord,\"{1}\")'>\n", fixQuoteInfoForm, flags);
 			string trailer = "</body>\n</html>\n";
 			string path = Path.Combine(m_outputDirName, "wl" + m_wordListFileCount.ToString() + ".htm");
 			info.FileNumber = m_wordListFileCount;
@@ -881,14 +908,21 @@ namespace sepp
 		// This version is for the OSIStoHTML converter, which inserts literal anchors <a name="C2V5"/>
 		private void ProcessElement(XmlReader reader)
 		{
+			// Get into 'name' the thing if any that can be an href target.
+			string name = reader.GetAttribute("id");
+
 			if (reader.Name == "a")
 			{
-				string name = reader.GetAttribute("name");
-				if (name != null && name != "") // don't clear anchor when we hit a link
-					m_anchor = name;
+				name = reader.GetAttribute("name");
+			}
+
+			// If we got a target remember various stuff from it.
+			if (name != null && name != "") // don't clear anchor when we hit a link
+			{
+				m_anchor = name;
 				if (name != null && name.StartsWith("C"))
 				{
-					string refSource = name.Substring(1, name.Length - 1); // strip of 'C'
+					string refSource = name.Substring(1, name.Length - 1); // strip off 'C'
 					string[] parts = refSource.Split('V');
 					if (parts.Length == 2)
 					{

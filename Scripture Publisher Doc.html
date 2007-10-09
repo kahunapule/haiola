@@ -177,12 +177,53 @@ button.</li>
 shortcuts the program makes. You can subsitute your own icon if you
 wish. It should have both 32x32 and 16x16 versions.</li>
 
-  <li>Resources\Firefox2.0.0.6 is an installer for Firefox, run
+  <li>Resources\Firefox2.0.0.6.exe is an installer for Firefox,
+run
 by the install browser button.</li>
 
-  <li>Indonesian.loc is a dummy file. If present, it causes
-ConcStartup to use the Indonesian localization even if that is not the
-default UI language on the system.</li>
+  <li>Resources\StartupSettings.xml is a simple XML file which
+controls some of ConcStartup's behavior. It allows you to specify the
+name of the browser installation file (which will typically change as
+new versions of Firefox come out), the default directory (relative to
+Program Files) where ConcStartup will initially propose to install
+things, and the name of the shortcut ConcStartup will make when
+installing.</li>
+
+  <li>Resources\Locales contains localization files for
+ConcStartup.
+Each file represents one localization (e.g., Indonesian.id). The main
+filename appears in the menu of possible locales. If that locale is
+chosen, the text from that file is used throughout the program. The
+file is (apart from comments) a succession of pairs of msgid/msgstr
+lines. The msgstr line should contain the localized version of the
+msgid line. The file extension should match the system abbreviation of
+the language; it is matched against the system's UI language to pick a
+default localization on startup.</li>
+
+</ul>
+
+<p>Additional structure for a multi-language CD</p>
+
+<ul>
+
+  <li>Each language has a folder whose name is the name of the
+language, and which contains the Conc directory and index.htm for that
+language.</li>
+
+  <li>There is a master index.html file in the root directory.</li>
+
+  <li>Resources\SiteIntroduction.htm is a file you can customize
+to
+provide an overall introduction to the site and the collection of
+languages.</li>
+
+  <li>Resources\LanguageIndex.htm is a generated index of all the
+languages on the CD (when installed on a hard disk, of all the ones the
+user has
+chosen to install).</li>
+
+  <li>Resources\Navigation.htm and Resources\root.htm help
+provide the structure of the top-level introduction.html</li>
 
 </ul>
 
@@ -197,21 +238,20 @@ diverting the browser to the proper root file if one of the child pages
 is opened independently (e.g., from a google search). It would be nice
 to do this.</p>
 
-<p class="enhancement">ConcStartup should be
-configurable to use a specified icon and browser installer. The default
-target directory could also be configurable.</p>
+<p class="enhancement">ConcStartup could be
+furthe configurable to use a specified icon.</p>
 
-<p class="enhancement">Localization strings should be
-taken from a file to allow localization without recompilaton.</p>
+<p class="enhancement">ConcStartup could be
+localized into more languages.</p>
 
-<p class="enhancement">ConcStartup should be
-localized into more languages and offer a combo box or similar control
-to allow the desired UI language to be chosen.</p>
+<p class="enhancement">Clarify exactly what the
+localization file extension is and what the possible abbreviations are.</p>
 
 <h2>Organization into frames (alphaTreeMf index type).</h2>
 
 <p>Sepp supports several different ways of organizing the tree of
-wordforms. The current default, used for the Kupang Scriptures, seems
+wordforms. The current default, used for the Kupang Scriptures and
+identified as alphaTreeMf, seems
 to work best. The frames are initially organized like this:</p>
 
 <ul>
@@ -238,7 +278,8 @@ to work best. The frames are initially organized like this:</p>
 </ul>
 
 <p>Selecting most links in the index pane replaces
-Introduction.htm with an alternative file. Clicking the concordance
+Introduction.htm with an alternative file, one of the Scripture book
+files. Clicking the concordance
 link replaces root.htm with another file, producing this organization:</p>
 
 <ul>
@@ -280,7 +321,8 @@ apparently similar tree diagram with a different letter expanded.</p>
 
 <p>When the user selects a wordform, treeConc.htm (which just
 contains
-brief instructions) with one of the wlNNNN.htm files containing the
+brief instructions) is replaced with one of the wlNNNN.htm files
+containing the
 occurrences of that word in a brief line of context.</p>
 
 <p>When the user selects an occurrence, treeText.htm is replaced
@@ -384,6 +426,9 @@ this working directory MUST be C:\BibleConv.</li>
 
 </ul>
 
+<p class="enhancement">I need to actually create this
+package. Someone else should try it.</p>
+
 <p class="enhancement">It should be possible to configure
 Sepp to use a different working directory.</p>
 
@@ -400,15 +445,32 @@ FieldWorks or EncConverters (***Todo: links. Or perhaps include this
 with instructions how to register it manually?)</li>
 
   <li>Unzipping Sepp should have created a subdirectory,
-C:\BibleConv\OW. Copy your OurWord db files there.</li>
+C:\BibleConv\Work. Create a subdirectory there whose name is the name
+of your language. Within it, create a subdirectory called "OW". Copy
+your OurWord db files into C:\BibleConv\&lt;langname&gt;\OW.</li>
 
-  <li>Edit Sepp C:\BibleConv\Options.xml to configure the way you
+  <li>Edit Sepp
+C:\BibleConv\&lt;langname&gt;SeppOptions.xml to
+configure the way you
 want
 Sepp to function. Minimally you must list the files you want Sepp to
 process and provide some information about each. This is described more
-below.</li>
+below. Alternatively, you may allow Sepp to create a default
+SeppOptions.xml when first run on your project, and customize it later.</li>
 
   <li>Runn Sepp. It looks like this:</li>
+
+</ul>
+
+<img style="width: 634px; height: 306px;" alt="A screenshot should appear here" src="SeppRootScreenshot.JPG"><br>
+
+<ul>
+
+  <li>Select your language (typically only one...if you are
+working on
+several, repeat the previous two steps for each, and select the one you
+want to work on. Click "Work on selected project". You should then see
+a dialog like this:</li>
 
 </ul>
 
@@ -417,21 +479,27 @@ below.</li>
 <ul>
 
   <li>Click the OW to USFM button. This creates a set of PTX
-files in a directory USFM under your working directory.&nbsp;</li>
+files in a directory USFM under your work\&lt;langname&gt;
+directory.&nbsp;</li>
 
   <li>Click the USFM to OSIS button. This creates a set of XML
-files in OSIS format in a directory OSIS under your working directory.</li>
+files in OSIS format in a directory OSIS under
+your&nbsp;work\&lt;langname&gt; directory.</li>
 
   <li>Click the OSIS to HTML button. This creates a set of HTML
-files in two directories, an HTML directory, and also in your final
-output Conc directory.</li>
+files in two directories, a work\&lt;langname&gt;\HTML
+directory, and also in your final
+output Conc directory, which is
+c:\BibleConv\&lt;langname&gt;\Conc.</li>
 
   <li>Click the HTML to XHTML button. This creates a set of XHTML
-files in a directory ConcInput under your working directory. These
+files in a directory ConcInput under
+your&nbsp;work\&lt;langname&gt; directory. These
 files are the actual input to the concordance-building process.</li>
 
   <li>(Optional). If you want some or all books to have an
-associated introduction, create a folder Intro under your working
+associated introduction, create a folder Intro under
+your&nbsp;work\&lt;langname&gt;
 directory, put the files there, and modify Sepp Options.xml to indicate
 which introduction file goes with which book. These files can be
 anything that can be displayed within a web page, for example, HTML,
@@ -447,7 +515,8 @@ need it.</p>
 
   <li>(Optional). If you want to add extra information (appears
 at the end of the book/chapter index, but is not concorded), create a
-folder Extras in your working directory and put the files there. Enter
+folder Extras in your&nbsp;work\&lt;langname&gt; directory
+and put the files there. Enter
 information about them in the extraFiles section of your Sepp
 Options.xml.</li>
 
@@ -456,12 +525,13 @@ for your site. It will also copy the files from Intro and Extras to the
 output Conc directory.</li>
 
   <li>Click Build Concordance to generate the remaining output
-files in Conc.</li>
+files in&nbsp;c:\BibleConv\&lt;langname&gt;\Conc.</li>
 
-  <li>Copy all the files from the supplied FilesToCopyToOutput
+  <li>Copy all the files from the supplied
+BibleConv\FilesToCopyToOutput
 directory to the Conc directory. (This is currently done manually.) You
 may instead choose one of the localized versions of these files;
-currently the only set is FilesToCopyIndonesian.</li>
+currently the only set is BibleConv\FilesToCopyIndonesian.</li>
 
 </ul>
 
@@ -477,10 +547,15 @@ and the program lets you choose? </p>
   <li>Move index.htm from the Conc directory to the parent
 directory.</li>
 
+  <li>Edit work\&lt;langname&gt;\Conc\Introduction.htm to
+say whatever you wish as an introduction to your language.</li>
+
 </ul>
 
-<p>At this point you should be able to open index.htm and review
-your site. Go back and fix any problems. The list control in Sepp
+<p>At this point you should be able to open
+c:\BibleConv\&lt;langname&gt;\index.htm and review
+your site. Go back and fix any problems. The list control in Project
+Manager
 allows you to work with one file at a time (or a few files). Note that
 the concordance and chapter index must be generated all-at-once; the
 only reason to do this without checking all files is to produce a
@@ -490,22 +565,70 @@ just those files checked. You can do that for the early stages, but the
 chapter and concordance indexes must be completely regenerated with all
 files selected.</p>
 
-<p>If you want to create a CD there are additional steps:</p>
+<p>If you want to generate a multilingual CD, repeat all the
+steps from
+creating the Work\&lt;langname&gt; directory for each language.
+When
+each individual language site is satisfactory, use the "Generate master
+language index" button on the main window to generate
+c:\BibleConv\Site\Resources\LanguageIndex.htm, the index file that
+allows the user to select a language from the root of the whole site.
+Test the complete site by opening c:\BibleConv\Site\index.html. You may
+also wish to edit C:\BibleConv\Site\Resources\SiteIntroduction.htm to
+say whatever you wish about the collection as a whole.</p>
+
+<p>If you want to create a CD there are additional steps. The
+C:\BibleConv\Site directory contains the files and folders that will be
+at the root of your CD. Expanding the Sepp distribution zip file has
+created the following files there (in addition to the folders with your
+language data):</p>
 
 <ul>
 
-  <li>Make a root directory for your CD. Move index.htm and the
-Conc directory there.</li>
+  <li>ConcStartup.exe</li>
 
-  <li>Copy ConcStartup.exe and autorun.inf (and if you wish
-Indonesian.loc) to the root.</li>
+  <li>autorun.inf</li>
 
-  <li>Copy the Resources directory to the root.</li>
+  <li>The files described above that go in the
+C:\BibleConv\Resources
+folder, except for the browser installer. You should download a
+suitable one, such as Firefox 2.0.0.6.exe, and put it in the Resources
+folder also.</li>
 
-  <li>Edit the Introduction.htm file to contain whatever you want.</li>
+  <li>If necessary edit
+C:\BibleConv\Resources\StartupSettings.xml to indicate the name of the
+browser installer.</li>
 
-  <li>Download Firefox2.0.0.6.exe and put it in the Resources
-folder (***Todo: link).</li>
+  <li>Burn a CD using the contents of the Site directory.</li>
+
+</ul>
+
+It's also possible to make a single-language CD. In this case, once
+you've created the files for your language in
+c:\BibleConv\&lt;langname&gt;,
+<ul>
+
+  <li>Move index.htm and the
+Conc directory from c:\BibleConv\&lt;langname&gt; up to
+c:\BibleConv\&lt;langname&gt;.
+Delete&nbsp;c:\BibleConv\&lt;langname&gt;.</li>
+
+  <li>Delete&nbsp;c:\BibleConv\index.html</li>
+
+  <li>Rename c:\BibleConv\index.htm (the index for your one
+language) to c:\BibleConv\index.html (to make it the master site root)</li>
+
+  <li>If you wish, you can delete the htm files in Resources,
+which are not used for a single-language CD.</li>
+
+  <li>Download a browser installer and put it in the Resources
+file as noted above.</li>
+
+  <li>If necessary edit
+C:\BibleConv\Resources\StartupSettings.xml to
+indicate the name of the browser installer. You may also wish to insert
+the name of your language into the defaultInstallDir and shortcutName
+items in the file.</li>
 
   <li>Burn a CD with the contents of the folder.</li>
 
@@ -519,7 +642,7 @@ If you are making a web site there are just a couple of extra steps:<br>
 
   <li>We would like you to include a visit counter in your
 introduction.
-(***Todo: copy the info about the one Chuck recommended. ***)</li>
+(***Todo: copy the info about the onewe've been using. ***)</li>
 
   <li>We would appreciate your including a link to the Sepp site
 (***Todo: when we have one...)</li>
@@ -619,7 +742,8 @@ gives the actual text that should appear in the index.</p>
 <p>Starting directly from XHTML has all the complications
 discussed below for starting from HTML. In addition, there is the
 complication that you will need to manually copy the XHTML files to the
-Conc directory. It remains to be seen whether this will work, but I
+site\&lt;langname&gt;\Conc directory. It remains to be seen
+whether this will work, but I
 don't know of any reason why it wouldn't.
 </p>
 
@@ -659,22 +783,99 @@ classes and listed in the &lt;specialClasses&gt; element.</li>
   <li>If you want to use display.css unmodified, you need to use
 the system of classes for which it was designed. At this point you will
 have to be able to read CSS files to figure this out.</li>
+
 </ul>
-Here is a typical document header generated by our current system:<br>
-<pre>&lt;head&gt;</pre>
-<pre>&lt;META http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;</pre>
-<pre>&lt;link rel="stylesheet" href="display.css" type="text/css"&gt;&lt;!--[if IE]&gt;</pre>
-<pre>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;link href="display-ie.css" rel="stylesheet" type="text/css" /&gt;</pre>
-<pre>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;![endif]--&gt;&lt;!--[if lte IE 6]&gt;</pre>
-<pre>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;link href="display-ie6.css" rel="stylesheet" type="text/css" /&gt;</pre>
-<pre>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;![endif]--&gt;&lt;script src="TextFuncs.js" type="text/javascript"&gt;&lt;/script&gt;&lt;/head&gt;</pre>
-<pre>&lt;body onload="onLoadBook('Galatia')" class="mainDoc"&gt;<br></pre>
-<p>Some important things to note:</p>
+
+Character encoding issues:<br>
+
 <ul>
-  <li>To make the selected-word highlighting behavior work requires the TextFuncs.js script</li>
-  <li>To make our stylesheets work requires the mainDoc class and the stylesheet links.</li>
-  <li>The overide behavior for IE requires the bizarre comments</li>
-  <li>The onLoadBook call is needed to get the book name into the Navigation bar.</li>
+
+  <li>The same character should not be used as a word-forming
+character and a punctuation character. The usual culprit is the single
+quote character, used either as a glottal stop or elision marker (as in
+"don't") as well a a quotation mark. If you need single quote as
+word-forming, try to make sure that you use the distinct Unicode
+characters for opening and closing quote as punctuation.</li>
+
+  <li>Don't use double-quote as a word-forming character.</li>
+
+  <li>The program has not been tested with data outside Unicode plane
+zero. I expect some problems, especially if some of the non-plane-zero
+characters are punctuation.</li>
+  <li>There are some problems with word highlighting if you use word-forming characters that are not standard in Unicode.&nbsp;</li>
+
+</ul>
+
+<p class="enhancement">Specifically, the word-highlighting code will
+highlight extra occurrences, if the only difference between the word it
+is supposed to highlight and a longer word is additional characters
+that are not normally word-forming. I have some ideas for fixing this,
+basically by having Sepp construct a regular expression which
+accurately expresses which characters are word-forming in a particular
+file.</p>
+
+Here is a typical document header generated by our current system:<br>
+
+<br>
+
+<span style="font-family: monospace;">&lt;!DOCTYPE
+html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;&lt;html
+xmlns:osis="http://www.bibletechnologies.net/2003/OSIS/namespace"
+xmlns:msxsl="urn:schemas-microsoft-com:xslt"
+xmlns:user="urn:nowhere"&gt;<br>
+
+&lt;head&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &lt;META http-equiv="Content-Type"
+content="text/html; charset=UTF-8"&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &lt;link rel="stylesheet"
+href="display.css" type="text/css"&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &lt;!--[if IE]&gt;<br>
+
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &lt;link href="display-ie.css"
+rel="stylesheet" type="text/css" /&gt;<br>
+
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &lt;![endif]--&gt;&lt;!--[if
+lte IE 6]&gt;<br>
+
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &lt;link href="display-ie6.css"
+rel="stylesheet" type="text/css" /&gt;<br>
+
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp; &lt;![endif]--&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &lt;script src="TextFuncs.js"
+type="text/javascript"&gt;&lt;/script&gt;<br>
+
+&nbsp;&nbsp;&nbsp; &lt;script
+type="text/javascript"&gt;var curBook="Reta'
+Ahun-hunut"&lt;/script&gt;<br>
+
+&lt;/head&gt;<br>
+
+&lt;body onload="onLoadBook(curBook)" class="mainDoc"&gt;</span>
+<p>Some important things to note:</p>
+
+<ul>
+
+  <li>To make the selected-word highlighting behavior work
+requires the TextFuncs.js script</li>
+
+  <li>To make our stylesheets work requires the mainDoc class and
+the stylesheet links.</li>
+
+  <li>The stylesheet overide behavior for IE requires the bizarre
+comments</li>
+
+  <li>The script defining the curBook variable and the onLoadBook
+call in the &lt;body&gt; element are needed to get the book
+name into the Navigation bar.</li>
 
 </ul>
 
@@ -691,7 +892,9 @@ highlighting the particular footnote when following the link. In
 addition, to make this work, the target (the actual footnote) must be
 an element in the same document which has the specified value as its ID
 attribute; this behavior won't work with footnotes containing anchors
-rather than IDs.</p>
+rather than IDs. (Of course "FNac" should be replaced by whatever ID
+the particular footnote has, and the crmark span is whatever symbol you
+want to appear in the body text to mark the footnote.)</p>
 
 <p>Problem: currently, the ChapIndex.htm file is generated from
 the OSIS input. You will have to create this by hand if you are not
@@ -702,12 +905,15 @@ to generate a ChapIndex.htm from XHTML using classes to identify
 chapter and book names. Another approach would be to allow the book
 name and number of chapters to be specified as optional attributes in
 the files list.</p>
-<p class="enhancement">Test this. One way would be to go back to the WEB bible and see if we can make a concordance out of it.</p>
+
+<p class="enhancement">Test this. One way would be to go
+back to the WEB bible and see if we can make a concordance out of it.</p>
 
 <h2>The transformation on to XHTML</h2>
 
 <p>Getting from HTML to XHTML uses a little program (included in
-the Sepp distribution, but not mine) called tidy. This is simply run on
+the Sepp distribution, but not one I wrote) called tidy. This is simply
+run on
 each input file, with the options "-asxhtml -utf8". You may want to try
 running it manually on one or two of your files. It tends to complain
 rather verbosely; most of the things it mentions are not problems. Use</p>
@@ -720,60 +926,106 @@ rather verbosely; most of the things it mentions are not problems. Use</p>
 <p class="enhancement">The program should
 detect failure and display whatever error messages tidy generates.
 Problem: tidy reports all kinds of things that don't matter. Try to at
-least document the most common warnings that can be ignored.</p>
+least document the most common warnings that can be ignored. Ideally
+the program might filter these from the output and only report any
+other problems.</p>
 
 <h1>OSIS input (OSIS to HTML)</h1>
-<p>A lot could be said here. The bulk of the work is done by an xsl
+
+<p>A lot could be said here. The bulk of the work is done by an
+xsl
 stylesheet, osisToHtml.xsl. I am using msxsl, so if you modify this
 stylesheet you can use anything msxsl handles. The input is OSIS
 (***Todo: insert a link.)</p>
+
 <p>The stylesheet is explicit about the elements it handles. This
 somewhat unfortunately means that if your OSIS contains elements it
 doesn't know about, it will just leave them out. A careful check is
 therefore needed to make sure that nothing (especially large ranges of
-verses!) is missing from your output.</p>
-<p>OSIS has many variants. This stylesheet is written with various expectations. Some that I know about are:</p>
+verses!) is missing from your output. It has so far only been tested on
+Genesis and the NT; anything that contains a different sort of element
+(I would pay special attention to Psalms) should be checked
+particularly carefully.</p>
+
+<p>OSIS has many variants. This stylesheet is written with
+various expectations. Some that I know about are:</p>
+
 <ul>
-  <li>The tree hierarchy is primary; verses hierarchy is indicated with anchors</li>
-  <li>Critical information is taken from the <span style="font-style: italic;">sID</span> and <span style="font-style: italic;">n</span> attributes of &lt;verse&gt; elements</li>
-  <li>Elements like &lt;title short="1 Yohanis"/&gt; are necessary to supply the book titles used in the book/chapter index.</li>
-  <li>&lt;chapter&gt; elements provide the list of chapters.</li>
+
+  <li>The tree hierarchy is primary; verses hierarchy is
+indicated with anchors</li>
+
+  <li>Critical information is taken from the <span style="font-style: italic;">sID</span> and <span style="font-style: italic;">n</span> attributes of
+&lt;verse&gt; elements</li>
+
+  <li>Elements like &lt;title short="1 Yohanis"/&gt; are
+necessary to supply the book titles used in the book/chapter index.</li>
+
+  <li>&lt;chapter&gt; elements provide the list of
+chapters.</li>
+
 </ul>
+
 Note that post-processing follows the stylesheet transformation, to do
 some things I could not find a clean way to do in XSLT. These include:<br>
+
 <ul>
+
   <li>spans with class <span style="font-style: italic;">notemark</span>
 containing a single one of the first 20 letters of the alphabet are
-converted to the symbols "*", "&dagger;", "&Dagger;", "&sect;" and
+converted to the symbols "*", "&dagger;", "&Dagger;",
+"&sect;" and
 various combinations of two of them.</li>
+
 </ul>
-<p class="enhancement">The list of sybols should be configurable from Sepp Options, including not doing this.</p>
+
+<p class="enhancement">The list of sybols should be
+configurable from Sepp Options, including not doing this.</p>
+
 <ul>
+
   <li>duplicate anchors are disambiguated by adding a suffix. For
-example, if &lt;a name="C16V9"/&gt; occurs twice, as in the Kupang
-version of Mark with two endings, the second is converted to&lt;a name="C16V9_1"/&gt;. </li>
+example, if &lt;a name="C16V9"/&gt; occurs twice, as in the
+Kupang
+version of Mark with two endings, the second is converted to &lt;a
+name="C16V9_1"/&gt;. </li>
+
   <li>certain elements (starting with "&lt;p
-class=\"crossRefNote\"",&nbsp;"&lt;div class=\"parallel\"&gt;", or
-&nbsp; "&lt;div class=\"parallelSub\"&gt;") are searched for things
+class=\"crossRefNote\"",&nbsp;"&lt;div
+class=\"parallel\"&gt;", or
+&nbsp; "&lt;div class=\"parallelSub\"&gt;") are searched
+for things
 that look like references, and the references converted into hot links.
 Something "looks like a reference" if it starts with one of the strings
 given in the <span style="font-style: italic;">parallel</span>
-attribute of a &lt;file&gt; element, and is followed by appropriate
+attribute of a &lt;file&gt; element, and is followed by
+appropriate
 arrangements of numbers. A single digit is interpreted as a verse in
 chapter 1; C:V is chapter/verse; C:V-V links to the first verse in the
 range; semi-colon separates references (if the second has no alphabetic
 stuff, the book name is taken from the previous one); commas separate
 verses in the same chapter.</li>
+
 </ul>
-<p class="enhancement">It should be possible to configure the elements that are searched for references to convert.</p>
-<p class="enhancement">Ideally it should be smart enough to spot
+
+<p class="enhancement">It should be possible to configure
+the elements that are searched for references to convert.</p>
+
+<p class="enhancement">Ideally it should be smart enough
+to spot
 references embedded in longer text. It would be nice to make hot-links
 within ordinary footnotes, for example.</p>
-<p class="enhancement">The tricks that are performed after the initial conversion to HTML should be available for use by projects starting with HTML</p>
+
+<p class="enhancement">The tricks that are performed after
+the initial conversion to HTML should be available for use by projects
+starting with HTML</p>
+
 <p class="enhancement">The program should
 detect failure and display whatever error messages msxsl generates. At
 least display errors indicating invalid osisToHTML.css file.</p>
-<p class="enhancement">It would be better if the stylesheet generated
+
+<p class="enhancement">It would be better if the
+stylesheet generated
 something really ugly...large, bold, red text, say...for any elements
 it does not expect in a particular place.</p>
 
@@ -782,47 +1034,74 @@ output file should be deleted if a new one is not generated
 successfully.</p>
 
 <h1>USFM input (USFM to OSIS)</h1>
-<p>I don't know much about this. Nathan's script seems to do a good job
+
+<p>I don't know much about this. Nathan's script seems to do a
+good job
 of converting anything I've thrown at it, once I fixed a couple of
 minor issues.</p>
+
 <p>(***Todo: &nbsp;link to spec.)
 </p>
+
 <p class="enhancement">The program should
 detect failure and accumulate a log of the errors and warnings reported
-by Nathan's Python script.</p>
+by Nathan's Python script. Ones we know we can ignore should be
+filtered.</p>
 
 <h1>OurWord input</h1>
-<p>This is definitely the most dicey part of the input process. I don't
+
+<p>This is definitely the most dicey part of the input process. I
+don't
 have any specification of the OW format, and it's clearly possible to
 insert unexpected stuff. I've kludged something that works for the
 Kupang data, but am not sure how well it will work for other projects.
 John Duerkson contributed the main CC table which handles the main
 conversion.</p>
-<p>Most SF markers in OW appear not to be significant unless at start
+
+<p>Most SF markers in OW appear not to be significant unless at
+start
 of line. Many fields must be considered to extend from the marker to
 the next start-of-line marker, even if other markers intervene.</p>
-<p>It is very easy, where much material (e.g., back translations, notes
+
+<p>It is very easy, where much material (e.g., back translations,
+notes
 not for publication) is being deleted, to end up with a newline that
 eventually becomes an unwanted space before a note caller.</p>
+
 <p>The actual process involves a number of steps.</p>
+
 <ul>
-  <li>A table deletes end-of-line white space, which often shows up unexpectedly in the output somewhere.</li>
-  <li>Fields beginning \bt, \ov, \nt, \al, \e, and \chk2 are deleted
+
+  <li>A table deletes end-of-line white space, which often shows
+up unexpectedly in the output somewhere.</li>
+
+  <li>Fields beginning \bt, \ov, \nt, \al, \e, and \chk2 are
+deleted
 (applying the principle that the fields extend to the next
 start-of-line marker). (Otherwise JohnD's table turns them into notes,
 and though Nathan's script discards these, we tend to get extra
 whitespace, especially before note callers.)</li>
+
+  <li>A special step splits up \vt blocks which contain more than
+one footnote caller, provided the \vt block is followed by the correct
+number of \ft blocks.</li>
+
   <li>Two of JohnD's CC tables do the bulk of the work.</li>
-  <li>A final cleanup table makes sure there isn't any white space, especially newlines, between text and following publishable notes.</li>
+
+  <li>A final cleanup table makes sure there isn't any white
+space, especially newlines, between text and following publishable
+notes.</li>
+
 </ul>
+
 JohnD's table marks fields it does not understand by leaving them in
 the output but inserting *** before them. This means that the only
 indication of a problem is typically these ***\ sequences at start of
-line. If you don't look for these they may just make it all the way
-through to the final output, which is a problem even if the spurious
-field is deleted and that's what you wanted. Therefore, you should look
-for such fields and do something about them. Enhancements noted below
-would make this easier.
+line. Sepp checks for such lines and generates a report of any it
+finds. It will also detect the error message JohnD's table inserts if
+it is unable to continue (typically because footnote callers and bodies
+don't match). If you see such a report you need to clean up the input
+(or have me improve the program :-) before you can continue.
 <p class="enhancement">The program should allow additional
 CC tables to be applied prior to and possibly after the main conversion.</p>
 
@@ -832,19 +1111,26 @@ fields to be deleted completely prior to the main conversion.</p>
 <p class="enhancement">The program should offer the option
 of converting an unknown field to some known field.</p>
 
-<p class="enhancement">The program should report any
-occurrences of ***\ at start of line in the output, and suggest dealing with them
-using one of the above mechanisms.</p>
-<p class="enhancement">Back translation information should be preserved
+<p class="enhancement">There could be an option allowing
+back translation information to be preserved
 through the whole process and made available to end users. Optional
 parallel columns, maybe?</p>
+
 <h1>Other work needed</h1>
-<p class="enhancement">Verse bridges should use non-breaking hyphen
+
+<p class="enhancement">Verse bridges should use
+non-breaking hyphen
 U+2011. In fact, the program should cope with input containing this, a
 regular hyphen, or U+2010 (breaking hyphen).</p>
-<p class="enhancement">Should support non-Roman ways of detecting sentence endings.</p>
-<p class="enhancement">Consider supporting non-Roman ways of finding word breaks.</p>
-<p class="enhancement">Consider ways of allowing phrases to be separate entries in the wordforms list.</p>
+
+<p class="enhancement">Should support non-Roman ways of
+detecting sentence endings.</p>
+
+<p class="enhancement">Consider supporting non-Roman ways
+of finding word breaks.</p>
+
+<p class="enhancement">Consider ways of allowing phrases
+to be separate entries in the wordforms list.</p>
 
 </body>
 </html>

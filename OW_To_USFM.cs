@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace sepp
 {
@@ -18,6 +19,10 @@ namespace sepp
 		string m_inputDirName;
 		string m_outputDirName;
 		private Int32 m_hTable = 0;
+
+		StringBuilder m_problemReports = new StringBuilder();
+		Dictionary<string, int> m_ProblemMarkers = new Dictionary<string, int>();
+		int m_seriousErrorCount = 0;
 
 		/// <summary>
 		/// initialize one.
@@ -35,6 +40,11 @@ namespace sepp
 		/// </summary>
 		public void Run(IList files)
 		{
+			// Reset problem records, in case ever used repeatedly.
+			m_ProblemMarkers.Clear();
+			m_problemReports.Remove(0, m_problemReports.Length);
+			m_seriousErrorCount = 0;
+
 			string[] inputFileNames = Directory.GetFiles(m_inputDirName, "*.db");
 			Progress status = new Progress(files.Count);
 			status.Show();
@@ -53,6 +63,39 @@ namespace sepp
 			}
 
 			status.Close();
+
+			if (m_ProblemMarkers.Count > 0 || m_seriousErrorCount > 0)
+			{
+				StringBuilder report = new StringBuilder();
+				if (m_seriousErrorCount > 0)
+				{
+					report.Append("Serious problems occurred while processing at least one file, indicated by lines beginning **** ERROR in the output\n");
+					report.Append("These errors result in the output being an incomplete conversion of the input\n\n");
+				}
+				if (m_ProblemMarkers.Count > 0)
+				{
+					List<string> keys = new List<string>(m_ProblemMarkers.Keys);
+					keys.Sort();
+					report.Append("The conversion process encountered some markers it could not handle.\n");
+					report.Append("These are indicated in the output files by lines starting ***\\.\n");
+					report.Append("The problem markers are these: ");
+					bool fFirst = true;
+					foreach (string key in keys)
+					{
+						if (fFirst)
+							fFirst = false;
+						else
+							report.Append("; ");
+						report.Append(String.Format("{0} ({1})", key, m_ProblemMarkers[key].ToString()));
+					}
+					report.Append(".\n\n");
+				}
+				report.Append("Here are the lines where the problems were found:\n");
+				report.Append(m_problemReports.ToString());
+				ProblemReport reportDlg = new ProblemReport();
+				reportDlg.ReportContents = report.ToString();
+				reportDlg.ShowDialog();
+			}
 		}
 
 		/// <summary>
@@ -84,6 +127,12 @@ namespace sepp
 				"e",
 				"chk2",
 
+				// Consider using this...if so, must be BEFORE we convert angle brackets to quotes!
+				//@"..\..\fix_glottal.cct",
+
+				// The main tables don't do well with multiple foonotes in a block. Now we've got rid of the \bts, we can break those up.
+				"footnotes.process",
+
 				// OW_to_PT.cct does not seem to get the quotes quite right. Kupang makes use of <<< and >>> which
 				// are ambiguous; OW_to_PT converts << and >> and < and >, but >>> is therefore interpreted as >> >
 				// and closes the double first, which is (usually) wrong.
@@ -101,6 +150,7 @@ namespace sepp
 				// Final cleanup strips remnants of s2 markers at end of field, and puts cross-ref notes inline so
 				// we don't get a spurious space before the <note> in the OSIS and beyond.
 				@"..\..\cleanup_OW_to_USFM.cct"
+
 			};
 			ConvertFileCC(inputFilePath, tablePaths, outputFilePath);
 		}
@@ -119,6 +169,7 @@ namespace sepp
 			// Read file into input
 			StreamReader reader = new StreamReader(inputPath);
 			input = reader.ReadToEnd() + "\0";
+			reader.Close();
 
 			int status = 0;
 			// Copy input into buffer
@@ -161,6 +212,16 @@ namespace sepp
 						// if we iterate, starting point is current output
 						cbyteInput = nOutLen;
 						inputBytes = outBuffer;
+					}
+				}
+				else if (tablePath.EndsWith(".process"))
+				{
+					// This will become a switch if we get more processes
+					if (tablePath == "footnotes.process")
+					{
+						FixMultipleFootnotes(ref inputBytes, ref cbyteInput);
+						outBuffer = inputBytes;// in case last pass
+						nOutLen = cbyteInput; // in case last pass.
 					}
 				}
 				else
@@ -209,7 +270,14 @@ namespace sepp
 						}
 						i++;
 					}
+					// copy the last few bytes.
+					while (i < cbyteInput)
+					{
+						outBuffer[cbyteOut++] = inputBytes[i++];
+					}
 					inputBytes = outBuffer;
+					cbyteInput = cbyteOut;
+					nOutLen = cbyteOut; // in case last pass.
 				}
 			}
 			// Convert the output back to a file
@@ -218,6 +286,185 @@ namespace sepp
 			//outputString = FixEmphasis(outputString);
 			output.Write(outputString);
 			output.Close();
+			// Check for problems indicated by lines starting ***\
+			StringReader checker = new StringReader(outputString);
+			int lineCount = 0;
+			for ( ; ; )
+			{
+				string line = checker.ReadLine();
+				if (line == null)
+					break;
+				lineCount++;
+				if (line.StartsWith("***\\"))
+				{
+					m_problemReports.AppendFormat("{0}({1}): {2}\n", outputPath, lineCount, line);
+					Regex re = new Regex(@"\\\w*"); // TODO: finish.
+					Match result = re.Match(line);
+					string marker = result.Value;
+					int count;
+					if (!m_ProblemMarkers.TryGetValue(marker, out count))
+						count = 0;
+					m_ProblemMarkers[marker] = ++count;
+				}
+				if (line.StartsWith("**** ERROR"))
+				{
+					m_problemReports.AppendFormat("{0}({1}): {2}\n", outputPath, lineCount, line);
+					m_seriousErrorCount++;
+				}
+			}
+		}
+
+		enum FnStates
+		{
+			fnsAwaitingVt,
+			fnsProcessingVt,
+			fnsCollectingFt
+		}
+
+		private void FixMultipleFootnotes(ref byte[] inputBytes, ref int cbyteInput)
+		{
+			byte[] outBuffer = new byte[cbyteInput * 2 +100]; // super-generous
+			int cbyteOut = 0;
+			byte[] marker = Encoding.UTF8.GetBytes(@"\vt ");
+			int i = 0;
+			byte[] anchor = Encoding.UTF8.GetBytes("|f");
+			byte[] footnote = Encoding.UTF8.GetBytes(@"\ft ");
+			List<int> anchors = new List<int>();
+			List<int> footnotes = new List<int>();
+			FnStates state = FnStates.fnsAwaitingVt;
+			int ichStartVt = -1; // will cause crash if accidentally used before otherwise initialized.
+			while (i < cbyteInput - 2)// 2 is length of shortest target
+			{
+				switch (state)
+				{
+					case FnStates.fnsAwaitingVt:
+						if (FindMarker(inputBytes, i, marker))
+						{
+							state = FnStates.fnsProcessingVt;
+							ichStartVt = i;
+						}
+						else
+						{
+							outBuffer[cbyteOut++] = inputBytes[i];
+						}
+						break;
+					case FnStates.fnsProcessingVt:
+						if (FindMarker(inputBytes, i, footnote))
+						{
+							footnotes.Add(i); // note it
+							state = FnStates.fnsCollectingFt;
+						}
+						else if (FindMarker(inputBytes, i, anchor))
+						{
+							anchors.Add(i);
+						}
+						else if (i > 0 && inputBytes[i-1] == 10 && inputBytes[i] == 92) // backslash at start of line
+						{
+							// We found some marker that terminates things. Note that it MIGHT be another \vt.
+							cbyteOut = HandleEndOfVtBlock(inputBytes, outBuffer, cbyteOut, marker, i, anchor, anchors, footnotes, ichStartVt);
+							state = FnStates.fnsAwaitingVt;
+							continue; // SKIP i++ so we can check to see whether this marker is \vt and starts a new block.
+						}
+						break;
+					case FnStates.fnsCollectingFt:
+						if (FindMarker(inputBytes, i, footnote))
+						{
+							footnotes.Add(i); // note it
+						}
+						else if (i > 0 && inputBytes[i - 1] == 10 && inputBytes[i] == 92) // backslash at start of line
+						{
+							cbyteOut = HandleEndOfVtBlock(inputBytes, outBuffer, cbyteOut, marker, i, anchor, anchors, footnotes, ichStartVt);
+							state = FnStates.fnsAwaitingVt;
+							continue; // SKIP i++ so we can check to see whether this marker is \vt and starts a new block.
+						}
+						break;
+				}
+				i++;
+			}
+			if (state != FnStates.fnsAwaitingVt)
+			{
+				// input terminated within a \vt block. Include the remaining text
+				cbyteOut = HandleEndOfVtBlock(inputBytes, outBuffer, cbyteOut, marker, cbyteInput, anchor, anchors, footnotes, ichStartVt);
+			}
+			else
+			{
+				// Copy the last few bytes
+				while (i < cbyteInput)
+					outBuffer[cbyteOut++] = inputBytes[i++];
+			}
+			// switch buffers and counts.
+			inputBytes = outBuffer;
+			cbyteInput = cbyteOut;
+		}
+
+		private static int HandleEndOfVtBlock(byte[] inputBytes, byte[] outBuffer, int cbyteOut, byte[] marker, int i, byte[] anchor, List<int> anchors, List<int> footnotes, int ichStartVt)
+		{
+			// If all is not consistent, give up and let it fail at next stage.
+			// If only one anchor, no need to fix.
+			if (anchors.Count != footnotes.Count || anchors.Count < 2)
+			{
+				// no need to re-arrange, just copy everything since \vt
+				cbyteOut = CopySegToOutput(inputBytes, outBuffer, cbyteOut, ichStartVt, i);
+			}
+			else
+			{
+				// Re-arrange so only one anchor per \vt.
+				cbyteOut = CopySegToOutput(inputBytes, outBuffer, cbyteOut, ichStartVt, anchors[0] + anchor.Length);
+				// the -1 should put a newline before the first \ft; copying up to footnotes[1] ends with a newline, too.
+				cbyteOut = CopySegToOutput(inputBytes, outBuffer, cbyteOut, footnotes[0] - 1, footnotes[1]);
+				footnotes.Add(i); // last footnote terminates at current character position.
+				for (int ifn = 1; ifn < anchors.Count; ifn++)
+				{
+					// Copy an extra \vt.
+					cbyteOut = CopySegToOutput(inputBytes, outBuffer, cbyteOut, ichStartVt, ichStartVt + marker.Length);
+					// Copy the text between the previous footnote and this one, including the |f
+					int ichStart = anchors[ifn - 1] + anchor.Length;
+					// Drop one leading space or newline; newline between \vt blocks is equivalent.
+					if (inputBytes[ichStart] == 32 || inputBytes[ichStart] == 10)
+						ichStart++;
+					cbyteOut = CopySegToOutput(inputBytes, outBuffer, cbyteOut, ichStart, anchors[ifn] + anchor.Length);
+					// Copy the next footnote, including the preceding and following newlines
+					cbyteOut = CopySegToOutput(inputBytes, outBuffer, cbyteOut, footnotes[ifn] - 1, footnotes[ifn + 1]);
+				}
+				if (anchors[anchors.Count - 1] + anchor.Length + 1 < footnotes[0])
+				{
+					int ichStart = anchors[anchors.Count - 1] + anchor.Length;
+					// Drop one leading space or newline; newline between \vt blocks is equivalent.
+					if (inputBytes[ichStart] == 32 || inputBytes[ichStart] == 10)
+						ichStart++;
+					if (ichStart + 1 < footnotes[0]) // further check in case ONLY one space
+					{
+						// We have text following the last anchor. Make yet another \vt
+						cbyteOut = CopySegToOutput(inputBytes, outBuffer, cbyteOut, ichStartVt, ichStartVt + marker.Length);
+						// And copy the trailing text. It runs from after the last anchor to before the first footnote body.
+						cbyteOut = CopySegToOutput(inputBytes, outBuffer, cbyteOut, ichStart, footnotes[0]);
+					}
+				}
+			}
+			anchors.Clear();
+			footnotes.Clear();
+			return cbyteOut;
+		}
+
+		private static int CopySegToOutput(byte[] inputBytes, byte[] outBuffer, int cbyteOut, int ichStart, int ichLim)
+		{
+			for (int k = ichStart; k < ichLim; k++)
+				outBuffer[cbyteOut++] = inputBytes[k];
+			return cbyteOut;
+		}
+
+		private static bool FindMarker(byte[] inputBytes, int i, byte[] target)
+		{
+			bool gotIt = true;
+			for (int j = 0; j < target.Length; j++)
+			{
+				if (inputBytes[i + j] != target[j])
+				{
+					gotIt = false;
+					break;
+				}
+			}
+			return gotIt;
 		}
 
 		int startEmphasis;
