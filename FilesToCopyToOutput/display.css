@@ -98,6 +98,14 @@ p.IndexBookName		{ margin-bottom: 0pt; margin-top: 3pt }
 span.OccRef			{color:Maroon}
 span.special		{color:Gray}
 
+/* JohnT, for bookNames index file */
+table.BookNameTable {}
+th.bookNameHeader,th.bookNameVernHeader, td.bookNameMissing, td.bookNameItem	{padding-right: 4pt}
+th.bookNameHeader,th.bookNameVernHeader	{text-align:left}
+td.bookNameVern,th.bookNameVernHeader	{color:Blue}
+td.bookNameMissing						{background-color:Yellow}
+td.bookNameItem							{}
+
 /* JohnT: for print footer. Note there should be only one in doc, with ID (not class) print-footer.
 This does not work well...not at all in IE (the footer div is hidden on screen, appears inline in print).
 In Firefox it sort of works, but the footer is in addition to the standard one and prints too close to
