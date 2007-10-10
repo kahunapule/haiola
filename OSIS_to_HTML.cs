@@ -12,14 +12,10 @@ using System.Text.RegularExpressions;
 namespace sepp
 {
 	/// <summary>
-	/// This class uses some CC files to convert from the OurWord SF model to USFM.
-	/// CC tables provided initially by John Duerksen.
-	/// Convertes all .db files in input directory.
+	/// This class uses an XSLT script and some custom programming to convert OSIS XML files to HTML
 	/// </summary>
-	public class OSIS_to_HTML
+	public class OSIS_to_HTML : ExternalProgramConverter
 	{
-		string m_inputDirName;
-		string m_outputDirName;
 		string m_finalOutputDir;
 		// Keys are book names used in references; values are HTM file names.
 		Dictionary<string, string> m_files = new Dictionary<string, string>();
@@ -30,9 +26,8 @@ namespace sepp
 		/// <param name="inputDirName"></param>
 		/// <param name="outputDirName"></param>
 		public OSIS_to_HTML(string inputDirName, string outputDirName, string finalOutputDirName, string optionsPath)
+			: base(inputDirName, outputDirName)
 		{
-			m_inputDirName = inputDirName;
-			m_outputDirName = outputDirName;
 			m_finalOutputDir = finalOutputDirName;
 
 			XmlDocument optionsDoc = new XmlDocument();
@@ -49,6 +44,12 @@ namespace sepp
 			}
 		}
 
+		internal override void Init()
+		{
+			base.Init();
+			ConcGenerator.EnsureDirectory(m_finalOutputDir);
+		}
+
 		private void BuildFileList(XmlNode node)
 		{
 			foreach (XmlNode item in node.ChildNodes)
@@ -62,52 +63,16 @@ namespace sepp
 			}
 		}
 
-		/// <summary>
-		/// Run the algorithm (on the intersection of the files in the list and those in the directory).
-		/// </summary>
-		public void Run(IList files)
+
+
+		internal override void DoPostProcessing(string outputFileName, string outputFilePath)
 		{
-			string[] inputFileNames = Directory.GetFiles(m_inputDirName, "*.xml");
-			Progress status = new Progress(files.Count);
-			status.Show();
-			ConcGenerator.EnsureDirectory(m_outputDirName);
-			ConcGenerator.EnsureDirectory(m_finalOutputDir);
-			int count = 0;
-			foreach (string inputFile in inputFileNames)
-			{
-				string filename = Path.GetFileName(inputFile);
-				if (files.Contains(Path.ChangeExtension(filename, "xml")))
-				{
-					status.File = filename;
-					ConvertFile(inputFile);
-					count++;
-					status.Value = count;
-				}
-			}
-
-			status.Close();
-		}
-
-		/// <summary>
-		/// Convert one file.
-		/// </summary>
-		/// <param name="inputFilePath">full path name to the file to convert.</param>
-		private void ConvertFile(string inputFilePath)
-		{
-			// Name of output file (without path)
-			string outputFileName = Path.ChangeExtension(Path.GetFileName(inputFilePath), "htm");
-			File.Delete(outputFileName); // Make sure we don't somehow preserve an old version.
-			string outputFilePath = Path.Combine(m_outputDirName, outputFileName);
-			string scriptPath = Path.GetFullPath(@"..\..\osis2Html.xsl");
-			string args = "\"" + inputFilePath + "\" \"" + scriptPath + "\" -o \"" + outputFilePath + "\"";
-			ProcessStartInfo info = new ProcessStartInfo("msxsl", args);
-			info.WindowStyle = ProcessWindowStyle.Minimized;
-			//info.RedirectStandardError = 
-			Process proc = Process.Start(info);
-			proc.WaitForExit();
-
-
 			string input = ReadFileToString(outputFilePath);
+			if (input == null)
+			{
+				ReportError("Could not do postprocessing because xslt produced no output");
+				return; // couldn't complete initial stages?
+			}
 			input = CreateSymbolCrossRefs(input);
 			string stage2 = FixDuplicateAnchors(input);
 
@@ -309,6 +274,8 @@ namespace sepp
 					System.Threading.Thread.Sleep(500);
 				}
 			}
+			if (reader == null)
+				return null;
 			string input = reader.ReadToEnd();
 			reader.Close();
 			return input;
@@ -442,6 +409,36 @@ namespace sepp
 			return result;
 		}
 
+
+		internal override string ToolPath
+		{
+			get { return "msxsl.exe"; }
+		}
+
+		internal override string[] Extensions
+		{
+			get { return new string[] { "*.xml" }; }
+		}
+
+		internal override string OutputExtension
+		{
+			get { return "htm"; }
+		}
+
+		internal override string CreateArguments(string inputFilePath, string outputFilePath)
+		{
+			string scriptPath = Path.GetFullPath(@"..\..\osis2Html.xsl");
+			return "\"" + inputFilePath + "\" \"" + scriptPath + "\" -o \"" + outputFilePath + "\"";
+
+		}
+
+		internal override bool CheckToolPresent
+		{
+			get
+			{
+				return false; // can't readily check because we don't know where msxsl.exe should be
+			}
+		}
 	}
 
 }

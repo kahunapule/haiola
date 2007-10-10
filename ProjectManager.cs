@@ -90,7 +90,12 @@ namespace sepp
 				}
 			}
 			int cAbbreviationsInvented = 0;
-			foreach (string filePath in Directory.GetFiles(Path.Combine(m_workDir, "OW")))
+			string srcDir = Path.Combine(m_workDir, "OW");
+			if (!Directory.Exists(srcDir))
+			{
+				srcDir = Path.Combine(m_workDir, "USFM");
+			}
+			foreach (string filePath in Directory.GetFiles(srcDir))
 			{
 				// For historical reasons the file name in the optinos file is supposed to end in xml
 				string fileName = Path.ChangeExtension(Path.GetFileName(filePath), "xml");
@@ -117,6 +122,15 @@ namespace sepp
 					if (secondHyphen > 0)
 					{
 						abbr1 = fileName.Substring(firstHyphen + 1, secondHyphen - firstHyphen - 1);
+					}
+					else if (fileName.Length > 5 && Char.IsDigit(fileName[0]) && Char.IsDigit(fileName[1]))
+					{
+						// Another very common pattern is a two-digit number to order things properly and then
+						// the book abbreviation.
+						if (Char.IsDigit(fileName[2]))
+							abbr1 = fileName.Substring(2, 2).ToUpper() + fileName.Substring(4, 1).ToLower();
+						else
+							abbr1 = fileName.Substring(2, 1).ToUpper() + fileName.Substring(3, 2).ToLower();
 					}
 					else
 					{
@@ -182,7 +196,7 @@ namespace sepp
 
 		private void m_button_USFM_to_OSIS_Click(object sender, EventArgs e)
 		{
-			USFM_to_OSIS converter = new USFM_to_OSIS(Path.Combine(m_workDir, @"USFM"), Path.Combine(m_workDir, @"OSIS"));
+			USFM_to_OSIS converter = new USFM_to_OSIS(Path.Combine(m_workDir, @"USFM"), Path.Combine(m_workDir, @"OSIS"), m_optionsPath);
 			converter.Run(m_filesList.CheckedItems);
 		}
 

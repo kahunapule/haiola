@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="BookNamePageGenerator.cs" />
     <Compile Include="ConcGenerator.cs" />
+    <Compile Include="ExternalProgramConverter.cs" />
     <Compile Include="Master.cs">
       <SubType>Form</SubType>
     </Compile>

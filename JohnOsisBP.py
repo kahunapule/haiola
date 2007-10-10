@@ -1013,11 +1013,11 @@ def readTagTable():
 # myChanges - Must be either None or a routine which takes a single
 # text string as an argument and returns a transformed string.
 
-def convertBooks(infile, outfile):
+def convertBooks(infile, outfile, codecIn):
     global id, book, chapter, chapterText, verse, chapterLabel
     global levelStk, tagStk, output, scr, stk, scopeDecorator
     
-    file = codecs.open(infile, "r", "utf-8")
+    file = codecs.open(infile, "r", codecIn)
     text = file.read()
     file.close()
     
@@ -1091,5 +1091,5 @@ if __name__=="__main__":
     id = "???"
     ShowScope = "Yes"    
     Language = "Kup"
-    convertBooks(sys.argv[1], sys.argv[2])
+    convertBooks(sys.argv[1], sys.argv[2], sys.argv[3])
 

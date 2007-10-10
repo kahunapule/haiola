@@ -5,74 +5,70 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Diagnostics;
-using System.Collections;  // For Process class.
+using System.Collections;
+using System.Xml;  // For Process class.
 
 namespace sepp
 {
 	/// <summary>
-	/// This class uses some CC files to convert from the OurWord SF model to USFM.
-	/// CC tables provided initially by John Duerksen.
-	/// Convertes all .db files in input directory.
+	/// This class uses Nathan's CPython script to convert USFM to OSIS
 	/// </summary>
-	public class USFM_to_OSIS
+	public class USFM_to_OSIS : ExternalProgramConverter
 	{
-		string m_inputDirName;
-		string m_outputDirName;
+		string m_codec = "utf-8"; // string specifying a Python codec.
+		string m_pythonPath = @"c:\python25\python.exe";
 
 		/// <summary>
 		/// initialize one.
 		/// </summary>
 		/// <param name="inputDirName"></param>
 		/// <param name="outputDirName"></param>
-		public USFM_to_OSIS(string inputDirName, string outputDirName)
+		public USFM_to_OSIS(string inputDirName, string outputDirName, string optionsPath)
+			: base(inputDirName, outputDirName)
 		{
-			m_inputDirName = inputDirName;
-			m_outputDirName = outputDirName;
-		}
-
-		/// <summary>
-		/// Run the algorithm (on all files).
-		/// </summary>
-		public void Run(IList files)
-		{
-			ConcGenerator.EnsureDirectory(m_outputDirName);
-			string[] inputFileNames = Directory.GetFiles(m_inputDirName, "*.ptx");
-			Progress status = new Progress(files.Count);
-			status.Show();
-			int count = 0;
-			foreach (string inputFile in inputFileNames)
+			XmlDocument optionsDoc = new XmlDocument();
+			optionsDoc.Load(optionsPath);
+			XmlNode root = optionsDoc.DocumentElement;
+			foreach (XmlNode node in root.ChildNodes)
 			{
-				string filename = Path.GetFileName(inputFile);
-				if (files.Contains(Path.ChangeExtension(filename, "xml")))
+				switch (node.Name)
 				{
-					status.File = filename;
-					Convert(inputFile);
-					count++;
-					status.Value = count;
+					case "options":
+						m_codec = AttVal(node, "usfmEncoding", "utf-8");
+						break;
 				}
 			}
-
-			status.Close();
 		}
 
-		/// <summary>
-		/// Convert one file.
-		/// </summary>
-		/// <param name="inputFilePath">full path name to the file to convert.</param>
-		private void Convert(string inputFilePath)
+		internal override string ToolPath
 		{
-			// Name of output file (without path)
-			string outputFileName = Path.ChangeExtension(Path.GetFileName(inputFilePath), "xml");
-			string outputFilePath = Path.Combine(m_outputDirName, outputFileName);
-			string scriptPath = Path.GetFullPath(@"..\..\JohnOsisBP.py");
-			string args = "\"" + scriptPath + "\" \"" + inputFilePath + "\" \"" + outputFilePath + "\"";
-			ProcessStartInfo info = new ProcessStartInfo("python", args);
-			info.WindowStyle = ProcessWindowStyle.Minimized;
-			//info.RedirectStandardError = 
-			Process proc = Process.Start(info);
-			proc.WaitForExit();
+			get { return m_pythonPath; }
 		}
 
+		internal override string[] Extensions
+		{
+			get { return new string[] { "*.ptx", "*.sfm" }; }
+		}
+
+		internal override string OutputExtension
+		{
+			get { return "xml"; }
+		}
+
+		internal override string CreateArguments(string inputFilePath, string outputFilePath)
+		{
+			string scriptPath = Path.GetFullPath(@"..\..\JohnOsisBP.py");
+			return "\"" + scriptPath + "\" " + base.CreateArguments(inputFilePath, outputFilePath) + " " + m_codec;
+		}
+		
+
+		private string AttVal(XmlNode node, string name, string defVal)
+		{
+			XmlAttribute att = node.Attributes[name];
+			if (att != null)
+				return att.Value;
+			return defVal;
+		}
 	}
 
 }
