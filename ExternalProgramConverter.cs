@@ -121,7 +121,7 @@ namespace sepp
 		private void Convert(string inputFilePath)
 		{
 			// Name of output file (without path)
-			string outputFileName = Path.ChangeExtension(Path.GetFileName(inputFilePath), "xml");
+			string outputFileName = Path.ChangeExtension(Path.GetFileName(inputFilePath), OutputExtension);
 			string outputFilePath = Path.Combine(m_outputDirName, outputFileName);
 			File.Delete(outputFilePath); // Make sure we don't somehow preserve an old version.
 			m_outputWriter.WriteLine("------Report on converting " + inputFilePath + " to " + outputFilePath + " ----------");
