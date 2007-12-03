@@ -126,6 +126,8 @@ namespace sepp
 				"al ",
 				"e",
 				"chk2",
+				"bnvt",
+				"nq",
 
 				// Consider using this...if so, must be BEFORE we convert angle brackets to quotes!
 				//@"..\..\fix_glottal.cct",
