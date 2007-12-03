@@ -17,6 +17,7 @@
 <xsl:param name="startId"/>
 <xsl:param name="endId"/>
 -->
+	<xsl:param name="copyright"/>
 
 <xsl:variable name="bookid" select="//osis:div[@type='book']/@osisID"/>
 <xsl:variable name="bookname" select="//osis:div[@type='book']//osis:title[text()][1]"/>
@@ -98,7 +99,9 @@
       <div class="maintitle2"><xsl:value-of select="osis:title/osis:title[@level='2']"/></div>
 		-->
 		  <xsl:apply-templates select="osis:title/osis:title" mode="title"/>
-		  <div class="copyright">(©2007 UBB-GMIT)</div>
+		  <div class="copyright">
+			  <xsl:value-of select="$copyright" />
+		  </div>
 	  </xsl:when>
       <xsl:otherwise>
 

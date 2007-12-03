@@ -17,6 +17,7 @@ namespace sepp
 	public class OSIS_to_HTML : ExternalProgramConverter
 	{
 		string m_finalOutputDir;
+		string m_copyright = "(©2007 UBB-GMIT)"; // default
 		// Keys are book names used in references; values are HTM file names.
 		Dictionary<string, string> m_files = new Dictionary<string, string>();
 
@@ -39,6 +40,9 @@ namespace sepp
 				{
 					case "files":
 						BuildFileList(node);
+						break;
+					case "copyright":
+						m_copyright = node.InnerText;
 						break;
 				}
 			}
@@ -428,7 +432,7 @@ namespace sepp
 		internal override string CreateArguments(string inputFilePath, string outputFilePath)
 		{
 			string scriptPath = Path.GetFullPath(@"..\..\osis2Html.xsl");
-			return "\"" + inputFilePath + "\" \"" + scriptPath + "\" -o \"" + outputFilePath + "\"";
+			return "\"" + inputFilePath + "\" \"" + scriptPath + "\" -o \"" + outputFilePath + "\" copyright=\"" + m_copyright + "\"";
 
 		}
 

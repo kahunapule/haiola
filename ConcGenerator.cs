@@ -445,8 +445,12 @@ namespace sepp
 
 		// Get a string representing the leading letter for a sort group.
 		// Todo: handle surrogate pairs.
-		private string GetSortLetter(string form)
+		private string GetSortLetter(string form1)
 		{
+			// Decomposing the string will leave the base character as the one we break on, if any words start with
+			// characters that are composed with diacritics. Otherwise, for example, since the A and A-acute words may have primary
+			// sort differences further along the word, we get an alternation between A and A-acute, and hence several groups for each.
+			string form = form1.Normalize(NormalizationForm.FormD);
 			//return form.Substring(0, 1).ToUpper()
 			for (int i = 0; i < form.Length; i++)
 			{
