@@ -22,7 +22,6 @@ namespace sepp
 		StringBuilder m_errorInfo;  // where we write standard error
 		string m_errorHeader; // Header line to write to error stream if we get any errors.
 		StreamWriter m_outputWriter;
-		bool m_errors;
 		string m_toolPath;
 
 		/// <summary>
@@ -34,14 +33,6 @@ namespace sepp
 		{
 			m_inputDirName = inputDirName;
 			m_outputDirName = outputDirName;
-		}
-
-		internal string AttVal(XmlNode node, string name, string defVal)
-		{
-			XmlAttribute att = node.Attributes[name];
-			if (att != null)
-				return att.Value;
-			return defVal;
 		}
 
 		internal abstract string ToolPath

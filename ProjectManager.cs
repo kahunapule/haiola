@@ -15,6 +15,7 @@ namespace sepp
 		string m_optionsPath; // e.g.,@"C:\BibleConv\Work\Kupang\Sepp Options.xml";
 		string m_workDir; //e.g., @"C:\BibleConv\Work\Kupang"
 		string m_siteDir; // e.g., c:\BibleConv\Site\Kupang
+		string[] m_tablePaths; // if non-null, OW_TO_USFM is replaced with Preprocess from Source directory using these tables.
 		public ProjectManager(string workDir, string siteDir)
 		{
 			m_workDir = workDir;
@@ -48,9 +49,21 @@ namespace sepp
 					case "files":
 						BuildFileList(node);
 						break;
+					case "preprocess":
+						SetupPreprocessing(node);
+						break;
 				}
 			}
 		}
+
+		private void SetupPreprocessing(XmlNode node)
+		{
+			m_button_OW_to_USFM.Text = "Preprocess";
+			m_tablePaths = new string[node.ChildNodes.Count];
+			for (int i = 0; i < m_tablePaths.Length; i++)
+				m_tablePaths[i] = Path.Combine(m_workDir,node.ChildNodes[i].InnerText);
+		}
+
 		CheckedListBox.CheckedItemCollection ActiveFiles
 		{
 			get { return m_filesList.CheckedItems; }
@@ -189,7 +202,14 @@ namespace sepp
 
 		private void m_button_OW_to_USFM_Click(object sender, EventArgs e)
 		{
-			OW_To_USFM converter = new OW_To_USFM(Path.Combine(m_workDir, @"OW"), Path.Combine(m_workDir, @"USFM"));
+			string srcDir = "OW";
+			if (m_tablePaths != null)
+				srcDir = "Source";
+			OW_To_USFM converter = new OW_To_USFM(Path.Combine(m_workDir, srcDir), Path.Combine(m_workDir, @"USFM"));
+			if (m_tablePaths != null)
+			{
+				converter.TablePaths = m_tablePaths;
+			}
 			converter.Run(m_filesList.CheckedItems);
 
 		}
