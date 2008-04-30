@@ -295,16 +295,30 @@ namespace sepp
 		/// (1 Korintus 5:1-13) - range!
 		/// (Utusan dong pung Carita 22:6-16, 26:12-18) - list of refs in same book
 		/// " Efesus 5:22, Kolose 3:18" - commas separate complete refs!
+		/// "Hahuu (Jénesis , Kejadian ) 15:13-14; Ézodu (Keluaran ) 3:12" - book name is complex and has comma!
 		/// The algorithm is:
+		/// 0. Wherever a recognized book name occurs, change it to something definitely not containing problem
+		/// punctuation: #%#%bookN
 		/// 1. Split the string at semi-colons or commas; handle each one independently,
 		/// except if we get a book or chapter, remember for subsequent ones.
 		/// 2. Each item from the above is split at commas. Consider all to come from same book.
 		/// 3. In first of each comma group, search for a match for known book name. If found, use longest.
+		/// 4. Convert occurrences of #%#%bookN back.
 		/// </summary>
 		/// <param name="chunk"></param>
 		/// <returns></returns>
-		private string ConvertRefs(string chunk)
+		private string ConvertRefs(string chunk1)
 		{
+			string chunk = chunk1;
+			int ibook = 0;
+			Dictionary<string, string> subsBookToFile = new Dictionary<string, string>(m_files.Count);
+			foreach (string bookName in m_files.Keys)
+			{
+				string subskey = "#%#%book" + ibook;
+				subsBookToFile[subskey] = m_files[bookName];
+				chunk = chunk.Replace(bookName, subskey);
+				ibook++;
+			}
 			string[] mainRefs = chunk.Split(';');
 			StringBuilder output = new StringBuilder(chunk.Length * 5 + 50);
 			// Ref may be simple verse number, chapter:verse, verse-verse, chapter:verse-verse
@@ -331,7 +345,7 @@ namespace sepp
 					}
 					string match = "";
 					int matchOffset = -1;
-					foreach (string bookName in m_files.Keys)
+					foreach (string bookName in subsBookToFile.Keys)
 					{
 						if (bookName.Length > match.Length)
 						{
@@ -340,7 +354,7 @@ namespace sepp
 							{
 								matchOffset = matchOffsetT;
 								match = bookName;
-								fileName = m_files[match];
+								fileName = subsBookToFile[match];
 							}
 						}
 					}
@@ -354,7 +368,7 @@ namespace sepp
 
 					// Look for something like a reference. Also, check that we don't have
 					// alphabetic text that did NOT match one of our books if we didn't match
-					// a book; otherwise, something like Titus 4:2; Isaih 12:3 makes both links
+					// a book; otherwise, something like Titus 4:2; Isaiah 12:3 makes both links
 					// to Titus. Note that we take the last match for the reference, otherwise, 1 Timothy 2:4
 					// finds the '1' as the reference. Grr.
 					int startNumSearch = 0;
@@ -410,6 +424,13 @@ namespace sepp
 				}
 			}
 			string result = output.ToString();
+			ibook = 0;
+			foreach (string bookName in m_files.Keys)
+			{
+				result = result.Replace("#%#%book" + ibook, bookName);
+				ibook++;
+			}
+
 			return result;
 		}
 

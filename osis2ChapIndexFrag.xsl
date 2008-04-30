@@ -25,10 +25,20 @@
 	<xsl:template match="osis:title[@short]">
 
 		<p class="IndexBookName">
-			<a target="main" href="$$filename$$"><xsl:value-of select="@short"/></a>
+			<a target="main" href="$$filename$$"><xsl:value-of select="@short"/>
+				<xsl:apply-templates/>
+			</a>
 		</p>
 		$$intro$$
 		
+	</xsl:template>
+
+	<xsl:template match="osis:hi[@type='italic']">
+
+		<i>
+			<xsl:apply-templates/>
+		</i>
+
 	</xsl:template>
 
 	<xsl:template match="osis:chapter">
