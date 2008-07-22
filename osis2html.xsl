@@ -69,6 +69,28 @@
   <i><xsl:apply-templates/></i>
 
 </xsl:template>
+	
+<xsl:template match="osis:hi[@type='italic']" mode="endnotes">
+
+  <i><xsl:apply-templates/></i>
+
+</xsl:template>
+	
+<xsl:template match="osis:hi[@type='emphasis']" mode="tooltip">
+
+  <i><xsl:apply-templates/></i>
+
+</xsl:template>
+	
+<xsl:template match="osis:hi[@type='small-caps']" mode="endnotes">
+	<span class="smallcaps"><xsl:apply-templates/></span>
+</xsl:template>
+	
+<xsl:template match="osis:hi[@type='italic']" mode="tooltip">
+
+  <i><xsl:apply-templates/></i>
+
+</xsl:template>
 
 <xsl:template match="osis:osis">
 
@@ -613,6 +635,16 @@
 
 </xsl:template>
 
+<xsl:template match="osis:hi[@type='italic']">
+
+	<i><xsl:apply-templates/></i>
+
+</xsl:template>
+	
+<xsl:template match="osis:hi[@type='small-caps']">
+	<span class="smallcaps"><xsl:apply-templates/></span>
+</xsl:template>
+	
 <xsl:template match="osis:div[@type='x-highLevelPoetryDivision']">
 
   <div style="margin-left: 4cm"><xsl:apply-templates/></div>

@@ -118,7 +118,10 @@ namespace sepp
 				if (files.Contains(Path.ChangeExtension(filename, "xml")))
 				{
 					status.File = filename;
-					Convert(inputFile);
+					if (!Convert(inputFile))
+					{
+						break;
+					}
 					count++;
 					status.Value = count;
 				}
@@ -164,13 +167,13 @@ namespace sepp
 		/// Convert one file.
 		/// </summary>
 		/// <param name="inputFilePath">full path name to the file to convert.</param>
-		private void Convert(string inputFilePath)
+		private bool Convert(string inputFilePath)
 		{
 			// Name of output file (without path)
 			string outputFileName = Path.ChangeExtension(Path.GetFileName(inputFilePath), "ptx");
 			string outputFilePath = Path.Combine(m_outputDirName, outputFileName);
 
-			ConvertFileCC(inputFilePath, m_tablePaths, outputFilePath);
+			return ConvertFileCC(inputFilePath, m_tablePaths, outputFilePath);
 		}
 
 		/// <summary>
@@ -181,7 +184,7 @@ namespace sepp
 		/// <param name="inputPath"></param>
 		/// <param name="tablePaths">A succession of tables to apply one after the other</param>
 		/// <param name="outputPath"></param>
-		private unsafe void ConvertFileCC(string inputPath, string[] tablePaths, string outputPath)
+		private unsafe bool ConvertFileCC(string inputPath, string[] tablePaths, string outputPath)
 		{
 			string input;
 			// Read file into input
@@ -211,7 +214,8 @@ namespace sepp
 
 							try
 							{
-								Load(tablePath);
+								if (Load(tablePath) != 0)
+									return false;
 								// call the wrapper sub-classes' DoConvert to let them do it.
 								int* pnOut = &nOutLen;
 								{
@@ -226,6 +230,7 @@ namespace sepp
 						if (status != 0)
 						{
 							TranslateErrStatus(status);
+							return false;
 						}
 						// if we iterate, starting point is current output
 						cbyteInput = nOutLen;
@@ -330,6 +335,7 @@ namespace sepp
 					m_seriousErrorCount++;
 				}
 			}
+			return true;
 		}
 
 		enum FnStates
@@ -345,7 +351,7 @@ namespace sepp
 			int cbyteOut = 0;
 			byte[] marker = Encoding.UTF8.GetBytes(@"\vt ");
 			int i = 0;
-			byte[] anchor = Encoding.UTF8.GetBytes("|f");
+			byte[] anchor = Encoding.UTF8.GetBytes("|fn");
 			byte[] footnote = Encoding.UTF8.GetBytes(@"\ft ");
 			List<int> anchors = new List<int>();
 			List<int> footnotes = new List<int>();
@@ -546,7 +552,7 @@ namespace sepp
 				m_hTable = 0;
 			}
 		}
-		protected unsafe void Load(string strTablePath)
+		protected unsafe int Load(string strTablePath)
 		{
 			// first make sure it's there
 			if (!File.Exists(strTablePath))
@@ -562,6 +568,7 @@ namespace sepp
 				{
 					TranslateErrStatus(status);
 				}
+				return status;
 			}
 		}
 
@@ -581,7 +588,6 @@ namespace sepp
 					MessageBox.Show("Unknown/unexpected error " + status, "Error");
 					break;
 			}
-			throw new Exception("Conversion failed");
 		}
 		#region DLLImport Statements
 		[DllImport("Cc32", SetLastError = true)]

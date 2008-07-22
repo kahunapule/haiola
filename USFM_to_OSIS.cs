@@ -47,7 +47,7 @@ namespace sepp
 
 		internal override string[] Extensions
 		{
-			get { return new string[] { "*.ptx", "*.sfm" }; }
+			get { return new string[] { "*.ptx", "*.sfm", "*.sfc" }; }
 		}
 
 		internal override string OutputExtension
