@@ -1,3 +1,4 @@
-span.chapter         { font-size: 18pt; font-weight: bold; float:none; margin-right: 4pt}
+/*span.chapter         { font-size: 18pt; font-weight: bold; float:none; margin-right: 4pt} */
 span.notemark        { font-size: 7pt; vertical-align: super; margin-left: 2pt; }
 /* didn't help p { zoom:1} */
+span.chapter         {  line-height: 30pt; padding-top: 0pt }
