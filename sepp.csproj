@@ -9,6 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>sepp</RootNamespace>
     <AssemblyName>sepp</AssemblyName>
+    <ApplicationIcon>Trumpet.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,13 +40,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BookNamePageGenerator.cs" />
+    <Compile Include="ChapterSplitter.cs" />
     <Compile Include="ConcGenerator.cs" />
     <Compile Include="ExternalProgramConverter.cs" />
+    <Compile Include="InputFileInfo.cs" />
     <Compile Include="Master.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Master.Designer.cs">
       <DependentUpon>Master.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Options.cs" />
+    <Compile Include="OptionsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OptionsDlg.Designer.cs">
+      <DependentUpon>OptionsDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="ProblemReport.cs">
       <SubType>Form</SubType>
@@ -78,6 +88,10 @@
     <EmbeddedResource Include="Master.resx">
       <SubType>Designer</SubType>
       <DependentUpon>Master.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OptionsDlg.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>OptionsDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ProblemReport.resx">
       <SubType>Designer</SubType>
@@ -112,8 +126,18 @@
     <Compile Include="USFM_to_OSIS.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Utils.cs" />
     <Compile Include="WordformInfo.cs" />
     <Compile Include="WordOccurrence.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\..\..\Downloads\Palaso\Palaso\Palaso.csproj">
+      <Project>{3527DA1D-1E25-48BE-A71E-9EBF7F9208D4}</Project>
+      <Name>Palaso</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Trumpet.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

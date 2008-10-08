@@ -110,7 +110,7 @@ namespace sepp
 				inputFileNames = Directory.GetFiles(m_inputDirName, "*.ptx");
 			Progress status = new Progress(files.Count);
 			status.Show();
-			ConcGenerator.EnsureDirectory(m_outputDirName);
+			Utils.EnsureDirectory(m_outputDirName);
 			int count = 0;
 			foreach (string inputFile in inputFileNames)
 			{
@@ -247,6 +247,29 @@ namespace sepp
 						nOutLen = cbyteInput; // in case last pass.
 					}
 				}
+				else if (tablePath.EndsWith(".re"))
+				{
+					// Apply a regular expression substitution
+					string temp = Encoding.UTF8.GetString(inputBytes, 0, cbyteInput - 1); // leave out final null
+					StreamReader tableReader = new StreamReader(tablePath, Encoding.UTF8);
+					while (!tableReader.EndOfStream)
+					{
+						string source = tableReader.ReadLine();
+						if (source.Trim().Length == 0)
+							continue;
+
+						char delim = source[0];
+						string[] parts = source.Split(new char[] {delim});
+						string pattern = parts[1]; // parts[0] is the empty string before the first delimiter
+						string replacement = parts[2];
+						temp = Regex.Replace(temp, pattern, replacement);
+					}
+					tableReader.Close();
+					temp = temp + "\0";
+					outBuffer = Encoding.UTF8.GetBytes(temp);
+					inputBytes = outBuffer;
+					cbyteInput = nOutLen = inputBytes.Length;
+				}
 				else
 				{
 					// Simple strings are interpreted as markers to be deleted.
@@ -305,6 +328,9 @@ namespace sepp
 			}
 			// Convert the output back to a file
 			StreamWriter output = new StreamWriter(outputPath);
+			// Make sure no trailing nulls get written to file.
+			while (nOutLen > 0 && outBuffer[nOutLen - 1] == 0)
+				nOutLen--;
 			string outputString = Encoding.UTF8.GetString(outBuffer, 0, nOutLen);
 			//outputString = FixEmphasis(outputString);
 			output.Write(outputString);

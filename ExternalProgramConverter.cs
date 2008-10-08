@@ -68,7 +68,7 @@ namespace sepp
 				MessageBox.Show("The program needed for this conversion was not found: " + m_toolPath, "Error");
 				return;
 			}
-			ConcGenerator.EnsureDirectory(m_outputDirName);
+			Utils.EnsureDirectory(m_outputDirName);
 			string[] inputFileNames = new string[0];
 			foreach (string pattern in Extensions)
 			{
@@ -76,7 +76,7 @@ namespace sepp
 				if (inputFileNames.Length != 0)
 					break;
 			}
-			Progress status = new Progress(files.Count);
+			Progress status = new Progress(inputFileNames.Length * 2);
 			status.Show();
 			int count = 0;
 			m_reportPath = Path.Combine(m_inputDirName, "ConversionReports.txt");
@@ -86,10 +86,24 @@ namespace sepp
 			foreach (string inputFile in inputFileNames)
 			{
 				string filename = Path.GetFileName(inputFile);
-				if (files.Contains(Path.ChangeExtension(filename, "xml")))
+				if (WantToConvert(files, filename))
 				{
 					status.File = filename;
-					Convert(inputFile);
+					ConvertFile(inputFile);
+					count++;
+					status.Value = count;
+				}
+			}
+			// PostProcessing is done separately after all the files are created. This is important for OSIS_to_HTML
+			// in chapter-per-file mode, which needs to look ahead to the next book to determine what the first chapter
+			// file should be to link to.
+			foreach (string inputFile in inputFileNames)
+			{
+				string filename = Path.GetFileName(inputFile);
+				if (WantToConvert(files, filename))
+				{
+					status.File = filename;
+					PostProcess(inputFile);
 					count++;
 					status.Value = count;
 				}
@@ -105,11 +119,16 @@ namespace sepp
 			}
 		}
 
+		protected virtual bool WantToConvert(IList files, string filename)
+		{
+			return files.Contains(Path.ChangeExtension(filename, "xml"));
+		}
+	
 		/// <summary>
 		/// Convert one file.
 		/// </summary>
 		/// <param name="inputFilePath">full path name to the file to convert.</param>
-		private void Convert(string inputFilePath)
+		internal void ConvertFile(string inputFilePath)
 		{
 			// Name of output file (without path)
 			string outputFileName = Path.ChangeExtension(Path.GetFileName(inputFilePath), OutputExtension);
@@ -136,6 +155,13 @@ namespace sepp
 			proc.BeginErrorReadLine();
 			proc.BeginOutputReadLine();
 			proc.WaitForExit();
+		}
+
+		void PostProcess(string inputFilePath)
+		{
+			// Name of output file (without path)
+			string outputFileName = Path.ChangeExtension(Path.GetFileName(inputFilePath), OutputExtension);
+			string outputFilePath = Path.Combine(m_outputDirName, outputFileName);
 			DoPostProcessing(outputFileName, outputFilePath);
 		}
 
@@ -177,8 +203,21 @@ namespace sepp
 			if (!String.IsNullOrEmpty(e.Data))
 			{
 				// Add the text to the collected output.
-				m_outputWriter.WriteLine(e.Data);
+				if (IndicatesError(e.Data))
+					ReportError(e.Data);
+				else
+					m_outputWriter.WriteLine(e.Data);
 			}
+		}
+
+		/// <summary>
+		/// Override (see e.g. HTML_to_XHTML.cs) when critical error messages may appear as ordinary output.
+		/// </summary>
+		/// <param name="message"></param>
+		/// <returns></returns>
+		protected virtual bool IndicatesError(string message)
+		{
+			return false;
 		}
 
 	}

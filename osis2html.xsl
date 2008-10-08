@@ -43,7 +43,7 @@
 	<!--xsl:variable name="book" select="//osis:title[@level='1']"/-->
 	<body onload="onLoadBook(curBook)" class="mainDoc">
 
-      <xsl:apply-templates select="//osis:div[@type='book']"/>
+      <xsl:apply-templates select="//osis:div[@type='book' or @type='majorSection']"/>
 		<div class="footnotes">
 			<xsl:if test="//osis:note[not(@type='crossReference')]">
 				<hr/>
@@ -108,7 +108,7 @@
 
 
 
-<xsl:template match="osis:div[@type='book']">
+<xsl:template match="osis:div[@type='book' or @type='majorSection']">
 
   <xsl:if test="osis:div[@type='section']">
 
@@ -389,7 +389,7 @@
 <xsl:template match="osis:l">
 
 	<xsl:choose>
-		<xsl:when test="name(../..)='q'">
+		<xsl:when test="@level>1">
 			<div class="embeddedPoetry">
 				<xsl:apply-templates/>
 			</div>
@@ -401,7 +401,8 @@
 			</div>
 		</xsl:otherwise>
 	</xsl:choose>
-
+	<xsl:apply-templates select="osis:note[@type='x-quoteSource']" mode="quoteSource"/>
+		
 </xsl:template>
 
 
@@ -501,6 +502,12 @@
 
 </xsl:template>
 
+	<xsl:template match="osis:note[@type='x-quoteSource']"></xsl:template>
+	<xsl:template match="osis:note[@type='x-quoteSource']" mode ="quoteSource">
+		<div class="quoteSource">
+			<xsl:apply-templates/>
+		</div>
+	</xsl:template>
 
 	<!-- JohnT modified this note handling, to restart at chapters and add notes at end. -->
 <xsl:template match="osis:note">

@@ -13,6 +13,7 @@ namespace sepp
 	public partial class ProjectManager : Form
 	{
 		string m_optionsPath; // e.g.,@"C:\BibleConv\Work\Kupang\Sepp Options.xml";
+		private Options m_options;
 		string m_workDir; //e.g., @"C:\BibleConv\Work\Kupang"
 		string m_siteDir; // e.g., c:\BibleConv\Site\Kupang
 		string[] m_tablePaths; // if non-null, OW_TO_USFM is replaced with Preprocess from Source directory using these tables.
@@ -27,7 +28,12 @@ namespace sepp
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
-			XmlDocument optionsDoc = new XmlDocument();
+			Reload();
+		}
+
+		private void Reload()
+		{
+		XmlDocument optionsDoc = new XmlDocument();
 			m_optionsPath = Path.Combine(m_workDir, "Sepp Options.xml");
 			if (!File.Exists(m_optionsPath))
 			{
@@ -54,10 +60,14 @@ namespace sepp
 						break;
 				}
 			}
+			m_options = new Options();
+			m_options.LoadOptions(m_optionsPath);
 		}
 
 		private void SetupPreprocessing(XmlNode node)
 		{
+			if (node.ChildNodes.Count == 0)
+				return;
 			m_button_OW_to_USFM.Text = "Preprocess";
 			m_tablePaths = new string[node.ChildNodes.Count];
 			for (int i = 0; i < m_tablePaths.Length; i++)
@@ -67,6 +77,34 @@ namespace sepp
 		CheckedListBox.CheckedItemCollection ActiveFiles
 		{
 			get { return m_filesList.CheckedItems; }
+		}
+
+		internal string WorkPath
+		{
+			get { return m_workDir; }
+		}
+
+		/// <summary>
+		///  The directory that is the root of all projects, one up from WorkPath.
+		/// </summary>
+		internal string RootWorkPath
+		{
+			get { return Path.GetDirectoryName(WorkPath);  }
+		}
+
+		internal string ExtrasPath
+		{
+			get { return Path.Combine(m_workDir, "Extras"); }
+		}
+
+		internal string OurWordPath
+		{
+			get { return Path.Combine(m_workDir, "OW"); }
+		}
+
+		internal string PreProcessPath
+		{
+			get { return Path.Combine(m_workDir, "Source"); }
 		}
 
 		// Generate a missing options file.
@@ -186,61 +224,98 @@ namespace sepp
 
 		private void BuildFileList(XmlNode node)
 		{
+			m_filesList.SuspendLayout();
+			m_filesList.Items.Clear();
 			foreach (XmlNode item in node.ChildNodes)
 			{
 				string fileName = item.Attributes["name"].Value;
 				m_filesList.Items.Add(fileName, CheckState.Checked);
 			}
+			m_filesList.ResumeLayout();
+		}
+
+		string ConcPath
+		{
+			get { return Path.Combine(m_siteDir, @"Conc"); }
 		}
 
 		private void m_runButton_Click(object sender, EventArgs e)
 		{
 			ConcGenerator generator = new ConcGenerator(
-				Path.Combine(m_workDir, @"ConcInput"), Path.Combine(m_siteDir, @"Conc"), m_optionsPath);
+				Path.Combine(m_workDir, @"ConcInput"), ConcPath, m_optionsPath, m_options);
 			generator.Run(m_filesList.CheckedItems);
 		}
 
-		private void m_button_OW_to_USFM_Click(object sender, EventArgs e)
+		const string OwDir = "OW";
+		private const string SourceDir = "Source";
+		internal string SourcePath
 		{
-			string srcDir = "OW";
-			if (m_tablePaths != null)
-				srcDir = "Source";
+			get { return Path.Combine(m_workDir, SourceDir); }
+		}
+
+		private void m_button_Input_to_USFM_Click(object sender, EventArgs e)
+		{
+			string srcDir = OwDir;
+			if (ConvertingSourceToUsfm())
+				srcDir = SourceDir;
 			OW_To_USFM converter = new OW_To_USFM(Path.Combine(m_workDir, srcDir), Path.Combine(m_workDir, @"USFM"));
 			if (m_tablePaths != null)
 			{
 				converter.TablePaths = m_tablePaths;
 			}
 			converter.Run(m_filesList.CheckedItems);
-
 		}
 
+		private bool ConvertingSourceToUsfm()
+		{
+			return m_tablePaths != null;
+		}
+
+		String UsfmDir = @"USFM";
+		String OsisDir = @"OSIS";
 		private void m_button_USFM_to_OSIS_Click(object sender, EventArgs e)
 		{
-			USFM_to_OSIS converter = new USFM_to_OSIS(Path.Combine(m_workDir, @"USFM"), Path.Combine(m_workDir, @"OSIS"), m_optionsPath);
+			USFM_to_OSIS converter = new USFM_to_OSIS(UsfmPath, OsisPath, m_optionsPath);
 			converter.Run(m_filesList.CheckedItems);
+		}
+
+		private string OsisPath
+		{
+			get { return Path.Combine(m_workDir, OsisDir); }
+		}
+
+		internal string UsfmPath
+		{
+			get { return Path.Combine(m_workDir, UsfmDir); }
 		}
 
 		private void m_buttonOSIS_to_HTML_Click(object sender, EventArgs e)
 		{
 			OSIS_to_HTML converter = new OSIS_to_HTML(
 				Path.Combine(m_workDir, @"OSIS"), Path.Combine(m_workDir, @"HTML"),
-				Path.Combine(m_siteDir, @"Conc"), Path.Combine(m_workDir, @"Sepp Options.xml"));
+				Path.Combine(m_siteDir, @"Conc"), Path.Combine(m_workDir, @"Sepp Options.xml"),
+				m_options);
 			converter.Run(m_filesList.CheckedItems);
 
 		}
 
 		private void m_buttonHTML_to_XHTML_Click(object sender, EventArgs e)
 		{
-			HTML_TO_XHTML converter = new HTML_TO_XHTML(Path.Combine(m_workDir, @"HTML"), Path.Combine(m_workDir, @"ConcInput"));
+			HTML_TO_XHTML converter = new HTML_TO_XHTML(Path.Combine(m_workDir, @"HTML"), Path.Combine(m_workDir, @"ConcInput"), m_options);
 			converter.Run(m_filesList.CheckedItems);
 
+		}
+
+		internal string IntroDir
+		{
+			get { return Path.Combine(m_workDir, @"Intro");  }
 		}
 
 		private void m_buttonChapIndex_Click(object sender, EventArgs e)
 		{
 			OSIS_to_ChapIndex generator = new OSIS_to_ChapIndex(Path.Combine(m_workDir, @"OSIS"), Path.Combine(m_siteDir, @"Conc"),
-				Path.Combine(m_workDir, @"Intro"), Path.Combine(m_workDir, @"Extras"),
-				Path.Combine(m_workDir, @"Sepp Options.xml"));
+				IntroDir, ExtrasPath,
+				m_options);
 			generator.Run(m_filesList.CheckedItems);
 
 		}
@@ -265,6 +340,70 @@ namespace sepp
 			BookNamePageGenerator generator = new BookNamePageGenerator(Path.GetDirectoryName(m_workDir), m_workDir,
 				Path.Combine(m_workDir, @"Sepp Options.xml"));
 			generator.Run(m_filesList.CheckedItems);
+		}
+
+		private void optionsButton_Click(object sender, EventArgs e)
+		{
+			OptionsDlg dlg = new OptionsDlg(this);
+			dlg.InitDlg(m_options);
+			if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+			{
+				m_options.SaveOptions(m_optionsPath);
+				Reload();
+			}
+		}
+
+		private void buttonAllSteps_Click(object sender, EventArgs e)
+		{
+			if (Directory.Exists(Path.Combine(m_workDir, OwDir)) || ConvertingSourceToUsfm())
+				m_button_Input_to_USFM_Click(this, e);
+			if (Directory.Exists(UsfmPath))
+				m_button_USFM_to_OSIS_Click(this, e);
+			// For now OSIS must exist, somehow.
+			if (!Directory.Exists(OsisPath))
+			{
+				MessageBox.Show(this, "Could not find or create required OSIS files", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return;
+			}
+			m_buttonOSIS_to_HTML_Click(this, e);
+			m_buttonHTML_to_XHTML_Click(this, e);
+			m_bookNameButton_Click(this, e);
+			m_buttonChapIndex_Click(this, e);
+			m_runButton_Click(this, e);
+			btnCopySupportFiles_Click(this, e);
+		}
+
+		private void btnCopySupportFiles_Click(object sender, EventArgs e)
+		{
+			string supportDir = m_options.SupportFilesPath;
+			foreach (string path in Directory.GetFiles(supportDir))
+			{
+				string fileName = Path.GetFileName(path);
+				if (fileName == "index.htm")
+				{
+					// This one goes in a different directory. Also make two copies, one for use as a stand-alone,
+					// and one when as part of a larger site.
+					DoCopy(path, Path.Combine(m_siteDir, fileName));
+					DoCopy(path, Path.Combine(m_siteDir, "index.html"));
+				}
+				else
+				{
+					DoCopy(path, Path.Combine(ConcPath, fileName));
+				}
+			}
+		}
+
+		private void DoCopy(string path, string destPath)
+		{
+			if (File.Exists(destPath) && File.GetLastWriteTime(path) < File.GetLastWriteTime(destPath))
+			{
+				if (MessageBox.Show(this, "Replace the newer file " + destPath + " with the older file " + path + "?",
+					"Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+				{
+					return;
+				}
+			}
+			File.Copy(path, destPath, true);
 		}
 
 	}
