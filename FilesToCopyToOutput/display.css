@@ -3,22 +3,22 @@
 /* last updated: 2007-07-12 */
 
 /* JohnT: global defaults */
-body				{ font-family: Gentium, Times New Roman, Serif; font-size: 12pt}
+body				{ font-family: CharisSIL, Times New Roman, Serif; font-size: 12pt}
 body.mainDoc	{
 	background-image: url(watermark.jpg);
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	background-position:center bottom}
 
-div.maintitle        { display: block; text-align: center; font-family: Georgia,Tahoma, Arial; font-size: 22pt; font-weight: bold; margin-top: 10pt; margin-bottom: 10pt }
-div.maintitle1       { display: block; text-align: center; font-family: Georgia,Tahoma, Arial; font-size: 22pt; font-weight: bold; margin-top: 2pt }
+div.maintitle        { display: block; text-align: center; font-family: Arial; font-size: 22pt; font-weight: bold; margin-top: 10pt; margin-bottom: 10pt }
+div.maintitle1       { display: block; text-align: center; font-family: Arial; font-size: 22pt; font-weight: bold; margin-top: 2pt }
 div.maintitle2       { display: block; text-align: center; font-size: 14pt; font-weight: bold; font-style: italic; margin-bottom: 2pt }
-div.copyright       { display: block; text-align: center; font-family: Georgia,Tahoma, Arial; font-size: 12pt; color: red; margin-bottom: 2pt }
+div.copyright       { display: block; text-align: center; font-family: Arial; font-size: 12pt; color: red; margin-bottom: 2pt }
 
-div.sectionheading   { display: block; text-align: center; font-family: Georgia, Tahoma, Arial; font-weight: bold; margin-top: 12pt }
-div.sectionsubheading   { display: block; text-align: center; font-family: Georgia, Tahoma, Arial; font-weight: bold; font-style: italic; margin-top: 6pt; margin-left: 12pt } /* JohnT */
-div.parallel		 { font-family: Andika DR AuSIL, Times New Roman, Serif; display: block; text-align: center; font-style: italic; margin-top: 0pt; font-size:9pt } /* JohnT */
-div.parallelSub		 { font-family: Andika DR AuSIL, Times New Roman, Serif; display: block; text-align: center; font-style: italic; margin-top: 0pt; margin-left: 12pt; font-size:9pt } /* JohnT */
+div.sectionheading   { display: block; text-align: center; font-family: Arial; font-weight: bold; margin-top: 12pt }
+div.sectionsubheading   { display: block; text-align: center; font-family: Arial; font-weight: bold; font-style: italic; margin-top: 6pt; margin-left: 12pt } /* JohnT */
+div.parallel		 { font-family: CharisSIL, Times New Roman, Serif; display: block; text-align: center; font-style: italic; margin-top: 0pt; font-size:9pt } /* JohnT */
+div.parallelSub		 { font-family: CharisSIL, Times New Roman, Serif; display: block; text-align: center; font-style: italic; margin-top: 0pt; margin-left: 12pt; font-size:9pt } /* JohnT */
 
 
 /* JohnT: based on a recommendation in http://www.xs4all.nl/~sbpoley/webmatters/superscripts.html,  to make line spacing
@@ -28,13 +28,14 @@ div.prose            { display: block; margin-bottom: 6pt; line-height: 1.4em; t
 div.proseblock       { display: block; line-height: 1.4em; text-align:justify}
 div.proseblockindent { display: block; margin-left: 1cm; line-height: 1.4em; text-align:justify }
 div.poetry           { display: block; margin-left: 1.5cm; text-indent: -0.5cm; line-height: 1.4em }
-div.embeddedPoetry   { display: block; margin-left: 1.5cm; text-indent: -0.5cm; line-height: 1.4em; margin-right: 1.0cm; text-align:justify }
+div.embeddedPoetry   { display: block; margin-left: 2.0cm; text-indent: -0.5cm; line-height: 1.4em; margin-right: 1.0cm; text-align:justify }
 div.list             { margin-left: 1cm; text-indent: -0.5cm; line-height: 1.4em }
+div.quoteSource		 { display:block; text-align:right; font-style:italic}
 
 p.footnote, p.crossRefNote
-					{display: block; font-family:GentiumAlt, Times New Roman; margin-top: 3pt; font-size: 10pt; text-align: justify}
+					{display: block; font-family:CharisSIL, Times New Roman; margin-top: 3pt; font-size: 10pt; text-align: justify}
 
-span.chapter         { font-family: Times New Roman, Serif; font-size: 32pt; font-weight: bold; float:left; margin-right: 4pt; line-height: 30pt; padding-top: 1pt }
+span.chapter         { font-family: Times New Roman, Serif; font-size: 32pt; font-weight: bold; float:left; margin-right: 4pt; line-height: 30pt; padding-top: 1pt; vertical-align:top }
 span.verse           { white-space:nowrap; font-family: Times New Roman, Serif; vertical-align: super; font-size: 7pt; margin-right: 2pt; color:Maroon; line-height:  0 }
 span.smallcaps       { font-size: smaller }
 span.notemark        { font-family: Times New Roman, Serif; font-size: 9pt; vertical-align: super; margin-left: 2pt; line-height: 0}
@@ -49,7 +50,7 @@ a:hover {
  
 a:hover span.popup 
 {
-  font-family: GentiumAlt, Times New Roman;
+  font-family: CharisSIL, Times New Roman;
   position: absolute;
   display: block;
   background: #afa;
@@ -66,7 +67,7 @@ a:hover span.popup
   text-align:left;
   }
   a:hover span.crpopup {
-  font-family: GentiumAlt, Times New Roman;
+  font-family: CharisSIL, Times New Roman;
   position: absolute;
   display: block;
   background: #ff8;
