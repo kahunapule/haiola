@@ -28,6 +28,7 @@ namespace sepp
 		/// </summary>
 		private void InitializeComponent()
 		{
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Master));
 			this.m_projectsList = new System.Windows.Forms.CheckedListBox();
 			this.MasterIndexButton = new System.Windows.Forms.Button();
 			this.ProjectButton = new System.Windows.Forms.Button();
@@ -72,8 +73,9 @@ namespace sepp
 			this.Controls.Add(this.ProjectButton);
 			this.Controls.Add(this.MasterIndexButton);
 			this.Controls.Add(this.m_projectsList);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "Master";
-			this.Text = "Scripture Electonic Publishing Program";
+			this.Text = "Prophero Scripture Electonic Publishing Program";
 			this.Load += new System.EventHandler(this.Master_Load);
 			this.ResumeLayout(false);
 

@@ -14,15 +14,16 @@ namespace sepp
 	/// </summary>
 	public class HTML_TO_XHTML : ExternalProgramConverter
 	{
-
+		private Options m_options;
 		/// <summary>
 		/// initialize one.
 		/// </summary>
 		/// <param name="inputDirName"></param>
 		/// <param name="outputDirName"></param>
-		public HTML_TO_XHTML(string inputDirName, string outputDirName)
+		public HTML_TO_XHTML(string inputDirName, string outputDirName, Options options)
 			: base(inputDirName, outputDirName)
 		{
+			m_options = options;
 		}
 
 		internal override bool LogErrors
@@ -43,6 +44,18 @@ namespace sepp
 			get { return "xml"; }
 		}
 
+		protected override bool WantToConvert(IList files, string filename)
+		{
+			if (m_options.ChapterPerFile)
+			{
+				return base.WantToConvert(files, Utils.MainFileName(filename));
+			}
+			else
+			{
+				return base.WantToConvert(files, filename); 
+			}
+		}
+
 		internal override string[] Extensions
 		{
 			get { return new string[] { "*.htm" }; }
@@ -52,6 +65,17 @@ namespace sepp
 		{
 			return "-asxhtml -utf8 -o \"" + outputFilePath + "\" \"" + inputFilePath + "\"";
 		}
+
+		/// <summary>
+		/// Override (see e.g. HTML_to_XHTML.cs) when critical error messages may appear as ordinary output.
+		/// </summary>
+		/// <param name="message"></param>
+		/// <returns></returns>
+		protected override bool IndicatesError(string message)
+		{
+			return message.IndexOf("Error:" )>= 0;
+		}
+
 
 	}
 

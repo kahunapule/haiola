@@ -43,7 +43,7 @@ namespace sepp
 		private void MasterIndexButton_Click(object sender, EventArgs e)
 		{
 			string m_outputDirName = Path.Combine(m_siteDirectory, "Resources");
-			ConcGenerator.EnsureDirectory(m_outputDirName);
+			Utils.EnsureDirectory(m_outputDirName);
 			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n"
 				+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">"
 				+ "<head>"
@@ -61,7 +61,7 @@ namespace sepp
 			{
 				status.File = projectName;
 
-				string name = ConcGenerator.MakeSafeXml(projectName);
+				string name = Utils.MakeSafeXml(projectName);
 				writer.Write("<li><a target=\"body\" href=\"..\\" + name + "\\Conc\\root.htm\">" + name + "</a></li>\n");
 
 				count++;

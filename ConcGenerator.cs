@@ -5,6 +5,7 @@ using System.Xml;
 using System.IO;
 using System.Windows.Forms;
 using System.Collections;
+using System.Globalization;
 
 namespace sepp
 {
@@ -27,7 +28,7 @@ namespace sepp
 	/// </summary>
 	public class ConcGenerator
 	{
-		enum IndexTypes
+		public enum IndexTypes
 		{
 			rangeTree, // a tree where the roots are ranges of words, equal in length.
 			alphaTree, // a tree where the roots are initial letters of the alphabet.
@@ -68,6 +69,7 @@ namespace sepp
 		string m_notesClass; // element with this class contains footnotes; references should not be output.
 		string m_notesRef; // use this string as the 'reference' for words within notesClass.
 		string m_headingRef; // use this string as the 'reference' for other non-Canonical words.
+		IComparer<string> m_comparer = StringComparer.InvariantCultureIgnoreCase; // a default
 
 		List<string> m_pendingExclusions = new List<string>(); // names of elemenents opened that must close before we restart.
 		List<string> m_pendingNonCanonical = new List<string>(); // names of open elemenents that indicate non-canonical text.
@@ -78,46 +80,12 @@ namespace sepp
 		Dictionary<string, string> m_uppercaseForms = new Dictionary<string, string>();
 		string m_bookChapText; // text for the 'Books and Chapters' hot link, from options file.
 
-		private string AttVal(XmlNode node, string name, string defVal)
+		public ConcGenerator(string inputDirName, string outputDirName, string optionsPath, Options options)
 		{
-			XmlAttribute att = node.Attributes[name];
-			if (att != null)
-				return att.Value;
-			return defVal;
-		}
-
-		private int IntAttVal(XmlNode node, string name, int defVal)
-		{
-			XmlAttribute att = node.Attributes[name];
-			if (att != null)
-			{
-				try
-				{
-					return Int32.Parse(att.Value);
-				}
-				catch(Exception)
-				{
-					// if anything goes wrong use the default.
-				}
-			}
-			return defVal;
-		}
-
-		/// <summary>
-		/// Add to dictionary each of the space-separated words in the list (with value true).
-		/// </summary>
-		/// <param name="dict"></param>
-		/// <param name="list"></param>
-		private void BuildDictionary(Dictionary<string, bool> dict, string list)
-		{
-			foreach (string key in list.Split(' '))
-				dict[key] = true;
-		}
-
-		public ConcGenerator(string inputDirName, string outputDirName, string optionsPath)
-		{
+			m_options = options;
 			m_inputDirName = inputDirName;
 			m_outputDirName = outputDirName;
+			// Enhance JohnT: move options reading into Options class.
 			XmlDocument optionsDoc = new XmlDocument();
 			optionsDoc.Load(optionsPath);
 			XmlNode root = optionsDoc.DocumentElement;
@@ -126,11 +94,11 @@ namespace sepp
 				switch (node.Name)
 				{
 					case "options":
-						m_mergeCase = AttVal(node, "mergeCase", "false") == "true";
-						m_wordformingChars = AttVal(node, "wordFormingCharacters", "");
-						m_maxContextLength = IntAttVal(node, "maxContext", m_maxContextLength);
-						m_minContextLength = IntAttVal(node, "minContext", m_minContextLength);
-						string indexType = AttVal(node, "indexType", "alphaTree");
+						m_mergeCase = Utils.AttVal(node, "mergeCase", "false") == "true";
+						m_wordformingChars = Utils.AttVal(node, "wordFormingCharacters", "");
+						m_maxContextLength = Utils.IntAttVal(node, "maxContext", m_maxContextLength);
+						m_minContextLength = Utils.IntAttVal(node, "minContext", m_minContextLength);
+						string indexType = Utils.AttVal(node, "indexType", "alphaTree");
 						switch (indexType)
 						{
 							case "alphaTree":
@@ -148,18 +116,18 @@ namespace sepp
 						}
 						break;
 					case "excludeWords":
-						string maxFreq = AttVal(node, "moreFrequentThan", "unlimited");
+						string maxFreq = Utils.AttVal(node, "moreFrequentThan", "unlimited");
 						m_maxFrequency = maxFreq == "unlimited" ? Int32.MaxValue : Int32.Parse(maxFreq);
-						BuildDictionary(m_excludeWords,node.InnerText);
+						Utils.BuildDictionary(m_excludeWords,node.InnerText);
 						break;
 					case "excludeClasses":
-						BuildDictionary(m_excludeClasses,node.InnerText);
+						Utils.BuildDictionary(m_excludeClasses,node.InnerText);
 						break;
 					case "specialClasses":
-						m_notesClass = AttVal(node, "notesClass", "");
-						m_notesRef = MakeSafeXml(AttVal(node, "notesRef", "-----") + ": ");
-						m_headingRef = MakeSafeXml(AttVal(node, "headingRef", "-----") + ": ");
-						BuildDictionary(m_nonCanonicalClasses, node.InnerText);
+						m_notesClass = Utils.AttVal(node, "notesClass", "");
+						m_notesRef = Utils.MakeSafeXml(Utils.AttVal(node, "notesRef", "-----") + ": ");
+						m_headingRef = Utils.MakeSafeXml(Utils.AttVal(node, "headingRef", "-----") + ": ");
+						Utils.BuildDictionary(m_nonCanonicalClasses, node.InnerText);
 						break;
 					case "files":
 						BuildFileList(node);
@@ -167,6 +135,38 @@ namespace sepp
 					case "bookChap":
 						m_bookChapText = node.InnerText;
 						break;
+					case "collation":
+						GetComparer(node);
+						break;
+				}
+			}
+		}
+
+		// Enhance: move functionality to Options.
+		private void GetComparer(XmlNode node)
+		{
+			string compareId = Utils.AttVal(node, "comparer", null);
+			if (compareId == null)
+				return;
+			if (compareId == "CustomSimple")
+			{
+				m_comparer = new Palaso.WritingSystems.Collation.SimpleRulesCollator(node.InnerText);
+			}
+			else if (compareId == "CustomICU")
+			{
+				m_comparer = new Palaso.WritingSystems.Collation.IcuRulesCollator(node.InnerText);
+			}
+			else
+			{
+				try
+				{
+					CultureInfo info = new CultureInfo(compareId);
+					m_comparer = StringComparer.Create(info, true);
+				}
+				catch (ArgumentException)
+				{
+					MessageBox.Show("Cannot interpret " + compareId + " as a collation ID. Using default collation.", "Error", MessageBoxButtons.OK,
+						MessageBoxIcon.Warning);
 				}
 			}
 		}
@@ -181,41 +181,34 @@ namespace sepp
 				m_abbreviations[Path.ChangeExtension(fileName, "htm")] = abbr;
 			}
 		}
-		/// Create the directory if it does not exist already. Return true if a problem occurs.
-		/// </summary>
-		/// <param name="destinationPath"></param>
-		/// <returns></returns>
-		internal static bool EnsureDirectory(string destinationPath)
-		{
-			if (!File.Exists(destinationPath))
-			{
-				try
-				{
-					Directory.CreateDirectory(destinationPath);
-				}
-				catch (Exception ex)
-				{
-					MessageBox.Show(String.Format("Unable to create directory {0}. Details: {1}", destinationPath, ex.Message), "Error");
-					return true;
-				}
-			}
-			return false;
-		}
+
 		public void Run(IList files)
 		{
 			Progress status = new Progress(files.Count);
-			EnsureDirectory(m_outputDirName);
+			Utils.EnsureDirectory(m_outputDirName);
 			status.Text = "Parsing";
 			status.Show();
 			int count = 0;
-			foreach (string inputFilePath in files)
+			foreach (string inputFile in files)
 			{
-				status.File = inputFilePath;
-				Parse(Path.Combine(m_inputDirName, inputFilePath));
+				status.File = inputFile;
+				string inputFilePath = Path.Combine(m_inputDirName, inputFile);
+				if (m_options.ChapterPerFile)
+				{
+					foreach (string inputPath in Utils.ChapFiles(inputFilePath))
+						Parse(inputPath);
+				}
+				else
+				{
+					Parse(inputFilePath); 
+				}
 				count++;
 				status.Value = count;
 			}
 			status.Close();
+
+			// Use the individual word occurrences to find phrase occurrences (and add them before sorting etc.)
+			AddPhraseOccurrences();
 			
 			List<WordformInfo> sortedOccurrences = new List<WordformInfo>(m_occurrences.Count);
 			foreach (WordformInfo info in m_occurrences.Values)
@@ -226,7 +219,7 @@ namespace sepp
 					continue;
 				sortedOccurrences.Add(info);
 			}
-			sortedOccurrences.Sort();
+			sortedOccurrences.Sort(new WordformInfoComparer(m_comparer));
 			status = new Progress(sortedOccurrences.Count);
 			status.Text = "Generating";
 			status.Show();
@@ -284,7 +277,7 @@ namespace sepp
 					WordformInfo firstItemInGroup = sortedOccurrences[iStartGroup];
 					WordformInfo lastItemInGroup = sortedOccurrences[iStartGroup + cThisGroup - 1];
 					writerMain.Write("<a href=\"{0}\" target=\"inner\">{1} - {2}</a><br/>\n",
-						new object[] { groupFileName, MakeSafeXml(firstItemInGroup.Form), MakeSafeXml(lastItemInGroup.Form) });
+						new object[] { groupFileName, Utils.MakeSafeXml(firstItemInGroup.Form), Utils.MakeSafeXml(lastItemInGroup.Form) });
 					WriteInnerIndexFile(groupFileName, sortedOccurrences, groupIndex, iStartGroup, cThisGroup);
 				}
 				iStartGroup += cThisGroup;
@@ -330,7 +323,7 @@ namespace sepp
 					WordformInfo firstItemInGroup = sortedOccurrences[iStartGroup];
 					WordformInfo lastItemInGroup = sortedOccurrences[iStartGroup + cThisGroup - 1];
 					writerMain.Write("<li>{0} - {1}<ul>\n",
-						new object[] { MakeSafeXml(firstItemInGroup.Form), MakeSafeXml(lastItemInGroup.Form) });
+						new object[] { Utils.MakeSafeXml(firstItemInGroup.Form), Utils.MakeSafeXml(lastItemInGroup.Form) });
 					WriteInnerIndexItems(writerMain, sortedOccurrences, iStartGroup, cThisGroup);
 					writerMain.Write("</ul></li>\n");
 				}
@@ -364,7 +357,7 @@ namespace sepp
 				{
 					iLimGroup++;
 				}
-				writerMain.Write("<li><span class=\"indexKeyLetter\">{0}</span><ul>\n", MakeSafeXml(keyLetter));
+				writerMain.Write("<li><span class=\"indexKeyLetter\">{0}</span><ul>\n", Utils.MakeSafeXml(keyLetter));
 				WriteInnerIndexItems(writerMain, sortedOccurrences, iStartGroup, iLimGroup - iStartGroup);
 				writerMain.Write("</ul></li>\n");
 				iStartGroup = iLimGroup;
@@ -422,7 +415,7 @@ namespace sepp
 				if (expandLetter == keyLetter)
 				{
 					writerMain.Write("<li class=\"liOpen\"><span id=\"open\" class=\"indexKeyLetter\"><span class=\"bullet\" onclick=\"location='{1}#open'\">&nbsp;</span><a href=\"{1}\">{0}</a></span><ul>\n",
-						MakeSafeXml(keyLetter), Path.GetFileName(pathRoot));
+						Utils.MakeSafeXml(keyLetter), Path.GetFileName(pathRoot));
 					WriteInnerIndexItems(writerMain, sortedOccurrences, iStartGroup, iLimGroup - iStartGroup);
 					writerMain.Write("</ul></li>\n");
 				}
@@ -431,7 +424,7 @@ namespace sepp
 					// write an element that looks like a closed node, but is actually a hotlink to another index file.
 					// (And do NOT write the subitems!)
 					writerMain.Write("<li class=\"liClosed\"><span class=\"indexKeyLetter\"><span class=\"bullet\"onclick=\"location='{1}'\">&nbsp;</span><a href=\"{1}#open\">{0}</a></span></li>\n",
-						MakeSafeXml(keyLetter), Path.GetFileName(keyLetterPath));
+						Utils.MakeSafeXml(keyLetter), Path.GetFileName(keyLetterPath));
 				}
 				if (expandLetter == null)
 				{
@@ -481,7 +474,7 @@ namespace sepp
 			{
 				WordformInfo item = sortedOccurrences[i];
 				writer.Write("<li><a href=\"wl{0}.htm\" target=\"conc\">{1} ({2})</a></li>\n",
-					new object[] { item.FileNumber, MakeSafeXml(item.Form), item.Occurrences.Count });
+					new object[] { item.FileNumber, Utils.MakeSafeXml(item.Form), item.Occurrences.Count });
 			}
 		}
 
@@ -498,7 +491,7 @@ namespace sepp
 			{
 				WordformInfo item = sortedOccurrences[i];
 				writer.Write("<a href=\"wl{0}.htm\" target=\"conc\">{1}</a><br/>\n",
-					new object[] { item.FileNumber, MakeSafeXml(item.Form) });
+					new object[] { item.FileNumber, Utils.MakeSafeXml(item.Form) });
 			}
 			writer.Write(trailer);
 			writer.Close();
@@ -545,25 +538,6 @@ namespace sepp
 		}
 
 		/// <summary>
-		/// Fix the string to be safe in a text region of XML.
-		/// </summary>
-		/// <param name="sInput"></param>
-		/// <returns></returns>
-
-		public static string MakeSafeXml(string sInput)
-		{
-			string sOutput = sInput;
-
-			if (sOutput != null && sOutput.Length != 0)
-			{
-				sOutput = sOutput.Replace("&", "&amp;");
-				sOutput = sOutput.Replace("<", "&lt;");
-				sOutput = sOutput.Replace(">", "&gt;");
-			}
-			return sOutput;
-		}
-
-		/// <summary>
 		/// Make an HTML file containing the occurrences of a particular wordform, with links to the text and click actions
 		/// to highlight the key word in the destination file.
 		/// 
@@ -577,7 +551,7 @@ namespace sepp
 		{
 			List<WordOccurrence> items = info.Occurrences;
 			string flags = info.MixedCase ? "i" : "";
-			string infoForm = MakeSafeXml(info.Form);
+			string infoForm = Utils.MakeSafeXml(info.Form);
 			string fixQuoteInfoForm = infoForm.Replace("'", "&#39"); // apostrophe in word can close onclick quote.
 			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n"
 				+ "<head><script src=\"ConcFuncs.js\" type=\"text/javascript\"></script>\n"
@@ -595,11 +569,11 @@ namespace sepp
 				writer.Write("<span class=\"OccRef\">");
 				if (item.Canonical)
 				{
-					writer.Write(m_abbreviations[item.FileName]);
+					writer.Write(GetAbbreviation(item.FileName));
 					writer.Write(" ");
 					writer.Write(item.Chapter);
 					writer.Write(".");
-					writer.Write(MakeSafeXml(item.Verse));
+					writer.Write(Utils.MakeSafeXml(item.Verse));
 					writer.Write(": ");
 				}
 				else if (item.Verse == "")
@@ -612,7 +586,7 @@ namespace sepp
 					writer.Write("<span class=\"special\">");
 				}
 				WritePrecedingContext(writer, item.Context.Substring(0, item.Offset));
-				string form = MakeSafeXml(item.Form);
+				string form = Utils.MakeSafeXml(item.Form);
 				string fixQuoteForm = form.Replace("'", "&#39"); // apostrophe in word can close onclick quote.
 				writer.Write("<a href=\"{0}#{1}\" target=\"main\">{4}</a>",
 					new object[] { item.FileName, item.Anchor, fixQuoteForm, flags, form});
@@ -628,11 +602,33 @@ namespace sepp
 			writer.Close();
 		}
 
+		private string GetAbbreviation(string fileName)
+		{
+			string abbr;
+			if (m_abbreviations.TryGetValue(fileName, out abbr))
+				return abbr;
+			if (m_options.ChapterPerFile)
+			{
+				int lastHyphen = fileName.LastIndexOf("-");
+				int lastDot = fileName.LastIndexOf(".");
+				if (lastHyphen > 0 && lastDot > 0)
+				{
+					string originalFileName = fileName.Remove(lastHyphen, lastDot - lastHyphen);
+					if (m_abbreviations.TryGetValue(originalFileName, out abbr))
+					{
+						m_abbreviations[fileName] = abbr; // find faster next time
+						return abbr;
+					}
+				}
+			}
+			return "???"; // last resort.
+		}
+
 		private void WritePrecedingContext(TextWriter writer, string context)
 		{
 			if (context.Length < m_maxContextLength)
 			{
-				writer.Write(MakeSafeXml(context));
+				writer.Write(Utils.MakeSafeXml(context));
 				return;
 			}
 			int iWhiteSpace = -1;
@@ -648,12 +644,12 @@ namespace sepp
 			{
 				while (iWhiteSpace < context.Length && Char.IsWhiteSpace(context[iWhiteSpace]))
 					iWhiteSpace++;
-				writer.Write(MakeSafeXml(context.Substring(iWhiteSpace, context.Length - iWhiteSpace)));
+				writer.Write(Utils.MakeSafeXml(context.Substring(iWhiteSpace, context.Length - iWhiteSpace)));
 			}
 			else
 			{
 				writer.Write("...");
-				writer.Write(MakeSafeXml(context.Substring(context.Length - m_maxContextLength + 3, m_maxContextLength - 3)));
+				writer.Write(Utils.MakeSafeXml(context.Substring(context.Length - m_maxContextLength + 3, m_maxContextLength - 3)));
 			}
 		}
 
@@ -661,7 +657,7 @@ namespace sepp
 		{
 			if (context.Length < m_maxContextLength)
 			{
-				writer.Write(MakeSafeXml(context));
+				writer.Write(Utils.MakeSafeXml(context));
 				return;
 			}
 			int iWhiteSpace = -1;
@@ -677,11 +673,11 @@ namespace sepp
 			{
 				while (iWhiteSpace > 0 && Char.IsWhiteSpace(context[iWhiteSpace - 1]))
 					iWhiteSpace--;
-				writer.Write(MakeSafeXml(context.Substring(0, iWhiteSpace)));
+				writer.Write(Utils.MakeSafeXml(context.Substring(0, iWhiteSpace)));
 			}
 			else
 			{
-				writer.Write(MakeSafeXml(context.Substring(0, m_maxContextLength - 3)));
+				writer.Write(Utils.MakeSafeXml(context.Substring(0, m_maxContextLength - 3)));
 				writer.Write("...");
 			}
 		}
@@ -768,6 +764,7 @@ namespace sepp
 		}
 
 		string m_saveContext = "";
+		private Options m_options;
 
 		/// <summary>
 		/// We've just added end-of-sentence punctuation to the context.
@@ -888,6 +885,56 @@ namespace sepp
 			m_pendingOccurrences.Add(item);
 		}
 
+		void AddPhraseOccurrences()
+		{
+			foreach (string phrase in m_options.Phrases)
+			{
+				int firstNonLetter;
+				for (firstNonLetter = 0; firstNonLetter < phrase.Length && IsLetter(phrase[firstNonLetter]); firstNonLetter++)
+					;
+				if (firstNonLetter == 0 || firstNonLetter == phrase.Length)
+					return; // nothing word-like, or only one word; nothing useful we can add
+				string firstWord = phrase.Substring(0, firstNonLetter);
+				WordformInfo info;
+				m_occurrences.TryGetValue(firstWord, out info);
+				if (info == null)
+				{
+					string firstWordLc = firstWord.ToLowerInvariant();
+					m_occurrences.TryGetValue(firstWordLc, out info);
+					if (info == null)
+					{
+						string existingUCForm;
+						m_uppercaseForms.TryGetValue(firstWordLc, out existingUCForm);
+						if (existingUCForm != null)
+							m_occurrences.TryGetValue(existingUCForm, out info);
+					}
+				}
+				if (info == null)
+					continue;
+				WordformInfo phraseInfo = new WordformInfo(phrase);
+				string target = phrase;
+				if (m_options.MergeCase)
+					target = phrase.ToLowerInvariant();
+
+				foreach (WordOccurrence wi in info.Occurrences)
+				{
+					string match = wi.Context.Substring(wi.Offset);
+					if (m_options.MergeCase)
+						match = match.ToLowerInvariant();
+					if (match.StartsWith(target))
+					{
+						WordOccurrence phraseOccurrence = new WordOccurrence(wi.FileName, wi.Chapter, wi.Verse, wi.Anchor, wi.Offset,
+						                                                     phrase, wi.Canonical);
+						phraseInfo.Occurrences.Add(phraseOccurrence);
+						phraseOccurrence.Context = wi.Context;
+					}
+				}
+
+				if (phraseInfo.Occurrences.Count > 0)
+					m_occurrences[phrase] = phraseInfo;
+			}
+		}
+
 		// This version is suitable for the World English Bible format, where the CV anchors are generated by JavaScript.
 		// Hence we are looking for something like <script ...>cb(2,5)/>
 		//private void ProcessElement(XmlReader reader)
@@ -969,5 +1016,24 @@ namespace sepp
 					ProcessEndOfSentence();
 			}
 		}
+	}
+
+	// Compare wordforms using the specified string comparer.
+	class WordformInfoComparer : IComparer<WordformInfo>
+	{
+		IComparer<string> m_comparer;
+
+		public WordformInfoComparer(IComparer<string> comparer)
+		{
+			m_comparer = comparer;
+		}
+		#region IComparer<WordformInfo> Members
+
+		public int Compare(WordformInfo x, WordformInfo y)
+		{
+			return m_comparer.Compare(x.Form, y.Form);
+		}
+
+		#endregion
 	}
 }

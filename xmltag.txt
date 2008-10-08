@@ -126,6 +126,7 @@ fq	90	q
 fqa	90	rdg
 fv	90	"seg[@type=""verseNumber""]"
 fdc	90	"seg[@editions=""dc""]"
+rq	90	"note[@type=""x-quoteSource""]"
 x	80	"note[@type=""crossReference""]"
 xo	80,90	"note[@type=""crossReference""]/reference[@type=""source""]"
 xt***		"text within the <note> element, may serve to indicate the end of text of another format marker"

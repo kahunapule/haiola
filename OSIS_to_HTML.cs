@@ -20,16 +20,21 @@ namespace sepp
 		string m_copyright = "(©2007 UBB-GMIT)"; // default
 		// Keys are book names used in references; values are HTM file names.
 		Dictionary<string, string> m_files = new Dictionary<string, string>();
+		// Key is file name, value is next file in sequence.
+		Dictionary<string, string> m_nextFiles = new Dictionary<string, string>();
+		private string m_prevFile = null;
+		private Options m_options;
 
 		/// <summary>
 		/// initialize one.
 		/// </summary>
 		/// <param name="inputDirName"></param>
 		/// <param name="outputDirName"></param>
-		public OSIS_to_HTML(string inputDirName, string outputDirName, string finalOutputDirName, string optionsPath)
+		public OSIS_to_HTML(string inputDirName, string outputDirName, string finalOutputDirName, string optionsPath, Options options)
 			: base(inputDirName, outputDirName)
 		{
 			m_finalOutputDir = finalOutputDirName;
+			m_options = options;
 
 			XmlDocument optionsDoc = new XmlDocument();
 			optionsDoc.Load(optionsPath);
@@ -51,11 +56,12 @@ namespace sepp
 		internal override void Init()
 		{
 			base.Init();
-			ConcGenerator.EnsureDirectory(m_finalOutputDir);
+			Utils.EnsureDirectory(m_finalOutputDir);
 		}
 
 		private void BuildFileList(XmlNode node)
 		{
+			string prevFile = "none";// will become a dummy key
 			foreach (XmlNode item in node.ChildNodes)
 			{
 				string fileName = item.Attributes["name"].Value;
@@ -63,8 +69,12 @@ namespace sepp
 				if (attr == null)
 					continue;
 				string parallel = attr.Value;
-				m_files[parallel] = Path.ChangeExtension(fileName, "htm");
+				string htmlFileName = Path.ChangeExtension(fileName, "htm");
+				m_files[parallel] = htmlFileName;
+				m_nextFiles[prevFile] = htmlFileName;
+				prevFile = htmlFileName;
 			}
+			m_nextFiles[prevFile] = null; // last file has no next.
 		}
 
 
@@ -81,6 +91,21 @@ namespace sepp
 			string stage2 = FixDuplicateAnchors(input);
 
 			MakeCrossRefLinkInfo(stage2, outputFilePath);
+
+			if (m_options.ChapterPerFile)
+			{
+				if (new ChapterSplitter(outputFilePath, m_options).Run(ref m_prevFile, m_nextFiles[outputFileName]))
+				{
+					File.Delete(outputFilePath);
+					foreach (string itemPath in Utils.ChapFiles(outputFilePath))
+						File.Copy(itemPath, Path.Combine(m_finalOutputDir, Path.GetFileName(itemPath)), true);
+					return;
+				}
+				else
+				{
+					MessageBox.Show("Could not split " + outputFilePath, "Error"); // Enhance: provide more info.
+				}
+			}
 
 			// And copy to the main output directory
 			if (m_finalOutputDir != null)
