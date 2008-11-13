@@ -12,6 +12,10 @@
 
 	<xsl:template match="/">
 		<div class="BookChapIndex">
+			<xsl:if test="not(//osis:title[@short])">
+				<xsl:apply-templates select="//osis:title[@type='main']"/>
+			</xsl:if>
+			
 			<xsl:apply-templates select="//osis:title[@short]"/>
 			<xsl:if test="count(//osis:chapter) > 1">
 				<p class="IndexChapterList">
@@ -31,6 +35,20 @@
 		</p>
 		$$intro$$
 		
+	</xsl:template>
+	<xsl:template match="osis:title[@type='main']">
+		<xsl:apply-templates select="osis:title[@level='1']"/>
+	</xsl:template>
+	
+	<xsl:template match="osis:title[@level='1']">
+
+		<p class="IndexBookName">
+			<a target="main" href="$$filename$$">
+				<xsl:apply-templates/>
+			</a>
+		</p>
+		$$intro$$
+
 	</xsl:template>
 
 	<xsl:template match="osis:hi[@type='italic']">

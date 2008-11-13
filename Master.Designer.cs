@@ -32,6 +32,7 @@ namespace sepp
 			this.m_projectsList = new System.Windows.Forms.CheckedListBox();
 			this.MasterIndexButton = new System.Windows.Forms.Button();
 			this.ProjectButton = new System.Windows.Forms.Button();
+			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// m_projectsList
@@ -65,11 +66,21 @@ namespace sepp
 			this.ProjectButton.UseVisualStyleBackColor = true;
 			this.ProjectButton.Click += new System.EventHandler(this.ProjectButton_Click);
 			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(352, 293);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(163, 13);
+			this.label1.TabIndex = 10;
+			this.label1.Text = "Version 0.90, 12 November 2008";
+			// 
 			// Master
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(631, 358);
+			this.Controls.Add(this.label1);
 			this.Controls.Add(this.ProjectButton);
 			this.Controls.Add(this.MasterIndexButton);
 			this.Controls.Add(this.m_projectsList);
@@ -78,6 +89,7 @@ namespace sepp
 			this.Text = "Prophero Scripture Electonic Publishing Program";
 			this.Load += new System.EventHandler(this.Master_Load);
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -86,5 +98,6 @@ namespace sepp
 		private System.Windows.Forms.CheckedListBox m_projectsList;
 		private System.Windows.Forms.Button MasterIndexButton;
 		private System.Windows.Forms.Button ProjectButton;
+		private System.Windows.Forms.Label label1;
 	}
 }

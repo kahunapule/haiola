@@ -133,13 +133,30 @@ namespace sepp
 			// Name of output file (without path)
 			string outputFileName = Path.ChangeExtension(Path.GetFileName(inputFilePath), OutputExtension);
 			string outputFilePath = Path.Combine(m_outputDirName, outputFileName);
+			RunProcess(inputFilePath, outputFilePath, m_toolPath, CreateArguments(inputFilePath, outputFilePath));
+			ImmediatePostProcess(inputFilePath, outputFilePath);
+		}
+
+		/// <summary>
+		/// This is called immediately after running the main process, on each selected input file.
+		/// The default does nothing (but see OSIS_to_HTML).
+		/// </summary>
+		/// <param name="inputFilePath"></param>
+		/// <param name="outputFilePath"></param>
+		protected virtual void ImmediatePostProcess(string inputFilePath, string outputFilePath)
+		{
+			
+		}
+
+		internal void RunProcess(string inputFilePath, string outputFilePath, string toolPath, string arguments)
+		{
 			File.Delete(outputFilePath); // Make sure we don't somehow preserve an old version.
 			m_outputWriter.WriteLine("------Report on converting " + inputFilePath + " to " + outputFilePath + " ----------");
 			m_errorHeader = "------Errors converting " + inputFilePath + " to " + outputFilePath + " ----------";
 			Process proc = new Process();
 			ProcessStartInfo info = proc.StartInfo;
-			info.Arguments = CreateArguments(inputFilePath, outputFilePath); ;
-			info.FileName = m_toolPath;
+			info.Arguments = arguments; ;
+			info.FileName = toolPath;
 			info.CreateNoWindow = true;
 			info.WindowStyle = ProcessWindowStyle.Hidden;
 			info.UseShellExecute = false;

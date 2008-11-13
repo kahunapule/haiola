@@ -17,8 +17,8 @@ namespace sepp
 	/// </summary>
 	public class OSIS_to_ChapIndex
 	{
-		string m_inputDirName;
-		string m_outputDirName;
+		string m_inputDirName; // contains OSIS files
+		string m_outputDirName; // site\Conc, where we put generated chap index
 		string m_introDirName; // directory contains corresponding introduction files.
 		string m_extraDirName; // directory contains extra files to make links to at end.
 		XslCompiledTransform m_xslt = new XslCompiledTransform();
@@ -84,17 +84,30 @@ namespace sepp
 					// Handle introduction if any
 					string introCrossRef = "";
 					string introFile;
+					string introPath = null;
 					if (m_options.IntroFiles.TryGetValue(inputFile, out introFile))
 					{
-						string introPath = Path.Combine(m_introDirName, introFile);
+						introPath = Path.Combine(m_introDirName, introFile);
 						if (File.Exists(introPath))
-						{
-							introCrossRef = "<p class=\"IndexIntroduction\"><a target=\"main\" href=\"" + introFile + "\">" +
-								m_options.IntroductionLinkText + "</a></p>";
 							File.Copy(introPath, Path.Combine(m_outputDirName, introFile), true);
-						}
 						else
-							MessageBox.Show("Introduction file not found: " + introPath, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+							MessageBox.Show("Introduction file not found: " + introPath, "Warning", MessageBoxButtons.OK,
+							                MessageBoxIcon.Warning);
+					}
+					else
+					{
+						// See if we generated one
+						introPath = Path.Combine(m_outputDirName, OSIS_to_HTML.MakeIntroFileName(filename));
+						if (File.Exists(introPath))
+							introFile = Path.GetFileName(introPath);
+						else
+							introPath = null;
+					}
+
+					if (introPath != null)
+					{
+						introCrossRef = "<p class=\"IndexIntroduction\"><a target=\"main\" href=\"" + introFile + "\">" +
+						                m_options.IntroductionLinkText + "</a></p>";
 					}
 
 					fragment = fragment.Replace("$$intro$$", introCrossRef);

@@ -175,7 +175,7 @@
 
       <tr>
         <td align="right">
-          <xsl:number/>
+          <xsl:number count="osis:div[@type='section']"/>
           <xsl:text>.</xsl:text>
         </td>
         <td>
@@ -231,16 +231,16 @@
       </div>
 
     </xsl:otherwise>
-  </xsl:choose>	
+  </xsl:choose>
 
-  <xsl:if test="osis:p | osis:list | osis:lg | osis:lb | osis:milestone | osis:speaker | osis:q | osis:div[@type='x-highLevelPoetryDivision'] | text()[.!='&#10;']">
-    <div class="text">
-	  <!-- JohnT: in the original this had no select. But then if the 'if' succeeds all the main sections get included twice!
+	<!-- JohnT: in the original this was present and the applyTempaltes had no select. But then if the 'if' succeeds all the main sections get included twice!
 	  This if appears to be to insert anything that precedes the main sections. I'm not sure how to get whatever might be matched by
-	  the text()[.!='&#10;']-->
+	  the text()[.!='&#10;']. Currently I don't want any introductory material in the main document...I generate any introduction separately.-->
+	<!--xsl:if test="osis:p | osis:list | osis:lg | osis:lb | osis:milestone | osis:speaker | osis:q | osis:div[@type='x-highLevelPoetryDivision'] | text()[.!='&#10;']">
+    <div class="text">
       <xsl:apply-templates select="osis:p | osis:list | osis:lg | osis:lb | osis:milestone | osis:speaker | osis:q | osis:div[@type='x-highLevelPoetryDivision']"/>
     </div>
-  </xsl:if>
+  </xsl:if-->
 
   <!-- <xsl:apply-templates select="osis:div[@type='section' and not(following::osis:verse[@sID = $startId] or preceding::osis:verse[@eID = $endId])]"/> -->
   <xsl:apply-templates select="osis:div[@type='section']"/>

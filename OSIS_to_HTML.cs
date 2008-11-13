@@ -59,6 +59,40 @@ namespace sepp
 			Utils.EnsureDirectory(m_finalOutputDir);
 		}
 
+		private const string IntroFileSuffix = "-Intro";
+
+		protected override void ImmediatePostProcess(string inputFilePath, string outputFilePath)
+		{
+			base.ImmediatePostProcess(inputFilePath, outputFilePath);
+			string baseFileName = Path.GetFileNameWithoutExtension(outputFilePath);
+			string introName = MakeIntroFileName(baseFileName);
+			string introPath = Path.Combine(Path.GetDirectoryName(outputFilePath), introName);
+			RunProcess(inputFilePath, introPath, ToolPath, CreateIntroArguments(inputFilePath, introPath));
+			if (!File.Exists(introPath))
+				return;
+			string introContents = ReadFileToString(introPath);
+			if (introContents.Contains("<html"))
+			{
+				// We found some introductory material, adjust links and copy it to the output directory.
+				MakeIntroHotLinks(introContents, introPath, baseFileName);
+				if (m_finalOutputDir != null)
+				{
+					File.Copy(outputFilePath, Path.Combine(m_finalOutputDir, introName), true);
+				}
+			}
+			else
+			{
+				// Empty file, get rid of it.
+				File.Delete(introPath);
+			}
+		}
+
+		public static string MakeIntroFileName(string baseFileName)
+		{
+			return Path.ChangeExtension(Path.GetFileNameWithoutExtension(baseFileName) + IntroFileSuffix, "htm");
+		}
+
+
 		private void BuildFileList(XmlNode node)
 		{
 			string prevFile = "none";// will become a dummy key
@@ -195,6 +229,7 @@ namespace sepp
 			return bldr.ToString();
 		}
 
+		private delegate string DoReplacements(string input);
 		/// <summary>
 		/// This looks for scripture references in the file and inserts info to allow the correct
 		/// hot links to be made.
@@ -203,8 +238,6 @@ namespace sepp
 		/// <param name="filePath">file to write to (often source of input also)</param>
 		private void MakeCrossRefLinkInfo(string input, string filePath)
 		{
-			TextWriter output = new StreamWriter(filePath, false, Encoding.UTF8);
-			int start = 0;
 			// Strings identifying elements that should be converted
 			string[] starts = new string[] {
 				"<p class=\"crossRefNote\"",
@@ -216,6 +249,57 @@ namespace sepp
 				"</div>",
 				"</div>"
 			};
+			ReplaceInSelectedElements(input, filePath, starts, ends, ConvertRefs);
+		}
+
+		/// <summary>
+		/// Another user of ReplaceInSelectedElements, does a slightly different conversion on links in introduction list items.
+		/// </summary>
+		/// <param name="input">input text to process</param>
+		/// <param name="destPath">file to write to (often source of input also)</param>
+		private void MakeIntroHotLinks(string input, string destPath, string baseFileName)
+		{
+			// Strings identifying elements that should be converted
+			string[] starts = new string[] {
+				"<div class=\"introListItem\">"
+				};
+			string[] ends = new string[] {
+				"</div>"
+			};
+			ReplaceInSelectedElements(input, destPath, starts, ends, new IntroRefConverter(this, baseFileName).ConvertIt);
+		}
+
+		class IntroRefConverter
+		{
+			private OSIS_to_HTML m_parent;
+			string m_baseFileName;
+
+			public IntroRefConverter (OSIS_to_HTML parent, string baseFileName)
+			{
+				m_parent = parent;
+				m_baseFileName = baseFileName;
+			}
+			public string ConvertIt(string chunk)
+			{
+				return m_parent.ConvertOutlineRefs(chunk, m_baseFileName);
+			}
+		}
+
+		/// <summary>
+		/// In the input string, search for chunks that begin with one of the 'starts' strings and end with one of the 'ends' strings.
+		/// (non-greedy matching).
+		/// The text between each pair is replaced with whatever convert() produces.
+		/// </summary>
+		/// <param name="input"></param>
+		/// <param name="filePath"></param>
+		/// <param name="starts"></param>
+		/// <param name="ends"></param>
+		/// <param name="convert"></param>
+		private void ReplaceInSelectedElements(string input, string filePath, string[] starts, string[] ends, DoReplacements convert)
+		{
+			Debug.Assert(starts.Length == ends.Length);
+			TextWriter output = new StreamWriter(filePath, false, Encoding.UTF8);
+			int start = 0;
 			// offsets where we first found each kind of target element
 			int[] offsets = new int[starts.Length];
 			for (int i = 0; i < starts.Length; i++)
@@ -253,38 +337,12 @@ namespace sepp
 					output.Write(input.Substring(start, startChunk - start));
 					start = endChunk; // Continue from here.
 					string chunk = input.Substring(startChunk, endChunk - startChunk);
-					output.Write(ConvertRefs(chunk));
+					output.Write(convert(chunk));
 				} // otherwise it's a bizarre match to an unterminated element, don't mess with it.
 				offsets[which] = input.IndexOf(starts[which], start + ends[which].Length);
 			}
 			output.Write(input.Substring(start)); // anything left over
 			output.Close();
-
-
-
-			//XmlDocument doc = new XmlDocument();
-			//doc.Load(outputFilePath);
-			//bool fChanges = false;
-			//foreach (XmlNode parallel in doc.SelectNodes("title[@type='parallel']"))
-			//{
-			//    XmlNode reference = null;
-			//    foreach (XmlNode child in parallel.ChildNodes)
-			//    {
-			//        if (child.Name == "reference")
-			//        {
-			//            reference = child;
-			//            break;
-			//        }
-			//    }
-			//    if (reference == null)
-			//        continue;
-			//    string source = reference.Value;
-			//}
-			//if (fChanges)
-			//{
-			//    XmlWriter writer = new XmlTextWriter(outputFilePath, Encoding.UTF8);
-			//    doc.WriteTo(writer);
-			//}
 		}
 
 		private static string ReadFileToString(string filePath)
@@ -330,7 +388,7 @@ namespace sepp
 		/// 3. In first of each comma group, search for a match for known book name. If found, use longest.
 		/// 4. Convert occurrences of #%#%bookN back.
 		/// </summary>
-		/// <param name="chunk"></param>
+		/// <param name="chunk1"></param>
 		/// <returns></returns>
 		private string ConvertRefs(string chunk1)
 		{
@@ -433,18 +491,7 @@ namespace sepp
 					{
 						start = matchOffset;
 					}
-					// Put anything in the input before the reference
-					output.Append(item.Substring(0, start));
-					// The next bit will be part of the anchor, so start it.
-					output.Append("<a href=\"");
-					output.Append(anchor);
-					output.Append("\">");
-					// The bit that should be the text of the anchor: input from start to end of reference.
-					output.Append(target.Substring(start, m.Index + m.Length - start));
-					// terminate the anchor
-					output.Append("</a>");
-					// And add anything else, possibly final punctuation
-					output.Append(target.Substring(m.Index + m.Length));
+					InsertHotLink(output, target, m, start, anchor);
 					fFirst = false;
 				}
 			}
@@ -457,6 +504,64 @@ namespace sepp
 			}
 
 			return result;
+		}
+
+		/// <summary>
+		/// Convert references as used in introductory outlines. A typical example would be "1. Wniak kalwieda. (1:1-2)"
+		/// We want the output to be 1. Wniak kalwieda. <a href="#C1V1>(1:1-2)</a>.
+		/// </summary>
+		/// <param name="chunk"></param>
+		/// <returns></returns>
+		private string ConvertOutlineRefs(string chunk, string baseFileName)
+		{
+			// Looks for parenthesized expression containing (verse) number, or C:V, possibly followed by
+			// a range indication. We don't care much about the range, so once we have C:V if that can be found,
+			// we accept any combination of digits, colon, and hyphen
+			Regex reRef = new Regex(@"\(([0-9]+)(:[0-9]+)?(-[0-9: ]+)?\)");
+			Match match = reRef.Match(chunk);
+			if (!match.Success)
+				return chunk;
+			StringBuilder output = new StringBuilder(chunk.Length + 40);
+			string chap = "1";
+			string verse = match.Groups[1].Value;
+			if (match.Groups.Count > 2 && match.Groups[2].Length > 0)
+			{
+				chap = verse;
+				verse = match.Groups[2].Value.Substring(1); // strip colon
+			}
+			string destFileName = baseFileName;
+			if (m_options.ChapterPerFile)
+				destFileName = ChapterSplitter.MakeNameForSegment(destFileName, chap);
+			destFileName = Path.ChangeExtension(destFileName, "htm");
+
+			InsertHotLink(output, chunk, match, match.Index, destFileName + "#C" + chap + "V" + verse);
+
+			return output.ToString();
+		}
+		/// <summary>
+		/// Insert into the string builder a string formed by replacing (in input) from start to the end of what m matched
+		/// with a hot link.
+		/// The anchor to which it links is supplied; the body of the link is what was replaced.
+		/// </summary>
+		/// <param name="output"></param>
+		/// <param name="input"></param>
+		/// <param name="input"></param>
+		/// <param name="m"></param>
+		/// <param name="anchor"></param>
+		private void InsertHotLink(StringBuilder output, string input, Match m, int start, string anchor)
+		{
+			// Put anything in the input before the reference
+			output.Append(input.Substring(0, start));
+			// The next bit will be part of the anchor, so start it.
+			output.Append("<a href=\"");
+			output.Append(anchor);
+			output.Append("\">");
+			// The bit that should be the text of the anchor: input from start to end of reference.
+			output.Append(input.Substring(start, m.Index + m.Length - start));
+			// terminate the anchor
+			output.Append("</a>");
+			// And add anything else, possibly final punctuation
+			output.Append(input.Substring(m.Index + m.Length));
 		}
 
 
@@ -480,6 +585,13 @@ namespace sepp
 			string scriptPath = Path.GetFullPath(@"..\..\osis2Html.xsl");
 			return "\"" + inputFilePath + "\" \"" + scriptPath + "\" -o \"" + outputFilePath + "\" copyright=\"" + m_copyright + "\"";
 
+		}
+
+		// Arguments for running the script that tries to extract an Introduction from the input.
+		private string CreateIntroArguments(string inputFilePath, string outputFilePath)
+		{
+			string scriptPath = Path.GetFullPath(@"..\..\osis2Intro.xsl");
+			return "\"" + inputFilePath + "\" \"" + scriptPath + "\" -o \"" + outputFilePath + "\" copyright=\"" + m_copyright + "\"";
 		}
 
 		internal override bool CheckToolPresent

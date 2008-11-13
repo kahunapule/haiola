@@ -96,9 +96,9 @@ namespace sepp
 					if (m.Success)
 					{
 						if (m.ToString() == "<table")
-							return Path.GetFileNameWithoutExtension(path) + "-" + tocTag + ".htm";
+							return MakeNameForSegment(path, tocTag);
 						else
-							return Path.GetFileNameWithoutExtension(path) + "-" + m.Groups[1] + ".htm";
+							return MakeNameForSegment(path, m.Groups[1].Value);
 					}
 				}
 
@@ -108,6 +108,14 @@ namespace sepp
 				reader.Close();
 			}
 			return null;
+		}
+
+		/// <summary>
+		/// Make a name for the file that is the specified part of the specified base file.
+		/// </summary>
+		public static string MakeNameForSegment(string baseName, string segmentId)
+		{
+			return Path.ChangeExtension(Path.GetFileNameWithoutExtension(baseName) + "-" + segmentId, "htm");
 		}
 
 		private void MakeTocFile()
