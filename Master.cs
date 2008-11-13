@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using Microsoft.Win32;
 
 namespace sepp
 {
@@ -29,6 +30,19 @@ namespace sepp
 				m_projectsList.SetItemChecked(i, true);
 			m_projectsList.SetSelected(0, true);
 			m_siteDirectory = Path.Combine(Path.GetDirectoryName(m_workDirectory), "Site");
+
+			RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\SIL\Prophero", true);
+			if (key == null || key.GetValue("Warning") == null)
+			{
+				WarningSplash dlg = new WarningSplash();
+				dlg.ShowDialog(this);
+				if (dlg.DoNotShowAgain)
+				{
+					if (key == null)
+						key = Registry.CurrentUser.CreateSubKey(@"Software\SIL\Prophero");
+					key.SetValue("Warning", "no");
+				}
+			}
 		}
 
 		private void ProjectButton_Click(object sender, EventArgs e)

@@ -1,8 +1,8 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{67AA8D95-5A06-48AC-8DE6-6EC9582D8BA4}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -10,6 +10,11 @@
     <RootNamespace>sepp</RootNamespace>
     <AssemblyName>sepp</AssemblyName>
     <ApplicationIcon>Trumpet.ico</ApplicationIcon>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -110,9 +115,14 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="WarningSplash.resx">
+      <DependentUpon>WarningSplash.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -127,6 +137,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utils.cs" />
+    <Compile Include="WarningSplash.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WarningSplash.Designer.cs">
+      <DependentUpon>WarningSplash.cs</DependentUpon>
+    </Compile>
     <Compile Include="WordformInfo.cs" />
     <Compile Include="WordOccurrence.cs" />
   </ItemGroup>

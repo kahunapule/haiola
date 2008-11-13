@@ -177,6 +177,8 @@ namespace sepp
 			{
 				string fileName = item.Attributes["name"].Value;
 				string abbr = item.Attributes["abbr"].Value;
+				if(abbr =="" || abbr == "???")
+					continue; // non-canonical
 				m_files.Add(fileName);
 				m_abbreviations[Path.ChangeExtension(fileName, "htm")] = abbr;
 			}

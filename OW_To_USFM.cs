@@ -24,16 +24,18 @@ namespace sepp
 		Dictionary<string, int> m_ProblemMarkers = new Dictionary<string, int>();
 		int m_seriousErrorCount = 0;
 		string[] m_tablePaths;
+		private Options m_options;
 
 		/// <summary>
 		/// initialize one.
 		/// </summary>
 		/// <param name="inputDirName"></param>
 		/// <param name="outputDirName"></param>
-		public OW_To_USFM(string inputDirName, string outputDirName)
+		public OW_To_USFM(string inputDirName, string outputDirName, Options options)
 		{
 			m_inputDirName = inputDirName;
 			m_outputDirName = outputDirName;
+			m_options = options;
 		}
 
 		public string[] TablePaths
@@ -188,7 +190,7 @@ namespace sepp
 		{
 			string input;
 			// Read file into input
-			StreamReader reader = new StreamReader(inputPath);
+			StreamReader reader = new StreamReader(inputPath, Encoding.GetEncoding(m_options.InputEncoding));
 			input = reader.ReadToEnd() + "\0";
 			reader.Close();
 

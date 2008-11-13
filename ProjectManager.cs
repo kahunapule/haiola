@@ -119,100 +119,7 @@ namespace sepp
 			XmlDocument doc = new XmlDocument();
 			doc.Load(basePath);
 			XmlElement fileSeqElt = (XmlElement)doc.SelectSingleNode("//files");
-			Dictionary<string, string> engAbbrs = new Dictionary<string, string>();
-			Dictionary<string, string> parallelNames = new Dictionary<string, string>();
-			Dictionary<string, string> fileNames = new Dictionary<string, string>();
-			List<string> order = new List<string>();
-			foreach (XmlElement fileElt in fileSeqElt.ChildNodes)
-			{
-				if (fileElt.Name == "file")
-				{
-					XmlAttribute attEng = fileElt.Attributes["eng"];
-					XmlAttribute attAbbr = fileElt.Attributes["abbr"];
-					XmlAttribute attParallel = fileElt.Attributes["parallel"];
-					if (attAbbr != null)
-					{
-						order.Add(attAbbr.Value);
-						if (attEng != null)
-							engAbbrs[attAbbr.Value] = attEng.Value;
-						if (attParallel != null)
-							parallelNames[attAbbr.Value] = attParallel.Value;
-					}
-				}
-			}
-			int cAbbreviationsInvented = 0;
-			string srcDir = Path.Combine(m_workDir, "OW");
-			if (!Directory.Exists(srcDir))
-			{
-				srcDir = Path.Combine(m_workDir, "USFM");
-			}
-			foreach (string filePath in Directory.GetFiles(srcDir))
-			{
-				// For historical reasons the file name in the optinos file is supposed to end in xml
-				string fileName = Path.ChangeExtension(Path.GetFileName(filePath), "xml");
-				// See if it matches any of our existing abbreviations.
-				string fileNameUpper = fileName.ToUpper();
-				bool fGotIt = false;
-				foreach (string abbr in order)
-				{
-					if (fileNameUpper.IndexOf(abbr.ToUpper()) != -1)
-					{
-						fileNames[abbr] = fileName;
-						fGotIt = true;
-						break;
-					}
-				}
-				if (!fGotIt)
-				{
-					string abbr1;
-					// at least in Kupang, abbr comes after first hyphen
-					int firstHyphen = fileName.IndexOf('-');
-					int secondHyphen = -1;
-					if (firstHyphen != -1)
-						secondHyphen = fileName.IndexOf('-', firstHyphen + 1);
-					if (secondHyphen > 0)
-					{
-						abbr1 = fileName.Substring(firstHyphen + 1, secondHyphen - firstHyphen - 1);
-					}
-					else if (fileName.Length > 5 && Char.IsDigit(fileName[0]) && Char.IsDigit(fileName[1]))
-					{
-						// Another very common pattern is a two-digit number to order things properly and then
-						// the book abbreviation.
-						if (Char.IsDigit(fileName[2]))
-							abbr1 = fileName.Substring(2, 2).ToUpper() + fileName.Substring(4, 1).ToLower();
-						else
-							abbr1 = fileName.Substring(2, 1).ToUpper() + fileName.Substring(3, 2).ToLower();
-					}
-					else
-					{
-						abbr1 = "abbr" + (++cAbbreviationsInvented);
-					}
-					order.Add(abbr1);
-					fileNames[abbr1] = fileName;
-				}
-			}
-			// Remove existig elements (but preserve attributes).
-			XmlAttributeCollection attrs = fileSeqElt.Attributes;
 			fileSeqElt.RemoveAll();
-			foreach (XmlAttribute attr in attrs)
-				fileSeqElt.Attributes.Append(attr);
-			// Now generate a new set of file elements.
-			foreach (string key in order)
-			{
-				string fileName1;
-				if (!fileNames.TryGetValue(key, out fileName1))
-					continue; // not matched, skip.
-				XmlElement fileNode = doc.CreateElement("file");
-				fileSeqElt.AppendChild(fileNode);
-				fileNode.SetAttribute("name", fileName1);
-				fileNode.SetAttribute("abbr", key);
-				string eng;
-				if (engAbbrs.TryGetValue(key, out eng))
-					fileNode.SetAttribute("eng", eng);
-				string parallel;
-				if (parallelNames.TryGetValue(key, out parallel))
-					fileNode.SetAttribute("parallel", parallel);
-			}
 			XmlWriterSettings settings = new XmlWriterSettings();
 			settings.Encoding = Encoding.UTF8;
 			settings.Indent = true;
@@ -258,7 +165,7 @@ namespace sepp
 			string srcDir = OwDir;
 			if (ConvertingSourceToUsfm())
 				srcDir = SourceDir;
-			OW_To_USFM converter = new OW_To_USFM(Path.Combine(m_workDir, srcDir), Path.Combine(m_workDir, @"USFM"));
+			OW_To_USFM converter = new OW_To_USFM(Path.Combine(m_workDir, srcDir), Path.Combine(m_workDir, @"USFM"), m_options);
 			if (m_tablePaths != null)
 			{
 				converter.TablePaths = m_tablePaths;
@@ -292,11 +199,16 @@ namespace sepp
 		private void m_buttonOSIS_to_HTML_Click(object sender, EventArgs e)
 		{
 			OSIS_to_HTML converter = new OSIS_to_HTML(
-				Path.Combine(m_workDir, @"OSIS"), Path.Combine(m_workDir, @"HTML"),
+				Path.Combine(m_workDir, @"OSIS"), HtmlPath(),
 				Path.Combine(m_siteDir, @"Conc"), Path.Combine(m_workDir, @"Sepp Options.xml"),
 				m_options);
 			converter.Run(m_filesList.CheckedItems);
 
+		}
+
+		private string HtmlPath()
+		{
+			return Path.Combine(m_workDir, @"HTML");
 		}
 
 		private void m_buttonHTML_to_XHTML_Click(object sender, EventArgs e)

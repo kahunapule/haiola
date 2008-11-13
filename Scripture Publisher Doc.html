@@ -1,15 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-
-  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+  <meta content="text/html; charset=ISO-8859-1"
+ http-equiv="content-type">
   <title>Scripture Publisher</title>
-
-
   <meta content="John Thomson" name="author">
-
-  <meta content="Describes a program to facilitate publishing Scripture in HTML" name="description">
-
+  <meta
+ content="Describes a program to facilitate publishing Scripture in HTML"
+ name="description">
   <style title="Sepp Doc Styles" type="text/css">
 .enhancement { border-style: solid;
 background-color: rgb(255, 123, 253);
@@ -18,17 +16,11 @@ margin-right: 0.5cm;
 }
   </style>
 </head>
-
-
 <body>
-
 <h1>Prophero</h1>
-
 <h1>Scripture Electronic Publishing Package</h1>
-
-Last modified October 5, 2008
+Last modified November 12, 2008 (Prophero version 0.90)
 <h1>Introduction</h1>
-
 <p>Prophero is a program, still very much under development, to
 facilitate the electronic publishing of Scripture. It can be used to
 convert sources in XHTML, HTML, OSIS, USFM, OurWord, or approximate
@@ -37,7 +29,6 @@ set of HTML files which can be used to browse the Scriptures directly
 or to study them by means of a concordance. Footnotes and
 cross-references are supported, and where the destination of a
 cross-reference exists in the site a hot link is created.</p>
-
 <p>In conjunction with ConcStartup, a simple program that can be
 invoked automatically when a CD is inserted, a set of HTML files
 produced by Prophero can be published on a CD. When the CD is inserted,
@@ -45,14 +36,12 @@ the computer will
 display a startup screen offering to run the concordance from CD,
 install a suitable browser, install preferred fonts, or install the
 complete package onto the computer and create shortcuts.</p>
-
 <p class="enhancement">Prophero is still very much under
 development. At many points through this documentation, you will see
 boxes like this describing enhancements I would like to make to it,
 and issues relating to its use that I want to investigate more. You may
 see traces of its old name, Sepp [Scripture Electronic Publishing
 Program], here and there.</p>
-
 <p>At least for now, using Prophero requires a fairly
 sophisticated
 knowledge of computers and file formats. One other package must be
@@ -62,16 +51,12 @@ probably
 need to do some analysis of one or more of the file
 formats&nbsp;Prophero uses
 to figure out what is going wrong. You may need to create or modify a
-CC table or XSLT stylesheet.</p>
-
+CC table or XSLT stylesheet or write a regular expression.</p>
 <p>You can see sample Prophero web sites at <a href="www.e-alkitab.org">www.e-alkitab.org</a>.
 You will probably understand the following discussion more easily if
 you spend a little while becoming familiar with how it works.</p>
-
 <h1>Output: structure of a&nbsp;Prophero publication</h1>
-
 <h2>Files</h2>
-
 <p>A&nbsp;Prophero electronic Bible consists of a root
 index.html file and
 a large collection of files in a subdirectory (of the root containing
@@ -81,38 +66,30 @@ provided with it. The
 exact set you generate and use depends somewhat on options you choose.
 The
 files in Conc include:</p>
-
 <p>Files you supply or modify:</p>
-
 <ul>
-
   <li>Introduction.htm, the file which appears in the main pane
 of the page when it first loads. You can customize this to give any
 sort of introduction you like to your site. It may contain images
 (e.g., SABU-ST3 with indigo GBB logo.jpg in the Kupang Malay site),
 links to additional introductory material, and so forth, in which case,
 those files will typically be in Conc as well.</li>
-
   <li>treeConc.htm, the default file that appears in the
 concordance
 (top right) pane initially. It typically instructs the user to open one
 of the letters and select a wordform. You may wish to localize it.</li>
-
   <li>treeText.htm, the default file for the bottom right content
 pane
 of the concordance. It typically contains instructions to select a
 wordform and then an occurrence. You may wish to localize it.</li>
-
   <li>dummyInner.htm, dummyConc.htm, and dummyText.htm, which are
 used
 by an alternative (largely obsolete) organization of the concordance.
 Most users can omit them.</li>
-
   <li>display.css, the main stylesheet used by the scripture
 files and some of the other panes in the page. You may wish to
 customize it, especially to select the most appropriate fonts for your
 text.</li>
-
   <li>Watermark.jpg. This is a background image for your web
 page. In
 the early sites it has been set to a faint 'watermark' diagonal image
@@ -120,94 +97,73 @@ of the copyright for the site. You can change it to whatever copyright
 notice or other background you want, or delete it. Note that people
 need to be able to read the text against this background; it should not
 use bold colors or black.</li>
-
   <li>Additional material such as
 introductions or appendices.</li>
-
+  <li>index.htm. You may want to change some text in this, such as the
+text that appears in the title bar of your browser.</li>
 </ul>
-
 <p>Files you copy but don't normally edit:</p>
-
 <ul>
-
   <li>Files root.htm, concMain.htm, treeMain.htm,
 treeMaster.htm, or indexconc.htm and concMain.htm, which establish the
 basic organization of the site
 into frames. Each also has a bit of text that appears if the user's
 browser doesn't support frames. You may wish to localize this, but few
 browsers now don't support frames.</li>
-
   <li>Navigation.htm, the source for the navigation bar which
 appears across the top of the page.</li>
-
   <li>display-ie.css, a stylesheet containing special-case rules
 needed for Internet Explorer.</li>
-
   <li>display-ie6.css, a stylesheet containing special-case rules
 needed for IE6 (and possibly previous versions, not yet tested).</li>
-
   <li>Three gif files (plus.gif, minus.gif, bullet.gif)
 containing bullet images used in the tree diagram.</li>
-
   <li>mktree.js, TextFuncs.js, ConcFuncs.js, Navigation.js,
 containing JavaScript code which implements various functions in the
 page.</li>
-
 </ul>
-
 <p>Files Prophero generates:</p>
-
 <ul>
-
   <li>HTML files
 containing the actual scripture text (one file per book or one per
 chapter). (In theory you could supply HTML files as a starting point,
 but this option is not fully developed; ChapterIndex.htm would have to
 be created by hand.)</li>
-
   <li>ChapterIndex.htm, a file generated to contain an index of
 the books and chapters in scripture and any additional material you
 have requested to be included.</li>
-
   <li>concTreeIndex.htm (or ConcIndexBar.htm), a file generated
 to contain a master
 index giving access to the wordforms that occur in your Scripture
 through a concordance.</li>
-
   <li>IndexNNN.htm files, a set of generated files which contain
 individual wordlists (e.g., for one letter of the alphabet), depending
 on options chosen.</li>
-
   <li>wlNNNN.htm files, a set of generated files each of which
 contains a list of occurrences (with a short context for each) of one
-wordform that occurs in your text.&nbsp;</li>
-
+wordform that occurs in your text.</li>
 </ul>
-
+<p class="enhancement">It would be better to give the occurrence-list
+files names derived from the actual word (doing something about any
+illegal characters). This would allow the concordance to be linked to
+from an online dictionary.</p>
 <p>Additional files for a CD distribution</p>
-
 <ul>
-
   <li>ConcStartup.exe, a simple program to launch the index.htm
 file, install a brower or fonts, or install the package.</li>
-
   <li>autorun.inf, the 'magic' file that tells the system to
 launch ConcStartup.exe when a CD is inserted. It also tells the system
 to use Resources\Cloth.ico as the icon for the CD. This is somewhat
 specific to the Kupang region; you may wish to replace it.</li>
-
   <li>Resources\Fonts can contain any font information you wish.
 Files in this folder of type TTF get installed by the install fonts
 button.</li>
-
   <li>Resources\Cloth.ico is the icon for both the CD and the
 shortcuts the program makes. You can subsitute your own icon if you
 wish. It should have both 32x32 and 16x16 versions.</li>
-
   <li>Resources\Firefox2.0.0.6.exe is an installer for Firefox,
 run
 by the install browser button.</li>
-
   <li>Resources\StartupSettings.xml is a simple XML file which
 controls some of ConcStartup's behavior. It allows you to specify the
 name of the browser installation file (which will typically change as
@@ -215,18 +171,14 @@ new versions of Firefox come out), the default directory (relative to
 Program Files) where ConcStartup will initially propose to install
 things, and the name of the shortcut ConcStartup will make when
 installing.</li>
-
 </ul>
-
 <span class="enhancement">Installing relative to Program
 Files is probably not a good idea, especially for Vista. Find a better
 option.</span>
 <ul>
-
   <li>Resources\Splash.jpg is the background image displayed by
 ConcStartup. You can replace it with any other image (preferably the
 same size). Remember various buttons will be overlaid.</li>
-
   <li>Resources\Locales contains localization files for
 ConcStartup.
 Each file represents one localization (e.g., Indonesian.id). The main
@@ -237,173 +189,114 @@ lines. The msgstr line should contain the localized version of the
 msgid line. The file extension should match the system abbreviation of
 the language; it is matched against the system's UI language to pick a
 default localization on startup.</li>
-
 </ul>
-
 <ul>
-
 </ul>
-
 <p>Additional structure for a multi-language CD</p>
-
 <ul>
-
   <li>Each language has a folder whose name is the name of the
 language, and which contains the Conc directory and index.htm for that
 language.</li>
-
   <li>There is a master index.html file in the root directory.</li>
-
   <li>Resources\SiteIntroduction.htm is a file you can customize
 to
 provide an overall introduction to the site and the collection of
 languages.</li>
-
   <li>Resources\LanguageIndex.htm is a generated index of all the
 languages on the CD (when installed on a hard disk, of all the ones the
 user has
 chosen to install).</li>
-
   <li>Resources\Navigation.htm and Resources\root.htm help
 provide the structure of the top-level introduction.html</li>
-
 </ul>
-
 <p class="enhancement">Test with other
 browsers besides Firefox and Internet Explorer 6 and 7. If possible get
 it to work with them too.</p>
-
 <p class="enhancement">Many of the pages generated will
 not make much sense
 isolated from the frameset. I've seen documentation of a technique for
 diverting the browser to the proper root file if one of the child pages
 is opened independently (e.g., from a google search). It would be nice
 to do this.</p>
-
 <p class="enhancement">ConcStartup could be
 further configurable to use a specified icon.</p>
-
 <p class="enhancement">ConcStartup could be
 localized into more languages.</p>
-
 <p class="enhancement">Clarify exactly what the
 localization file extension is and what the possible abbreviations are.</p>
-
 <h2>Organization into frames (alphaTreeMf index type).</h2>
-
 <p>Prophero organizes its data into frames. The frames are
 initially organized like this:</p>
-
 <ul>
-
   <li>index.htm</li>
-
   <ul>
-
     <li>navigation (Conc\Navigation.htm)</li>
-
     <li>body (Conc\root.htm)
       <ul>
-
         <li>index (ChapterIndex.htm)</li>
-
         <li>main (Introduction.htm)</li>
-
       </ul>
-
     </li>
-
   </ul>
-
 </ul>
-
 <p>Selecting most links in the index pane replaces
 Introduction.htm with an alternative file, one of the Scripture chapter
 (or book)
 files. Clicking the concordance
 link replaces root.htm with another file, producing this organization:</p>
-
 <ul>
-
   <li>index.htm</li>
-
   <ul>
-
     <li>navigation (Conc\Navigation.htm)</li>
-
     <li>body (Conc\treeMaster)
       <ul>
-
         <li>outer (concTreeIndex.htm)</li>
-
         <li>concholder (treeMain.htm)
           <ul>
-
             <li>conc (treeConc.htm)</li>
-
             <li>main (treeText.htm)</li>
-
           </ul>
-
         </li>
-
       </ul>
-
     </li>
-
   </ul>
-
 </ul>
-
 <p>In this organization, the contents of the outer pane will be
 replaced with one of the indexNNN.htm files when the user expands one
 of the letters of the alphabet. Each of these index files contains an
 apparently similar tree diagram with a different letter expanded.</p>
-
 <p>When the user selects a wordform, treeConc.htm (which just
 contains
 brief instructions) is replaced with one of the wlNNNN.htm files
 containing the
 occurrences of that word in a brief line of context.</p>
-
 <p>When the user selects an occurrence, treeText.htm is replaced
 with one of the htm files containing a chapter (or book) of Scripture
 (scrolled to
 the appropriate place, with all occurrences of the word highlighted).</p>
-
 There are other ways of organizing the tree of wordforms, which so far
 have not proved as useful as the default (known as alphaTreeMf). See
 appendix A.<br>
-
 <h1>Overview of the process</h1>
-
 <p>The basic operation of Prophero, if you are starting from
 OurWord
 files, works like this:</p>
-
 <ul>
-
   <li>Create a working directory for the process by unzipping
 the Prophero package (get it from john_thomson@sil.org for now). For
 the moment
 this working directory MUST be C:\BibleConv.</li>
-
 </ul>
-
 <p class="enhancement">I wish the build process created
 this package
 automatically. For now I have to do it manually each time I make a
 version to give someone, and it is error-prone.</p>
-
 <p class="enhancement">It should be possible to configure
 Prophero to use a different working directory.</p>
-
 <p class="enhancement">Prophero&nbsp;should be posted
 on a web site
 somewhere so people can get it directly.</p>
-
 <ul>
-
   <li>Download and install CPython if you do not already have
 it. Go to&nbsp;<a href="http://www.python.org/download/">the
 CPython web site</a>
@@ -412,59 +305,58 @@ expects
 to find Python.exe in C:\python25/python.exe. This could be made
 configurable if necessary. (Later versions of Python are probably OK,
 too.)</li>
-
+  <li>You need the Microsoft utility program msxsl.exe. You can
+download it <a
+ href="http://www.microsoft.com/downloads/details.aspx?familyid=2FB55371-C94E-4373-B0E9-DB4816552E41&amp;displaylang=en">here</a>:.
+It further requires msxml, which you can find following a link on the
+msxsl page. (Warning: Propero does not currently give a helpful error
+message if msxsl.exe is not found on your path. This can be confusing.
+I hope to improve it.)</li>
+</ul>
+<p class="enhancement">Detect the absence of msxsl.exe and give a
+helpful error message.</p>
+<ul>
   <li>Obtain the DotNet version of the CC DLL, for example, from
 FieldWorks or EncConverters&nbsp;</li>
-
 </ul>
-
 <p class="enhancement">(***Todo: links. Or perhaps include
 this
 with instructions how to register it manually? Or maybe it doesn't need
 to be installed if in the same directory as Prophero? Investigate.)</p>
-
 <ul>
-
   <li>Unzipping&nbsp;Prophero should have created a
 subdirectory,
 C:\BibleConv\Work. Create a subdirectory there whose name is the name
 of your language. Within it, create a subdirectory called "OW". Copy
 your OurWord db files into C:\BibleConv\&lt;langname&gt;\OW.</li>
-
   <li>Run&nbsp;Prophero (shortcut in root of BibleConv). It
 looks like this:</li>
-
 </ul>
-
-<img style="width: 634px; height: 306px;" alt="A screenshot should appear here" src="SeppRootScreenshot.JPG"><br>
-
+<img style="width: 634px; height: 306px;"
+ alt="A screenshot should appear here" src="SeppRootScreenshot.JPG"><br>
 <ul>
-
   <li>Select your language (typically only one...if you are
 working on
 several, repeat the previous two steps for each, and select the one you
 want to work on). Click "Work on selected project". You should then see
 a dialog like this:</li>
-
 </ul>
-
-<h1><img style="width: 545px; height: 395px;" alt="Here you should see a picture of the application running" src="SeppScreenshot.JPG"></h1>
-
+<h1><img style="width: 545px; height: 395px;"
+ alt="Here you should see a picture of the application running"
+ src="SeppScreenshot.JPG"></h1>
 <p>Next you must set some options, minimally the input files you
 want included in your publication and some related information. Click
 the Edit options button. It brings up this dialog (initially the list
 will be empty). Click Adjust File List to populate the first four
 columns with Prophero's best guesses.</p>
-
-<p><img style="width: 724px; height: 521px;" alt="Picture of dialog" src="Sepp_Options_Input.JPG"></p>
-
+<p><img style="width: 724px; height: 521px;" alt="Picture of dialog"
+ src="Sepp_Options_Input.JPG"></p>
 <p>The file column contains the names (without extensions) of all
 the files in C:\BibleConv\&lt;language&gt;\OW. These are your
-inpu files. The only way to change this list is to add or remove files
+input files. The only way to change this list is to add or remove files
 in the OW directory and Adjust File List again. You should remove any
 files that are not Scripture you want to publish. (Of course, keep a
 copy elsewhere if they are useful for other purposes!)</p>
-
 <p>Prophero attempts to guess which canonical book each file
 represents, and sorts them accordingly. If it finds one of the standard
 book abbreviations in the file name, it will guess that book.
@@ -474,19 +366,18 @@ it will mark the book as "???" and put it at the end. You can correct
 the guesses by clicking on the abbreviation in the first column and
 selecting the correct one for a particular book. Prophero will
 automatically re-order it.</p>
-
 <p>The third column contains the book abbreviations that will
 actually appear in the Concordance. Propero guesses the standard
 English ones. Correct any that need it by clicking and typing.</p>
-
 <p>The fourth column contains the full book names. These are used
 for a couple of things, but the most important is detecting
 cross-references and turning them into hot links. The book name that
 appears by default is taken from the (first) \h field in your file (if
-any). You should correct it if necessary to the name used (hopefully
+any). If there are no \h fields it will take the first \mt. You should
+correct it if necessary to the name used (hopefully
 consistently :-) for that book in cross-references to it.</p>
-
-<p>The fifth column is optional. If you have created introduction
+<p>The fifth column is optional. If you have created separate
+introduction
 files for any of your books, you should place them
 in&nbsp;C:\BibleConv\&lt;language&gt;\Intro.
 Click in the fifth column to see a combo box listing all the files from
@@ -495,25 +386,20 @@ book.&nbsp;These
 files can be
 anything that can be displayed within a web page, for example, HTML,
 PDF, or JPG files.</p>
-
 <p class="enhancement">Enhance ConcStartup with an option
 to install Acrobat reader, for use when introduction or extra files
 need it.</p>
-
 <p>You may wish to explore the other tabs at this point, or even
 read the section below which discusses them. However, they all have
 defaults sufficient for a first try at least. When you are satisfied,
 click OK to save the input file and other options information.</p>
-
 <p>Now you are back in the Project Tasks dialog. If all goes
 well, you can just click "Do all steps" to run the
-complete process. It is eqivalent to clicking each of the buttons in
+complete process. This is equivalent to clicking each of the buttons in
 the middle column in sequence from top to bottom. The result is a
 complete website at C:\BibleConv\Site\&lt;language&gt;. Open
 the index.htm file to check it out!</p>
-
 <h2>One step at a time</h2>
-
 <p> "Do all steps" is mainly useful when you have most of the
 options
 figured out and have made some small change, perhaps to the text of one
@@ -521,55 +407,48 @@ or more input files. Usually, initially, you will be better taking it
 one step at a time and checking whether errors occur. The individual
 steps in the process correspond to the middle column of buttons. Work
 through them from top to bottom.</p>
-
 <p class="enhancement">Currently Do All Steps will not
 stop running the steps after reporting a problem with an earlier step.
 It should do so.</p>
-
 <ul>
-
   <li>Click the OW to USFM button. This creates a set of PTX
 files in a directory USFM under your work\&lt;langname&gt;
 directory.&nbsp;</li>
-
   <li>Click the USFM to OSIS button. This creates a set of XML
 files in OSIS format in a directory OSIS under
 your&nbsp;work\&lt;langname&gt; directory.</li>
-
   <li>Click the OSIS to HTML button. This creates a set of HTML
 files in two directories, a work\&lt;langname&gt;\HTML
 directory, and also in your final
 output Conc directory, which is
 c:\BibleConv\site\&lt;langname&gt;\Conc.</li>
-
   <li>Click the HTML to XHTML button. This creates a set of XHTML
 files in a directory ConcInput under
 your&nbsp;work\&lt;langname&gt; directory. These
 files are the actual input to the concordance-building process.</li>
-
   <li>Click Buld chapter index to create the book/chapter index
 for your site. It will also copy the files from Intro and Extras to the
 output Conc directory.</li>
-
   <li>Click Build Concordance to generate the remaining output
 files in&nbsp;c:\BibleConv\site\&lt;langname&gt;\Conc.</li>
-  <li>Click Copy Support Files to copy the framework files into your output directory.&nbsp;(Alternatively, if you want another localization: copy all the files from one of&nbsp;the supplied
+  <li>Click Copy Support Files to copy the framework files into your
+output directory.&nbsp;(Alternatively, if you want another
+localization: copy all the files from one of&nbsp;the supplied
 BibleConv\FilesToCopyXXX
-directory to the Conc directory, then move index.htm from the Conc directory to the parent
-directory. Or, you may make a new directory and your own localization. If you do this please send me a copy.)</li>
+directory to the Conc directory, then move index.htm from the Conc
+directory to the parent
+directory. Or, you may make a new directory and your own localization.
+If you do this please send me a copy.)</li>
 </ul>
 <p class="enhancement">Currently the button is hard-coded to copy the
 default English support files. Provide a way to configure it to copy
 other localizations.</p>
 <ul>
-
-
   <li>Edit site\&lt;langname&gt;\Conc\Introduction.htm to
 say whatever you wish as an introduction to your language.</li>
-  <li>Edit site\&lt;langname&gt;\index.htm to replace 'Kupang' with the name of your language, and possibly replace e-alkitab etc.</li>
-
+  <li>Edit site\&lt;langname&gt;\index.htm to replace 'Kupang' with the
+name of your language, and possibly replace e-alkitab etc.</li>
 </ul>
-
 <p>At this point you should be able to open
 c:\BibleConv\site\&lt;langname&gt;\index.htm and review
 your site. Go back and fix any problems. The list control in Project
@@ -586,8 +465,69 @@ just those files checked. You can do that for the early stages, but the
 HTML files, chapter and concordance indexes must be completely
 regenerated with all
 files selected.</p>
+<h3>Introductions</h3>
+<p>If you do not specify an explicit introduction file for a book, and
+Prophero detects introductory material in the Scripture file itself, it
+will generate a rudimentary introduction. This feature probably needs
+more work. It makes some attempt to turn references in such
+introductions into hot links into the Scripture text. You may want to
+edit the resulting files by hand and move them into the Intro folder.
+Files specified there take precedence over generated Introduction files.</p>
+<p>If you want to make your own hot links into the Scripture file, they
+should look like this: </p>
+<pre id="line18">&lt;<span class="start-tag">a</span><span
+ class="attribute-name"> href</span>=<span class="attribute-value">"42MRKLNG-1.htm#C1V1"</span>&gt;(1:1-13)&lt;/<span
+ class="end-tag">a</span>&gt;<br></pre>
+<p>The filename should be the appropriate file for the book (with
+chapter number, if you are doing one chapter per file). The part after
+the # in the href is an anchor. Propero generates an anchor for each
+verse in the form CnVm, where 'n' is the chapter number and 'v' is the
+verse number. The body of the element can be whatever you want the
+hotlink to display, as usual.</p>
+<p class="enhancement">Currently Prophero generates hot links in an
+Introduction when it sees something like (2:3-4:6) in a list (presumed
+to be an outline). This will link to chapter 2 verse 3. If it sees
+(2-3) it currently guesses that you have a book without chapters and
+generates a link to 1:2. This needs to be improved. It will not
+generate a link at all if there is other text in the parentheses; for
+example, (chapters 3-4) does not get made hot at all. I am not sure how
+that should be changed. Maybe allow the user to create one or more
+regular expressions which identify references and extract the chapter
+and verse numbers?</p>
+<h3>Troubleshooting</h3>
+<p>Here are some notes of problems I have encountered and possible
+solutions.</p>
+<h4>Input is not UTF-8</h4>
+<p>OurWord files should all be Unicode (specifically UTF-8). USFM or
+other SFM files may not be. Prophero can cope with this, but you have
+to edit the options file manually. If your starting point is files in
+the USFM directory, you can set the usfmEncoding attribute. &nbsp;The
+value must
+currently be one of the standard CPython codec identifiers. See <a
+ href="http://docs.python.org/lib/standard-encodings.html">the
+Python Codec List</a> for details. If your starting point is SFM files
+(in the Source directory), you can set the inputEncoding attribute.
+This (sorry!) must be one of the DotNet encodings. Use a value from the
+Name column in the table in the description of the <a
+ href="http://msdn.microsoft.com/en-us/library/system.text.encoding.aspx">System.Text.Encoding
+class</a>.</p>
+<h4>OSIS files do not parse</h4>
+<p>One reason for this is lines in the USFM which end with a hyphen and
+get turned into comments in OSIS. This can result in lines like this:</p>
+<pre>&lt;!-- \restore 17-Mar-2008@13:24, Backup Description=17-Mar-2008@13:05, B Altork ---&gt;</pre>
+<p>The problem is the closing ---&gt;, which is illegal, produced by
+appending the close comment onto the trailing hyphen. I hope soon to
+fix the program so it doesn't do this. Until then, you can either
+eliminate the trailing hyphen in the input, or manually edit the OSIS
+and insert a space or something.</p>
+<h4>Angle-bracket quotes</h4>
+<p>Some input files use &lt; &gt; and &lt;&lt; &gt;&gt; to show quotes
+more clearly, but these are not wanted in the output. (Don't confuse
+this, though, with French-based writing systems which use similar marks
+normally for quotations.)</p>
+A file fix_quotes.cct can be used as one step in an SFM import process
+to correct this. It is already part of the OurWord import process.
 <h2>Making a multi-language site</h2>
-
 <p>If you want to generate a multilingual CD, repeat all the
 steps from
 creating the Work\&lt;langname&gt; directory for each language.
@@ -600,112 +540,77 @@ Test the complete site by opening c:\BibleConv\Site\index.html. You may
 also wish to edit C:\BibleConv\Site\Resources\SiteIntroduction.htm to
 say whatever you wish about the collection as a whole.</p>
 <h2>Making a CD</h2>
-
 <p>If you want to create a CD there are additional steps. The
 C:\BibleConv\Site directory contains the files and folders that will be
 at the root of your CD. Expanding the Prophero distribution zip file
 has
 created the following files there (in addition to the folders with your
 language data which Prophero has generated):</p>
-
 <ul>
-
   <li>ConcStartup.exe</li>
-
   <li>autorun.inf</li>
-
   <li>The files described above that go in the
 C:\BibleConv\Resources
 folder, except for the browser installer. You should download a
 suitable one, such as Firefox 2.0.0.6.exe, and put it in the Resources
 folder also.</li>
-
   <li>If necessary edit
 C:\BibleConv\Resources\StartupSettings.xml to indicate the name of the
 browser installer.</li>
-
   <li>Burn a CD using the contents of the Site directory.</li>
-
 </ul>
-
 It's also possible to make a single-language CD. In this case, once
 you've created the files for your language in
 c:\BibleConv\site\&lt;langname&gt;,
 <ul>
-
   <li>Move index.htm and the
 Conc directory from c:\BibleConv\site\&lt;langname&gt; up to
 c:\BibleConv\&lt;langname&gt;.
 Delete&nbsp;c:\BibleConv\site\&lt;langname&gt;.</li>
-
   <li>Delete&nbsp;c:\BibleConv\index.html</li>
-
   <li>Rename c:\BibleConv\index.htm (the index for your one
 language) to c:\BibleConv\index.html (to make it the master site root)</li>
-
   <li>If you wish, you can delete the HTML (*.htm) files in Resources,
 which are not used for a single-language CD.</li>
-
   <li>Download a browser installer and put it in the Resources
 file as noted above.</li>
-
   <li>If necessary edit
 C:\BibleConv\Resources\StartupSettings.xml to
 indicate the name of the browser installer. You may also wish to insert
 the name of your language into the defaultInstallDir and shortcutName
 items in the file.</li>
-
   <li>Burn a CD with the contents of the folder.</li>
-
 </ul>
-
 If you are making a web site there are just a couple of extra steps:<br>
-
 <ul>
-
   <li>Edit the Introduction.htm file to contain whatever you want.</li>
-
   <li>We would like you to include a visit counter in your
 introduction.
 (***Todo: copy the info about the one we've been using. ***)</li>
-
   <li>We would appreciate your including a link to the Prophero
 site
 (***Todo: when we have one...)</li>
-
 </ul>
-
 Other, optional things you might do:<br>
-
 <ul>
-
   <li>Edit the icon (Resources\Cloth.ico).</li>
-
   <li>Supply different or additional fonts in the Resources\Fonts
 folder.</li>
-
 </ul>
-
 <p class="enhancement">The fonts button should be disabled
 or hidden in ConcStartup if there
 are no fonts to install. Or else it should give an appropriate message.</p>
-
 <ul>
-
   <li>Edit display.css to adjust the way your Scripture is
 formattted, especially the most suitable (and fall-back) fonts.</li>
-
   <li>Make Scripture references in your book introductions etc.
 "hot". The scripture files have anchors of the form CnnVnn for each
 verse (even ones in the middle of a bridge!). Scripture is always in a
 frame called "main". Thus, a typical hot link would look like this:
 &lt;a target="main"
 href="Kup-MRK-Final-Qa.htm#C16V1"&gt;16:1-8&lt;/a&gt;.</li>
-
 </ul>
-
 <h1>Additional options pages</h1>
-
 <h3>Miscellaneous</h3>
 <p>By default, converting OSIS to HTML generates a file for each
 chapter (with buttons linking next and previous chapters). You can turn
@@ -718,7 +623,6 @@ occurrences of a word when the concordance loads a longer book is still
 noticeable.</p>
 <p>This tab also holds the collection of conversion steps to apply to
 your input files when starting from an arbitrary (typically SFM) source.</p>
-
 <h3>Concordance</h3>
 <p>This tab groups various options that control properties of the
 concordance that Prophero generates. Most are fairly self-explanatory.
@@ -729,24 +633,24 @@ words that occur very frequently. (Excluding all words that occur more
 than once or twice may also be useful as a spelling check.) You can
 specify some phrases that should be treated as their own entries in the
 concordance (the individual words are also concorded).</p>
-
 <h3>Sorting</h3>
-<p>This tab offers you the ability to control how the words in the concordance are sorted. See&nbsp;<a href="http://palaso.org/archives/28">http://palaso.org/archives/28</a>
+<p>This tab offers you the ability to control how the words in the
+concordance are sorted. See&nbsp;<a href="http://palaso.org/archives/28">http://palaso.org/archives/28</a>
 for a description of the 'custom simple' way of specifying your own
 sort method, which is similar to Toolbox (but can offer more powerful
 options, too). See
 http://www.icu-project.org/userguide/Collate_Customization.html for a
 description of &nbsp;Custom ICU rules. Or, just select the ID of a
 known language to sort the same way as it.</p>
-<p>(Thanks to the Palaso team, developers of WeSay, for the code that made these options possible.)</p>
-<p class="enhancement">I should write up my own description of at least the basics of the two approaches.</p>
-
+<p>(Thanks to the Palaso team, developers of WeSay, for the code that
+made these options possible.)</p>
+<p class="enhancement">I should write up my own description of at least
+the basics of the two approaches.</p>
 <h3>Localization</h3>
 <p>In this tab you can localize the strings which Prophero inserts into
 various files at various points. Hopefully the descriptions in the
 dialog are sufficient to explain exactly where these strings will show
 up.</p>
-
 <h3>Book Names</h3>
 <p>A minor capability of Prophero is to assemble an HTML page that
 indicates corresponding names of Scripture books in different
@@ -761,7 +665,6 @@ ought to be in the 'Extras' folder (see next tab) but you may need to
 move it there by hand. I should check and if necessary fix this. Also,
 the 'adjust files' function should happen automatically when the tab is
 displayed.</p>
-
 <h3>Back Matter</h3>
 If you want to add extra information (appears
 at the end of the book/chapter index, but is not concorded), create a
@@ -775,8 +678,8 @@ give a hotlink to won't have an entry. You can move rows up and down
 with the buttons to control the order in which they will appear. You
 can click Adjust File List again as necessary when you have added (or
 removed) files.<br>
-<p class="enhancement">Since clicking this button is harmless, the adjustment should be made automatically when switching to this tab.</p>
-
+<p class="enhancement">Since clicking this button is harmless, the
+adjustment should be made automatically when switching to this tab.</p>
 <h3>Advanced</h3>
 <p>Don't mess with these options unless you are trying to concord HTML
 files that were not generated by Prophero. The options here allow you
@@ -784,7 +687,6 @@ to tell Prophero how to interpret different CSS classes of HTML
 elements. If you have a set of HTML files with different conventions,
 you can set things up here.</p>
 <h1>Different starting points</h1>
-
 <p>It is possible to start the process at other points,
 for example, if your Scripture is already USFM, OSIS, HTML, or even
 XHTML, or a form of SF which can easily be transformed to USFM.
@@ -794,7 +696,6 @@ sections of this
 document describe what I know about the various intermediate formats.
 If you encounter problems, it may be that I can enhance the program to
 help.</p>
-
 <p>One option is to start with arbitrary SFM
 files,
 typically close to USFM, and run an alternative step to the OW to USFM
@@ -813,13 +714,14 @@ appear in the pattern or replacement as a delimiter.) Multiple lines in
 the same re file are, again, applied in turn to the whole file. Be
 careful: unlike CC, a later substitution may apply to the output of a
 previous one. The regular expression language used is the one supported
-by DotNet 2.0. (See <a href="http://www.regular-expressions.info/dotnet.html">http://www.regular-expressions.info/dotnet.html</a> or <a href="http://msdn.microsoft.com/en-us/library/az24scfc.aspx">http://msdn.microsoft.com/en-us/library/az24scfc.aspx</a>).</p>
+by DotNet 2.0. (See <a
+ href="http://www.regular-expressions.info/dotnet.html">http://www.regular-expressions.info/dotnet.html</a>
+or <a href="http://msdn.microsoft.com/en-us/library/az24scfc.aspx">http://msdn.microsoft.com/en-us/library/az24scfc.aspx</a>).</p>
 <p>In the following sections I will briefly discuss all the stages the
 input goes through in reverse order, both to help you debug any
 problems, and also to discuss the issues you might face starting later
 in the process.</p>
 <h1>XHTML Input</h1>
-
 <p>Starting directly from XHTML has all the complications
 discussed below for starting from HTML. In addition, there is the
 complication that you will need to manually copy the XHTML files to the
@@ -827,72 +729,53 @@ site\&lt;langname&gt;\Conc directory. It remains to be seen
 whether this will work, but I
 don't know of any reason why it wouldn't.
 </p>
-
 <p class="enhancement">It should be possible to work
 entirely with XHTML, not needing an HTML version of the files. Is it?</p>
-
 <h1>HTML to XHTML</h1>
-
 <h2>The HTML input expected</h2>
-
 <p>(Note: you can typically skip this section if your HTML is
 generated from one of the earlier stages.)</p>
-
 <p>Here are the key requirements for an HTML file set
 that&nbsp;Prophero
 can process:</p>
-
 <ul>
-
   <li>The input file must be encoded in UTF8. (***Todo: links to
 TecKit and maybe other tools that can help with encoding conversions)</li>
-
   <li>The Scripture must be organized one book per file or one chapter
 per file. &nbsp;(The appropriate option under Miscellaneous must be set
 accordingly.)</li>
-
   <li>At the start of each verse must be an anchor of the form
 CNVM, where N is the chapter number and M is the verse number. For
 example, &lt;a name="C2V25"/&gt; or &lt;a
 name="C12V1"/&gt;</li>
-
   <li>elements whose contents should not be concorded (for
 example, verse numbers, possibly section headings) must have classes,
 which are listed in the &lt;excludeClasses&gt; element in Sepp
-Options.xml and in the first box in the Advanced tab in the Options dialog..</li>
-
+Options.xml and in the first box in the Advanced tab in the Options
+dialog..</li>
   <li>elements whose contents are not canonical should be given
-classes and listed in the &lt;specialClasses&gt; element or the second box in the Advanced tab..</li>
-
+classes and listed in the &lt;specialClasses&gt; element or the second
+box in the Advanced tab..</li>
   <li>If you want to use display.css unmodified, you need to use
 the system of classes for which it was designed. At this point you will
 have to be able to read CSS files to figure this out.</li>
-
 </ul>
-
 Character encoding issues:<br>
-
 <ul>
-
   <li>The same character should not be used as a word-forming
 character and a punctuation character. The usual culprit is the single
 quote character, used either as a glottal stop or elision marker (as in
 "don't") as well a a quotation mark. If you need single quote as
 word-forming, try to make sure that you use the distinct Unicode
 characters for opening and closing quote as punctuation.</li>
-
   <li>Don't use double-quote as a word-forming character.</li>
-
   <li>The program has not been tested with data outside Unicode
 plane
 zero. I expect some problems, especially if some of the non-plane-zero
 characters are punctuation.</li>
-
   <li>There are some problems with word highlighting if you use
 word-forming characters that are not standard in Unicode.&nbsp;</li>
-
 </ul>
-
 <p class="enhancement">Specifically, the word-highlighting
 code will
 highlight extra occurrences, if the only difference between the word it
@@ -901,80 +784,55 @@ that are not normally word-forming. I have some ideas for fixing this,
 basically by having Prophero construct a regular expression which
 accurately expresses which characters are word-forming in a particular
 file.</p>
-
 Here is a typical document header generated by our current system:<br>
-
 <br>
-
 <span style="font-family: monospace;">&lt;!DOCTYPE
 html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"&gt;&lt;html
 xmlns:osis="http://www.bibletechnologies.net/2003/OSIS/namespace"
 xmlns:msxsl="urn:schemas-microsoft-com:xslt"
 xmlns:user="urn:nowhere"&gt;<br>
-
 &lt;head&gt;<br>
-
 &nbsp;&nbsp;&nbsp; &lt;META http-equiv="Content-Type"
 content="text/html; charset=UTF-8"&gt;<br>
-
 &nbsp;&nbsp;&nbsp; &lt;link rel="stylesheet"
 href="display.css" type="text/css"&gt;<br>
-
 &nbsp;&nbsp;&nbsp; &lt;!--[if IE]&gt;<br>
-
 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &lt;link href="display-ie.css"
 rel="stylesheet" type="text/css" /&gt;<br>
-
 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &lt;![endif]--&gt;&lt;!--[if
 lte IE 6]&gt;<br>
-
 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &lt;link href="display-ie6.css"
 rel="stylesheet" type="text/css" /&gt;<br>
-
 &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp; &lt;![endif]--&gt;<br>
-
 &nbsp;&nbsp;&nbsp; &lt;script src="TextFuncs.js"
 type="text/javascript"&gt;&lt;/script&gt;<br>
-
 &nbsp;&nbsp;&nbsp; &lt;script
 type="text/javascript"&gt;var curBook="Reta'
 Ahun-hunut"&lt;/script&gt;<br>
-
 &lt;/head&gt;<br>
-
 &lt;body onload="onLoadBook(curBook)" class="mainDoc"&gt;</span>
 <p>Some important things to note:</p>
-
 <ul>
-
   <li>To make the selected-word highlighting behavior work
 requires the TextFuncs.js script</li>
-
   <li>To make our stylesheets work requires the mainDoc class and
 the stylesheet links.</li>
-
   <li>The stylesheet overide behavior for IE requires the bizarre
 comments</li>
-
   <li>The script defining the curBook variable and the onLoadBook
 call in the &lt;body&gt; element are needed to get the book
 name into the Navigation bar.</li>
-
 </ul>
-
 <p>If you want popup footnotes to work, the callers should look
 like this:</p>
-
 <pre>&lt;a href="#FNac" onclick="hilite('FNac')"&gt;&lt;span class="crmark"&gt;c&lt;/span&gt;&lt;span class="crpopup"&gt;Roma 7:15-23&lt;/span&gt;&lt;/a&gt; <br></pre>
-
 <p>The contents of the span with class crpopup (or popup for
 non-cross-reference footnotes) is the text that actually pops up.</p>
-
 <p>The onclick is required only to get the behavior of
 highlighting the particular footnote when following the link. In
 addition, to make this work, the target (the actual footnote) must be
@@ -983,22 +841,18 @@ attribute; this behavior won't work with footnotes containing anchors
 rather than IDs. (Of course "FNac" should be replaced by whatever ID
 the particular footnote has, and the crmark span is whatever symbol you
 want to appear in the body text to mark the footnote.)</p>
-
 <p>Problem: currently, the ChapIndex.htm file is generated from
 the OSIS input. You will have to create this by hand if you are not
 coming through OSIS.</p>
-
 <p class="enhancement">Give Prophero the ability
 to generate a ChapIndex.htm from XHTML using classes to identify
 chapter and book names. Another approach would be to allow the book
 name and number of chapters to be specified as optional attributes in
 the files list.</p>
-
 <p class="enhancement">Test this. One way would be to go
-back to the WEB bible and see if we can make a concordance out of the HTML version directly.</p>
-
+back to the WEB bible and see if we can make a concordance out of the
+HTML version directly.</p>
 <h2>The transformation on to XHTML</h2>
-
 <p>Getting from HTML to XHTML uses a little program (included in
 the Prophero distribution, but not one I wrote) called tidy. This is
 simply
@@ -1006,31 +860,24 @@ run on
 each input file, with the options "-asxhtml -utf8". You may want to try
 running it manually on one or two of your files. It tends to complain
 rather verbosely; most of the things it mentions are not problems. Use</p>
-
 <pre>tidy -asxhtml -utf8 -o output.xml input.htm<br></pre>
-
 <p>Put quotes around the file names if they have spaces.</p>
-
 <p>The conversion process&nbsp;
 produces a log, which is written to
 work\&lt;language&gt;\HTML\ConversionReport.txt. It is worth
 inspecting
 this to see if any problems reported deserve attention.</p>
-
 <p class="enhancement">Currently it complains about our
 generating id
 attributes for footnotes like "1Cor.2.7" &nbsp;which start with
 numbers. This doesn't seem to bother any browser I've tried, but I
 probably should fix it.</p>
-
 <p class="enhancement">Problem: tidy reports all kinds of
 things that don't matter. Try to at
 least document the most common warnings that can be ignored. Ideally
 the program might filter these from the output and only report any
 other problems.</p>
-
 <h1>OSIS input (OSIS to HTML)</h1>
-
 <p>A lot could be said here. The bulk of the work is done by an
 xsl
 stylesheet, osisToHtml.xsl. I am using msxsl, so if you modify this
@@ -1038,7 +885,6 @@ stylesheet you can use anything msxsl handles. The input is OSIS,
 specifically with the main structure in sections and paragraphs, and
 chapters and verses as milestones.
 (***Todo: insert a link.)</p>
-
 <p>The stylesheet is explicit about the elements it handles. This
 somewhat unfortunately means that if your OSIS contains elements it
 doesn't know about, it will just leave them out. A careful check is
@@ -1050,50 +896,37 @@ Genesis and the NT; anything that contains a different sort of element
 particularly carefully. I have done one complete Bible (the World
 English Bible) and fixed some problems unique to Psalms, but I haven't
 checked the overall result systematically.</p>
-
 <p>OSIS has many variants. This stylesheet is written with
 various expectations. Some that I know about are:</p>
-
 <ul>
-
   <li>The tree hierarchy is primary; verses hierarchy is
 indicated with milestones</li>
-
-  <li>Critical information is taken from the <span style="font-style: italic;">sID</span> and <span style="font-style: italic;">n</span> attributes of
+  <li>Critical information is taken from the <span
+ style="font-style: italic;">sID</span> and <span
+ style="font-style: italic;">n</span> attributes of
 &lt;verse&gt; elements</li>
-
   <li>Elements like &lt;title short="1 Yohanis"/&gt; are
 necessary to supply the book titles used in the book/chapter index.</li>
-
   <li>&lt;chapter&gt; elements provide the list of
 chapters.</li>
-
 </ul>
-
 Note that post-processing follows the stylesheet transformation, to do
 some things I could not find a clean way to do in XSLT. These include:<br>
-
 <ul>
-
   <li>spans with class <span style="font-style: italic;">notemark</span>
 containing a single one of the first 20 letters of the alphabet are
 converted to the symbols "*", "&dagger;", "&Dagger;",
 "&sect;" and
 various combinations of two of them.</li>
-
 </ul>
-
 <p class="enhancement">The list of sybols should be
 configurable, including not doing this.</p>
-
 <ul>
-
   <li>duplicate anchors are disambiguated by adding a suffix. For
 example, if &lt;a name="C16V9"/&gt; occurs twice, as in the
 Kupang
 version of Mark with two endings, the second is converted to &lt;a
 name="C16V9_1"/&gt;. </li>
-
   <li>certain elements (starting with "&lt;p
 class=\"crossRefNote\"",&nbsp;"&lt;div
 class=\"parallel\"&gt;", or
@@ -1101,8 +934,10 @@ class=\"parallel\"&gt;", or
 for things
 that look like references, and the references converted into hot links.
 Something "looks like a reference" if it starts with one of the strings
-given in the fourth colum of the Options/Input tab ( the <span style="font-style: italic;">parallel</span>
-attribute of a &lt;file&gt; element in the options file), and is followed by
+given in the fourth colum of the Options/Input tab ( the <span
+ style="font-style: italic;">parallel</span>
+attribute of a &lt;file&gt; element in the options file), and is
+followed by
 appropriate
 arrangements of numbers. A single digit is interpreted as a verse in
 chapter 1; C:V is chapter/verse; C:V-V links to the first verse in the
@@ -1116,7 +951,6 @@ be somewhat cryptic, typically error messages generated by msxsl
 (especially if you have been modifying the osis2html.xsl stylesheet).
 Hopefully it will
 provide some clue what went wrong.</p>
-
     <p>The conversion process also
 produces a log, which is written to
 work\&lt;language&gt;\OSIS\ConversionReport.txt. It may be
@@ -1125,41 +959,31 @@ inspecting
 this to see if any problems reported deserve attention. If it contains
 error messages rather than just warnings, Prophero will automatically
 display it for you.</p>
-
   </li>
-
 </ul>
-
 <p class="enhancement">It should be possible to configure
 the elements that are searched for references to convert.</p>
-
 <p class="enhancement">Ideally it should be smart enough
 to spot
 references embedded in longer text. It would be nice to make hot-links
 within ordinary footnotes, for example.</p>
-
 <p class="enhancement">The tricks that are performed after
 the initial conversion to HTML should be available for use by projects
 starting with HTML</p>
-
-
 <p class="enhancement">It would be better if the
 stylesheet generated
 something really ugly...large, bold, red text, say...for any elements
 it does not expect in a particular place. Or made a log of them.</p>
-
 <p class="enhancement">Possibly the intended
 output file should be deleted if a new one is not generated
 successfully.</p>
-
 <h1>USFM input (USFM to OSIS)</h1>
-
 <p>I don't know much about this. Nathan's script seems to do a
 good job
 of converting most things I've thrown at it, once I fixed a couple of
 minor issues.</p>
-
-<p>See&nbsp;<a href="http://confluence.ubs-icap.org/display/USFM/Home;jsessionid=09E346041AC02A279629A6752614F516">the
+<p>See&nbsp;<a
+ href="http://confluence.ubs-icap.org/display/USFM/Home;jsessionid=09E346041AC02A279629A6752614F516">the
 USFM specification</a> for details on the USFM format.</p>
 <p>One problem that has come up is that if a paragraph and chapter
 start at the same place, the USFM spec is silent as to whether \c or \p
@@ -1170,19 +994,18 @@ paragraph of the chapter omitted. One workaround is to put doubtful
 USFM files into the Source directory, and apply the regular expression
 script file reverseBcBp.re to convert to USFM. This re-orders the
 markers if they are not in the expected order.</p>
-
 <p>In Sepp Options.xml, on the options element, you can set the
 attribute usfmEncoding if your USFM data is not in UTF8. The value must
-currently be one of the standard CPython codec identifiers. See <a href="http://docs.python.org/lib/standard-encodings.html">the
+currently be one of the standard CPython codec identifiers. See <a
+ href="http://docs.python.org/lib/standard-encodings.html">the
 Python Codec List</a> for details.</p>
-<p><span class="enhancement">It would be very handy to have an option for this in the Options dialog, probably Miscellaneous tab.</span></p>
-
+<p><span class="enhancement">It would be very handy to have an option
+for this in the Options dialog, probably Miscellaneous tab.</span></p>
 <p>If something goes badly wrong (so an output file can't be
 produced)
 a dialog will be displayed giving some information. Typically it will
 be quite cryptic, such as a Python stack dump. Hopefully it will
 provide some clue what went wrong.</p>
-
 <p>The conversion process also produces a log, which is written
 to
 work\&lt;language&gt;\USFM\ConversionReport.txt. It is worth
@@ -1190,53 +1013,41 @@ inspecting
 this to see if any problems reported deserve attention. For example,
 any SF markers which the program did not know how to convert will be
 noted here, with a reference.</p>
-
 <h1>OurWord input</h1>
-
 <p>This is definitely the most dicey part of the input process. I
 don't
 have any specification of the OW format, and it's clearly possible to
 insert unexpected stuff. I've kludged something that works for the
-Kupang data and several other projects in Timor, but am not sure how well it will work for other projects.
+Kupang data and several other projects in Timor, but am not sure how
+well it will work for other projects.
 John Duerkson contributed the main CC table which handles the main
 conversion.</p>
-
 <p>Most SF markers in OW appear not to be significant unless at
 start
 of line. Many fields must be considered to extend from the marker to
 the next start-of-line marker, even if other markers intervene.</p>
-
 <p>It is very easy, where much material (e.g., back translations,
 notes
 not for publication) is being deleted, to end up with a newline that
 eventually becomes an unwanted space before a note caller.</p>
-
 <p>The actual process involves a number of steps.</p>
-
 <ul>
-
   <li>A table deletes end-of-line white space, which often shows
 up unexpectedly in the output somewhere.</li>
-
   <li>Fields beginning \bt, \ov, \nt, \al, \e, and \chk2 are
 deleted
 (applying the principle that the fields extend to the next
 start-of-line marker). (Otherwise JohnD's table turns them into notes,
 and though Nathan's script discards these, we tend to get extra
 whitespace, especially before note callers.)</li>
-
   <li>A special step splits up \vt blocks which contain more than
 one footnote caller, provided the \vt block is followed by the correct
 number of \ft blocks.</li>
-
   <li>Two of JohnD's CC tables do the bulk of the work.</li>
-
   <li>A final cleanup table makes sure there isn't any white
 space, especially newlines, between text and following publishable
 notes.</li>
-
 </ul>
-
 JohnD's table marks fields it does not understand by leaving them in
 the output but inserting *** before them. This means that the only
 indication of a problem is typically these ***\ sequences at start of
@@ -1247,42 +1058,29 @@ don't match). If you see such a report you need to clean up the input
 (or have me improve the program :-) before you can continue.
 <p class="enhancement">The program should allow additional
 CC tables to be applied prior to and possibly after the main conversion.</p>
-
 <p class="enhancement">The program should allow additional
 fields to be deleted completely prior to the main conversion.</p>
-
 <p class="enhancement">The program should offer the option
 of converting an unknown field to some known field.</p>
-
 <p class="enhancement">There could be an option allowing
 back translation information to be preserved
 through the whole process and made available to end users. Optional
 parallel columns, maybe?</p>
-
 <h1>Other work that might get done some day</h1>
-
 <p class="enhancement">Verse bridges should use
 non-breaking hyphen
 U+2011. In fact, the program should cope with input containing this, a
 regular hyphen, or U+2010 (breaking hyphen).</p>
-
 <p class="enhancement">Should support non-Roman ways of
 detecting sentence endings.</p>
-
 <p class="enhancement">Consider supporting non-Roman ways
 of finding word breaks.</p>
-
 <p class="enhancement">Consider ways of allowing phrases
 to be separate entries in the wordforms list.</p>
-
 <h1>Appendix A: Other concordance organizations</h1>
-
 <p>In the sepp options file, you can select other organizations:</p>
-
 <dl>
-
   <dt>alphaTree</dt>
-
   <dd>This similar in appearance (tree of letters which can be
 expanded), but
 concTreeIndex has all the wordforms and no indexNNN.htm files are
@@ -1290,9 +1088,7 @@ generated. JavaScript is used to expand and collapse items. An
 advantage is being able to expand more than one item at a time.
 However, loading the tree is much slower, and in IE it stays fully
 expanded until you allow the JavaScript to run.</dd>
-
   <dt>rangeTree</dt>
-
   <dd>This is currently implemented like alphaTree, though it
 would be
 possible and better to implement it like alphaTreeMf. Instead of
@@ -1304,9 +1100,7 @@ very large alphabet (making the top-level of the alpha tree too large)
 or if two many words start with the same letter. Warning: it hasn't
 been used for a while, and might be lacking some of the later
 enhancements.</dd>
-
   <dt>twoLevelRange</dt>
-
   <dd>This organizes the list like rangeTree, but the display is
 organized differently. There are two separate vertical columns.
 Selecting a range in the first one puts that range of wordforms into
@@ -1314,43 +1108,25 @@ the second one. This version has not been found very useful, and has
 not been tried for some time. It requires a somewhat different version
 of the frame-organizing files. These may require some adjustment if it
 comes back into favor.</dd>
-
 </dl>
-
 <ul>
-
   <li>index.htm</li>
-
   <ul>
-
     <li>navigation (Conc\Navigation.htm)</li>
-
     <li>body (Conc\indexConc)
       <ul>
-
         <li>outer (concIndexBar.htm)</li>
-
         <li>inner (dummyInner.htm)</li>
-
         <li>concholder (concMain.htm)
           <ul>
-
             <li>conc (dummyConc.htm)</li>
-
             <li>main (dummyText.htm)</li>
-
           </ul>
-
         </li>
-
       </ul>
-
     </li>
-
   </ul>
-
 </ul>
-
 <p class="enhancement">There are really two orthgonal
 variations:
 alphabetic versus equal-range subdivision, and two-pane, JavaScript
@@ -1359,60 +1135,46 @@ supported, probably with two separate properties controlling them. At
 least, the rangeTreeMf option should be supported, for using the
 equal-range approach with the (so far most desired) fast tree
 presentation.</p>
-
 <h1>Appendix B: The Sepp Options.xml file</h1>
-
 <p>The options you set in the Options dialog, and a few others rarely
 changed, are stored in a file called Sepp Options.xml in your
 work\&lt;language&gt; directory.</p>
 <p>Sketchy documentation is provided as comments in the file itself.</p>
-
 <p>The most important part of the options file is the section
 that tells&nbsp;Prophero what files to process and in what order
 they should
 appear in the contents list. A line in the &lt;files&gt;
 section typicallly looks like this:</p>
-
 <pre>&lt;file name="Kup-TIT-Final-Qa.xml" abbr="Tit" eng="Tit" parallel="Titus" intro="Kup-TIT-Intro-Q.htm"/&gt;<br></pre>
-
 <p>The <span style="font-style: italic;">name</span>
 attribute gives the actual computer name of the file. For historical
 reasons, it should always have the extension xml.&nbsp;Prophero
 will substitute
 the appropriate extension when dealing with other kinds of files.</p>
-
 <p class="enhancement">It would be neater not
 to require any extension here.</p>
-
 <p>The <span style="font-style: italic;">abbr</span>
 attribute is the abbreviation that should appear for this book in
 references in the concordance (top right) pane.</p>
-
 <p>The <span style="font-style: italic;">eng</span>
 attribute is only for documentation and perhaps to make things easier
 for an english speaker setting things up. It is the English
 abbreviation of the book.</p>
-
 <p>The <span style="font-style: italic;">parallel</span>
 attribute is the version of the book name that occurs in
 cross-references. This is used in detecting places where
 cross-references can automatically be made "hot."</p>
-
 <p>The optional&nbsp;<span style="font-style: italic;">intro</span>
 attribute gives the name of any introduction file that is provided (in
 the Intro folder) for this book.</p>
-
 <p>If you have extra files and want links to them appended to the
 book/chapter index, put entries like this in the
 &lt;extraFiles&gt; element:</p>
-
 <p>&lt;file name="Kup-CREED-Final-Q.htm" linkText="Pengakuan
 Iman Rasuli"/&gt;</p>
-
 <p>Here <span style="font-style: italic;">name</span>
 gives the name of the file and <span style="font-style: italic;">linkText</span>
 gives the actual text that should appear in the index.</p>
 <p class="enhancement"></p>
-
 </body>
 </html>
