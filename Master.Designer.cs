@@ -73,7 +73,7 @@ namespace sepp
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(163, 13);
 			this.label1.TabIndex = 10;
-			this.label1.Text = "Version 0.90, 12 November 2008";
+			this.label1.Text = "Version 0.91, 30 November 2008";
 			// 
 			// Master
 			// 

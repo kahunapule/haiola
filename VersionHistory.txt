@@ -1,0 +1,6 @@
+Prophero version history
+
+0.91 30 November
+	- fixed crash when splitting chapters if missing book name in options
+	- added option to use private osis1html.xml
+0.90 12 November: first numbered release.
