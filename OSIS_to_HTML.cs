@@ -99,12 +99,13 @@ namespace sepp
 			foreach (XmlNode item in node.ChildNodes)
 			{
 				string fileName = item.Attributes["name"].Value;
-				XmlAttribute attr = item.Attributes["parallel"];
-				if (attr == null)
-					continue;
-				string parallel = attr.Value;
 				string htmlFileName = Path.ChangeExtension(fileName, "htm");
-				m_files[parallel] = htmlFileName;
+				XmlAttribute attr = item.Attributes["parallel"];
+				if (attr != null)
+				{
+					string parallel = attr.Value;
+					m_files[parallel] = htmlFileName;
+				}
 				m_nextFiles[prevFile] = htmlFileName;
 				prevFile = htmlFileName;
 			}
@@ -128,7 +129,8 @@ namespace sepp
 
 			if (m_options.ChapterPerFile)
 			{
-				if (new ChapterSplitter(outputFilePath, m_options).Run(ref m_prevFile, m_nextFiles[outputFileName]))
+				string message = new ChapterSplitter(outputFilePath, m_options).Run(ref m_prevFile, m_nextFiles[outputFileName]);
+				if (message == null)
 				{
 					File.Delete(outputFilePath);
 					foreach (string itemPath in Utils.ChapFiles(outputFilePath))
@@ -137,7 +139,7 @@ namespace sepp
 				}
 				else
 				{
-					MessageBox.Show("Could not split " + outputFilePath, "Error"); // Enhance: provide more info.
+					MessageBox.Show("Could not split " + outputFilePath + " - " + message, "Error"); // Enhance: provide more info.
 				}
 			}
 
@@ -582,7 +584,10 @@ namespace sepp
 
 		internal override string CreateArguments(string inputFilePath, string outputFilePath)
 		{
-			string scriptPath = Path.GetFullPath(@"..\..\osis2Html.xsl");
+			// Look for an override of osis2Html, if not found use standard one.
+			string scriptPath = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(inputFilePath)), "osis2Html.xsl");
+			if (!File.Exists(scriptPath))
+				scriptPath = Path.GetFullPath(@"..\..\osis2Html.xsl");
 			return "\"" + inputFilePath + "\" \"" + scriptPath + "\" -o \"" + outputFilePath + "\" copyright=\"" + m_copyright + "\"";
 
 		}

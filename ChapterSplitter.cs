@@ -45,10 +45,10 @@ namespace sepp
 		internal const string tocTag = "TOC";
 		
 		/// <summary>
-		/// Run the breakdown...return true if successful.
+		/// Run the breakdown...return null if successful, error message otherwise.
 		/// </summary>
 		/// <returns></returns>
-		public bool Run(ref string prevFile, string nextFile)
+		public string Run(ref string prevFile, string nextFile)
 		{
 			m_prevFile = prevFile;
 			if (nextFile != null)
@@ -61,16 +61,16 @@ namespace sepp
 			reader.Close();
 
 			if (!GetMainElements())
-				return false;
+				return "problems parsing HTML--could not find <body> element";
 			BuildFootnoteMap();
 			GetChapterAnchors();
 			if (m_chapAnchorIndexes.Count == 0)
-				return false;
+				return "no chapters found";
 			MakeChapterFiles();
 			if (m_toc != null)
 				MakeTocFile(); // Depends on info set up by MakeChapterFiles!
 			prevFile = m_prevFile;
-			return true;
+			return null;
 		}
 
 		/// <summary>

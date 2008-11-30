@@ -110,6 +110,7 @@
 
 <xsl:template match="osis:div[@type='book' or @type='majorSection']">
 
+	<!-- If there are sections, use them to make a table of contents.-->
   <xsl:if test="osis:div[@type='section']">
 
     <xsl:choose>
@@ -212,6 +213,7 @@
 
   <br/><xsl:text>&#10;</xsl:text>
 
+	<!-- Find the most promising element and make a main heading.-->
   <xsl:choose>
     <xsl:when test="osis:title/osis:title[@level='2']">
 
