@@ -25,10 +25,12 @@ namespace sepp
 		private Dictionary<string, string> m_footnotes = new Dictionary<string, string>();
 		private Dictionary<string, string> m_crossRefs = new Dictionary<string, string>();
 		private string m_prevFile; // Exact name (with chapter number) of target file for previous link in first chapter; or null if none
-		private string m_nextFile; // Exact name of file for next link in last chapter.
+		private string m_prevMainFile; // Name of chapter before current book.
+		private string m_nextMainFile; // Exact name of file for next link in last chapter.
 		// Dictionary built while writing chapter files mapping anchors (the value of the name attribute of <a> elements)
 		// to the file containing them. This is used in patching hrefs in the TOC.
 		Dictionary<string, string>m_anchorToFile = new Dictionary<string, string>();
+		private OSIS_to_HTML m_parent;
 		private Options m_options;
 		/// <summary>
 		/// Make one.
@@ -48,12 +50,13 @@ namespace sepp
 		/// Run the breakdown...return null if successful, error message otherwise.
 		/// </summary>
 		/// <returns></returns>
-		public string Run(ref string prevFile, string nextFile)
+		public string Run(ref string prevFile, string nextFile, OSIS_to_HTML parent)
 		{
-			m_prevFile = prevFile;
+			m_parent = parent;
+			m_prevFile = m_prevMainFile = prevFile;
 			if (nextFile != null)
 			{
-				m_nextFile = BuildNextFileLinkTargetName(Path.Combine(m_outputDir, nextFile));
+				m_nextMainFile = BuildNextFileLinkTargetName(Path.Combine(m_outputDir, nextFile));
 			}
 			// Read file into input
 			StreamReader reader = new StreamReader(m_inputPath, Encoding.UTF8);
@@ -66,11 +69,32 @@ namespace sepp
 			GetChapterAnchors();
 			if (m_chapAnchorIndexes.Count == 0)
 				return "no chapters found";
-			MakeChapterFiles();
-			if (m_toc != null)
-				MakeTocFile(); // Depends on info set up by MakeChapterFiles!
-			prevFile = m_prevFile;
+			if (m_parent.KeepAsSingleFile(m_inputFileName))
+			{
+				MakeSingleFile();
+				prevFile = m_prevFile;
+			}
+			else
+			{
+				// break into chapters
+				MakeChapterFiles();
+				prevFile = m_prevFile; // Return for next book the last chaper of this (not the TOC!)
+				if (m_toc != null)
+					MakeTocFile(); // Depends on info set up by MakeChapterFiles!
+			}
 			return null;
+		}
+
+		/// <summary>
+		/// Make a single file, as there is only one chapter.
+		/// For consistency with BuildNextFileLinkTargetName, it will be called TOC if there is a TOC, otherwise, _1.
+		/// </summary>
+		private void MakeSingleFile()
+		{
+			// Determine the name that the previous file will use to link to this.
+			// This is a bit redundant, but more robust than other approaches.
+			string outputFile = BuildNextFileLinkTargetName(Path.Combine(m_outputDir, m_inputFileName));
+			MakeChapterBodyPath(m_toc + m_body, Path.Combine(m_outputDir, outputFile), GetPrevFileName(-1), m_nextMainFile);
 		}
 
 		/// <summary>
@@ -120,8 +144,8 @@ namespace sepp
 
 		private void MakeTocFile()
 		{
-			string nextFile = m_nextFile;
-			if (m_chapNames.Count > 0)
+			string nextFile = m_nextMainFile;
+			if (m_chapNames.Count > 1)
 				nextFile = Path.GetFileName(BuildOutputPathname(m_chapNames[0]));
 			// Scan m_toc for HREFs which need to have the appropriate filename inserted, and do it.
 			// This is any href that is to an anchor in 'the current file' (starts with #) where the anchor is now in one of the chapter files.
@@ -143,7 +167,7 @@ namespace sepp
 				toc.Append(m.Groups);
 			}
 			toc.Append(m_toc.Substring(start, m_toc.Length - start));
-			MakeChapterBody(toc.ToString(), tocTag, nextFile);
+			MakeChapterBody(toc.ToString(), tocTag, GetPrevFileName(-1), nextFile);
 		}
 
 		// Each <p> element in the foonotes list is captured using its id as a key.
@@ -235,7 +259,10 @@ namespace sepp
 			Regex reDivTextAtEnd = new Regex("<div [^>]*class=\"text\"[^>]*>\\s*(<div[^>]*>\\s*)?\\G", RegexOptions.RightToLeft);
 			// Finds the last text division header.
 			Regex reLastDivText = new Regex("<div [^>]*class=\"text\"[^>]*>", RegexOptions.RightToLeft);
-			// loop deliberately omits last chapter
+			// loop deliberately omits last chapter.
+			// Each iteration determines the break at the end of chapter i, and in the process, the start of chapter i+1.
+			// needExtraDivAtStartOfChap is set true when the break is not at a text div boundary, in order
+			// that the extra open div might be put in the following chapter.
 			for (int ichapter = 0; ichapter < m_chapNames.Count - 1; ichapter++)
 			{
 				int endOfChapter = m_chapAnchorIndexes[ichapter + 1];
@@ -266,6 +293,8 @@ namespace sepp
 						endOfChapter = m.Index; // unless we find we can include more in the following chapter.
 					}
 					chapContents = GetBaseChapContents(endOfChapter, startOfChapter, needExtraDivAtStartOfChap, nestedDivHeader);
+					// The next chapter
+					needExtraDivAtStartOfChap = false;
 				}
 				else
 				{
@@ -278,32 +307,55 @@ namespace sepp
 					string nestedDivTrailer;
 					nestedDivHeader = GetNestedDivInfo(lastDivBody, out nestedDivTrailer);
 					chapContents += nestedDivTrailer;
+					needExtraDivAtStartOfChap = true;
 				}
-				MakeChapterBody(chapContents, m_chapNames[ichapter], 
+				MakeChapterBody(OSIS_to_HTML.MoveAnchorsBeforeHeadings(chapContents), m_chapNames[ichapter], GetPrevFileName(ichapter),
 					Path.GetFileName(BuildOutputPathname(m_chapNames[ichapter + 1])));
 				startOfChapter = endOfChapter;
 			}
 			// The final chapter uses the start information as usual, but extends to the end of the whole body.
 			MakeChapterBody(GetBaseChapContents(m_body.Length, startOfChapter, needExtraDivAtStartOfChap, nestedDivHeader),
-			                m_chapNames[m_chapNames.Count - 1], m_nextFile);
+			                m_chapNames[m_chapNames.Count - 1], GetPrevFileName(m_chapNames.Count - 1), m_nextMainFile);
 			return true;
 		}
 
+		/// <summary>
+		/// Get the appropriate previous file name. Depends on chapter index (-1 for toc). Assumes chapters except toc
+		/// are written in order, so m_prevFile contains appropriate value for most. We want toc AND first chapter to
+		/// point back to the previous book.
+		/// </summary>
+		/// <param name="ichapter"></param>
+		/// <returns></returns>
+		string GetPrevFileName(int ichapter)
+		{
+			if (ichapter < 0)
+				return m_prevMainFile;
+			if (ichapter > 0)
+				return m_prevFile;
+			// ichapter is 0: first chapter
+			if (String.IsNullOrEmpty(m_toc))
+				return m_prevMainFile;
+			return Path.GetFileName(BuildOutputPathname(tocTag));
+		}
+
 		// Given a piece of the input that corresponds to one chapter, make a file out of it.
-		private void MakeChapterBody(string chapContents, string chapId, string nextFile)
+		private void MakeChapterBody(string chapContents, string chapId, string prevFile, string nextFile)
+		{
+			MakeChapterBodyPath(chapContents, BuildOutputPathname(chapId), prevFile, nextFile);
+		}
+		private void MakeChapterBodyPath(string chapContents, string outputPath, string prevFile, string nextFile)
 		{
 			chapContents = FixFileCrossRefs(chapContents);
-			string outputPath = BuildOutputPathname(chapId);
 			AddAnchorsToMap(chapContents, outputPath);
 			StreamWriter output = new StreamWriter(outputPath, false, Encoding.UTF8);
 			output.Write(m_header);
-			MakeNavigationDiv(output, nextFile);
+			MakeNavigationDiv(output, prevFile, nextFile);
 			output.Write(chapContents);
-			MakeNavigationDiv(output, nextFile);
+			MakeNavigationDiv(output, prevFile, nextFile);
 			string footnotes = FootnotesFor(chapContents);
-			output.Write(footnotes);
+			output.Write(FixFileCrossRefs(footnotes));
 			if (footnotes.Length > 0) // Enhance: maybe check for some minimum number of lines?
-				MakeNavigationDiv(output, nextFile);
+				MakeNavigationDiv(output, prevFile, nextFile);
 			output.Write("</body></html>\n");
 			output.Close();
 			m_prevFile = Path.GetFileName(outputPath);
@@ -322,12 +374,12 @@ namespace sepp
 			return Path.Combine(m_outputDir, m_inputFileName + "-" + chapId + ".htm");
 		}
 
-		private void MakeNavigationDiv(StreamWriter output, string nextFile)
+		private void MakeNavigationDiv(StreamWriter output, string prevFile, string nextFile)
 		{
 			output.Write("\n<div class=\"navButtons\">\n");
-			if (m_prevFile != null)
-				output.Write(MakeButton(m_options.PreviousChapterText, m_prevFile));
-			if (m_nextFile != null)
+			if (prevFile != null)
+				output.Write(MakeButton(m_options.PreviousChapterText, prevFile));
+			if (nextFile != null)
 				output.Write(MakeButton(m_options.NextChapterText, nextFile));
 			output.Write("</div >\n");
 		}
@@ -341,7 +393,7 @@ namespace sepp
 		private string FixFileCrossRefs(string input)
 		{
 			StringBuilder output = new StringBuilder();
-			Regex reCrossRef = new Regex("(href=\"[^\"]+)(\\.htm#C(\\d+)V\\d+)");
+			Regex reCrossRef = new Regex("(href=\"([^\"]+))(\\.htm#C(\\d+)V\\d+)");
 			int start = 0;
 			for (Match m = reCrossRef.Match(input); m.Success; m = m.NextMatch())
 			{
@@ -349,8 +401,11 @@ namespace sepp
 				start = m.Index + m.Length;
 				output.Append(m.Groups[1].ToString()); // pattern up to end of filename w/o extension
 				output.Append("-");
-				output.Append(m.Groups[3].ToString()); // chapter number
-				output.Append(m.Groups[2].ToString()); // rest of pattern
+				if (m_parent.KeepAsSingleFile(m.Groups[2].ToString())) // the actual file name
+					output.Append(tocTag);
+				else
+					output.Append(m.Groups[4].ToString()); // chapter number
+				output.Append(m.Groups[3].ToString()); // rest of pattern
 			}
 			output.Append(input.Substring(start, input.Length - start));// balance of input
 			return output.ToString();

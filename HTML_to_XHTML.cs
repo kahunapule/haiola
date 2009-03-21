@@ -34,6 +34,12 @@ namespace sepp
 			}
 		}
 
+		// We can't readily check for file existence here because if chapterPerFile is on, we only have individual
+		// file chapters, not the book as a whole.
+		internal override bool CheckFileExists(string filepath)
+		{
+			return true;
+		}
 		internal override string ToolPath
 		{
 			get { return Path.GetFullPath(@"..\..\tidy.exe"); }

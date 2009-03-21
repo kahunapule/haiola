@@ -33,6 +33,7 @@ namespace sepp
 			this.MasterIndexButton = new System.Windows.Forms.Button();
 			this.ProjectButton = new System.Windows.Forms.Button();
 			this.label1 = new System.Windows.Forms.Label();
+			this.btnSetRootDirectory = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// m_projectsList
@@ -73,13 +74,24 @@ namespace sepp
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(163, 13);
 			this.label1.TabIndex = 10;
-			this.label1.Text = "Version 0.91, 30 November 2008";
+			this.label1.Text = "Version 0.92, 30 November 2008";
+			// 
+			// btnSetRootDirectory
+			// 
+			this.btnSetRootDirectory.Location = new System.Drawing.Point(365, 150);
+			this.btnSetRootDirectory.Name = "btnSetRootDirectory";
+			this.btnSetRootDirectory.Size = new System.Drawing.Size(238, 23);
+			this.btnSetRootDirectory.TabIndex = 11;
+			this.btnSetRootDirectory.Text = "Set root directory";
+			this.btnSetRootDirectory.UseVisualStyleBackColor = true;
+			this.btnSetRootDirectory.Click += new System.EventHandler(this.btnSetRootDirectory_Click);
 			// 
 			// Master
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(631, 358);
+			this.Controls.Add(this.btnSetRootDirectory);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.ProjectButton);
 			this.Controls.Add(this.MasterIndexButton);
@@ -99,5 +111,6 @@ namespace sepp
 		private System.Windows.Forms.Button MasterIndexButton;
 		private System.Windows.Forms.Button ProjectButton;
 		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Button btnSetRootDirectory;
 	}
 }

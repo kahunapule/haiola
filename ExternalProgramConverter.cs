@@ -69,44 +69,56 @@ namespace sepp
 				return;
 			}
 			Utils.EnsureDirectory(m_outputDirName);
-			string[] inputFileNames = new string[0];
+			string extension = null;
 			foreach (string pattern in Extensions)
 			{
-				inputFileNames = Directory.GetFiles(m_inputDirName, pattern);
-				if (inputFileNames.Length != 0)
+				if (Directory.GetFiles(m_inputDirName, pattern).Length != 0)
+				{
+					extension = Path.GetExtension(pattern);
 					break;
+				}
 			}
-			Progress status = new Progress(inputFileNames.Length * 2);
-			status.Show();
+			if (extension == null)
+				MessageBox.Show("No matching input files");
+			List<string> inputFilePaths = new List<string>();
+			foreach (string patternFile in files)
+			{
+				string filename = Path.ChangeExtension(patternFile, extension);
+				string filepath = Path.Combine(m_inputDirName, filename);
+				if (!CheckFileExists(filepath))
+					return;
+				inputFilePaths.Add(filepath);
+			}
 			int count = 0;
 			m_reportPath = Path.Combine(m_inputDirName, "ConversionReports.txt");
 			File.Delete(m_reportPath); // get rid of any old reports
 			m_errorInfo = null;
 			m_outputWriter = new StreamWriter(m_reportPath, true, Encoding.UTF8);
-			foreach (string inputFile in inputFileNames)
+			Progress status = new Progress(inputFilePaths.Count * 2);
+			status.Show();
+
+			foreach (string inputFile in inputFilePaths)
+			{
+				PreProcess(inputFile);
+			}
+			foreach (string inputFile in inputFilePaths)
 			{
 				string filename = Path.GetFileName(inputFile);
-				if (WantToConvert(files, filename))
-				{
-					status.File = filename;
-					ConvertFile(inputFile);
-					count++;
-					status.Value = count;
-				}
+				status.File = filename;
+				ConvertFile(inputFile);
+				count++;
+				status.Value = count;
 			}
 			// PostProcessing is done separately after all the files are created. This is important for OSIS_to_HTML
 			// in chapter-per-file mode, which needs to look ahead to the next book to determine what the first chapter
 			// file should be to link to.
-			foreach (string inputFile in inputFileNames)
+			foreach (string inputFile in inputFilePaths)
 			{
 				string filename = Path.GetFileName(inputFile);
-				if (WantToConvert(files, filename))
-				{
-					status.File = filename;
-					PostProcess(inputFile);
-					count++;
-					status.Value = count;
-				}
+				status.File = filename;
+				PostProcess(inputFile);
+				count++;
+				status.Value = count;
 			}
 
 			status.Close();
@@ -117,6 +129,24 @@ namespace sepp
 				reportDlg.ReportContents = m_errorInfo.ToString();
 				reportDlg.Show();
 			}
+		}
+
+		internal virtual bool CheckFileExists(string filepath)
+		{
+			if (!File.Exists(filepath))
+			{
+				MessageBox.Show("Expected input file not found: " + filepath);
+				return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Hook for any preprocessing (of all files before the main loop starts).
+		/// </summary>
+		/// <param name="inputFile"></param>
+		public virtual void PreProcess(string inputFile)
+		{
 		}
 
 		protected virtual bool WantToConvert(IList files, string filename)

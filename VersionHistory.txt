@@ -1,5 +1,8 @@
 Prophero version history
 
+0.92 ??
+	- Allow root directory to be chosen
+	- Give helpful message instead of crashing if no projects in work directory.
 0.91 30 November
 	- fixed crash when splitting chapters if missing book name in options
 	- added option to use private osis1html.xml

@@ -24,6 +24,9 @@ namespace sepp
 		Dictionary<string, string> m_nextFiles = new Dictionary<string, string>();
 		private string m_prevFile = null;
 		private Options m_options;
+		// used if making one file per chapter, this keeps track of the books that have only one chapter
+		// and are therefore combined with their TOCs.
+		private HashSet<string> m_SingleChapBookFileNames = new HashSet<string>();
 
 		/// <summary>
 		/// initialize one.
@@ -59,6 +62,26 @@ namespace sepp
 			Utils.EnsureDirectory(m_finalOutputDir);
 		}
 
+		/// <summary>
+		/// Hook for any preprocessing (of all files before the main loop starts).
+		/// Here used to build the table of single-file books.
+		/// </summary>
+		/// <param name="osisPath"></param>
+		public override void PreProcess(string osisPath)
+		{
+			if (m_options.ChapterPerFile)
+			{
+				string osisContents = ReadFileToString(osisPath);
+				Regex reId = new Regex("<div [^>]*osisID *= *\"([^\"]*)\"");
+				Match m = reId.Match(osisContents);
+				string bookId = "";
+				if (m.Success)
+					bookId = m.Groups[1].Value.Trim().ToLowerInvariant();
+				if (HasNoChapters(bookId))
+					m_SingleChapBookFileNames.Add(Path.GetFileNameWithoutExtension(osisPath).Trim().ToLowerInvariant());
+			}
+		}
+
 		private const string IntroFileSuffix = "-Intro";
 
 		protected override void ImmediatePostProcess(string inputFilePath, string outputFilePath)
@@ -74,7 +97,7 @@ namespace sepp
 			if (introContents.Contains("<html"))
 			{
 				// We found some introductory material, adjust links and copy it to the output directory.
-				MakeIntroHotLinks(introContents, introPath, baseFileName);
+				MakeIntroHotLinks(introContents, introPath, baseFileName, inputFilePath);
 				if (m_finalOutputDir != null)
 				{
 					File.Copy(outputFilePath, Path.Combine(m_finalOutputDir, introName), true);
@@ -122,6 +145,8 @@ namespace sepp
 				ReportError("Could not do postprocessing because xslt produced no output");
 				return; // couldn't complete initial stages?
 			}
+			if (!m_options.ChapterPerFile)
+				input = MoveAnchorsBeforeHeadings(input);
 			input = CreateSymbolCrossRefs(input);
 			string stage2 = FixDuplicateAnchors(input);
 
@@ -129,7 +154,8 @@ namespace sepp
 
 			if (m_options.ChapterPerFile)
 			{
-				string message = new ChapterSplitter(outputFilePath, m_options).Run(ref m_prevFile, m_nextFiles[outputFileName]);
+				string message = new ChapterSplitter(outputFilePath, m_options).Run(ref m_prevFile, m_nextFiles[outputFileName],
+					this);
 				if (message == null)
 				{
 					File.Delete(outputFilePath);
@@ -148,6 +174,51 @@ namespace sepp
 			{
 				File.Copy(outputFilePath, Path.Combine(m_finalOutputDir, outputFileName), true);
 			}
+		}
+
+		// We're looking for things like this:
+		// <div class="sectionsubheading"><a name="12.2">Orang yang iko Tuhan Yesus, sama ke garam deng taráng</a></div>
+		//<div class="parallelSub">
+		//(<a href="Kup-MRK-Final-Qa-9.htm#C9V50">Markus 9:50</a>; <a href="Kup-LUK-Final-Qa-14.htm#C14V34">Lukas 14:34-35</a>)</div>
+		//<div class="text">
+		//<div class="prose">
+		//<a name="C5V13">
+		// and hoping to move the C5V13 anchor before the <div class="sectionsubheading"...>.
+
+		// It's complicated because there could be quite a bit of stuff in between, but a move is allowed only if the anchor is at the very start of
+		// the prose division. Also the start of what we want to move around could be a sectionheading instead of a sectionsubheading.
+		internal static string MoveAnchorsBeforeHeadings(string input)
+		{
+			Regex reheading = new Regex("<div class=\"section(sub)?heading\"[^>]*>");
+			Regex reProse = new Regex("<div class=\"prose\">\\s*");
+			Regex reAnchors = new Regex("\\G(<a name=\"C[0-9]+\"></a>)?<a name=\"C[0-9]+V[0-9]+\"></a>");
+			StringBuilder result = new StringBuilder(input.Length + 100);
+			int startNextCopy = 0;
+			int endIntro = input.IndexOf("</table>");
+			if (endIntro < 0)
+				endIntro = 0;
+			int startNextSearch;
+			for (Match mh = reheading.Match(input, endIntro); mh.Success; mh = reheading.Match(input, startNextSearch) )
+			{
+				// We found something that looks like a section heading. Find the following prose division.
+				Match mp = reProse.Match(input, mh.Index + mh.Length);
+				if (!mp.Success)
+					break; // no more prose. Done.
+				// If we don't find an anchor right at the start of the prose, go back to looking for headings.
+				// (Nb the ^ at the start of the reAnchors pattern).
+				startNextSearch = mp.Index + mp.Length;
+				Match ma = reAnchors.Match(input, startNextSearch);
+				if (!ma.Success)
+					continue;
+				// We want to move the anchor before the heading.
+				// Copy whatever we haven't already copied up to (and including) the heading.
+				result.Append(input.Substring(startNextCopy, mh.Index + mh.Length - startNextCopy)); 
+				result.Append(ma.ToString()); // copy the anchor (will now be at start of heading)
+				result.Append(input.Substring(mh.Index + mh.Length, ma.Index - mh.Index - mh.Length)); // Copy end of heading to start of anchor
+				startNextCopy = startNextSearch = ma.Index + ma.Length; // resume search for heading and subsequent copy after anchor
+			}
+			result.Append(input.Substring(startNextCopy));
+			return result.ToString();
 		}
 
 		string[] m_symbols; // shared with delegate
@@ -254,12 +325,34 @@ namespace sepp
 			ReplaceInSelectedElements(input, filePath, starts, ends, ConvertRefs);
 		}
 
+		private static HashSet<string> s_hasNoChapters;
+		bool HasNoChapters(string bookId)
+		{
+			if (s_hasNoChapters == null)
+			{
+				s_hasNoChapters = new HashSet<string>();
+				// I think these are the real OSISIDs for these...at least they are what show up in the Luang.
+				s_hasNoChapters.Add("phlm");
+				s_hasNoChapters.Add("jude");
+				s_hasNoChapters.Add("2john");
+				s_hasNoChapters.Add("3john");
+
+				// Can't hurt to have these too.
+				s_hasNoChapters.Add("phm");
+				s_hasNoChapters.Add("jud");
+				s_hasNoChapters.Add("2jn");
+				s_hasNoChapters.Add("3jn");
+
+			}
+			return s_hasNoChapters.Contains(bookId);
+		}
+
 		/// <summary>
 		/// Another user of ReplaceInSelectedElements, does a slightly different conversion on links in introduction list items.
 		/// </summary>
 		/// <param name="input">input text to process</param>
 		/// <param name="destPath">file to write to (often source of input also)</param>
-		private void MakeIntroHotLinks(string input, string destPath, string baseFileName)
+		private void MakeIntroHotLinks(string input, string destPath, string baseFileName, string osisPath)
 		{
 			// Strings identifying elements that should be converted
 			string[] starts = new string[] {
@@ -268,22 +361,30 @@ namespace sepp
 			string[] ends = new string[] {
 				"</div>"
 			};
-			ReplaceInSelectedElements(input, destPath, starts, ends, new IntroRefConverter(this, baseFileName).ConvertIt);
+
+			ReplaceInSelectedElements(input, destPath, starts, ends, new IntroRefConverter(this, baseFileName, KeepAsSingleFile(osisPath)).ConvertIt);
+		}
+
+		internal bool KeepAsSingleFile(string path)
+		{
+			return m_SingleChapBookFileNames.Contains(Path.GetFileNameWithoutExtension(path).Trim().ToLowerInvariant());
 		}
 
 		class IntroRefConverter
 		{
 			private OSIS_to_HTML m_parent;
 			string m_baseFileName;
+			private bool m_fHasNoChapters;
 
-			public IntroRefConverter (OSIS_to_HTML parent, string baseFileName)
+			public IntroRefConverter (OSIS_to_HTML parent, string baseFileName, bool hasNoChapters)
 			{
 				m_parent = parent;
 				m_baseFileName = baseFileName;
+				m_fHasNoChapters = hasNoChapters;
 			}
 			public string ConvertIt(string chunk)
 			{
-				return m_parent.ConvertOutlineRefs(chunk, m_baseFileName);
+				return m_parent.ConvertOutlineRefs(chunk, m_baseFileName, m_fHasNoChapters);
 			}
 		}
 
@@ -399,7 +500,7 @@ namespace sepp
 			Dictionary<string, string> subsBookToFile = new Dictionary<string, string>(m_files.Count);
 			foreach (string bookName in m_files.Keys)
 			{
-				string subskey = "#%#%book" + ibook;
+				string subskey = "#%#%book" + ibook + "#"; // final hatch to prevent book1 matching book10 on convert back
 				subsBookToFile[subskey] = m_files[bookName];
 				chunk = chunk.Replace(bookName, subskey);
 				ibook++;
@@ -501,7 +602,7 @@ namespace sepp
 			ibook = 0;
 			foreach (string bookName in m_files.Keys)
 			{
-				result = result.Replace("#%#%book" + ibook, bookName);
+				result = result.Replace("#%#%book" + ibook + "#", bookName);
 				ibook++;
 			}
 
@@ -514,7 +615,7 @@ namespace sepp
 		/// </summary>
 		/// <param name="chunk"></param>
 		/// <returns></returns>
-		private string ConvertOutlineRefs(string chunk, string baseFileName)
+		private string ConvertOutlineRefs(string chunk, string baseFileName, bool hasNoChapters)
 		{
 			// Looks for parenthesized expression containing (verse) number, or C:V, possibly followed by
 			// a range indication. We don't care much about the range, so once we have C:V if that can be found,
@@ -531,9 +632,22 @@ namespace sepp
 				chap = verse;
 				verse = match.Groups[2].Value.Substring(1); // strip colon
 			}
+			else if (!hasNoChapters)
+			{
+				// A single number in a book with chapters is interpreted as a chapter number
+				chap = verse;
+				verse = "1";
+			}
 			string destFileName = baseFileName;
 			if (m_options.ChapterPerFile)
-				destFileName = ChapterSplitter.MakeNameForSegment(destFileName, chap);
+			{
+				// If the book has no chapters, we will combine it with its TOC in a single file so we need to give that file
+				// name for the destination rather than one based on the chapter number.
+				string fileTag = chap;
+				if (hasNoChapters)
+					fileTag = ChapterSplitter.tocTag;
+				destFileName = ChapterSplitter.MakeNameForSegment(destFileName, fileTag);
+			}
 			destFileName = Path.ChangeExtension(destFileName, "htm");
 
 			InsertHotLink(output, chunk, match, match.Index, destFileName + "#C" + chap + "V" + verse);

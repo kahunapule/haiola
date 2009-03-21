@@ -20,17 +20,20 @@ namespace sepp
 		string m_workDirectory = @"c:\BibleConv\Work";
 		string m_siteDirectory; // curently c:\BibleConv\Site
 
+		bool GetRootDirectory()
+		{
+			FolderBrowserDialog dlg = new FolderBrowserDialog();
+			dlg.Description =
+				@"Select a root dialog (default is C:\BibleConv) to contain your working directories and the root of your prototype site.";
+			dlg.ShowNewFolderButton = true;
+			if (dlg.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+				return false;
+			m_workDirectory = Path.Combine(dlg.SelectedPath, "Work");
+			return true;
+		}
+
 		private void Master_Load(object sender, EventArgs e)
 		{
-			foreach (string path in Directory.GetDirectories(m_workDirectory))
-			{
-				m_projectsList.Items.Add(Path.GetFileName(path));
-			}
-			for (int i = 0; i < m_projectsList.Items.Count; i++)
-				m_projectsList.SetItemChecked(i, true);
-			m_projectsList.SetSelected(0, true);
-			m_siteDirectory = Path.Combine(Path.GetDirectoryName(m_workDirectory), "Site");
-
 			RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\SIL\Prophero", true);
 			if (key == null || key.GetValue("Warning") == null)
 			{
@@ -43,6 +46,37 @@ namespace sepp
 					key.SetValue("Warning", "no");
 				}
 			}
+			if (!Directory.Exists(m_workDirectory))
+				if (!GetRootDirectory())
+					Application.Exit();
+			LoadWorkingDirectory();
+		}
+
+		private void LoadWorkingDirectory()
+		{
+			m_projectsList.Items.Clear();
+			if (!Directory.Exists(m_workDirectory))
+				Directory.CreateDirectory(m_workDirectory);
+			foreach (string path in Directory.GetDirectories(m_workDirectory))
+			{
+				m_projectsList.Items.Add(Path.GetFileName(path));
+			}
+			for (int i = 0; i < m_projectsList.Items.Count; i++)
+				m_projectsList.SetItemChecked(i, true);
+			if (m_projectsList.Items.Count != 0)
+			{
+				m_projectsList.SetSelected(0, true);
+				ProjectButton.Enabled = true;
+			}
+			else
+			{
+				MessageBox.Show(this, "No projects found in " + m_workDirectory
+									  +
+									  ". You should create a folder there for your project and place your input files in the appropriate subdirectory.",
+								"No Projects", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				ProjectButton.Enabled = false;
+			}
+			m_siteDirectory = Path.Combine(Path.GetDirectoryName(m_workDirectory), "Site");
 		}
 
 		private void ProjectButton_Click(object sender, EventArgs e)
@@ -85,6 +119,12 @@ namespace sepp
 			writer.Close();
 
 			status.Close();
+		}
+
+		private void btnSetRootDirectory_Click(object sender, EventArgs e)
+		{
+			if (GetRootDirectory())
+				LoadWorkingDirectory();
 		}
 	}
 }
