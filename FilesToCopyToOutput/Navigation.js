@@ -15,3 +15,14 @@ function SetBookName(bookName)
 	// no suitable child nodes to replace.
 	target.appendChild(replacement);
 }
+
+function TocPath(path)
+{
+	var indexH = path.lastIndexOf("-");
+	var indexDot = path.lastIndexOf(".");
+	if (indexH != -1)
+	{
+		 return path.substring(0, indexH + 1) + "TOC" + path.substring(indexDot);
+	}
+	return path;
+}
