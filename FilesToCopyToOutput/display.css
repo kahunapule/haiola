@@ -31,6 +31,9 @@ div.poetry           { display: block; margin-left: 1.5cm; text-indent: -0.5cm; 
 div.embeddedPoetry   { display: block; margin-left: 2.0cm; text-indent: -0.5cm; line-height: 1.4em; margin-right: 1.0cm; text-align:justify }
 div.list             { margin-left: 1cm; text-indent: -0.5cm; line-height: 1.4em }
 div.quoteSource		 { display:block; text-align:right; font-style:italic}
+div.introListItem    { margin-left: 1cm; text-indent: -0.5cm; line-height: 1.4em }
+
+div {margin-left:0.5cm; margin-right:0.5cm}
 
 p.footnote, p.crossRefNote
 					{display: block; font-family:CharisSIL, Times New Roman; margin-top: 3pt; font-size: 10pt; text-align: justify}
