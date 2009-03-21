@@ -480,9 +480,10 @@ namespace sepp
 					continue;
 				string fileName = Path.ChangeExtension(Path.GetFileName(path), "xml").ToLowerInvariant();
 				ListViewItem existingItem;
-				if (existingFiles.TryGetValue(fileName, out existingItem))
+				string key = Path.GetFileNameWithoutExtension(fileName).ToLowerInvariant();
+				if (existingFiles.TryGetValue(key, out existingItem))
 				{
-					existingFiles.Remove(fileName);
+					existingFiles.Remove(key);
 					continue;
 				}
 				// Try to guess the abbreviation from the file name

@@ -110,6 +110,8 @@ namespace sepp
 				inputFileNames = Directory.GetFiles(m_inputDirName, "*.sfm");
 			if (inputFileNames.Length == 0)
 				inputFileNames = Directory.GetFiles(m_inputDirName, "*.ptx");
+			if (inputFileNames.Length == 0)
+				inputFileNames = Directory.GetFiles(m_inputDirName, "*.sfc");
 			Progress status = new Progress(files.Count);
 			status.Show();
 			Utils.EnsureDirectory(m_outputDirName);

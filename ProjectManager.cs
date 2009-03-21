@@ -71,7 +71,12 @@ namespace sepp
 			m_button_OW_to_USFM.Text = "Preprocess";
 			m_tablePaths = new string[node.ChildNodes.Count];
 			for (int i = 0; i < m_tablePaths.Length; i++)
-				m_tablePaths[i] = Path.Combine(m_workDir,node.ChildNodes[i].InnerText);
+			{
+				string tableName = node.ChildNodes[i].InnerText;
+				if (Path.GetExtension(tableName).Length > 0)
+					tableName = Path.Combine(m_workDir, tableName);
+				m_tablePaths[i] = tableName;
+			}
 		}
 
 		CheckedListBox.CheckedItemCollection ActiveFiles
