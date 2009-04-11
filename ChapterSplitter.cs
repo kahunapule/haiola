@@ -32,16 +32,18 @@ namespace sepp
 		Dictionary<string, string>m_anchorToFile = new Dictionary<string, string>();
 		private OSIS_to_HTML m_parent;
 		private Options m_options;
+	    private string m_pageFooter;
 		/// <summary>
 		/// Make one.
 		/// </summary>
 		/// <param name="inputPath"></param>
-		public ChapterSplitter(string inputPath, Options options)
+		public ChapterSplitter(string inputPath, Options options, string pageFooter)
 		{
 			m_inputPath = inputPath;
 			m_options = options;
 			m_inputFileName = Path.GetFileNameWithoutExtension(inputPath);
 			m_outputDir = Path.GetDirectoryName(m_inputPath);
+		    m_pageFooter = pageFooter;
 		}
 
 		internal const string tocTag = "TOC";
@@ -356,6 +358,8 @@ namespace sepp
 			output.Write(FixFileCrossRefs(footnotes));
 			if (footnotes.Length > 0) // Enhance: maybe check for some minimum number of lines?
 				MakeNavigationDiv(output, prevFile, nextFile);
+            if (m_pageFooter != null)
+                output.Write(m_pageFooter);
 			output.Write("</body></html>\n");
 			output.Close();
 			m_prevFile = Path.GetFileName(outputPath);

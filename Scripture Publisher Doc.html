@@ -19,7 +19,7 @@ margin-right: 0.5cm;
 <body>
 <h1>Prophero</h1>
 <h1>Scripture Electronic Publishing Package</h1>
-Last modified Feb 10, 2009 (Prophero version 0.90)
+Last modified April 11, 2009 (Prophero version 0.93)
 <h1>Introduction</h1>
 <p>Prophero is a program, still very much under development, to
 facilitate the electronic publishing of Scripture. It can be used to
@@ -1196,5 +1196,49 @@ Click the text. In the resulting dialog, set the rotation to -45
 degrees. Click Rotate.<br>
 If desired, crop, but it doesn't matter much.<br>
 Save as Watermark.jpg.<br>
+<h1>Appendix D: special files</h1>
+<p>You can tweak Prophero's behavior in a number of ways by placing
+files in the root directory BibleConv\Work\&lt;lang&gt;.</p>
+<p>If Prophero finds osis2html.xsl there, it will use that version
+instead of the usual one (in the root bibleConv directory) to convert
+from OSIS to HTML. This allows you to make custom tweaks to the HTML
+generated. Be aware, however, that Prophero makes additional changes to
+the HTML files after generating them (e.g., breaking into chapter
+files, adding navigation buttons, adjusting hot link destinations)
+which may not work if you make the wrong changes. It is strongly
+suggested that you start with the standard XSLT and make the minimum
+necessary changes.</p>
+<p>If Prophero finds pageFooter.txt there, it will insert the text
+literally into each chapter file immediately before the closing
+&lt;/body&gt; marker of your HTML file. One use of this is to insert a
+copyright notice or refer readers to where the paper book can be
+purchased. (Note that while pageFooter.txt must contain valid HTML
+which can be inserted at the place indicated, it is not a proper
+stand-alone HTML file, and is therefore not given the extension HTM or
+HTML.)</p>
+<h1>Appendix E: Revision history</h1>
+<h2>0.93 (check-in April 11 2009)</h2>
+Fixed several bugs in splitting books into individual chapter files.<br>
+Added support for footer on each page when splitting into chapters.<br>
+No longer splits book outline from first chapter if it is the only
+chapter.<br>
+Fixed multi-chapter bugs in HTML to XHTML conversion.<br>
+Anchors for chapters that are preceded by section headings are now
+placed before the section heading. This allows external links to the
+chapter to go to a more natural starting point for the chapter.<br>
+Fixed a bug in making hot links that occurred when one of the first ten
+books in the Bible (indexed with a single digit) had links to it.<br>
+When making hot links in an outline in an Introduction extracted from
+HTML, if the book has only one chapter a simple number is interpreted
+as a verse number; otherwise, as a chapter number.<br>
+Support SFC as possible extension for input files.<br>
+Fixed a bug in SFM-&gt;USFM conversion where deleting from a marker we
+don't want to the end of the line. Previously the line break would be
+deleted even if the marker was not found at the start of the line; now,
+only if it is.<br>
+Added incomplete code for generating daily bible reading guide.<br>
+Handles \q3 by means of a new deepPoetry CSS class.<br>
+Handles \s3 (nested subheadings) by means of a sectionsubsubheading
+class.
 </body>
 </html>

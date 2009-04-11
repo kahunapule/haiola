@@ -27,6 +27,7 @@ namespace sepp
 		// used if making one file per chapter, this keeps track of the books that have only one chapter
 		// and are therefore combined with their TOCs.
 		private HashSet<string> m_SingleChapBookFileNames = new HashSet<string>();
+        private string m_pageFooter;
 
 		/// <summary>
 		/// initialize one.
@@ -154,7 +155,7 @@ namespace sepp
 
 			if (m_options.ChapterPerFile)
 			{
-				string message = new ChapterSplitter(outputFilePath, m_options).Run(ref m_prevFile, m_nextFiles[outputFileName],
+				string message = new ChapterSplitter(outputFilePath, m_options, m_pageFooter).Run(ref m_prevFile, m_nextFiles[outputFileName],
 					this);
 				if (message == null)
 				{
@@ -698,7 +699,12 @@ namespace sepp
 
 		internal override string CreateArguments(string inputFilePath, string outputFilePath)
 		{
-			// Look for an override of osis2Html, if not found use standard one.
+            string pageFooterPath = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(inputFilePath)), "pageFooter.txt");
+            if (File.Exists(pageFooterPath))
+            {
+                m_pageFooter = new StreamReader(pageFooterPath, Encoding.UTF8).ReadToEnd();
+            }
+            // Look for an override of osis2Html, if not found use standard one.
 			string scriptPath = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(inputFilePath)), "osis2Html.xsl");
 			if (!File.Exists(scriptPath))
 				scriptPath = Path.GetFullPath(@"..\..\osis2Html.xsl");
