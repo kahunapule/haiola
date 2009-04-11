@@ -17,6 +17,7 @@ div.copyright       { display: block; text-align: center; font-family: Arial; fo
 
 div.sectionheading   { display: block; text-align: center; font-family: Arial; font-weight: bold; margin-top: 12pt }
 div.sectionsubheading   { display: block; text-align: center; font-family: Arial; font-weight: bold; font-style: italic; margin-top: 6pt; margin-left: 12pt } /* JohnT */
+div.sectionsubsubheading   { display: block; text-align: center; font-family: Arial; font-size: 10pt; font-weight: bold; font-style: normal; margin-top: 6pt; margin-left: 12pt } /* JohnT */
 div.parallel		 { font-family: CharisSIL, Times New Roman, Serif; display: block; text-align: center; font-style: italic; margin-top: 0pt; font-size:9pt } /* JohnT */
 div.parallelSub		 { font-family: CharisSIL, Times New Roman, Serif; display: block; text-align: center; font-style: italic; margin-top: 0pt; margin-left: 12pt; font-size:9pt } /* JohnT */
 
@@ -29,9 +30,11 @@ div.proseblock       { display: block; line-height: 1.4em; text-align:justify}
 div.proseblockindent { display: block; margin-left: 1cm; line-height: 1.4em; text-align:justify }
 div.poetry           { display: block; margin-left: 1.5cm; text-indent: -0.5cm; line-height: 1.4em }
 div.embeddedPoetry   { display: block; margin-left: 2.0cm; text-indent: -0.5cm; line-height: 1.4em; margin-right: 1.0cm; text-align:justify }
+div.deepPoetry       { display: block; margin-left: 2.5cm; text-indent: -0.5cm; line-height: 1.4em; margin-right: 1.0cm; text-align:justify }
 div.list             { margin-left: 1cm; text-indent: -0.5cm; line-height: 1.4em }
 div.quoteSource		 { display:block; text-align:right; font-style:italic}
 div.introListItem    { margin-left: 1cm; text-indent: -0.5cm; line-height: 1.4em }
+div.pageFooter            { display: block; margin-bottom: 6pt; text-align:justify; margin-top: 6pt; font-family: Arial; font-size: 8pt}
 
 div {margin-left:0.5cm; margin-right:0.5cm}
 
