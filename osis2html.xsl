@@ -308,13 +308,26 @@
 
 	<!-- <xsl:if test="osis:title and starts-with(@scope, concat($startId, '-')) or osis:title and preceding::osis:verse[@sID = $startId]"> -->
 	<xsl:if test="osis:title">
-		<div class="sectionsubheading">
-			<!--JohnT: this doesn't generate exactly what I'd like but at least they're unique. position() on its own
-			repeats in each section.-->
-			<a name="{count(preceding::osis:div[@type='section'])}.{position()}">
-				<xsl:value-of select="osis:title"/>
-			</a>
-		</div>
+    <xsl:choose>
+    <xsl:when test="parent::osis:div[@type='subSection']">
+      <div class="sectionsubsubheading">
+        <!--JohnT: this doesn't generate exactly what I'd like but at least they're unique. position() on its own
+		    repeats in each section.-->
+        <a name="{count(preceding::osis:div[@type='section'])}.{count(preceding::osis:div[@type='subSection'])}.{position()}">
+          <xsl:value-of select="osis:title"/>
+        </a>
+      </div>
+    </xsl:when>
+    <xsl:otherwise>
+	    <div class="sectionsubheading">
+		    <!--JohnT: this doesn't generate exactly what I'd like but at least they're unique. position() on its own
+		    repeats in each section.-->
+		    <a name="{count(preceding::osis:div[@type='section'])}.{position()}">
+			    <xsl:value-of select="osis:title"/>
+		    </a>
+	    </div>
+    </xsl:otherwise>
+    </xsl:choose>
 	</xsl:if>
 	<xsl:if test="osis:title[@type='parallel']">
 		<div class="parallelSub">
@@ -324,7 +337,7 @@
 
 	<div class="text">
 		<!-- <xsl:apply-templates select="osis:p[not(following::osis:verse[@sID = $startId] or preceding::osis:verse[@eID = $endId])] | osis:list[not(following::osis:verse[@sID = $startId] or preceding::osis:verse[@eID = $endId])] | osis:lg[not(following::osis:verse[@sID = $startId] or preceding::osis:verse[@eID = $endId])] | osis:milestone[not(following::osis:verse[@sID = $startId] or preceding::osis:verse[@eID = $endId])] | osis:lb[not(following::osis:verse[@sID = $startId] or preceding::osis:verse[@eID = $endId])]"/> -->
-		<xsl:apply-templates select="osis:p | osis:list | osis:lg | osis:lb | osis:milestone | osis:q | osis:speaker | osis:q | osis:div[@type='x-highLevelPoetryDivision'] | text()[.!='&#10;']"/>
+		<xsl:apply-templates select="osis:p | osis:list | osis:lg | osis:lb | osis:milestone | osis:q | osis:speaker | osis:q | osis:div[@type='x-highLevelPoetryDivision'] | osis:div[@type='subSection'] |text()[.!='&#10;']"/>
 	</div>
 	<!-- JohnT: if we have sub-sub-sections do something here.-->
 </xsl:template>
@@ -391,7 +404,12 @@
 <xsl:template match="osis:l">
 
 	<xsl:choose>
-		<xsl:when test="@level>1">
+    <xsl:when test="@level>2">
+      <div class="deepPoetry">
+        <xsl:apply-templates/>
+      </div>
+    </xsl:when>
+    <xsl:when test="@level=1">
 			<div class="embeddedPoetry">
 				<xsl:apply-templates/>
 			</div>

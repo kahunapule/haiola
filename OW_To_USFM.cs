@@ -299,17 +299,32 @@ namespace sepp
 						{
 							if (target == marker)
 							{
-								target = matchEnd;
+								target = matchEnd; // while looking for this we don't copy to output.
 								i++;
 								continue;
 							}
 							else
 							{
 								target = marker;
-								// i is pointing at the newline before the end marker. We don't want to copy that.
-								// but, we do want to consider the terminating backslash as a possible start of another
-								// match.
-								i += 1; // the backslash is the current character (skip the nl)
+                                // Usually, we are deleting a whole line, the quoted part in 13, 10"\xx whatever 13 10"\
+                                // i is pointing at the newline (10) which is the last character we want to delete, and we
+                                // can achieve that (and prepare to check the following \ as the start of another marker)
+                                // by just incrementing i.
+                                // However, we could also be in the case 
+                                // \yy previous text not deleted "\xx whatever 13 10"\
+                                // In this case if we delete the newline the following marker will no longer follow a newline.
+                                // It could then get deleted as part of the \\yy line, or we may just mess up the next stage
+                                // because it expects that marker to start a line. Therefore, we delete the newline only if
+                                // it is preceded by another newline in the output.
+							    if (cbyteOut >= 0 && outBuffer[cbyteOut - 1] != 10)
+                                {
+                                    // need to keep newline. Put a CR before it if the input has one. Since there is
+                                    // already output, i can't be 0.
+                                    if (inputBytes[i-1] == 13)
+                                        outBuffer[cbyteOut++] = 13;
+                                    outBuffer[cbyteOut++] = 10;
+                                }
+                                i += 1; // the backslash is the current character (skip the nl)
 								continue;
 							}
 						}

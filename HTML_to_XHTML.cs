@@ -34,12 +34,12 @@ namespace sepp
 			}
 		}
 
-		// We can't readily check for file existence here because if chapterPerFile is on, we only have individual
-		// file chapters, not the book as a whole.
-		internal override bool CheckFileExists(string filepath)
-		{
-			return true;
-		}
+        //// We can't readily check for file existence here because if chapterPerFile is on, we only have individual
+        //// file chapters, not the book as a whole.
+        //internal override bool CheckFileExists(string filepath)
+        //{
+        //    return true;
+        //}
 		internal override string ToolPath
 		{
 			get { return Path.GetFullPath(@"..\..\tidy.exe"); }
@@ -61,6 +61,20 @@ namespace sepp
 				return base.WantToConvert(files, filename); 
 			}
 		}
+
+        /// <summary>
+        /// Given a main (book) file name, generate the related files we should actually operate on.
+        /// </summary>
+        /// <param name="mainFilename"></param>
+        /// <returns></returns>
+        protected override IEnumerable<string> GetActualFileNames(string mainFilename)
+        {
+            if (m_options.ChapterPerFile)
+            {
+                return Utils.ChapFiles(mainFilename);
+            }
+            return new string[] { mainFilename };
+        }
 
 		internal override string[] Extensions
 		{

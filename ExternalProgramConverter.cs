@@ -83,11 +83,13 @@ namespace sepp
 			List<string> inputFilePaths = new List<string>();
 			foreach (string patternFile in files)
 			{
-				string filename = Path.ChangeExtension(patternFile, extension);
-				string filepath = Path.Combine(m_inputDirName, filename);
-				if (!CheckFileExists(filepath))
-					return;
-				inputFilePaths.Add(filepath);
+				string mainFilePath = Path.Combine(m_inputDirName, Path.ChangeExtension(patternFile, extension));
+                foreach (string filepath in GetActualFileNames(mainFilePath))
+                {
+                    if (!CheckFileExists(filepath))
+                        return;
+                    inputFilePaths.Add(filepath);
+                }
 			}
 			int count = 0;
 			m_reportPath = Path.Combine(m_inputDirName, "ConversionReports.txt");
@@ -130,6 +132,16 @@ namespace sepp
 				reportDlg.Show();
 			}
 		}
+
+        /// <summary>
+        /// Given a main (book) file name, generate the related files we should actually operate on.
+        /// </summary>
+        /// <param name="mainFilename"></param>
+        /// <returns></returns>
+        protected virtual IEnumerable<string> GetActualFileNames(string mainFilename)
+        {
+            return new string[] {mainFilename};
+        }
 
 		internal virtual bool CheckFileExists(string filepath)
 		{
