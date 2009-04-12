@@ -44,13 +44,27 @@ namespace sepp
 		{
 			Utils.EnsureDirectory(m_outputDirName);
 			m_xslt.Load(@"..\..\osis2ChapIndexFrag.xsl");
-			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n"
-				+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">"
-				+ "<head>"
-				+ "</head>\n<body class=\"BookChapIndex\">\n"
-				+ "<p><a target=\"body\" href=\"treeMaster.htm\">" + m_options.ConcordanceLinkText + "</a></p>\n";
+
+            string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n"
+                + "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">"
+                + "<head>"
+                + "</head>\n<body class=\"BookChapIndex\">\n"
+                + "<p><a target=\"body\" href=\"treeMaster.htm\">" + m_options.ConcordanceLinkText + "</a></p>\n";
+            string bcHeaderPath = Path.Combine(Path.GetDirectoryName(m_inputDirName), "bookChapterHeader.txt");
+            if (File.Exists(bcHeaderPath))
+            {
+                string headerFmt = new StreamReader(bcHeaderPath, Encoding.UTF8).ReadToEnd();
+                header = string.Format(headerFmt, m_options.ConcordanceLinkText);
+            }
 			string trailer = "</body>\n</html>\n";
-			string path = Path.Combine(m_outputDirName, "ChapterIndex.htm");
+
+            string bcFooterPath = Path.Combine(Path.GetDirectoryName(m_inputDirName), "bookChapterFooter.txt");
+            if (File.Exists(bcFooterPath))
+            {
+                string trailerFmt = new StreamReader(bcFooterPath, Encoding.UTF8).ReadToEnd();
+                trailer = string.Format(trailerFmt, m_options.ConcordanceLinkText);
+            }
+            string path = Path.Combine(m_outputDirName, "ChapterIndex.htm");
 			TextWriter writer = new StreamWriter(path, false, Encoding.UTF8);
 			writer.Write(header);
 

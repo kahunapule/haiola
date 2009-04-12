@@ -311,9 +311,19 @@ namespace sepp
 
 			string pathMain = Path.Combine(m_outputDirName, "concTreeIndex.htm");
 			TextWriter writerMain = new StreamWriter(pathMain, false, Encoding.UTF8);
-			writerMain.Write(indexHeader);
-			writerMain.Write(m_bookChapText);
-			writerMain.Write(indexHeader2);
+
+            string ciHeaderPath = Path.Combine(Path.GetDirectoryName(m_inputDirName), "concIndexHeader.txt");
+            if (File.Exists(ciHeaderPath))
+            {
+                string headerFmt = new StreamReader(ciHeaderPath, Encoding.UTF8).ReadToEnd();
+                writerMain.Write(string.Format(headerFmt, m_options.ConcordanceLinkText));
+            }
+            else
+            {
+                writerMain.Write(indexHeader);
+                writerMain.Write(m_bookChapText);
+                writerMain.Write(indexHeader2);               
+            }
 
 			int groupIndex = 1;
 			for (int cGroupsRemaining = groupSize; cGroupsRemaining > 0; cGroupsRemaining--)
@@ -332,7 +342,16 @@ namespace sepp
 				iStartGroup += cThisGroup;
 				groupIndex++;
 			}
-			writerMain.Write(indexTrailer);
+            string ciFooterPath = Path.Combine(Path.GetDirectoryName(m_inputDirName), "concIndexFooter.txt");
+            if (File.Exists(ciFooterPath))
+            {
+                string fmt = new StreamReader(ciFooterPath, Encoding.UTF8).ReadToEnd();
+                writerMain.Write(string.Format(fmt, m_options.ConcordanceLinkText));
+            }
+            else
+            {
+                writerMain.Write(indexTrailer);
+            }
 			writerMain.Close();
 		}
 		/// <summary>
@@ -396,11 +415,20 @@ namespace sepp
 		{
 			int iStartGroup = 0;
 			TextWriter writerMain = new StreamWriter(pathMain, false, Encoding.UTF8);
-			writerMain.Write(indexMfHeader);
-			writerMain.Write(m_bookChapText);
-			writerMain.Write(indexHeader2);
+            string ciHeaderPath = Path.Combine(Path.GetDirectoryName(m_inputDirName), "concIndexHeader.txt");
+            if (File.Exists(ciHeaderPath))
+            {
+                string headerFmt = new StreamReader(ciHeaderPath, Encoding.UTF8).ReadToEnd();
+                writerMain.Write(string.Format(headerFmt, m_options.ConcordanceLinkText));
+            }
+            else
+            {
+                writerMain.Write(indexMfHeader);
+                writerMain.Write(m_bookChapText);
+                writerMain.Write(indexHeader2);
+            }
 
-			while (iStartGroup < sortedOccurrences.Count)
+		    while (iStartGroup < sortedOccurrences.Count)
 			{
 				string keyLetter = GetSortLetter(sortedOccurrences[iStartGroup].Form);
 				// Enhance JohnT: handle surrogate pair or multigraph. (See keyLetterFileSuffix below, too.)
@@ -434,8 +462,17 @@ namespace sepp
 				}
 				iStartGroup = iLimGroup;
 			}
-			writerMain.Write(indexTrailer);
-			writerMain.Close();
+            string ciFooterPath = Path.Combine(Path.GetDirectoryName(m_inputDirName), "concIndexFooter.txt");
+            if (File.Exists(ciFooterPath))
+            {
+                string fmt = new StreamReader(ciFooterPath, Encoding.UTF8).ReadToEnd();
+                writerMain.Write(string.Format(fmt, m_options.ConcordanceLinkText));
+            }
+            else
+            {
+                writerMain.Write(indexTrailer);
+            }
+		    writerMain.Close();
 		}
 
 		// Get a string representing the leading letter for a sort group.
