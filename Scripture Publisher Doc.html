@@ -1216,6 +1216,16 @@ purchased. (Note that while pageFooter.txt must contain valid HTML
 which can be inserted at the place indicated, it is not a proper
 stand-alone HTML file, and is therefore not given the extension HTM or
 HTML.)</p>
+<p>If Prophero finds bookChapterFooter.txt or bookChapterHeader.txt,
+these override the header and footer text normally inserted at the
+start and end of the main table of contents. Each should contain {0},
+which if present will be replaced with the localized text for the link
+to the concordance TOC. Samples (not currently used) are in the root
+directory.</p>
+<p>Similarly, concIndexHeader.txt and concIndexFooter.txt override the
+normal start and end of the files that make up the concordance index.
+{0} if present will be replaced with the localized text for the link to
+"books and chapters."</p>
 <h1>Appendix E: Revision history</h1>
 <h2>0.93 (check-in April 11 2009)</h2>
 Fixed several bugs in splitting books into individual chapter files.<br>
@@ -1239,6 +1249,8 @@ only if it is.<br>
 Added incomplete code for generating daily bible reading guide.<br>
 Handles \q3 by means of a new deepPoetry CSS class.<br>
 Handles \s3 (nested subheadings) by means of a sectionsubsubheading
-class.
+class.<br>
+Added ability to override the bookChapterFooter.txt,
+bookChapterHeader.txt, concIndexHeader.txt and concIndexFooter.txt.
 </body>
 </html>
