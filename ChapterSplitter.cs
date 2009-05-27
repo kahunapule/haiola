@@ -256,9 +256,10 @@ namespace sepp
 			int startOfChapter = Math.Max(0, m_body.IndexOf("<div"));
 			bool needExtraDivAtStartOfChap = false;
 			string nestedDivHeader = "";
+            // match a complete (opening or closing) <div> element, incluing attributes and the angle brackets.
 			Regex reDiv = new Regex(@"<(/?)div[^>]*>",RegexOptions.RightToLeft);
-			// Tests for a string ending in <div class="text">, optionally followed by another <div> element, with optional white space
-			Regex reDivTextAtEnd = new Regex("<div [^>]*class=\"text\"[^>]*>\\s*(<div[^>]*>\\s*)?\\G", RegexOptions.RightToLeft);
+			// Tests for a string ending in </div> with optional white space
+			Regex reDivTextAtEnd = new Regex("</div>\\s*\\G", RegexOptions.RightToLeft);
 			// Finds the last text division header.
 			Regex reLastDivText = new Regex("<div [^>]*class=\"text\"[^>]*>", RegexOptions.RightToLeft);
 			// loop deliberately omits last chapter.
@@ -272,46 +273,38 @@ namespace sepp
 				string chapContents;
 				if (lastDiv.Success)
 				{
-					// Chapter break is at start of text div. Include in this chapter any previous non-text divs.
+					// Chapter break is between divisions. Break exactly at the anchor.
 					// This is by far the common case.
-					endOfChapter = lastDiv.Index;
-					int depth = 0; // incremented for </div>
-					for (Match m = reDiv.Match(m_body, startOfChapter, endOfChapter - startOfChapter);
-					     m.Success;
-					     m = m.NextMatch())
-					{
-						if (m.Groups[1].Length > 0)
-							depth++; // working backwards, end of div increases depth
-						else
-							depth--; // forwards, start of div decreases depth.
-						// Don't consider breaking the chapter at a div that is nested inside a previous main div.
-						if (depth != 0)
-							continue;
-						string divHeader = m.ToString();
-						if (divHeader.IndexOf("class=\"text\"") > 0)
-						{
-							break; // found a preceding div we do NOT want to include in following chapter
-						}
-						endOfChapter = m.Index; // unless we find we can include more in the following chapter.
-					}
 					chapContents = GetBaseChapContents(endOfChapter, startOfChapter, needExtraDivAtStartOfChap, nestedDivHeader);
 					// The next chapter
 					needExtraDivAtStartOfChap = false;
 				}
 				else
 				{
-					// chapter does not start at beginning of text division. It includes everything up to the chapter anchor,
+					// chapter does not start between text divisions. It includes everything up to the chapter anchor,
 					chapContents = GetBaseChapContents(endOfChapter, startOfChapter, needExtraDivAtStartOfChap, nestedDivHeader);
-					// and also something to close off any open divisions...
-					Match lastDivMatch = reLastDivText.Match(m_body, endOfChapter);
-					int startLastDivBody = lastDivMatch.Index + lastDivMatch.Length;
+				    // and also something to close off any open divisions...
+					Match lastDivTextMatch = reLastDivText.Match(m_body, endOfChapter);
+					int startLastDivBody = lastDivTextMatch.Index + lastDivTextMatch.Length;
 					string lastDivBody = m_body.Substring(startLastDivBody, endOfChapter - startLastDivBody);
 					string nestedDivTrailer;
-					nestedDivHeader = GetNestedDivInfo(lastDivBody, out nestedDivTrailer);
-					chapContents += nestedDivTrailer;
+				    bool chapSplitsDiv; // true if we want to append the rest of the split division as overlap
+					nestedDivHeader = GetNestedDivInfo(lastDivBody, out nestedDivTrailer, out chapSplitsDiv);
+
+                    // Include the rest of the current div, but marked up for exclusion from concording (and possibly different style)
+                    if (chapSplitsDiv)
+                    {
+                        int endpara = m_body.IndexOf("</div>", endOfChapter);
+                        if (endpara > 0)
+                        {
+                            string tailOfChapter = m_body.Substring(endOfChapter, endpara - endOfChapter);
+                            chapContents += "<span class=\"overlap\">" + tailOfChapter + "</span>";
+                        }
+                    }
+				    chapContents += nestedDivTrailer;
 					needExtraDivAtStartOfChap = true;
 				}
-				MakeChapterBody(OSIS_to_HTML.MoveAnchorsBeforeHeadings(chapContents), m_chapNames[ichapter], GetPrevFileName(ichapter),
+				MakeChapterBody(chapContents, m_chapNames[ichapter], GetPrevFileName(ichapter),
 					Path.GetFileName(BuildOutputPathname(m_chapNames[ichapter + 1])));
 				startOfChapter = endOfChapter;
 			}
@@ -435,10 +428,16 @@ namespace sepp
 			return "";
 		}
 
-		private string GetNestedDivInfo(string lastDivBody, out string nestedDivTrailer)
+        // Return the extra information we want to add at the start of the next chapter, and also the trailer
+        // we need to put at the end of this chapter, to close any open divs properly in this chapter,
+        // and re-open them at the start of the next. In addition, the body of the last div is included
+        // in the return value, marked with a special class.
+        // Exception: if the chapter anchor occurs right at the start of a <div>, we don't duplicate it, and return chapSplitsDiv false.
+		private string GetNestedDivInfo(string lastDivBody, out string nestedDivTrailer, out bool chapSplitsDiv)
 		{
 			List<string> openDivElts = new List<string>();
 			Regex reDiv = new Regex(@"<(/?)div[^>]*>");
+		    int ichLastDivStart = -1;
 			for (Match m = reDiv.Match(lastDivBody); m.Success; m = m.NextMatch())
 			{
 				if (m.Groups[1].Length > 0)
@@ -449,6 +448,7 @@ namespace sepp
 				else
 				{
 					openDivElts.Add(m.ToString());
+				    ichLastDivStart = m.Index + m.Length;
 				}
 			}
 			string result = "";
@@ -458,7 +458,15 @@ namespace sepp
 				result += divHeader;
 				nestedDivTrailer += "</div>";
 			}
-			return result;
+		    chapSplitsDiv = false;
+            if (ichLastDivStart >= 0)
+            {
+                string overlap = lastDivBody.Substring(ichLastDivStart);
+                chapSplitsDiv = !Regex.IsMatch(overlap, "^\\s$");
+                if (chapSplitsDiv)
+                    result += "<span class=\"overlap\">" + overlap + "</span>";
+            }
+		    return result;
 		}
 
 		private string GetBaseChapContents(int endOfChapter, int startOfChapter, bool needExtraDivAtStartOfChap, string nestedDivHeader)

@@ -294,7 +294,7 @@ namespace sepp
 				+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">\n\t"
 				+ "<script type=\"text/javascript\" src=\"mktree.js\"></script>\n</head>\n"
 				+ "<body class=\"ConcIndex\">\n"
-				+ "<p><a target=\"body\" href=\"Root.htm\">";
+				+ "<p><a target=\"body\" href=\"root.htm\">";
 		const string indexHeader2 = "</a></p>\n"
 				+ "<ul class=\"mktree\">\n";
 		const string indexTrailer = "</ul>\n</body>\n</html>\n";
@@ -391,7 +391,7 @@ namespace sepp
 				+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">\n"
 				+ "</head>\n"
 				+ "<body class=\"ConcIndex\">\n"
-				+ "<p><a target=\"body\" href=\"Root.htm\">";
+				+ "<p><a target=\"body\" href=\"root.htm\">";
 		const string indexMfHeader2 = "</a></p>\n"
 				+ "<ul class=\"mktree\">\n";
 		/// <summary>
