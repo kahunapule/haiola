@@ -146,8 +146,7 @@ namespace sepp
 				ReportError("Could not do postprocessing because xslt produced no output");
 				return; // couldn't complete initial stages?
 			}
-			if (!m_options.ChapterPerFile)
-				input = MoveAnchorsBeforeHeadings(input);
+			input = MoveAnchorsBeforeHeadings(input);
 			input = CreateSymbolCrossRefs(input);
 			string stage2 = FixDuplicateAnchors(input);
 
@@ -186,13 +185,22 @@ namespace sepp
 		//<a name="C5V13">
 		// and hoping to move the C5V13 anchor before the <div class="sectionsubheading"...>.
 
+        // Or like this:
+        // <div class="sectionheading"><a name="17"></a>Da Peopo Tell Da Bad Tings Dey Wen Do</div>
+        // <div class="text"><a name="C9"></a><a name="C9V1"></a><div class="prose">
+        // and again hoping to move <a name="C9"></a><a name="C9V1"> before the sectionheading.
+
+        // Or like this:
+        // <div class="sectionsubheading"><a name="C2"></a><a name="C2V1"></a><a name="0.7">Day Numba Seven</a></div>
+
 		// It's complicated because there could be quite a bit of stuff in between, but a move is allowed only if the anchor is at the very start of
-		// the prose division. Also the start of what we want to move around could be a sectionheading instead of a sectionsubheading.
+		// the prose or text division. Also the start of what we want to move around could be a sectionheading instead of a sectionsubheading.
 		internal static string MoveAnchorsBeforeHeadings(string input)
 		{
-			Regex reheading = new Regex("<div class=\"section(sub)?heading\"[^>]*>");
+			Regex reheading = new Regex("<div class=\"section(sub)?heading\"[^>]*>\\s*");
 			Regex reProse = new Regex("<div class=\"prose\">\\s*");
-			Regex reAnchors = new Regex("\\G(<a name=\"C[0-9]+\"></a>)?<a name=\"C[0-9]+V[0-9]+\"></a>");
+            Regex reText = new Regex("<div class=\"text\">\\s*");
+            Regex reAnchors = new Regex("\\G(<a name=\"C[0-9]+\"></a>)?<a name=\"C[0-9]+V[0-9]+\"></a>");
 			StringBuilder result = new StringBuilder(input.Length + 100);
 			int startNextCopy = 0;
 			int endIntro = input.IndexOf("</table>");
@@ -201,28 +209,45 @@ namespace sepp
 			int startNextSearch;
 			for (Match mh = reheading.Match(input, endIntro); mh.Success; mh = reheading.Match(input, startNextSearch) )
 			{
-				// We found something that looks like a section heading. Find the following prose division.
-				Match mp = reProse.Match(input, mh.Index + mh.Length);
-				if (!mp.Success)
-					break; // no more prose. Done.
-				// If we don't find an anchor right at the start of the prose, go back to looking for headings.
-				// (Nb the ^ at the start of the reAnchors pattern).
-				startNextSearch = mp.Index + mp.Length;
-				Match ma = reAnchors.Match(input, startNextSearch);
-				if (!ma.Success)
-					continue;
-				// We want to move the anchor before the heading.
-				// Copy whatever we haven't already copied up to (and including) the heading.
-				result.Append(input.Substring(startNextCopy, mh.Index + mh.Length - startNextCopy)); 
-				result.Append(ma.ToString()); // copy the anchor (will now be at start of heading)
-				result.Append(input.Substring(mh.Index + mh.Length, ma.Index - mh.Index - mh.Length)); // Copy end of heading to start of anchor
-				startNextCopy = startNextSearch = ma.Index + ma.Length; // resume search for heading and subsequent copy after anchor
+                // We found something that looks like a section heading.
+                // Look for anchor right at start of section heading div.
+                if (MoveAnchor(input, mh, null, reAnchors, out startNextSearch, result, ref startNextCopy))
+                    continue;
+                // Look for it at start of following text div.
+                if (MoveAnchor(input, mh, reText, reAnchors, out startNextSearch, result, ref startNextCopy))
+                    continue;
+                // Finally see if it is at start of prose div.
+				MoveAnchor(input, mh, reProse, reAnchors, out startNextSearch, result, ref startNextCopy);
 			}
 			result.Append(input.Substring(startNextCopy));
 			return result.ToString();
 		}
 
-		string[] m_symbols; // shared with delegate
+	    private static bool MoveAnchor(string input, Match mh, Regex reProse, Regex reAnchors, out int startNextSearch, StringBuilder result, ref int startNextCopy)
+	    {
+	        startNextSearch = mh.Index + mh.Length; // ensures we make some forward progress.
+            if (reProse != null)
+            {
+                Match mp = reProse.Match(input, mh.Index + mh.Length);
+                if (!mp.Success)
+                    return false;
+                startNextSearch = mp.Index + mp.Length;
+            }
+	        // If we don't find an anchor right at the start of the prose, go back to looking for headings.
+	        // (Nb the ^ at the start of the reAnchors pattern).
+	        Match ma = reAnchors.Match(input, startNextSearch);
+	        if (!ma.Success)
+	            return false;
+	        // We want to move the anchor before the heading.
+	        // Copy whatever we haven't already copied up to the heading.
+	        result.Append(input.Substring(startNextCopy, mh.Index - startNextCopy)); 
+	        result.Append(ma.ToString()); // copy the anchor (will now be before start of heading)
+	        result.Append(input.Substring(mh.Index, ma.Index - mh.Index)); // Copy end of heading to start of anchor
+	        startNextCopy = startNextSearch = ma.Index + ma.Length; // resume search for heading and subsequent copy after anchor
+	        return true;
+	    }
+
+	    string[] m_symbols; // shared with delegate
 
 		private string CreateSymbolCrossRefs(string input)
 		{

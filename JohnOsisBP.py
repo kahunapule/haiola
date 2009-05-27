@@ -91,6 +91,14 @@ class ScopeDecorator:
         self.prevID = osisID
 
 
+    # JohnT: Called to force immediate insert of end of previous verse
+    def insertVerseEnd(self):
+        node = stk[-1]
+        vrs = XMLNode("verse", 90)
+        vrs.setParm("eID", self.prevID)
+        node.children.append(vrs)
+        self.prevID = None       
+        
 # Escape embedded <, >, or &
 def mapText(m):
     inp = m.group(0)
@@ -376,7 +384,7 @@ def doId(text):
 # Process the start of a new chapter by getting chapter number
 # and resetting the verse number.
 
-def doChapter(text):
+def doChapter(text, nextTag):
     global chapter, verse, chapterText, chapterLabel
     
     verse = 0
@@ -390,9 +398,15 @@ def doChapter(text):
     except:        
         printError("Invalid chapter number: ", ch)
         chapter = 0
+    
 
-    # Output a chapter milestone (after closing any open environments
-    popStk(50)
+    # Output a chapter milestone (after closing any open environments)
+    if nextTag == "nb":
+        #JohnT: chapter embedded in paragraph: don't close paragraph; close any previous verse
+        scopeDecorator.insertVerseEnd()
+        popStk(51)
+    else:
+         popStk(50)
     pushStk("chapter", 50)
     stk[-1].setParm("osisID", "%s.%s" % (book, chapterText))
     
@@ -764,7 +778,8 @@ def convertText(text):
 
         # Handle \c
         if tag == "c":
-            doChapter(text)
+            nextTag = tt[i].rstrip()[1:]
+            doChapter(text, nextTag)
             continue
 
         # Handle \cl
@@ -817,13 +832,13 @@ def convertText(text):
                 #stk[-1].appendText(text)
             #continue
 
-        # don't treat \nb specially. Trying to make this be embedded is a mess.
-        ## Ignore \nb since it indicates that there was no paragraph
-        ## break present (just a marker indicating that the paragraph
-        ## spanned a chapter boundary.
-        #if tag == "nb":
-            #stk[-1].appendText(text)
-            #continue
+        # JohnT: reinstate this; we are handling \nb.
+        # Ignore \nb since it indicates that there was no paragraph
+        # break present (just a marker indicating that the paragraph
+        # spanned a chapter boundary.
+        if tag == "nb":
+            stk[-1].appendText(text)
+            continue
 
         # \ft and \xt are generic character style close markers.
         # Close all character styles.
