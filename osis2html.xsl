@@ -8,8 +8,8 @@
 
 
 <!-- XSLT stylesheet for Bible text in OSIS format (output to HTML, with display.css file) -->
-<!-- Dave van Grootheest, Netherlands Bible Society -->
-<!-- last updated: 2007-07-12 -->
+<!-- Dave van Grootheest, Netherlands Bible Society, modified by John Thomson, SIL -->
+<!-- last updated: 2009-05-31 -->
 
 
 
