@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
@@ -133,5 +134,24 @@ namespace sepp
 			foreach (string key in list.Split(' '))
 				dict[key] = true;
 		}
+
+        /// <summary>
+        /// Get a full path for the required file. In debug builds it is often found in ..\..\X; in an installed release build it is in the same directory
+        /// as the program. Throw an exception if not found at either place.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public static string GetUtilityFile(string fileName)
+        {
+            // Get the directory where everything lives in an installed release (Substring(6 strips off file//).
+            string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase).Substring(6);
+            string filePath = Path.Combine(baseDir, fileName);
+            if (File.Exists(filePath))
+                return filePath;
+            string alternatePath = Path.GetFullPath(Path.Combine(@"..\..", fileName));
+            if (!File.Exists(alternatePath))
+                throw new Exception("Could not find required file " + fileName + " either at " + filePath + " or " + alternatePath);
+            return alternatePath;
+        }
 	}
 }

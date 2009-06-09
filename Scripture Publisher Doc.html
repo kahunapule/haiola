@@ -19,7 +19,7 @@ margin-right: 0.5cm;
 <body>
 <h1>Prophero</h1>
 <h1>Scripture Electronic Publishing Package</h1>
-Last modified April 11, 2009 (Prophero version 0.93)
+Last modified June 8, 2009 (Prophero version 0.95)
 <h1>Introduction</h1>
 <p>Prophero is a program, still very much under development, to
 facilitate the electronic publishing of Scripture. It can be used to
@@ -282,17 +282,18 @@ appendix A.<br>
 OurWord
 files, works like this:</p>
 <ul>
+  <li>Run the Prophero installer. This puts various files into
+&lt;program files&gt;/The Seed Company/Prophero. It also creates an
+icon on your desktop and in your start menu and a folder called
+BibleConv in your documents folder. It is usually best to move the
+BibleConv folder to the root of your C drive (this is where Prophero
+expects to find it by default; otherwise, for now you will have to
+navigate to it each time you run the program).</li>
   <li>Create a working directory for the process by unzipping
 the Prophero package (get it from john_thomson@sil.org for now). For
 the moment
 this working directory MUST be C:\BibleConv.</li>
 </ul>
-<p class="enhancement">I wish the build process created
-this package
-automatically. For now I have to do it manually each time I make a
-version to give someone, and it is error-prone.</p>
-<p class="enhancement">It should be possible to configure
-Prophero to use a different working directory.</p>
 <p class="enhancement">Prophero&nbsp;should be posted
 on a web site
 somewhere so people can get it directly.</p>
@@ -324,12 +325,12 @@ this
 with instructions how to register it manually? Or maybe it doesn't need
 to be installed if in the same directory as Prophero? Investigate.)</p>
 <ul>
-  <li>Unzipping&nbsp;Prophero should have created a
-subdirectory,
-C:\BibleConv\Work. Create a subdirectory there whose name is the name
+  <li>Installing Prophero should have created a
+subdirectory,&nbsp;BibleConv\Work. Create a subdirectory there whose
+name is the name
 of your language. Within it, create a subdirectory called "OW". Copy
 your OurWord db files into C:\BibleConv\&lt;langname&gt;\OW.</li>
-  <li>Run&nbsp;Prophero (shortcut in root of BibleConv). It
+  <li>Run&nbsp;Prophero (shortcut on your desktop). It
 looks like this:</li>
 </ul>
 <img style="width: 634px; height: 306px;"
@@ -994,6 +995,9 @@ paragraph of the chapter omitted. One workaround is to put doubtful
 USFM files into the Source directory, and apply the regular expression
 script file reverseBcBp.re to convert to USFM. This re-orders the
 markers if they are not in the expected order.</p>
+<p>USFM specifies that the \nb marker should follow \c if you
+deliberately do NOT want a paragraph break at a chapter boundary.
+Prophero also requires this.</p>
 <p>In Sepp Options.xml, on the options element, you can set the
 attribute usfmEncoding if your USFM data is not in UTF8. The value must
 currently be one of the standard CPython codec identifiers. See <a
@@ -1066,6 +1070,13 @@ of converting an unknown field to some known field.</p>
 back translation information to be preserved
 through the whole process and made available to end users. Optional
 parallel columns, maybe?</p>
+<h1>SFM input</h1>
+<p>Prophero supports input from arbitrary files if you can yourself
+specify a transformation to USFM using a combination of CC files and
+regular expressions. Often it is useful to work this way if your input
+is <span style="font-style: italic;">almost</span> USFM but requires
+some small fixes, such as converting angle brackets to quotes.</p>
+<p>This option is described above under different starting points.</p>
 <h1>Other work that might get done some day</h1>
 <p class="enhancement">Verse bridges should use
 non-breaking hyphen
@@ -1227,6 +1238,21 @@ normal start and end of the files that make up the concordance index.
 {0} if present will be replaced with the localized text for the link to
 "books and chapters."</p>
 <h1>Appendix E: Revision history</h1>
+<h2>0.95 (check in June 8 2009)</h2>
+Added support for splitting a single file of all of Scripture in USFM
+into book files by locating \id lines. (Todo: check, this might have
+been in 0.94)<br>
+Added installer.<br>
+Corrected default stylesheet to look for "Charis SIL" rather than
+"CharisSIL".
+<h2>0.94 (check in May 25 2009)</h2>
+Added support for chapter break in mid-paragraph. USFM to OSIS
+conversion handles \nb properly. Formatting places the chapter number
+run correctly in mid-paragraph. Splitting the HTML into chapters
+duplicates the paragraph containing the chapter number in both chapter
+files, marking the appropriate parts of the paragraph as spans of class
+'overlap' so they are not doubly concorded.<br>
+Added support for \q3 (second level of indenting poetry).
 <h2>0.93 (check-in April 11 2009)</h2>
 Fixed several bugs in splitting books into individual chapter files.<br>
 Added support for footer on each page when splitting into chapters.<br>

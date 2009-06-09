@@ -57,7 +57,7 @@ namespace sepp
 
 		internal override string CreateArguments(string inputFilePath, string outputFilePath)
 		{
-			string scriptPath = Path.GetFullPath(@"..\..\JohnOsisBP.py");
+			string scriptPath = Path.GetFullPath(Utils.GetUtilityFile("JohnOsisBP.py"));
 			return "\"" + scriptPath + "\" " + base.CreateArguments(inputFilePath, outputFilePath) + " " + m_codec;
 		}
 		

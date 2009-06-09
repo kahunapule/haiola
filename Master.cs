@@ -126,5 +126,39 @@ namespace sepp
 			if (GetRootDirectory())
 				LoadWorkingDirectory();
 		}
+
+        private void m_btnSplitFile_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+			dlg.CheckFileExists = true;
+			dlg.InitialDirectory = m_workDirectory;
+			//dlg.Multiselect = true;
+			dlg.Filter = "SFM files(*.sfm)|*.sfm|All files|*.*";
+            if (dlg.ShowDialog(this) == DialogResult.OK)
+            {
+                string sourceFilePath = dlg.FileName;
+                string sourceDir = Path.GetDirectoryName(sourceFilePath);
+                string sourceFileName = Path.GetFileName(sourceFilePath);
+                string destDir = Path.Combine(sourceDir, "Source");
+                Utils.EnsureDirectory(destDir);
+                string prefix = sourceFileName.Substring(0, 3);
+                StreamReader source = new StreamReader(sourceFilePath, Encoding.UTF8);
+                StreamWriter writer = null;
+                while (!source.EndOfStream)
+                {
+                    string line = source.ReadLine();
+                    if (line.StartsWith("\\id "))
+                    {
+                        if (writer != null)
+                            writer.Close();
+                        string outputPath = Path.Combine(destDir, prefix + "-" + line.Substring(4).Trim() + ".sfm");
+                        writer = new StreamWriter(outputPath, false, Encoding.UTF8);
+                    }
+                    writer.WriteLine(line);
+                }
+                if (writer != null)
+                    writer.Close();
+            }
+        }
 	}
 }
