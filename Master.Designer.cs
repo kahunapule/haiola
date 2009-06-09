@@ -34,6 +34,7 @@ namespace sepp
             this.ProjectButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.btnSetRootDirectory = new System.Windows.Forms.Button();
+            this.m_btnSplitFile = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // m_projectsList
@@ -72,9 +73,9 @@ namespace sepp
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(352, 293);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(134, 13);
+            this.label1.Size = new System.Drawing.Size(131, 13);
             this.label1.TabIndex = 10;
-            this.label1.Text = "Version 0.94, 25 May 2009";
+            this.label1.Text = "Version 0.95, 8 June 2009";
             // 
             // btnSetRootDirectory
             // 
@@ -86,11 +87,22 @@ namespace sepp
             this.btnSetRootDirectory.UseVisualStyleBackColor = true;
             this.btnSetRootDirectory.Click += new System.EventHandler(this.btnSetRootDirectory_Click);
             // 
+            // m_btnSplitFile
+            // 
+            this.m_btnSplitFile.Location = new System.Drawing.Point(365, 201);
+            this.m_btnSplitFile.Name = "m_btnSplitFile";
+            this.m_btnSplitFile.Size = new System.Drawing.Size(238, 23);
+            this.m_btnSplitFile.TabIndex = 12;
+            this.m_btnSplitFile.Text = "Split a multi-book file";
+            this.m_btnSplitFile.UseVisualStyleBackColor = true;
+            this.m_btnSplitFile.Click += new System.EventHandler(this.m_btnSplitFile_Click);
+            // 
             // Master
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(631, 358);
+            this.Controls.Add(this.m_btnSplitFile);
             this.Controls.Add(this.btnSetRootDirectory);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.ProjectButton);
@@ -112,5 +124,6 @@ namespace sepp
 		private System.Windows.Forms.Button ProjectButton;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button btnSetRootDirectory;
+        private System.Windows.Forms.Button m_btnSplitFile;
 	}
 }

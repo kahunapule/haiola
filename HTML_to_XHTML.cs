@@ -42,7 +42,7 @@ namespace sepp
         //}
 		internal override string ToolPath
 		{
-			get { return Path.GetFullPath(@"..\..\tidy.exe"); }
+			get { return Utils.GetUtilityFile("tidy.exe"); }
 		}
 
 		internal override string OutputExtension

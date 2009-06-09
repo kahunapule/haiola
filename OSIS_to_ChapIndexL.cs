@@ -43,7 +43,7 @@ namespace sepp
 		public void Run(IList files)
 		{
 			Utils.EnsureDirectory(m_outputDirName);
-			m_xslt.Load(@"..\..\osis2ChapIndexFrag.xsl");
+			m_xslt.Load(Utils.GetUtilityFile("osis2ChapIndexFrag.xsl"));
 
             string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n"
                 + "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">"

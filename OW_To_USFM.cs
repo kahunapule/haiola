@@ -54,18 +54,18 @@ namespace sepp
 				// Use the default
 				m_tablePaths = new string[] {
 				// remove spaces at end of line. They can end up between end of sentence and note marker.
-				@"..\..\cleanup_EOL_spaces.cct", 
+				Utils.GetUtilityFile("cleanup_EOL_spaces.cct"), 
 				// removes btX fields, which (when converted to \note: btX....\note* by current OW_to_PT cause
 				// Nathan's USFM->OSIS to drop the rest of the verse after a footnote.
-				//@"..\..\remove_bt_from_OW.cct", 
+				//Utils.GetUtilityFile("remove_bt_from_OW.cct"), 
 				"bt",
 				// removes \ov fields, which otherwise tend to result in a newline before various notes,
 				// which becomes an unwanted space after following stages.
-				//@"..\..\remove_ov_from_OW.cct", 
+				//Utils.GetUtilityFile("remove_ov_from_OW.cct"), 
 				"ov",
 				// Strip all the \ntX fields. JohnD's file makes of all these markers that don't translate into \note.
 				// The OSIS converter discards them, but the resulting blank lines mess up spacing of note markers.
-				//@"..\..\remove_nt_from_OW.cct",
+				//Utils.GetUtilityFile("remove_nt_from_OW.cct"),
 				"nt",
 				// Several more fields that are not wanted and not handled by the OW_to_PT.
 				"al ",
@@ -75,7 +75,7 @@ namespace sepp
 				"nq",
 
 				// Consider using this...if so, must be BEFORE we convert angle brackets to quotes!
-				//@"..\..\fix_glottal.cct",
+				//Utils.GetUtilityFile("fix_glottal.cct"),
 
 				// The main tables don't do well with multiple foonotes in a block. Now we've got rid of the \bts, we can break those up.
 				"footnotes.process",
@@ -85,18 +85,18 @@ namespace sepp
 				// and closes the double first, which is (usually) wrong.
 				// This version removes any space in >> > etc, and interprets >>> as > >>.
 				// This change may be redundant with the latest version of JohnD's OW_to_PT.cct
-				//@"..\..\fix_quotes.cct", 
+				//Utils.GetUtilityFile("fix_quotes.cct"), 
 				// Main conversion by John Duerkson implemented in these two files.
-				@"..\..\OW_to_PT.cct",
-				@"..\..\move_footnote_to_fn.cct",
+				Utils.GetUtilityFile("OW_to_PT.cct"),
+				Utils.GetUtilityFile("move_footnote_to_fn.cct"),
 				// Strip all the \note fields that JohnD's file makes of all the markers that don't translate.
 				// The OSIS converter discards them, but the resulting blank lines mess up spacing of note markers.
 				// Didn't work...strips the whole file content after the first \note. Also not needed, now have
 				// \nt being deleted properly.
-				//@"..\..\remove_note_from_USFM.cct",
+				//Utils.GetUtilityFile("remove_note_from_USFM.cct"),
 				// Final cleanup strips remnants of s2 markers at end of field, and puts cross-ref notes inline so
 				// we don't get a spurious space before the <note> in the OSIS and beyond.
-				@"..\..\cleanup_OW_to_USFM.cct"
+				Utils.GetUtilityFile("cleanup_OW_to_USFM.cct")
 				};
 			}
 			// Reset problem records, in case ever used repeatedly.

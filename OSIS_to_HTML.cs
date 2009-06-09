@@ -732,7 +732,7 @@ namespace sepp
             // Look for an override of osis2Html, if not found use standard one.
 			string scriptPath = Path.Combine(Path.GetDirectoryName(Path.GetDirectoryName(inputFilePath)), "osis2Html.xsl");
 			if (!File.Exists(scriptPath))
-				scriptPath = Path.GetFullPath(@"..\..\osis2Html.xsl");
+				scriptPath = Utils.GetUtilityFile("osis2Html.xsl");
 			return "\"" + inputFilePath + "\" \"" + scriptPath + "\" -o \"" + outputFilePath + "\" copyright=\"" + m_copyright + "\"";
 
 		}
@@ -740,7 +740,7 @@ namespace sepp
 		// Arguments for running the script that tries to extract an Introduction from the input.
 		private string CreateIntroArguments(string inputFilePath, string outputFilePath)
 		{
-			string scriptPath = Path.GetFullPath(@"..\..\osis2Intro.xsl");
+            string scriptPath = Utils.GetUtilityFile("osis2Intro.xsl");
 			return "\"" + inputFilePath + "\" \"" + scriptPath + "\" -o \"" + outputFilePath + "\" copyright=\"" + m_copyright + "\"";
 		}
 
