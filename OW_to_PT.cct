@@ -1,6 +1,6 @@
 begin > utf8
 
-c Changetable to convert OW formatted file to USFM v.2, jd 200803
+c Changetable to convert OW formatted file to USFM v.2, John Duerksen 200803 (possibly with some modifications by John Thomson)
 
 store(sp) " " nl
 endstore

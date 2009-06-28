@@ -1,6 +1,9 @@
 #! (tr1,tr2)
 #! ndx should not generate text twice
 
+# This file was originally developed by Nathan Miles of UBS, and modified by John Thomson of SIL International while on loan to The Seed Company.
+# Used as part of Prophero by permission of the UBS.
+
 #! had to change to test for type(None) in MarkerDefinitions
 #! is there a conflict between subtype first and embedded for <verse>
 #      when used for the first verse of a Psalm?
