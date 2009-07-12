@@ -105,6 +105,9 @@ namespace sepp
 			m_seriousErrorCount = 0;
 
 			// Input is typically db files from OurWord, sfm from TE, or ptx from ParaText.
+            // It may also be from Bibledit or another USFM tool. Many archived input files
+            // do not have consistent file extensions. Some are named for the language as a
+            // suffix. Bibledit uses .usfm on its exports.
 			string[] inputFileNames = Directory.GetFiles(m_inputDirName, "*.db");
 			if (inputFileNames.Length == 0)
 				inputFileNames = Directory.GetFiles(m_inputDirName, "*.sfm");
@@ -112,7 +115,11 @@ namespace sepp
 				inputFileNames = Directory.GetFiles(m_inputDirName, "*.ptx");
 			if (inputFileNames.Length == 0)
 				inputFileNames = Directory.GetFiles(m_inputDirName, "*.sfc");
-			Progress status = new Progress(files.Count);
+            if (inputFileNames.Length == 0)
+                inputFileNames = Directory.GetFiles(m_inputDirName, "*.usfm");
+            if (inputFileNames.Length == 0)
+                inputFileNames = Directory.GetFiles(m_inputDirName, "*.*");
+            Progress status = new Progress(files.Count);
 			status.Show();
 			Utils.EnsureDirectory(m_outputDirName);
 			int count = 0;

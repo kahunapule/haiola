@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# coding: utf-8
+
 #! (tr1,tr2)
 #! ndx should not generate text twice
 
@@ -149,8 +152,9 @@ class XMLNode:
             # Ed's insertion/mod:
             # Using the attribute path to output ide, rem, and restore 
             # as XML comments.
+            # Kahunapule: add space at end to avoid - making an invalid end comment marker
             if name in ["ide", "rem", "restore"]:
-                parmText = " " + "\\" + name + " " + self.parms[name]
+                parmText = " " + "\\" + name + " " + self.parms[name] + " "
             else:
                 parmText += " " + name + '="' + self.parms[name] + '"'
         
@@ -186,8 +190,14 @@ class XMLNode:
             # any reasonable number.
             parmText = parmText.replace('--', '-')
             parmText = parmText.replace('--', '-')
-            parmText = parmText.replace('--', '-')
-            self.outputTag(self.tagName + parmText + "--")    
+            # Kahunapule: somebody, somewhere, will probably think that 80 hyphens in a row is "reasonable."
+            # Therefore, I changed this to change any remaining -- to an underscore, partially preserving appearance.
+            # I would have preferred to use an em dash (—), but the .replace function chokes on the Unicode outside
+            # of the ASCII range.
+            parmText = parmText.replace('--', '_')
+            # Kahunapule: space inserted before "--" just in case the last character of parmText is a dash.
+            # Triple dashes at the end of an XML comment are not allowed.
+            self.outputTag(self.tagName + parmText + " --")    
         else:
             self.outputTag(self.tagName + parmText + "/")
 
@@ -297,6 +307,7 @@ idMap['REV'] = "Rev"
 idMap['TOB'] = "Tob"
 idMap['JDT'] = "Jdt"
 idMap['ESG'] = "AddEsth"
+idMap['DNT'] = "AddDan"
 idMap['WIS'] = "Wis"
 idMap['SIR'] = "Sir"
 idMap['BAR'] = "Bar"
@@ -850,6 +861,16 @@ def convertText(text):
                 popStk()
             stk[-1].appendText(text)
             continue
+            
+        if tag == "wj":
+            # pushStk("q", 90)
+            stk[-1].appendText(text)
+            continue
+        		
+        if tag == "wj*":
+        		# popStk()
+        		stk[-1].appendText(text)
+        		continue
 
         tagInfo = tags.get(tag, None)
         if not tagInfo:

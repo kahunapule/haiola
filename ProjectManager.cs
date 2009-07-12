@@ -290,6 +290,12 @@ namespace sepp
 			btnCopySupportFiles_Click(this, e);
 		}
 
+        public void automaticRun()
+        {
+            buttonAllSteps_Click(null, null);
+            Close();
+        }
+
 		private void btnCopySupportFiles_Click(object sender, EventArgs e)
 		{
 			string supportDir = m_options.SupportFilesPath;
