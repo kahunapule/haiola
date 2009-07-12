@@ -26,7 +26,9 @@ namespace sepp
 		/// <param name="verse"></param>
 		public WordOccurrence(string file, int chapter, string verse, string anchor, int offset, string form, bool canonical)
 		{
-			m_file = file;
+            if (offset < 0)
+                throw new ArgumentException("Attempt to set offset of a word occurrence to a negative value.");
+            m_file = file;
 			m_chapter = chapter;
 			m_verse = verse;
 			m_offset = offset;
@@ -87,7 +89,12 @@ namespace sepp
 		public int Offset
 		{
 			get { return m_offset; }
-			set { m_offset = value; }
+			set
+			{
+                if (value < 0)
+                    throw new ArgumentException("Attempt to set offset of a word occurrence to a negative value.");
+                m_offset = value;
+			}
 		}
 
 		/// <summary>
@@ -96,7 +103,10 @@ namespace sepp
 		public string Context
 		{
 			get { return m_context; }
-			set { m_context = value; }
+			set
+			{
+			    m_context = value;
+			}
 		}
 
 		/// <summary>

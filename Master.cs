@@ -160,5 +160,18 @@ namespace sepp
                     writer.Close();
             }
         }
+
+        private void WorkOnAllButton_Click(object sender, EventArgs e)
+        {
+            foreach (object o_project in m_projectsList.Items)
+            {
+                string project = (string)o_project;
+                string projectWorkPath = Path.Combine(m_workDirectory, project);
+                string projectSitePath = Path.Combine(m_siteDirectory, project);
+                ProjectManager manager = new ProjectManager(projectWorkPath, projectSitePath);
+                manager.Show();
+                manager.automaticRun();
+            }
+        }
 	}
 }

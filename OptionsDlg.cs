@@ -476,7 +476,8 @@ namespace sepp
 
 			foreach (string path in Directory.GetFiles(sourceDir))
 			{
-				if (Path.GetFileName(path).ToLowerInvariant() == "conversionreports.txt")
+                string lcpath = Path.GetFileName(path).ToLowerInvariant();
+				if ((lcpath.CompareTo("conversionreports.txt") == 0) || (Path.GetExtension(lcpath).CompareTo(".bak")== 0))
 					continue;
 				string fileName = Path.ChangeExtension(Path.GetFileName(path), "xml").ToLowerInvariant();
 				ListViewItem existingItem;
@@ -487,13 +488,17 @@ namespace sepp
 					continue;
 				}
 				// Try to guess the abbreviation from the file name
-				string stdAbbr = GuessStandardAbbr(fileName);
+				string stdAbbr = GuessStandardAbbr(path);
+                string xrefAbbr = GuessXRef(path);
 				int insertAt = FigureInsertPosition(stdAbbr);
 				// Enhance JohnT: is there a way to obtain a better guess from a USFM/OW file?
 				// Enhance JohnT: almost sure there is a field from which we can get a good guess for this.
 				// Enhance JohnT: If there is a file in the Intro directory whose name contains fileName, guess that.
-				lstFiles.Items.Insert(insertAt, MakeFileItem(stdAbbr, Path.GetFileNameWithoutExtension(path), stdAbbr,
-					GuessXRef(path), ""));
+                // Kahunapule: default the crossreference abbreviations to non-abbreviated vernacular book names, not
+                // English abbreviations, assuming that the reader will understand those better. They don't have to be
+                // abbreviated, but they do have to be understandable to the target audience.
+				lstFiles.Items.Insert(insertAt, MakeFileItem(stdAbbr, Path.GetFileNameWithoutExtension(path), xrefAbbr,
+					xrefAbbr, ""));
 			}
 			// Remove any items for which files no longer exist.
 			foreach(ListViewItem item in existingFiles.Values)
@@ -513,24 +518,27 @@ namespace sepp
 		}
 
 		/// <summary>
-		/// Guess the book name to look for in cross-refs. We use \h if we can find one at all, otherwise, \mt
+		/// Guess the book name to look for in cross-refs. We use \h if we can find one at all, otherwise, \mt1
+        /// or \mt (omitting \mt2 and \mt3).
 		/// </summary>
-		/// <param name="path"></param>
+		/// <param name="path">File name to look for crossreference book name.</param>
 		/// <returns></returns>
 		private string GuessXRef(string path)
 		{
 			string fallback = "";
 			StreamReader reader = new StreamReader(path, Encoding.UTF8);
-			for (; !reader.EndOfStream;)
+			while (!reader.EndOfStream)
 			{
 				string line = reader.ReadLine();
 				if (line.StartsWith(@"\h"))
 				{
 					return line.Substring(2).Trim();
 				}
-				if (line.StartsWith(@"\mt"))
+				if (line.StartsWith(@"\mt "))
 					fallback = line.Substring(3).Trim();
-			}
+                if (line.StartsWith(@"\mt1 "))
+                    fallback = line.Substring(4).Trim();
+            }
 			return fallback;
 		}
 
@@ -569,8 +577,34 @@ namespace sepp
 
 		Dictionary<string, string> m_specialBookPatterns = new Dictionary<string, string>();
 
-		private string GuessStandardAbbr(string fileName)
+		private string GuessStandardAbbr(string pathName)
 		{
+            // First guess: use the ID line.
+            string result = "";
+            string line;
+            StreamReader sr = new StreamReader(pathName);
+            while ((result.Length < 1) && (!sr.EndOfStream))
+            {
+                line = sr.ReadLine();
+                if (line.StartsWith(@"\id ") && (line.Length > 6))
+                {
+                    result = line.Substring(4, 3).ToUpper(CultureInfo.InvariantCulture);
+                }
+            }
+            sr.Close();
+            if (result.Length > 0)
+                return result;
+            // Second guess: ask the user with a triple question mark.
+            return "???";
+
+            /*
+             * If you are here in the code, you are grasping at straws with bad input.
+             * USFM says nothing about what file naming conventions you should use.
+             * It does require an ID line, which must contain a standard abbreviation
+             * as the first part of the \id line. (That may optionally be followed by
+             * a comment.
+            result = "???";
+
 			string fileNameLC = fileName.ToLowerInvariant();
 			// If we can find a special match in the file name that determiones it.
 			foreach (string pattern in m_specialBookPatterns.Keys)
@@ -592,7 +626,8 @@ namespace sepp
 				if (int.TryParse(fileName.Substring(0, 2), out bookIndex) && bookIndex > 0 && bookIndex <= canonicalAbbrs.Length)
 					return canonicalAbbrs[bookIndex - 1];
 			}
-			return "???"; // any other ideas, anyone??
+			return result; // any other ideas, anyone??
+            */
 		}
 
 
@@ -793,6 +828,12 @@ namespace sepp
 					break;
 			}
 		}
+
+        private void clearReloadButton_Click(object sender, EventArgs e)
+        {
+            lstFiles.Items.Clear();
+            m_options.InputFiles.Clear();
+            btnAdjustFiles_Click(sender, e);        }
 	}
 
 	class FileListAdjuster

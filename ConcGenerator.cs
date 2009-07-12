@@ -839,12 +839,23 @@ namespace sepp
 					cSave--;
 				nextSave = context.Substring(0, cSave);
 			}
-			context = context.Substring(cInitialPunct) + m_saveContext;
+			string newContext = context.Substring(cInitialPunct) + m_saveContext;
 			m_saveContext = nextSave;
 			foreach (WordOccurrence w in m_pendingOccurrences)
 			{
-				w.Context = context;
-				w.Offset = w.Offset - cInitialPunct;
+                if (cInitialPunct <= w.Offset)
+                {
+                    // Normally we should be able to remove the previous sentence punctuation and leave w.Offset valid.
+                    w.Context = newContext;
+                    w.Offset = w.Offset - cInitialPunct;
+                }
+                else
+                {
+                    // pathologically the occurrence might just possibly be within what we thought was previous sentence punctuation.
+                    // If so remove as much as we can, and add the usual.
+                    w.Context = context.Substring(w.Offset) + m_saveContext;
+                    w.Offset = 0;
+                }
 			}
 			m_pendingOccurrences.Clear();
 		}

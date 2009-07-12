@@ -117,11 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="label23.Text" xml:space="preserve">
-    <value>This tab controls sorting of words in the concordance. You can define a custom sort order or pick a standard one. In Custom Simple mode, characters on the same line sort as equal, unless words are otherwise identical. You can get another level by grouping items on a line with parentheses. See documentation for custom ICU. You can enter some words and test the result in the right-hand box.</value>
-  </data>
   <data name="label20.Text" xml:space="preserve">
     <value>This tab specifies the input files for your project. Each line gives a standard abbreviation which identifies the file and determines canonical order, the input file (without extension), the abbreviation which should be used for this book in the concordance, the name for this book which is used in cross-references, and the name of a file containing the 'introduction' to this book (if any).</value>
+  </data>
+  <data name="label23.Text" xml:space="preserve">
+    <value>This tab controls sorting of words in the concordance. You can define a custom sort order or pick a standard one. In Custom Simple mode, characters on the same line sort as equal, unless words are otherwise identical. You can get another level by grouping items on a line with parentheses. See documentation for custom ICU. You can enter some words and test the result in the right-hand box.</value>
   </data>
   <data name="label19.Text" xml:space="preserve">
     <value>This tab controls the work of the "Build book names page" button. Book names are available in the language of the project (from the Input tab, Book name used in cross refs column) and in other languages, taken from files with names beginning "BookNames_" in your Work directory. To include a language in your book names page, provide a column header for that language in the right-hand column here.</value>
