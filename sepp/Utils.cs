@@ -135,6 +135,14 @@ namespace sepp
 				dict[key] = true;
 		}
 
+        public static string ExePath
+        {
+            get
+            {
+                return Path.GetDirectoryName(System.IO.Path.GetFullPath(Environment.GetCommandLineArgs()[0]));
+            }
+        }
+
         /// <summary>
         /// Get a full path for the required file. In debug builds it is often found in ..\..\X; in an installed release build it is in the same directory
         /// as the program. Throw an exception if not found at either place.
@@ -143,15 +151,46 @@ namespace sepp
         /// <returns></returns>
         public static string GetUtilityFile(string fileName)
         {
-            // Get the directory where everything lives in an installed release (Substring(6 strips off file//).
-            string baseDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase).Substring(6);
-            string filePath = Path.Combine(baseDir, fileName);
-            if (File.Exists(filePath))
-                return filePath;
-            string alternatePath = Path.GetFullPath(Path.Combine(@"..\..", fileName));
-            if (!File.Exists(alternatePath))
-                throw new Exception("Could not find required file " + fileName + " either at " + filePath + " or " + alternatePath);
-            return alternatePath;
+            if (File.Exists(fileName))
+                return fileName;
+            string fileDir = Path.GetDirectoryName(fileName);
+            string nameOnly = Path.GetFileName(fileName);
+            string filePath = Path.Combine(fileDir, "..");
+            string result = Path.Combine(filePath, nameOnly);
+            if (File.Exists(result))
+                return result;
+            filePath = Path.Combine(filePath, "..");
+            result = Path.Combine(filePath, nameOnly);
+            if (File.Exists(result))
+                return result;
+            result = Path.Combine(ExePath, nameOnly);
+            if (File.Exists(result))
+                return result;
+            result = Path.Combine(Path.Combine(Path.Combine(ExePath, ".."), ".."), nameOnly);
+            if (File.Exists(result))
+                return result;
+            throw new Exception("Could not find required file " + fileName);
         }
+
+        public static void CopyDirectory(string Src, string Dst)
+        {
+            String[] Files;
+
+            if (Dst[Dst.Length - 1] != Path.DirectorySeparatorChar)
+                Dst += Path.DirectorySeparatorChar;
+            if (!Directory.Exists(Dst))
+                Directory.CreateDirectory(Dst);
+            Files = Directory.GetFileSystemEntries(Src);
+            foreach (string Element in Files)
+            {
+                // Sub directories
+                if (Directory.Exists(Element))
+                    CopyDirectory(Element, Dst + Path.GetFileName(Element));
+                else // Files in directory
+                    File.Copy(Element, Dst + Path.GetFileName(Element), true);
+            }
+        }
+
+
 	}
 }

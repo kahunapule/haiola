@@ -348,7 +348,7 @@ namespace sepp
 			dlg.CheckFileExists = true;
 			dlg.InitialDirectory = m_manager.WorkPath;
 			//dlg.Multiselect = true;
-			dlg.Filter = "CC tables(*.cct)|*.cct|Regular Expressions(*.re)|*.re";
+			dlg.Filter = "Change files (*.cct; *.re)|*.cct;*.re|CC tables(*.cct)|*.cct|Regular Expressions(*.re)|*.re";
 			if (dlg.ShowDialog(this) == DialogResult.OK)
 			{
 				string newFilePath = dlg.FileName;
@@ -472,8 +472,6 @@ namespace sepp
 
 			lstFiles.SuspendLayout();
 
-			InitSpecialPatterns();
-
 			foreach (string path in Directory.GetFiles(sourceDir))
 			{
                 string lcpath = Path.GetFileName(path).ToLowerInvariant();
@@ -506,15 +504,6 @@ namespace sepp
 			lstFiles.ResumeLayout();
 
 			return true;
-		}
-
-		// Special ways of identifying books, to try before looking for canonical abbreviation in filename.
-		// Need to look for 52col because it unfortunately matches '2cor' but more likely indicates Colossians.
-		private void InitSpecialPatterns()
-		{
-			if (m_specialBookPatterns.Count != 0)
-				return;
-			m_specialBookPatterns["52col"] = "Col";
 		}
 
 		/// <summary>
@@ -575,8 +564,6 @@ namespace sepp
 			return index;
 		}
 
-		Dictionary<string, string> m_specialBookPatterns = new Dictionary<string, string>();
-
 		private string GuessStandardAbbr(string pathName)
 		{
             // First guess: use the ID line.
@@ -597,37 +584,6 @@ namespace sepp
             // Second guess: ask the user with a triple question mark.
             return "???";
 
-            /*
-             * If you are here in the code, you are grasping at straws with bad input.
-             * USFM says nothing about what file naming conventions you should use.
-             * It does require an ID line, which must contain a standard abbreviation
-             * as the first part of the \id line. (That may optionally be followed by
-             * a comment.
-            result = "???";
-
-			string fileNameLC = fileName.ToLowerInvariant();
-			// If we can find a special match in the file name that determiones it.
-			foreach (string pattern in m_specialBookPatterns.Keys)
-			{
-				if (fileNameLC.Contains(pattern))
-					return m_specialBookPatterns[pattern];
-			}
-			// If we can find a standard abbreviation in the file name use it.
-			foreach (string abbr in canonicalAbbrs)
-			{
-				if (fileNameLC.Contains(abbr.ToLowerInvariant()))
-					return abbr;
-			}
-			if (fileName.Length > 2)
-			{
-				// see if we can interpret the first two characters as a number between 1 and 66. If so, assume standard
-				// Paratext naming.
-				int bookIndex;
-				if (int.TryParse(fileName.Substring(0, 2), out bookIndex) && bookIndex > 0 && bookIndex <= canonicalAbbrs.Length)
-					return canonicalAbbrs[bookIndex - 1];
-			}
-			return result; // any other ideas, anyone??
-            */
 		}
 
 
@@ -833,7 +789,8 @@ namespace sepp
         {
             lstFiles.Items.Clear();
             m_options.InputFiles.Clear();
-            btnAdjustFiles_Click(sender, e);        }
+            btnAdjustFiles_Click(sender, e);
+        }
 	}
 
 	class FileListAdjuster

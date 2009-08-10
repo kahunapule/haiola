@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.IO;
+using WordSend;
 
 namespace sepp
 {
@@ -167,6 +168,7 @@ namespace sepp
 
 		private void m_button_Input_to_USFM_Click(object sender, EventArgs e)
 		{
+            m_button_OW_to_USFM.Enabled = false;
 			string srcDir = OwDir;
 			if (ConvertingSourceToUsfm())
 				srcDir = SourceDir;
@@ -176,7 +178,8 @@ namespace sepp
 				converter.TablePaths = m_tablePaths;
 			}
 			converter.Run(m_filesList.CheckedItems);
-		}
+            m_button_OW_to_USFM.Enabled = true;
+        }
 
 		private bool ConvertingSourceToUsfm()
 		{
@@ -201,6 +204,11 @@ namespace sepp
 			get { return Path.Combine(m_workDir, UsfmDir); }
 		}
 
+        private string UsfxPath
+        {
+            get { return Path.Combine(m_workDir, "usfx"); }
+        }
+
 		private void m_buttonOSIS_to_HTML_Click(object sender, EventArgs e)
 		{
 			OSIS_to_HTML converter = new OSIS_to_HTML(
@@ -215,6 +223,11 @@ namespace sepp
 		{
 			return Path.Combine(m_workDir, @"HTML");
 		}
+
+        private string HtmPath
+        {
+            get { return m_siteDir; /* was Path.Combine(m_workDir, "htm");*/ }
+        }
 
 		private void m_buttonHTML_to_XHTML_Click(object sender, EventArgs e)
 		{
@@ -272,23 +285,43 @@ namespace sepp
 
 		private void buttonAllSteps_Click(object sender, EventArgs e)
 		{
-			if (Directory.Exists(Path.Combine(m_workDir, OwDir)) || ConvertingSourceToUsfm())
-				m_button_Input_to_USFM_Click(this, e);
-			if (Directory.Exists(UsfmPath))
-				m_button_USFM_to_OSIS_Click(this, e);
-			// For now OSIS must exist, somehow.
-			if (!Directory.Exists(OsisPath))
-			{
-				MessageBox.Show(this, "Could not find or create required OSIS files", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return;
-			}
-			m_buttonOSIS_to_HTML_Click(this, e);
-			m_buttonHTML_to_XHTML_Click(this, e);
-			m_bookNameButton_Click(this, e);
-			m_buttonChapIndex_Click(this, e);
-			m_runButton_Click(this, e);
-			btnCopySupportFiles_Click(this, e);
-		}
+            try
+            {
+                buttonAllSteps.Enabled = false;
+                if (OwCheckBox.Checked && (Directory.Exists(Path.Combine(m_workDir, OwDir)) || ConvertingSourceToUsfm()))
+                    m_button_Input_to_USFM_Click(this, e);
+                if (UsfxCheckBox.Checked && Directory.Exists(UsfmPath))
+                {
+                    UsfmToUsfxButton_Click(sender, e);
+                    m_button_USFM_to_OSIS_Click(this, e);
+                }
+                if (HtmlCheckBox.Checked)
+                    UsfxToHtmlButton_Click(sender, e);
+                // For now OSIS must exist, somehow.
+                if (!Directory.Exists(OsisPath))
+                {
+                    MessageBox.Show(this, "Could not find or create required OSIS files", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                if (OsisHtmlCheckBox.Checked)
+                    m_buttonOSIS_to_HTML_Click(this, e);
+                if (XhtmlCheckBox.Checked)
+                    m_buttonHTML_to_XHTML_Click(this, e);
+                if (bookNamePageCheckBox.Checked)
+                    m_bookNameButton_Click(this, e);
+                if (ChapterIndexCheckBox.Checked)
+                    m_buttonChapIndex_Click(this, e);
+                if (ConcordanceCheckBox.Checked)
+                    m_runButton_Click(this, e);
+                if (copySupportFilesCheckBox.Checked)
+                    btnCopySupportFiles_Click(this, e);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            buttonAllSteps.Enabled = true;
+        }
 
         public void automaticRun()
         {
@@ -298,7 +331,11 @@ namespace sepp
 
 		private void btnCopySupportFiles_Click(object sender, EventArgs e)
 		{
-			string supportDir = m_options.SupportFilesPath;
+			string supportDir = Path.Combine(Master.MasterInstance.dataRootDir, "FilesToCopyToOutput");
+            if (ConcordanceCheckBox.Checked)
+                Utils.CopyDirectory(Path.Combine(supportDir, "Conc"), Path.Combine(m_siteDir, "Conc"));
+            Utils.CopyDirectory(Path.Combine(supportDir, "css"), Path.Combine(Master.MasterInstance.m_siteDirectory, "css"));
+            /*
 			foreach (string path in Directory.GetFiles(supportDir))
 			{
 				string fileName = Path.GetFileName(path);
@@ -308,12 +345,15 @@ namespace sepp
 					// and one when as part of a larger site.
 					DoCopy(path, Path.Combine(m_siteDir, fileName));
 					DoCopy(path, Path.Combine(m_siteDir, "index.html"));
+
+                    // Only one of the above is really necessary. --Kahunapule
 				}
 				else
 				{
 					DoCopy(path, Path.Combine(ConcPath, fileName));
 				}
-			}
+            }
+            */
 		}
 
 		private void DoCopy(string path, string destPath)
@@ -329,5 +369,33 @@ namespace sepp
 			File.Copy(path, destPath, true);
 		}
 
+        private void UsfmToUsfxButton_Click(object sender, EventArgs e)
+        {
+            UsfmToUsfxButton.Enabled = false;
+            Utils.EnsureDirectory(UsfxPath);
+
+            Logit.OpenFile(Path.Combine(UsfxPath, "ConversionReports.txt"));
+            SFConverter.scripture = new Scriptures();
+
+            // Read the input USFM files into internal data structures.
+            SFConverter.ProcessFilespec(Path.Combine(UsfmPath, "*.ptx"));
+
+            // Write out the USFX file.
+            SFConverter.scripture.WriteUSFX(Path.Combine(UsfxPath, "usfx.xml"));
+            Logit.CloseFile();
+            UsfmToUsfxButton.Enabled = true;
+        }
+
+        private void UsfxToHtmlButton_Click(object sender, EventArgs e)
+        {
+            UsfxToHtmlButton.Enabled = false;
+            Utils.EnsureDirectory(HtmPath);
+            usfxToHtmlConverter toHtm = new usfxToHtmlConverter();
+            Logit.OpenFile(Path.Combine(HtmPath, "ConversionReports.txt"));
+            toHtm.ConvertUsfxToHtml(Path.Combine(UsfxPath, "usfx.xml"), HtmPath, m_options.PreviousChapterText,
+                m_options.NextChapterText, "", "");
+            Logit.CloseFile();
+            UsfxToHtmlButton.Enabled = true;
+        }
 	}
 }

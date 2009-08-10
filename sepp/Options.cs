@@ -48,7 +48,7 @@ namespace sepp
 		internal List<BookNameColumnInfo> m_bookNameCclumns = new List<BookNameColumnInfo>();
 		internal string m_sortSpec;
 		internal CollationMode m_collationMode = CollationMode.kDefault;
-		private string m_supportFilesPath = @"C:\BibleConv\FilesToCopyToOutput"; // Enhance: save to options, edit in dialog.
+		// private string m_supportFilesPath = @"C:\BibleConv\FilesToCopyToOutput"; // Enhance: save to options, edit in dialog.
 
 		#endregion Basic Data
 
@@ -72,10 +72,12 @@ namespace sepp
 		/// <summary>
 		/// Directory for supporting files (relative to root work dir
 		/// </summary>
+        /*
 		public string SupportFilesPath
 		{
 			get { return m_supportFilesPath; }
 		}
+        */
 
 		public bool ChapterPerFile
 		{
