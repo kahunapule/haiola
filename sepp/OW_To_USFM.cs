@@ -209,8 +209,9 @@ namespace sepp
 			int cbyteInput = inputBytes.Length; // replaced by output length for subsequent iterations
 			byte[] outBuffer = inputBytes; // in case 0 iterations
 			int nOutLen = inputBytes.Length;
-			foreach (string tablePath in tablePaths)
+			foreach (string tp in tablePaths)
 			{
+                string tablePath = Utils.GetUtilityFile(tp);
 				if (tablePath.EndsWith(".cct"))
 				{
 					// allocate a new buffer

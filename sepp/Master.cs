@@ -7,43 +7,60 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using Microsoft.Win32;
+using WordSend;
 
 namespace sepp
 {
 	public partial class Master : Form
 	{
+        public static Master MasterInstance;
+        private XMLini xini;
+        public string dataRootDir; // Default is BibleConv in the user's documents folder
+        string m_workDirectory;
+        public string m_siteDirectory; // curently Site, always under dataRootDir
+
 		public Master()
 		{
 			InitializeComponent();
+            MasterInstance = this;
 		}
 
-		string m_workDirectory = @"c:\BibleConv\Work";
-		string m_siteDirectory; // curently c:\BibleConv\Site
 
 		bool GetRootDirectory()
 		{
 			FolderBrowserDialog dlg = new FolderBrowserDialog();
 			dlg.Description =
-				@"Select a root dialog (default is C:\BibleConv) to contain your working directories and the root of your prototype site.";
+				@"Select a root dialog (default is BibleConv in your My Documents directory) to contain your working directories and the root of your prototype site.";
 			dlg.ShowNewFolderButton = true;
 			if (dlg.ShowDialog() != System.Windows.Forms.DialogResult.OK)
 				return false;
-			m_workDirectory = Path.Combine(dlg.SelectedPath, "Work");
-			return true;
+            dataRootDir = dlg.SelectedPath;
+            m_workDirectory = Path.Combine(dataRootDir, "Work");
+            m_siteDirectory = Path.Combine(dataRootDir, "Site");
+            xini.WriteString("dataRootDir", dataRootDir);
+            xini.Write();
+            string templateDir = Path.Combine(Utils.ExePath, "BibleConv");
+            if (!Directory.Exists(templateDir))
+                templateDir = Path.Combine(Utils.ExePath, Path.Combine("..", Path.Combine("..", Path.Combine("..", "BibleConv"))));
+            Utils.CopyDirectory(templateDir, dataRootDir);
+            return true;
 		}
 
 		private void Master_Load(object sender, EventArgs e)
 		{
-			RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\SIL\Prophero", true);
-			if (key == null || key.GetValue("Warning") == null)
+            xini = new XMLini(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SIL"),
+                "Prophero.xini"));
+            dataRootDir = xini.ReadString("dataRootDir", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "BibleConv"));
+            m_workDirectory = Path.Combine(dataRootDir, "Work");
+            m_siteDirectory = Path.Combine(dataRootDir, "Site");
+            if (xini.ReadBool("Warning", true))
 			{
 				WarningSplash dlg = new WarningSplash();
 				dlg.ShowDialog(this);
 				if (dlg.DoNotShowAgain)
 				{
-					if (key == null)
-						key = Registry.CurrentUser.CreateSubKey(@"Software\SIL\Prophero");
-					key.SetValue("Warning", "no");
+                    xini.WriteBool("Warning", false);
+                    xini.Write();
 				}
 			}
 			if (!Directory.Exists(m_workDirectory))
@@ -55,8 +72,7 @@ namespace sepp
 		private void LoadWorkingDirectory()
 		{
 			m_projectsList.Items.Clear();
-			if (!Directory.Exists(m_workDirectory))
-				Directory.CreateDirectory(m_workDirectory);
+            Utils.EnsureDirectory(m_workDirectory);
 			foreach (string path in Directory.GetDirectories(m_workDirectory))
 			{
 				m_projectsList.Items.Add(Path.GetFileName(path));
@@ -76,7 +92,6 @@ namespace sepp
 								"No Projects", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				ProjectButton.Enabled = false;
 			}
-			m_siteDirectory = Path.Combine(Path.GetDirectoryName(m_workDirectory), "Site");
 		}
 
 		private void ProjectButton_Click(object sender, EventArgs e)

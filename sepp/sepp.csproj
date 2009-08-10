@@ -155,9 +155,13 @@
     <Content Include="Trumpet.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\..\BibleConv\Palaso\Palaso\Palaso\Palaso.csproj">
+    <ProjectReference Include="..\..\palaso\Palaso\Palaso.csproj">
       <Project>{3527DA1D-1E25-48BE-A71E-9EBF7F9208D4}</Project>
       <Name>Palaso</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\WordSend\BibleFileLib\BibleFileLib.csproj">
+      <Project>{F8AAB011-442B-46E6-91D4-B130C74F081B}</Project>
+      <Name>BibleFileLib</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

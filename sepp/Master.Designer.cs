@@ -74,9 +74,9 @@ namespace sepp
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(352, 293);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(126, 13);
+            this.label1.Size = new System.Drawing.Size(132, 13);
             this.label1.TabIndex = 10;
-            this.label1.Text = "Version 0.96, 9 July 2009";
+            this.label1.Text = "Version 0.97, 14 July 2009";
             // 
             // btnSetRootDirectory
             // 
@@ -84,7 +84,7 @@ namespace sepp
             this.btnSetRootDirectory.Name = "btnSetRootDirectory";
             this.btnSetRootDirectory.Size = new System.Drawing.Size(244, 23);
             this.btnSetRootDirectory.TabIndex = 11;
-            this.btnSetRootDirectory.Text = "Set root directory";
+            this.btnSetRootDirectory.Text = "Set root data directory";
             this.btnSetRootDirectory.UseVisualStyleBackColor = true;
             this.btnSetRootDirectory.Click += new System.EventHandler(this.btnSetRootDirectory_Click);
             // 
@@ -104,7 +104,7 @@ namespace sepp
             this.WorkOnAllButton.Name = "WorkOnAllButton";
             this.WorkOnAllButton.Size = new System.Drawing.Size(244, 23);
             this.WorkOnAllButton.TabIndex = 13;
-            this.WorkOnAllButton.Text = "Run all steps on all projects";
+            this.WorkOnAllButton.Text = "Run selected steps on all projects";
             this.WorkOnAllButton.UseVisualStyleBackColor = true;
             this.WorkOnAllButton.Click += new System.EventHandler(this.WorkOnAllButton_Click);
             // 

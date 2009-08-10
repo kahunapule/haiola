@@ -15,7 +15,7 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_04D39754F1C042A8B232B828F842A8D7"
+        "MsmKey" = "8:_04CE92C4838F4E399551CDD0ADB767DA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -27,37 +27,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_0B36EB744293418F9788AE78CF1AA5FB"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_0BBCED0C60064ED9948FFC22DFD1A55B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_0D5FD855DE7746EC91E45D8C4A289D6B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_0EB8513B538A4AC980A7E36E95310E19"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_0EBC36FE3C91425CAF193FF98B43B470"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_13314413505D4231929A1C94459FBE2E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -69,8 +39,20 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_14AB0E43EE484848893F17ED7C14E827"
+        "MsmKey" = "8:_14092D6ED3B2488CA5698B86C9EB8B58"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_16B568ADD821138260751A014BD810E2"
+        "OwnerKey" = "8:_56D1D562F1FA4B6686189F0E53C51382"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_16B568ADD821138260751A014BD810E2"
+        "OwnerKey" = "8:_FC14D18134CAF53AC22CD0128AB0E166"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -81,13 +63,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_18D9379C64424207A57020EA53A0A56B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_1F995BCEAB194E0FB4A2997F9C54C4C5"
+        "MsmKey" = "8:_1F515E9260FC491C89DE683578C50F9A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -99,14 +75,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_272B1D263D9848D69357E55AB148BC14"
+        "MsmKey" = "8:_329C428D001A4F2290079C9709340FE7"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_32C3FEE03B820A7F22ABFADDA431A300"
-        "OwnerKey" = "8:_56D1D562F1FA4B6686189F0E53C51382"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -117,7 +87,19 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_349DDC70756041358678D7F1F29CB073"
+        "MsmKey" = "8:_340CC3917D4947FBB726BA89A8CFD181"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_343BC6E48465469ABC3C29AB2BAF2769"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_384F9E04319F453193F685DBF52BA2C3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -129,14 +111,26 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_3AB5DDF2233544D8BA68DCDCC2BEEAFC"
+        "MsmKey" = "8:_3B135F92DB32405986E1E182BF58B4A0"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_3BEBA71BB9A74A1BB8F6B9D4AEF866AE"
+        "MsmKey" = "8:_3E059F3D05744D369A8612DC2102F41F"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3E65039726DD58B9116EB3F53C352C96"
+        "OwnerKey" = "8:_3E059F3D05744D369A8612DC2102F41F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3E65039726DD58B9116EB3F53C352C96"
+        "OwnerKey" = "8:_56D1D562F1FA4B6686189F0E53C51382"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -147,13 +141,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_436DEF2F12CC4B9398998177FDD84A63"
+        "MsmKey" = "8:_3EE94B64BE81457FBF7FA7E57EFAEFFA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_45F131226DC449EE911CBE32DB472C14"
+        "MsmKey" = "8:_404A460340A84F9DA29EEDF17A32FB1A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -165,13 +159,25 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_4C758E1AC5A44A0082381AE6E91517AF"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4DB8A7A593424C69B31B6D358551C05A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_4F0B7455150D45AAACC04C19EB216640"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_51589359A3A24CC5BE7D9497220673C9"
+        "MsmKey" = "8:_53EAE8FC004942F4A280B936F8B5777C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -189,7 +195,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_58B9DB966BD94D3FB534AC5AD119060C"
+        "MsmKey" = "8:_58A4524F645F47DA9DD2A5C0A946AC7E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5B1B69746A9641EC848B28582B72D0D3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -207,7 +219,25 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_6BA8CC426F474F97B5A13561D56B8FE0"
+        "MsmKey" = "8:_6C8B167D402C403C93BA39AC3FC25FD2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6F7CB6C109BC4F8C9329B15925ACE862"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6F8F797033A440A28EFBE53268DD91C5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_71DBD5FB2E5F49C98EEC8782363BE9AF"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -219,13 +249,25 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_746A18BCA6FD4C2CAE98BF8EE900786F"
+        "MsmKey" = "8:_777D6B9A553A4F0ABC1501633F7A2156"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_7AEE2C808A39431486A348F315BE7F52"
+        "MsmKey" = "8:_7D16862504554CA5951D035AC4E4913F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7D1E0CC3B58F4732B5FFA450735DB43A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_816BB640B48D4BF9BE555CFEDB6DB10A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -243,19 +285,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_860EFA8A545E4C83A76B4BCD06AB29F0"
+        "MsmKey" = "8:_85A1E3E6A25A4FAE8B3A39F298BAA844"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_87D4D9030F88494B948CA3A6F79AE1E6"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9065F2398F37425C8A3D8BE06A0F2668"
+        "MsmKey" = "8:_8D9C9D7999894775A2A953940C8113FB"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -267,7 +303,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_946B4FF0A6CE4A628D2D281138D74393"
+        "MsmKey" = "8:_94DEA75711CD4ED0848FDD1B41CE66D1"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -279,50 +315,14 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_967173A2B6F14BF1AC9A6098D5A2D6E5"
+        "MsmKey" = "8:_99B1FBFEAAF04248A86D1D0CBCCFA249"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_984F5F2F67304EB7BEB812027D9B5996"
+        "MsmKey" = "8:_A7A3297C1182445A88BDC8F3669D0CBF"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9D656D9F45B043A381C03908F8D4A179"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9E9EB294EE4B47138FE9C035319088E6"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A3E94FA7559EE462A8EFF5821A6A2978"
-        "OwnerKey" = "8:_56D1D562F1FA4B6686189F0E53C51382"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A3E94FA7559EE462A8EFF5821A6A2978"
-        "OwnerKey" = "8:_32C3FEE03B820A7F22ABFADDA431A300"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A6DCAFD637F9ED825667E84884AAE87F"
-        "OwnerKey" = "8:_56D1D562F1FA4B6686189F0E53C51382"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_A6DCAFD637F9ED825667E84884AAE87F"
-        "OwnerKey" = "8:_32C3FEE03B820A7F22ABFADDA431A300"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -333,13 +333,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_B094A8F354EB426CB6659519D6D45FA0"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_B22FE47F52484B97BC7396567D553D87"
+        "MsmKey" = "8:_AB225B418D8D41C1AB3FCF3BF4E537E9"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -351,13 +345,25 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_BA00A9E3BF704687A0292CD97DD335CA"
+        "MsmKey" = "8:_B71E8A69A77CBEBE39263924F2A983F0"
+        "OwnerKey" = "8:_56D1D562F1FA4B6686189F0E53C51382"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B71E8A69A77CBEBE39263924F2A983F0"
+        "OwnerKey" = "8:_FC14D18134CAF53AC22CD0128AB0E166"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BA13925FE54145C493A687B82B344BA5"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_BBE47AB16E364650B200B746FA64FADB"
+        "MsmKey" = "8:_BB09D702A67E4A1B97865745D16B19FF"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -369,38 +375,56 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_C5FEC759E3CD40EE87E2547EA5D67F74"
+        "MsmKey" = "8:_C6CBF9969C5F44B0B74AEC559C1914FD"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_CE86A8A8485247DFAA0423D3E32FA155"
+        "MsmKey" = "8:_CC72434380584B109C95676F88CC4215"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_CFD4485DC5BF403C9DD82E6F9AA807EC"
+        "MsmKey" = "8:_CC73A74EAEF44690B59D3A8451A11BA1"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_D5E8F25397CF4DCDB0920445A3AB6FEF"
+        "MsmKey" = "8:_CF82D33B36D54DFDACD48E5BF626B892"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_DDE37C0C8FAC7269CEDDBF2523383391"
-        "OwnerKey" = "8:_56D1D562F1FA4B6686189F0E53C51382"
+        "MsmKey" = "8:_D58B2762E98D44A2B4FAB08D8691923C"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_DDE37C0C8FAC7269CEDDBF2523383391"
-        "OwnerKey" = "8:_32C3FEE03B820A7F22ABFADDA431A300"
+        "MsmKey" = "8:_D993EE27F7BA445DA1204FCE8F46012E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_DA93B49B416E4D2A834FBE873B9C1A3B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_DC9928DF0D3A43CFA021603E676BBB4A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_DCF8907E6ACD4B33A8197DDC17B60E0E"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -411,7 +435,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_EC50B7B5609C4189B3E48791B78AD829"
+        "MsmKey" = "8:_E746A15399DD4425B3F30057DAF7C137"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -423,19 +447,43 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_ED78310A2A364DC09E63D3C9F41DC9FF"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_ED31B0650E8439B578EBAC8A89297304"
+        "OwnerKey" = "8:_56D1D562F1FA4B6686189F0E53C51382"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_F2359C0447BA45808B7538452B932929"
+        "MsmKey" = "8:_ED31B0650E8439B578EBAC8A89297304"
+        "OwnerKey" = "8:_FC14D18134CAF53AC22CD0128AB0E166"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F9711DFA801E44CFB42B3F48D0CC5A43"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_FA78D7AF8E7541A6B5E4797C65F9C215"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FC14D18134CAF53AC22CD0128AB0E166"
+        "OwnerKey" = "8:_56D1D562F1FA4B6686189F0E53C51382"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FCEF7149C28E419D971CEF6CC2B52230"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FFD551E40FBC442099CF73C8ECF82A98"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -448,25 +496,37 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_32C3FEE03B820A7F22ABFADDA431A300"
+        "OwnerKey" = "8:_FC14D18134CAF53AC22CD0128AB0E166"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_DDE37C0C8FAC7269CEDDBF2523383391"
+        "OwnerKey" = "8:_B71E8A69A77CBEBE39263924F2A983F0"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_A3E94FA7559EE462A8EFF5821A6A2978"
+        "OwnerKey" = "8:_ED31B0650E8439B578EBAC8A89297304"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_A6DCAFD637F9ED825667E84884AAE87F"
+        "OwnerKey" = "8:_16B568ADD821138260751A014BD810E2"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_3E059F3D05744D369A8612DC2102F41F"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_3E65039726DD58B9116EB3F53C352C96"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -477,7 +537,7 @@
         "DisplayName" = "8:Debug"
         "IsDebugOnly" = "11:TRUE"
         "IsReleaseOnly" = "11:FALSE"
-        "OutputFilename" = "8:Debug\\Setup1.msi"
+        "OutputFilename" = "8:Debug\\SetupPropheroDebug.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -574,12 +634,12 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_04D39754F1C042A8B232B828F842A8D7"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_04CE92C4838F4E399551CDD0ADB767DA"
             {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\display-ie.css"
-            "TargetName" = "8:display-ie.css"
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\minus.gif"
+            "TargetName" = "8:minus.gif"
             "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -614,112 +674,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0B36EB744293418F9788AE78CF1AA5FB"
-            {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\plus.gif"
-            "TargetName" = "8:plus.gif"
-            "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0BBCED0C60064ED9948FFC22DFD1A55B"
-            {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\Navigation.htm"
-            "TargetName" = "8:Navigation.htm"
-            "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0D5FD855DE7746EC91E45D8C4A289D6B"
-            {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\ConcFuncs.js"
-            "TargetName" = "8:ConcFuncs.js"
-            "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0EB8513B538A4AC980A7E36E95310E19"
             {
             "SourcePath" = "8:..\\Scripture Publisher Doc.html"
             "TargetName" = "8:Scripture Publisher Doc.html"
             "Tag" = "8:"
             "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0EBC36FE3C91425CAF193FF98B43B470"
-            {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\dummyConc.htm"
-            "TargetName" = "8:dummyConc.htm"
-            "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_13314413505D4231929A1C94459FBE2E"
-            {
-            "SourcePath" = "8:C:\\BibleConv\\Work\\Inupiat\\Sepp Options.xml"
-            "TargetName" = "8:Sepp Options.xml"
-            "Tag" = "8:"
-            "Folder" = "8:_C04EB8E64B54464F9078745FD5033117"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -754,12 +714,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_14AB0E43EE484848893F17ED7C14E827"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_14092D6ED3B2488CA5698B86C9EB8B58"
             {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\treeconc.htm"
-            "TargetName" = "8:treeconc.htm"
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\Introduction.htm"
+            "TargetName" = "8:Introduction.htm"
             "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -772,6 +732,37 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_16B568ADD821138260751A014BD810E2"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:icu.net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_16B568ADD821138260751A014BD810E2"
+                    {
+                    "Name" = "8:icu.net.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:icu.net.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_16DCC3E8AE934173A20A71419D85F7DD"
@@ -794,32 +785,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_18D9379C64424207A57020EA53A0A56B"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1F515E9260FC491C89DE683578C50F9A"
             {
-            "SourcePath" = "8:C:\\BibleConv\\Site\\Resources\\LanguageIndex.htm"
-            "TargetName" = "8:LanguageIndex.htm"
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\ConcFuncs.js"
+            "TargetName" = "8:ConcFuncs.js"
             "Tag" = "8:"
-            "Folder" = "8:_219EC778B9A9431B803915EA19DFE905"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1F995BCEAB194E0FB4A2997F9C54C4C5"
-            {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\dummyText.htm"
-            "TargetName" = "8:dummyText.htm"
-            "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -854,12 +825,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_272B1D263D9848D69357E55AB148BC14"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_329C428D001A4F2290079C9709340FE7"
             {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\bullet.gif"
-            "TargetName" = "8:bullet.gif"
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\css\\WaterMark.jpg"
+            "TargetName" = "8:WaterMark.jpg"
             "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
+            "Folder" = "8:_C54F7E4906D7417FA4B581FDE5749A10"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -872,37 +843,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_32C3FEE03B820A7F22ABFADDA431A300"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_32C3FEE03B820A7F22ABFADDA431A300"
-                    {
-                    "Name" = "8:Palaso.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Palaso.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_335ABFC4933D4EA8B0D8E948C3C375A7"
@@ -925,12 +865,52 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_349DDC70756041358678D7F1F29CB073"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_340CC3917D4947FBB726BA89A8CFD181"
             {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\treeText.htm"
-            "TargetName" = "8:treeText.htm"
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\Navigation.htm"
+            "TargetName" = "8:Navigation.htm"
             "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_343BC6E48465469ABC3C29AB2BAF2769"
+            {
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\display.css"
+            "TargetName" = "8:display.css"
+            "Tag" = "8:"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_384F9E04319F453193F685DBF52BA2C3"
+            {
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\mktree.css"
+            "TargetName" = "8:mktree.css"
+            "Tag" = "8:"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -965,12 +945,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3AB5DDF2233544D8BA68DCDCC2BEEAFC"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3B135F92DB32405986E1E182BF58B4A0"
             {
-            "SourcePath" = "8:C:\\fw\\DistFiles\\CC32.dll"
-            "TargetName" = "8:CC32.dll"
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\index.htm"
+            "TargetName" = "8:index.htm"
             "Tag" = "8:"
-            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -985,12 +965,23 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3BEBA71BB9A74A1BB8F6B9D4AEF866AE"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_3E65039726DD58B9116EB3F53C352C96"
             {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\treeMain.htm"
-            "TargetName" = "8:treeMain.htm"
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:BibleFileLib, Version=0.0.3499.30308, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_3E65039726DD58B9116EB3F53C352C96"
+                    {
+                    "Name" = "8:BibleFileLib.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:BibleFileLib.dll"
+            "TargetName" = "8:"
             "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
+            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1002,7 +993,7 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3E882A7E3025478CB92B65CF43566A21"
@@ -1025,12 +1016,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_436DEF2F12CC4B9398998177FDD84A63"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3EE94B64BE81457FBF7FA7E57EFAEFFA"
             {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\mktree.css"
-            "TargetName" = "8:mktree.css"
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\bullet.gif"
+            "TargetName" = "8:bullet.gif"
             "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1045,12 +1036,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_45F131226DC449EE911CBE32DB472C14"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_404A460340A84F9DA29EEDF17A32FB1A"
             {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\concMain.htm"
-            "TargetName" = "8:concMain.htm"
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\Navigation.js"
+            "TargetName" = "8:Navigation.js"
             "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1085,6 +1076,46 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4C758E1AC5A44A0082381AE6E91517AF"
+            {
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\mktree.js"
+            "TargetName" = "8:mktree.js"
+            "Tag" = "8:"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4DB8A7A593424C69B31B6D358551C05A"
+            {
+            "SourcePath" = "8:..\\..\\BibleConv\\Site\\Resources\\LanguageIndex.htm"
+            "TargetName" = "8:LanguageIndex.htm"
+            "Tag" = "8:"
+            "Folder" = "8:_0845A5D15C824768AC27AAC63F224A5B"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4F0B7455150D45AAACC04C19EB216640"
             {
             "SourcePath" = "8:..\\remove_ov_from_OW.cct"
@@ -1105,12 +1136,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_51589359A3A24CC5BE7D9497220673C9"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_53EAE8FC004942F4A280B936F8B5777C"
             {
-            "SourcePath" = "8:C:\\BibleConv\\Site\\Resources\\Navigation.js"
-            "TargetName" = "8:Navigation.js"
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\css\\prophero-ie6.css"
+            "TargetName" = "8:prophero-ie6.css"
             "Tag" = "8:"
-            "Folder" = "8:_219EC778B9A9431B803915EA19DFE905"
+            "Folder" = "8:_C54F7E4906D7417FA4B581FDE5749A10"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1145,12 +1176,32 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_58B9DB966BD94D3FB534AC5AD119060C"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_58A4524F645F47DA9DD2A5C0A946AC7E"
             {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\display-ie6.css"
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\display-ie.css"
+            "TargetName" = "8:display-ie.css"
+            "Tag" = "8:"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5B1B69746A9641EC848B28582B72D0D3"
+            {
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\display-ie6.css"
             "TargetName" = "8:display-ie6.css"
             "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1205,12 +1256,72 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6BA8CC426F474F97B5A13561D56B8FE0"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6C8B167D402C403C93BA39AC3FC25FD2"
             {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\dummyInner.htm"
-            "TargetName" = "8:dummyInner.htm"
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\treeMain.htm"
+            "TargetName" = "8:treeMain.htm"
             "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6F7CB6C109BC4F8C9329B15925ACE862"
+            {
+            "SourcePath" = "8:..\\..\\BibleConv\\Site\\Resources\\Splash.JPG"
+            "TargetName" = "8:Splash.JPG"
+            "Tag" = "8:"
+            "Folder" = "8:_0845A5D15C824768AC27AAC63F224A5B"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6F8F797033A440A28EFBE53268DD91C5"
+            {
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\indexconc.htm"
+            "TargetName" = "8:indexconc.htm"
+            "Tag" = "8:"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_71DBD5FB2E5F49C98EEC8782363BE9AF"
+            {
+            "SourcePath" = "8:..\\..\\BibleConv\\Site\\Resources\\SiteIntroduction_en.htm"
+            "TargetName" = "8:SiteIntroduction_en.htm"
+            "Tag" = "8:"
+            "Folder" = "8:_0845A5D15C824768AC27AAC63F224A5B"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1245,12 +1356,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_746A18BCA6FD4C2CAE98BF8EE900786F"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_777D6B9A553A4F0ABC1501633F7A2156"
             {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\NavigationSingle.htm"
-            "TargetName" = "8:NavigationSingle.htm"
+            "SourcePath" = "8:..\\..\\BibleConv\\Site\\Resources\\Cloth.ico"
+            "TargetName" = "8:Cloth.ico"
             "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
+            "Folder" = "8:_0845A5D15C824768AC27AAC63F224A5B"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1265,12 +1376,52 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7AEE2C808A39431486A348F315BE7F52"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7D16862504554CA5951D035AC4E4913F"
             {
-            "SourcePath" = "8:C:\\BibleConv\\Site\\Resources\\Locales\\Indonesian.id"
-            "TargetName" = "8:Indonesian.id"
+            "SourcePath" = "8:..\\..\\BibleConv\\Site\\Resources\\Navigation.htm"
+            "TargetName" = "8:Navigation.htm"
             "Tag" = "8:"
-            "Folder" = "8:_6AFCD40491D04E9B86AFD1BBB7FCD3BA"
+            "Folder" = "8:_0845A5D15C824768AC27AAC63F224A5B"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7D1E0CC3B58F4732B5FFA450735DB43A"
+            {
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\concMain.htm"
+            "TargetName" = "8:concMain.htm"
+            "Tag" = "8:"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_816BB640B48D4BF9BE555CFEDB6DB10A"
+            {
+            "SourcePath" = "8:..\\..\\BibleConv\\Work\\Sepp Options.xml"
+            "TargetName" = "8:Sepp Options.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_A08AAEAE01D34C088BDD15DC4FCE2523"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1325,12 +1476,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_860EFA8A545E4C83A76B4BCD06AB29F0"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_85A1E3E6A25A4FAE8B3A39F298BAA844"
             {
-            "SourcePath" = "8:C:\\BibleConv\\Site\\Resources\\StartupSettings.xml"
-            "TargetName" = "8:StartupSettings.xml"
+            "SourcePath" = "8:..\\..\\BibleConv\\Site\\Resources\\Locales\\Indonesian.id"
+            "TargetName" = "8:Indonesian.id"
             "Tag" = "8:"
-            "Folder" = "8:_219EC778B9A9431B803915EA19DFE905"
+            "Folder" = "8:_8D492ECB0F6442638A126A492D66EE39"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1345,32 +1496,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_87D4D9030F88494B948CA3A6F79AE1E6"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8D9C9D7999894775A2A953940C8113FB"
             {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\mktree.js"
-            "TargetName" = "8:mktree.js"
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\treeMaster.htm"
+            "TargetName" = "8:treeMaster.htm"
             "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9065F2398F37425C8A3D8BE06A0F2668"
-            {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\Introduction.htm"
-            "TargetName" = "8:Introduction.htm"
-            "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1405,12 +1536,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_946B4FF0A6CE4A628D2D281138D74393"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_94DEA75711CD4ED0848FDD1B41CE66D1"
             {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\minus.gif"
-            "TargetName" = "8:minus.gif"
+            "SourcePath" = "8:CC32.dll"
+            "TargetName" = "8:CC32.dll"
             "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
+            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1445,12 +1576,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_967173A2B6F14BF1AC9A6098D5A2D6E5"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_99B1FBFEAAF04248A86D1D0CBCCFA249"
             {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\Navigation.js"
-            "TargetName" = "8:Navigation.js"
+            "SourcePath" = "8:..\\..\\BibleConv\\Site\\Resources\\display.css"
+            "TargetName" = "8:display.css"
             "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
+            "Folder" = "8:_0845A5D15C824768AC27AAC63F224A5B"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1465,12 +1596,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_984F5F2F67304EB7BEB812027D9B5996"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A7A3297C1182445A88BDC8F3669D0CBF"
             {
-            "SourcePath" = "8:C:\\BibleConv\\Site\\Resources\\root.htm"
-            "TargetName" = "8:root.htm"
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\css\\prophero.js"
+            "TargetName" = "8:prophero.js"
             "Tag" = "8:"
-            "Folder" = "8:_219EC778B9A9431B803915EA19DFE905"
+            "Folder" = "8:_C54F7E4906D7417FA4B581FDE5749A10"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1483,108 +1614,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9D656D9F45B043A381C03908F8D4A179"
-            {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\treeMaster.htm"
-            "TargetName" = "8:treeMaster.htm"
-            "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9E9EB294EE4B47138FE9C035319088E6"
-            {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\Watermark.jpg"
-            "TargetName" = "8:Watermark.jpg"
-            "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A3E94FA7559EE462A8EFF5821A6A2978"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:LinqBridge, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c2b14eb747628076, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_A3E94FA7559EE462A8EFF5821A6A2978"
-                    {
-                    "Name" = "8:LinqBridge.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:LinqBridge.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A6DCAFD637F9ED825667E84884AAE87F"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:icu.net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_A6DCAFD637F9ED825667E84884AAE87F"
-                    {
-                    "Name" = "8:icu.net.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:icu.net.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A90BE0BAAF7C4DE284D8A0939A160F72"
@@ -1607,32 +1636,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B094A8F354EB426CB6659519D6D45FA0"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AB225B418D8D41C1AB3FCF3BF4E537E9"
             {
-            "SourcePath" = "8:C:\\BibleConv\\Site\\Resources\\Navigation.htm"
-            "TargetName" = "8:Navigation.htm"
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\NavigationSingle.htm"
+            "TargetName" = "8:NavigationSingle.htm"
             "Tag" = "8:"
-            "Folder" = "8:_219EC778B9A9431B803915EA19DFE905"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B22FE47F52484B97BC7396567D553D87"
-            {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\index.htm"
-            "TargetName" = "8:index.htm"
-            "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1667,12 +1676,43 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BA00A9E3BF704687A0292CD97DD335CA"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_B71E8A69A77CBEBE39263924F2A983F0"
             {
-            "SourcePath" = "8:C:\\BibleConv\\Site\\Resources\\display.css"
-            "TargetName" = "8:display.css"
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:NDesk.DBus, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f6716e4f9b2ed099, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_B71E8A69A77CBEBE39263924F2A983F0"
+                    {
+                    "Name" = "8:NDesk.DBus.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:NDesk.DBus.dll"
+            "TargetName" = "8:"
             "Tag" = "8:"
-            "Folder" = "8:_219EC778B9A9431B803915EA19DFE905"
+            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BA13925FE54145C493A687B82B344BA5"
+            {
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\css\\prophero.css"
+            "TargetName" = "8:prophero.css"
+            "Tag" = "8:"
+            "Folder" = "8:_C54F7E4906D7417FA4B581FDE5749A10"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1687,12 +1727,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BBE47AB16E364650B200B746FA64FADB"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BB09D702A67E4A1B97865745D16B19FF"
             {
-            "SourcePath" = "8:C:\\BibleConv\\Site\\Resources\\Cloth.ico"
-            "TargetName" = "8:Cloth.ico"
+            "SourcePath" = "8:..\\..\\BibleConv\\Site\\Resources\\SiteIntroduction_id.htm"
+            "TargetName" = "8:SiteIntroduction_id.htm"
             "Tag" = "8:"
-            "Folder" = "8:_219EC778B9A9431B803915EA19DFE905"
+            "Folder" = "8:_0845A5D15C824768AC27AAC63F224A5B"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1727,12 +1767,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C5FEC759E3CD40EE87E2547EA5D67F74"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C6CBF9969C5F44B0B74AEC559C1914FD"
             {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\display.css"
-            "TargetName" = "8:display.css"
+            "SourcePath" = "8:..\\..\\BibleConv\\Site\\Resources\\Navigation.js"
+            "TargetName" = "8:Navigation.js"
             "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
+            "Folder" = "8:_0845A5D15C824768AC27AAC63F224A5B"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1747,12 +1787,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CE86A8A8485247DFAA0423D3E32FA155"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CC72434380584B109C95676F88CC4215"
             {
-            "SourcePath" = "8:C:\\BibleConv\\Site\\Resources\\SiteIntroduction_en.htm"
-            "TargetName" = "8:SiteIntroduction_en.htm"
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\treeconc.htm"
+            "TargetName" = "8:treeconc.htm"
             "Tag" = "8:"
-            "Folder" = "8:_219EC778B9A9431B803915EA19DFE905"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1767,12 +1807,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CFD4485DC5BF403C9DD82E6F9AA807EC"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CC73A74EAEF44690B59D3A8451A11BA1"
             {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\TextFuncs.js"
-            "TargetName" = "8:TextFuncs.js"
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\Watermark.jpg"
+            "TargetName" = "8:Watermark.jpg"
             "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1787,12 +1827,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D5E8F25397CF4DCDB0920445A3AB6FEF"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CF82D33B36D54DFDACD48E5BF626B892"
             {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\indexconc.htm"
-            "TargetName" = "8:indexconc.htm"
+            "SourcePath" = "8:..\\..\\BibleConv\\Site\\Resources\\StartupSettings.xml"
+            "TargetName" = "8:StartupSettings.xml"
             "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
+            "Folder" = "8:_0845A5D15C824768AC27AAC63F224A5B"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1807,23 +1847,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_DDE37C0C8FAC7269CEDDBF2523383391"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D58B2762E98D44A2B4FAB08D8691923C"
             {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:NDesk.DBus, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f6716e4f9b2ed099, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_DDE37C0C8FAC7269CEDDBF2523383391"
-                    {
-                    "Name" = "8:NDesk.DBus.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:NDesk.DBus.dll"
-            "TargetName" = "8:"
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\plus.gif"
+            "TargetName" = "8:plus.gif"
             "Tag" = "8:"
-            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1835,7 +1864,87 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D993EE27F7BA445DA1204FCE8F46012E"
+            {
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\css\\prophero-ie.css"
+            "TargetName" = "8:prophero-ie.css"
+            "Tag" = "8:"
+            "Folder" = "8:_C54F7E4906D7417FA4B581FDE5749A10"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DA93B49B416E4D2A834FBE873B9C1A3B"
+            {
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\dummyInner.htm"
+            "TargetName" = "8:dummyInner.htm"
+            "Tag" = "8:"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DC9928DF0D3A43CFA021603E676BBB4A"
+            {
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\treeText.htm"
+            "TargetName" = "8:treeText.htm"
+            "Tag" = "8:"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DCF8907E6ACD4B33A8197DDC17B60E0E"
+            {
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\root.htm"
+            "TargetName" = "8:root.htm"
+            "Tag" = "8:"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DE2A894F5FCA4E5A9EB2D0B470726F05"
@@ -1858,12 +1967,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EC50B7B5609C4189B3E48791B78AD829"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E746A15399DD4425B3F30057DAF7C137"
             {
-            "SourcePath" = "8:C:\\BibleConv\\Site\\Resources\\Splash.JPG"
-            "TargetName" = "8:Splash.JPG"
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\TextFuncs.js"
+            "TargetName" = "8:TextFuncs.js"
             "Tag" = "8:"
-            "Folder" = "8:_219EC778B9A9431B803915EA19DFE905"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1898,12 +2007,23 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_ED78310A2A364DC09E63D3C9F41DC9FF"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_ED31B0650E8439B578EBAC8A89297304"
             {
-            "SourcePath" = "8:C:\\BibleConv\\Site\\Resources\\SiteIntroduction_id.htm"
-            "TargetName" = "8:SiteIntroduction_id.htm"
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:LinqBridge, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c2b14eb747628076, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_ED31B0650E8439B578EBAC8A89297304"
+                    {
+                    "Name" = "8:LinqBridge.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:LinqBridge.dll"
+            "TargetName" = "8:"
             "Tag" = "8:"
-            "Folder" = "8:_219EC778B9A9431B803915EA19DFE905"
+            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1915,15 +2035,15 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F2359C0447BA45808B7538452B932929"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F9711DFA801E44CFB42B3F48D0CC5A43"
             {
-            "SourcePath" = "8:C:\\BibleConv\\FilesToCopyToOutput\\root.htm"
-            "TargetName" = "8:root.htm"
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\dummyConc.htm"
+            "TargetName" = "8:dummyConc.htm"
             "Tag" = "8:"
-            "Folder" = "8:_68630021C6ED47D599B3DC675198811A"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1958,6 +2078,77 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_FC14D18134CAF53AC22CD0128AB0E166"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_FC14D18134CAF53AC22CD0128AB0E166"
+                    {
+                    "Name" = "8:Palaso.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Palaso.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FCEF7149C28E419D971CEF6CC2B52230"
+            {
+            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\dummyText.htm"
+            "TargetName" = "8:dummyText.htm"
+            "Tag" = "8:"
+            "Folder" = "8:_BC479B16C5284DE3988D0032289D7251"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FFD551E40FBC442099CF73C8ECF82A98"
+            {
+            "SourcePath" = "8:..\\..\\BibleConv\\Site\\Resources\\root.htm"
+            "TargetName" = "8:root.htm"
+            "Tag" = "8:"
+            "Folder" = "8:_0845A5D15C824768AC27AAC63F224A5B"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
         }
         "FileType"
         {
@@ -1975,94 +2166,6 @@
                 {
                 }
             }
-            "{1525181F-901A-416C-8A58-119130FE478E}:_36F0E9125E5C40EE8DCA63B24747CD5B"
-            {
-            "Name" = "8:#1918"
-            "AlwaysCreate" = "11:FALSE"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Property" = "8:PersonalFolder"
-                "Folders"
-                {
-                    "{9EF0B969-E518-4E46-987F-47570745A589}:_970277E0C9A3459E95AC6C660FBD76F3"
-                    {
-                    "Name" = "8:BibleConv"
-                    "AlwaysCreate" = "11:FALSE"
-                    "Condition" = "8:"
-                    "Transitive" = "11:FALSE"
-                    "Property" = "8:_A6087B08C1F24B9D9D84CA5426CDA008"
-                        "Folders"
-                        {
-                            "{9EF0B969-E518-4E46-987F-47570745A589}:_68630021C6ED47D599B3DC675198811A"
-                            {
-                            "Name" = "8:FilesToCopyToOutput"
-                            "AlwaysCreate" = "11:FALSE"
-                            "Condition" = "8:"
-                            "Transitive" = "11:FALSE"
-                            "Property" = "8:_6BA82B4CF69E4230A7A2B882076A5337"
-                                "Folders"
-                                {
-                                }
-                            }
-                            "{9EF0B969-E518-4E46-987F-47570745A589}:_9F831B1F1C2D4468A3B28D64240FF95F"
-                            {
-                            "Name" = "8:Site"
-                            "AlwaysCreate" = "11:FALSE"
-                            "Condition" = "8:"
-                            "Transitive" = "11:FALSE"
-                            "Property" = "8:_ADE857EA562949C5995B5D7C39932FFA"
-                                "Folders"
-                                {
-                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_219EC778B9A9431B803915EA19DFE905"
-                                    {
-                                    "Name" = "8:Resources"
-                                    "AlwaysCreate" = "11:FALSE"
-                                    "Condition" = "8:"
-                                    "Transitive" = "11:FALSE"
-                                    "Property" = "8:_7B23E0497AA54C2BBED0E2C07EEEECBC"
-                                        "Folders"
-                                        {
-                                            "{9EF0B969-E518-4E46-987F-47570745A589}:_633848AFCF7D4F3CAB55B5C3B51810E8"
-                                            {
-                                            "Name" = "8:Fonts"
-                                            "AlwaysCreate" = "11:FALSE"
-                                            "Condition" = "8:"
-                                            "Transitive" = "11:FALSE"
-                                            "Property" = "8:_67F446A4379C4E47B7E6DE70B66B4629"
-                                                "Folders"
-                                                {
-                                                }
-                                            }
-                                            "{9EF0B969-E518-4E46-987F-47570745A589}:_6AFCD40491D04E9B86AFD1BBB7FCD3BA"
-                                            {
-                                            "Name" = "8:Locales"
-                                            "AlwaysCreate" = "11:FALSE"
-                                            "Condition" = "8:"
-                                            "Transitive" = "11:FALSE"
-                                            "Property" = "8:_C3136DBF5A034A38806D9918CFE57AB7"
-                                                "Folders"
-                                                {
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            "{9EF0B969-E518-4E46-987F-47570745A589}:_C04EB8E64B54464F9078745FD5033117"
-                            {
-                            "Name" = "8:Work"
-                            "AlwaysCreate" = "11:FALSE"
-                            "Condition" = "8:"
-                            "Transitive" = "11:FALSE"
-                            "Property" = "8:_8C9CB19440EE4667A755F12D84391CF9"
-                                "Folders"
-                                {
-                                }
-                            }
-                        }
-                    }
-                }
-            }
             "{3C67513D-01DD-4637-8A68-80971EB9504F}:_4AB33C7C536A4AE49678C91B200B5F9F"
             {
             "DefaultLocation" = "8:[ProgramFilesFolder][Manufacturer]\\[ProductName]"
@@ -2073,6 +2176,105 @@
             "Property" = "8:TARGETDIR"
                 "Folders"
                 {
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_B227B2053D9945A19D0D4921E0BB222D"
+                    {
+                    "Name" = "8:BibleConv"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_7C8533F119E34C1083BE838782A41BD1"
+                        "Folders"
+                        {
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_2CAA156D305649A59D6922036B7F2FC1"
+                            {
+                            "Name" = "8:FilesToCopyToOutput"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_894F5A866A214AA4AFA55AFC3969A154"
+                                "Folders"
+                                {
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_BC479B16C5284DE3988D0032289D7251"
+                                    {
+                                    "Name" = "8:Conc"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_A22A5F57DD404CAB84475746114D6014"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_C54F7E4906D7417FA4B581FDE5749A10"
+                                    {
+                                    "Name" = "8:css"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_9A1FABDB0ED04F31AB97FC9C7921A2BA"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
+                                }
+                            }
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_A08AAEAE01D34C088BDD15DC4FCE2523"
+                            {
+                            "Name" = "8:Work"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_E1E6EBA7823E41E0A968A24417F13CF2"
+                                "Folders"
+                                {
+                                }
+                            }
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_E208E5ACBB41447F85EE8F3D9B9CFDCB"
+                            {
+                            "Name" = "8:Site"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_C33A8D54B6A9407197A6ED66777EA7F8"
+                                "Folders"
+                                {
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_0845A5D15C824768AC27AAC63F224A5B"
+                                    {
+                                    "Name" = "8:Resources"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_F0285F19DCC2499BB15228F42B452B74"
+                                        "Folders"
+                                        {
+                                            "{9EF0B969-E518-4E46-987F-47570745A589}:_8D492ECB0F6442638A126A492D66EE39"
+                                            {
+                                            "Name" = "8:Locales"
+                                            "AlwaysCreate" = "11:FALSE"
+                                            "Condition" = "8:"
+                                            "Transitive" = "11:FALSE"
+                                            "Property" = "8:_9793FFD4ADA1465DA9094B88AFAAC689"
+                                                "Folders"
+                                                {
+                                                }
+                                            }
+                                            "{9EF0B969-E518-4E46-987F-47570745A589}:_A45FB4AFC75448DDB17211609930B7D8"
+                                            {
+                                            "Name" = "8:Fonts"
+                                            "AlwaysCreate" = "11:FALSE"
+                                            "Condition" = "8:"
+                                            "Transitive" = "11:FALSE"
+                                            "Property" = "8:_52541C38E7864F86B4CB454EEE1B827D"
+                                                "Folders"
+                                                {
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
             "{1525181F-901A-416C-8A58-119130FE478E}:_7DA2FAE28E7E463FBDECD178353EEE61"
@@ -2102,18 +2304,18 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Prophero"
-        "ProductCode" = "8:{CA1365D4-C17F-41AC-B2BC-46B1C52E1C8E}"
-        "PackageCode" = "8:{C9904B45-135D-43F1-83DB-9ECFC046F029}"
+        "ProductCode" = "8:{975D58E7-FD5E-4E08-92D2-15F2DB242E48}"
+        "PackageCode" = "8:{B0CFBBA0-B221-4265-850F-891C375CA760}"
         "UpgradeCode" = "8:{38144284-1E0E-461B-95EC-5E4636DCC029}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
-        "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:0.95.0"
+        "InstallAllUsers" = "11:FALSE"
+        "ProductVersion" = "8:0.96.0"
         "Manufacturer" = "8:The Seed Company"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:Setup1"
+        "Title" = "8:Setup Prophero"
         "Subject" = "8:"
         "ARPCONTACT" = "8:John Thomson"
         "Keywords" = "8:"
@@ -2649,9 +2851,37 @@
         }
         "ProjectOutput"
         {
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_3E059F3D05744D369A8612DC2102F41F"
+            {
+            "SourcePath" = "8:..\\..\\..\\WordSend\\usfm2usfx\\obj\\Debug\\usfm2usfx.exe"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{1F0208DB-F643-4698-B353-3A40DB441AC9}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_56D1D562F1FA4B6686189F0E53C51382"
             {
-            "SourcePath" = "8:..\\obj\\Release\\sepp.exe"
+            "SourcePath" = "8:..\\obj\\Debug\\sepp.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
