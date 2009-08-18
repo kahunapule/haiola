@@ -46,7 +46,7 @@ namespace sepp
 				m_totalReadings += ReadingsForMonth(i);
 			m_readings = new Reading[m_totalReadings];
 
-			int totalLength = m_sections.Sum(info => info.Length);
+			int totalLength = (int) m_sections.Sum(info => info.Length);
 
 			int remainingLength = totalLength;
 			int iSection = 0;
