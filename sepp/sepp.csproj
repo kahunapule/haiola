@@ -37,6 +37,14 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NDesk.DBus, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f6716e4f9b2ed099, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Release\NDesk.DBus.dll</HintPath>
+    </Reference>
+    <Reference Include="Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Release\Palaso.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -155,11 +163,7 @@
     <Content Include="Trumpet.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\palaso\Palaso\Palaso.csproj">
-      <Project>{3527DA1D-1E25-48BE-A71E-9EBF7F9208D4}</Project>
-      <Name>Palaso</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\WordSend\BibleFileLib\BibleFileLib.csproj">
+    <ProjectReference Include="..\BibleFileLib\BibleFileLib.csproj">
       <Project>{F8AAB011-442B-46E6-91D4-B130C74F081B}</Project>
       <Name>BibleFileLib</Name>
     </ProjectReference>

@@ -5,9 +5,7 @@
 /* JohnT: global defaults */
 body				{ font-family: "Gentium", "Charis SIL", "Times New Roman", serif; font-size: 12pt; line-height: 1.4em}
 body.mainDoc	{
-	background-color: rgb(240,255,240);
-	background-image: url(watermark.jpg);
-	background-repeat: repeat;
+	background-color: rgb(128,255,255);
 	}
 /* Styles for USFM elements -- div for paragraph and span for character styles */
 span.add { color: rgb(16,16,16); font-style: italic }
@@ -127,7 +125,16 @@ div.parallelSub		 { font-family: Charis SIL, Times New Roman, Serif; display: bl
 /* JohnT: based on a recommendation in http://www.xs4all.nl/~sbpoley/webmatters/superscripts.html,  to make line spacing
 as nearly as possible uniform despite superscripts, especially in FF, we set block elements that contain them to a line-height
 of 1.4 em, and the actual superscript elements have a line-height of zero.*/
-div.navButtons { font-family: "Arial", "Helvetica", san-serif; font-size: 12pt; display: block; margin-bottom: 6pt; margin-left: 1em; margin-right: 1em; line-height: 1.4em; text-align:left }
+div.navButtons { font-family: "Arial", "Helvetica", san-serif; font-size: 12pt; font-weight: bold; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align: center; clear: both }
+div.navButtons a { padding: 3px; background-color: #036; border-bottom: 1px solid #eee; }
+div.navButtons a:visited { color: #ffff66; text-decoration: none; }
+div.navButtons a:link { color: #ffffff; text-decoration: none; }
+div.navButtons a:hover { background-color: #0505ab; color: #fff; }
+div.navChapters { font-family: "Arial", "Helvetica", san-serif; font-size: 7pt; display: block; margin-bottom: 10pt; text-align: center }
+div.navChapters a { padding: 3px; background-color: #036; border-bottom: 1px solid #eee; }
+div.navChapters a:visited { color: #ffff66; text-decoration: none; }
+div.navChapters a:link { color: #ffffff; text-decoration: none; }
+div.navChapters a:hover { background-color: #0505ab; color: #fff; }
 div.prose            { display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:justify; margin-top: 6pt}
 div.proseblock       { display: block; line-height: 1.4em; text-align:justify}
 div.proseblockindent { display: block; margin-left: 1cm; line-height: 1.4em; text-align:justify }
@@ -137,9 +144,16 @@ div.deepPoetry       { display: block; margin-left: 2.5cm; text-indent: -0.5cm; 
 div.list             { margin-left: 1cm; text-indent: -0.5cm; line-height: 1.4em }
 div.quoteSource		 { display:block; text-align:right; font-style:italic}
 div.introListItem    { margin-left: 1cm; text-indent: -0.5cm; line-height: 1.4em }
-div.pageFooter       { display: block; margin-bottom: 6pt; text-align: left; margin-top: 6pt; margin-left: 1em; margin-right: 1em; font-family: Arial, Helvetica, san-serif; font-size: 8pt}
+div.pageFooter       { display: block; margin-bottom: 6pt; text-align: left; margin-top: 6pt; padding: 3px; font-family: Arial, Helvetica, san-serif; font-size: 8pt}
 div.text            {margin-left: 0;margin-right:0}
-div {margin-left:0.5cm; margin-right:0.5cm}
+div {margin-left: 5px; margin-right:5px}
+div.bookList { font-family: "Arial", "Helvetica", san-serif; font-size: 7pt; line-height: 8pt; float: left; margin: 0px; padding: 3px; width: 15%; background: rgb(128,255,255) }
+div.main { float: right; width: 80%; padding: 3px; background: rgb(80,256,144) }
+div.bookLine  { font-family: "Arial", "Helvetica", san-serif; font-size: 8pt; line-height: 9pt; display: block; text-align:left }
+div.bookLine a { display: block; padding: 3px; background-color: #036; border-bottom: 1px solid #eee; }
+div.bookLine a:visited { color: #ffff66; text-decoration: none; }
+div.bookLine a:link { color: #ffffff; text-decoration: none; }
+div.bookLine a:hover { background-color: #0505ab; color: #fff; }
 
 p.footnote, p.crossRefNote { display: block; font-family:Charis SIL, Times New Roman; margin-top: 3pt; font-size: 10pt; text-align: justify; margin-left: 0em }
 
@@ -162,7 +176,7 @@ a:hover span.popup
   font-family: Charis SIL, Times New Roman;
   position: absolute;
   display: block;
-  background: #afa;
+  background: rgb(255,255,255);
   border: 1px solid black;
   color: black;
   margin-left:2pt;
@@ -179,7 +193,7 @@ a:hover span.popup
   font-family: Charis SIL, Times New Roman;
   position: absolute;
   display: block;
-  background: #ff8;
+  background: rgb(255,255,255);
   border: 1px solid black;
   color: black;
   margin-left:2pt;
