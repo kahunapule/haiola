@@ -290,11 +290,14 @@ namespace sepp
                 buttonAllSteps.Enabled = false;
                 if (OwCheckBox.Checked && (Directory.Exists(Path.Combine(m_workDir, OwDir)) || ConvertingSourceToUsfm()))
                     m_button_Input_to_USFM_Click(this, e);
+                Application.DoEvents();
                 if (UsfxCheckBox.Checked && Directory.Exists(UsfmPath))
                 {
                     UsfmToUsfxButton_Click(sender, e);
-                    m_button_USFM_to_OSIS_Click(this, e);
                 }
+                Application.DoEvents();
+                if (OsisCheckBox.Checked)
+                    m_button_USFM_to_OSIS_Click(this, e);
                 if (HtmlCheckBox.Checked)
                     UsfxToHtmlButton_Click(sender, e);
                 // For now OSIS must exist, somehow.
@@ -315,6 +318,7 @@ namespace sepp
                     m_runButton_Click(this, e);
                 if (copySupportFilesCheckBox.Checked)
                     btnCopySupportFiles_Click(this, e);
+                Application.DoEvents();
             }
             catch (Exception ex)
             {

@@ -154,6 +154,8 @@ div.bookLine a { display: block; padding: 3px; background-color: #036; border-bo
 div.bookLine a:visited { color: #ffff66; text-decoration: none; }
 div.bookLine a:link { color: #ffffff; text-decoration: none; }
 div.bookLine a:hover { background-color: #0505ab; color: #fff; }
+div.toc1 {display: block; font-family: "Arial", "Helvetica", san-serif; font-size: 12pt; text-align: left }
+div.toc2 {display: block; font-family: "Arial", "Helvetica", san-serif; font-size: 9pt; text-align: left; margin-left: 2em }
 
 p.footnote, p.crossRefNote { display: block; font-family:Charis SIL, Times New Roman; margin-top: 3pt; font-size: 10pt; text-align: justify; margin-left: 0em }
 

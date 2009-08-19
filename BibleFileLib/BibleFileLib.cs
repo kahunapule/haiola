@@ -5251,6 +5251,7 @@ namespace WordSend
             string formatString = "00";
             if (currentBookAbbrev.CompareTo("PSA") == 0)
                 formatString = "000";
+            sb.Append("<a href=\"index.htm\">^</a>&nbsp;&nbsp;&nbsp;&nbsp;");
             int i;
             for (i = 1; i <= bookRecord.numChapters; i++)
             {
@@ -5260,7 +5261,7 @@ namespace WordSend
                     sb.Append(String.Format(" <a href=\"{0}\">{1}</a>", 
                         String.Format("{0}{1}.htm", currentBookAbbrev, i.ToString(formatString)), i));
             }
-            sb.Append("</div>\r\n");
+            sb.Append("&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"copyright.htm\">©</a></div>\r\n");
             navButtonCode = sb.ToString();
             htm.WriteLine(navButtonCode);
         }
@@ -5550,6 +5551,8 @@ namespace WordSend
             bool containsDC = false;
             newChapterFound = false;
             ignore = false;
+            StringBuilder toc = new StringBuilder();
+            string chapFormat = "00";
 
             footnotesToWrite = new StringBuilder(String.Empty);
             preVerse = new StringBuilder(String.Empty);
@@ -5591,6 +5594,10 @@ namespace WordSend
                                 {
                                     currentBookAbbrev = id;
                                     bookRecord = (BibleBookRecord)bookInfo.books[currentBookAbbrev];
+                                    if (id.CompareTo("PSA") == 0)
+                                        chapFormat = "000";
+                                    else
+                                        chapFormat = "00";
                                 }
                                 chapterNumber = 0;
                                 verseNumber = 0;
@@ -5617,10 +5624,26 @@ namespace WordSend
                                     }
                                 }
                                 break;
+                            case "s":
+                            case "d":
+                                usfx.Read();
+                                if (usfx.NodeType == XmlNodeType.Text)
+                                {
+                                    toc.Append(String.Format("<div class=\"toc2\"><a href=\"{0}{1}.htm#C{2}V{3}\">{4}</a></div>\r\n",
+                                        currentBookAbbrev, Math.Max(1, chapterNumber).ToString(chapFormat),
+                                        Math.Max(1, chapterNumber).ToString(),
+                                        verseNumber.ToString(), usfx.Value.Trim()));
+                                }
+                                break;
                             case "h":
                                 usfx.Read();
                                 if (usfx.NodeType == XmlNodeType.Text)
+                                {
                                     currentBookHeader = usfx.Value.Trim();
+                                    toc.Append(String.Format("<div class=\"toc1\"><a href=\"{0}{1}.htm\">{2}</a></div>\r\n",
+                                        currentBookAbbrev, chapFormat.Substring(1) + "1",
+                                        usfx.Value.Trim()));
+                                }
                                 break;
                             case "cl":
                                 usfx.Read();
@@ -5738,6 +5761,41 @@ namespace WordSend
                     }
                 }
                 usfx.Close();
+
+                // Write translation index file
+                currentFileName = Path.Combine(htmDir, "index.htm");
+                htm = new StreamWriter(currentFileName, false, Encoding.UTF8);
+                htm.WriteLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns:msxsl=\"urn:schemas-microsoft-com:xslt\" xmlns:user=\"urn:nowhere\">");
+                htm.WriteLine("<head>");
+                htm.WriteLine("<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
+                htm.WriteLine("<link rel=\"stylesheet\" href=\"../css/prophero.css\" type=\"text/css\">");
+                htm.WriteLine("<title>Scripture</title></head>");
+                htm.WriteLine("<body class=\"mainDoc\">");
+                htm.WriteLine("<div class=\"main\"><div class=\"toc\"><a href=\"../index.htm\">^</a></div>\r\n{0}",
+                    toc.ToString());
+                htm.WriteLine("<div class=\"toc\"><a href=\"copyright.htm\">©</a></div>");
+                htm.WriteLine("</div>"); // end of div.main
+                htm.WriteLine("<div class=\"bookList\">");
+                int i;
+                BibleBookRecord br;
+                for (i = 0; i < bookList.Count; i++)
+                {
+                    br = (BibleBookRecord)bookList[i];
+                    if (i == bookListIndex)
+                    {
+                        htm.WriteLine("<div class=\"bookLine\">{0}</div>", br.vernacularHeader);
+                    }
+                    else
+                    {
+                        if (br.tla.CompareTo("PSA") == 0)
+                            htm.WriteLine("<div class=\"bookLine\"><a href=\"{0}001.htm\">{1}</a></div>", br.tla, br.vernacularHeader);
+                        else
+                            htm.WriteLine("<div class=\"bookLine\"><a href=\"{0}01.htm\">{1}</a></div>", br.tla, br.vernacularHeader);
+                    }
+                }
+                htm.WriteLine("</div></body></html>");
+                htm.Close();
+                htm = null;
 
                 // Pass 2: content generation
 

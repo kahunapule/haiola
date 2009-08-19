@@ -45,20 +45,14 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_16B568ADD821138260751A014BD810E2"
-        "OwnerKey" = "8:_56D1D562F1FA4B6686189F0E53C51382"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_16B568ADD821138260751A014BD810E2"
-        "OwnerKey" = "8:_FC14D18134CAF53AC22CD0128AB0E166"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_16DCC3E8AE934173A20A71419D85F7DD"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_18F27406C03EFFC608884D18F6E13DF3"
+        "OwnerKey" = "8:_56D1D562F1FA4B6686189F0E53C51382"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -75,8 +69,14 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_329C428D001A4F2290079C9709340FE7"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_2BA539B8D99C43423BB18B26FB1D1E91"
+        "OwnerKey" = "8:_56D1D562F1FA4B6686189F0E53C51382"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_2BA539B8D99C43423BB18B26FB1D1E91"
+        "OwnerKey" = "8:_E7EB3535F662B9839C9FEDB7569C7845"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -154,12 +154,6 @@
         "Entry"
         {
         "MsmKey" = "8:_4F0B7455150D45AAACC04C19EB216640"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_53EAE8FC004942F4A280B936F8B5777C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -303,12 +297,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_A7A3297C1182445A88BDC8F3669D0CBF"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_A90BE0BAAF7C4DE284D8A0939A160F72"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -327,18 +315,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_B71E8A69A77CBEBE39263924F2A983F0"
-        "OwnerKey" = "8:_56D1D562F1FA4B6686189F0E53C51382"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_B71E8A69A77CBEBE39263924F2A983F0"
-        "OwnerKey" = "8:_FC14D18134CAF53AC22CD0128AB0E166"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_BA13925FE54145C493A687B82B344BA5"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -353,6 +329,18 @@
         {
         "MsmKey" = "8:_C0FD8706DE854A2D86830BBE6B6D51D8"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C615F0D223A939D0B5C3AF5153E24644"
+        "OwnerKey" = "8:_56D1D562F1FA4B6686189F0E53C51382"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C615F0D223A939D0B5C3AF5153E24644"
+        "OwnerKey" = "8:_E7EB3535F662B9839C9FEDB7569C7845"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -387,12 +375,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_D993EE27F7BA445DA1204FCE8F46012E"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_DA93B49B416E4D2A834FBE873B9C1A3B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -417,26 +399,32 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_E69B87F0F122D83D50E2B0701D5B994A"
+        "OwnerKey" = "8:_56D1D562F1FA4B6686189F0E53C51382"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E69B87F0F122D83D50E2B0701D5B994A"
+        "OwnerKey" = "8:_E7EB3535F662B9839C9FEDB7569C7845"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_E746A15399DD4425B3F30057DAF7C137"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_ECBDC13C87E24DD3A97FF282F4079B5A"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_ED31B0650E8439B578EBAC8A89297304"
+        "MsmKey" = "8:_E7EB3535F662B9839C9FEDB7569C7845"
         "OwnerKey" = "8:_56D1D562F1FA4B6686189F0E53C51382"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_ED31B0650E8439B578EBAC8A89297304"
-        "OwnerKey" = "8:_FC14D18134CAF53AC22CD0128AB0E166"
+        "MsmKey" = "8:_ECBDC13C87E24DD3A97FF282F4079B5A"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -449,12 +437,6 @@
         {
         "MsmKey" = "8:_FA78D7AF8E7541A6B5E4797C65F9C215"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_FC14D18134CAF53AC22CD0128AB0E166"
-        "OwnerKey" = "8:_56D1D562F1FA4B6686189F0E53C51382"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -478,25 +460,31 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_FC14D18134CAF53AC22CD0128AB0E166"
+        "OwnerKey" = "8:_E7EB3535F662B9839C9FEDB7569C7845"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_B71E8A69A77CBEBE39263924F2A983F0"
+        "OwnerKey" = "8:_2BA539B8D99C43423BB18B26FB1D1E91"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_ED31B0650E8439B578EBAC8A89297304"
+        "OwnerKey" = "8:_C615F0D223A939D0B5C3AF5153E24644"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_16B568ADD821138260751A014BD810E2"
+        "OwnerKey" = "8:_E69B87F0F122D83D50E2B0701D5B994A"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_18F27406C03EFFC608884D18F6E13DF3"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -704,37 +692,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_16B568ADD821138260751A014BD810E2"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:icu.net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_16B568ADD821138260751A014BD810E2"
-                    {
-                    "Name" = "8:icu.net.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:icu.net.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_16DCC3E8AE934173A20A71419D85F7DD"
             {
             "SourcePath" = "8:..\\remove_bt_from_OW.cct"
@@ -753,6 +710,37 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_18F27406C03EFFC608884D18F6E13DF3"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:BibleFileLib, Version=0.0.3517.30230, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_18F27406C03EFFC608884D18F6E13DF3"
+                    {
+                    "Name" = "8:BibleFileLib.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:BibleFileLib.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1F515E9260FC491C89DE683578C50F9A"
@@ -795,12 +783,23 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_329C428D001A4F2290079C9709340FE7"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_2BA539B8D99C43423BB18B26FB1D1E91"
             {
-            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\css\\WaterMark.jpg"
-            "TargetName" = "8:WaterMark.jpg"
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:NDesk.DBus, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f6716e4f9b2ed099, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_2BA539B8D99C43423BB18B26FB1D1E91"
+                    {
+                    "Name" = "8:NDesk.DBus.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:NDesk.DBus.dll"
+            "TargetName" = "8:"
             "Tag" = "8:"
-            "Folder" = "8:_C54F7E4906D7417FA4B581FDE5749A10"
+            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -812,7 +811,7 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_335ABFC4933D4EA8B0D8E948C3C375A7"
@@ -1061,26 +1060,6 @@
             "TargetName" = "8:remove_ov_from_OW.cct"
             "Tag" = "8:"
             "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_53EAE8FC004942F4A280B936F8B5777C"
-            {
-            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\css\\prophero-ie6.css"
-            "TargetName" = "8:prophero-ie6.css"
-            "Tag" = "8:"
-            "Folder" = "8:_C54F7E4906D7417FA4B581FDE5749A10"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1535,26 +1514,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A7A3297C1182445A88BDC8F3669D0CBF"
-            {
-            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\css\\prophero.js"
-            "TargetName" = "8:prophero.js"
-            "Tag" = "8:"
-            "Folder" = "8:_C54F7E4906D7417FA4B581FDE5749A10"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A90BE0BAAF7C4DE284D8A0939A160F72"
             {
             "SourcePath" = "8:..\\OW to PT.cct"
@@ -1615,37 +1574,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_B71E8A69A77CBEBE39263924F2A983F0"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:NDesk.DBus, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f6716e4f9b2ed099, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_B71E8A69A77CBEBE39263924F2A983F0"
-                    {
-                    "Name" = "8:NDesk.DBus.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:NDesk.DBus.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BA13925FE54145C493A687B82B344BA5"
             {
             "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\css\\prophero.css"
@@ -1704,6 +1632,37 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C615F0D223A939D0B5C3AF5153E24644"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:LinqBridge, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c2b14eb747628076, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_C615F0D223A939D0B5C3AF5153E24644"
+                    {
+                    "Name" = "8:LinqBridge.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:LinqBridge.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C6CBF9969C5F44B0B74AEC559C1914FD"
@@ -1806,26 +1765,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D993EE27F7BA445DA1204FCE8F46012E"
-            {
-            "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\css\\prophero-ie.css"
-            "TargetName" = "8:prophero-ie.css"
-            "Tag" = "8:"
-            "Folder" = "8:_C54F7E4906D7417FA4B581FDE5749A10"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DA93B49B416E4D2A834FBE873B9C1A3B"
             {
             "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\dummyInner.htm"
@@ -1906,6 +1845,37 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E69B87F0F122D83D50E2B0701D5B994A"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:icu.net, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_E69B87F0F122D83D50E2B0701D5B994A"
+                    {
+                    "Name" = "8:icu.net.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:icu.net.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E746A15399DD4425B3F30057DAF7C137"
             {
             "SourcePath" = "8:..\\..\\BibleConv\\FilesToCopyToOutput\\Conc\\TextFuncs.js"
@@ -1926,6 +1896,37 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E7EB3535F662B9839C9FEDB7569C7845"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_E7EB3535F662B9839C9FEDB7569C7845"
+                    {
+                    "Name" = "8:Palaso.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Palaso.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_ECBDC13C87E24DD3A97FF282F4079B5A"
             {
             "SourcePath" = "8:..\\concIndexHeader.txt"
@@ -1944,37 +1945,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_ED31B0650E8439B578EBAC8A89297304"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:LinqBridge, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c2b14eb747628076, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_ED31B0650E8439B578EBAC8A89297304"
-                    {
-                    "Name" = "8:LinqBridge.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:LinqBridge.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F9711DFA801E44CFB42B3F48D0CC5A43"
@@ -2015,37 +1985,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_FC14D18134CAF53AC22CD0128AB0E166"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Palaso, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_FC14D18134CAF53AC22CD0128AB0E166"
-                    {
-                    "Name" = "8:Palaso.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Palaso.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_4AB33C7C536A4AE49678C91B200B5F9F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FCEF7149C28E419D971CEF6CC2B52230"
