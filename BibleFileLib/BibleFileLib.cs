@@ -3464,6 +3464,9 @@ namespace WordSend
 									EndUSFXElement();
 								}
 								break;
+                            case "toc":
+                                // TODO: store metadata and do something useful with it.
+                                break;
 							default:
                                 badsf = "\\" + sf.tag;
                                 if (sf.level > 0)
