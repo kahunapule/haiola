@@ -5261,6 +5261,7 @@ namespace WordSend
             string formatString = "00";
             if (currentBookAbbrev.CompareTo("PSA") == 0)
                 formatString = "000";
+            sb.Append("<a href=\"index.htm\">^</a>&nbsp;&nbsp;&nbsp;&nbsp;");
             int i;
             for (i = 0; i <= bookRecord.numChapters; i++)
             {
@@ -5270,7 +5271,7 @@ namespace WordSend
                     sb.Append(String.Format(" <a href=\"{0}\">{1}</a>", 
                         String.Format("{0}{1}.htm", currentBookAbbrev, i.ToString(formatString)), i));
             }
-            sb.Append("</div>\r\n");
+            sb.Append("&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"copyright.htm\">©</a></div>\r\n");
             navButtonCode = sb.ToString();
             htm.WriteLine(navButtonCode);
         }
@@ -5564,6 +5565,7 @@ namespace WordSend
             bool containsDC = false;
             newChapterFound = false;
             ignore = false;
+            StringBuilder toc = new StringBuilder();
             string chapFormat = "00";
             int i;
             BibleBookRecord br;
@@ -5657,6 +5659,12 @@ namespace WordSend
                                         currentBookAbbrev, Math.Max(1, chapterNumber).ToString(chapFormat),
                                         Math.Max(1, chapterNumber).ToString(),
                                         verseNumber.ToString(), usfx.Value.Trim()));
+                                }
+                                break;
+                                {
+                                    toc.Append(String.Format("<div class=\"toc1\"><a href=\"{0}{1}.htm\">{2}</a></div>\r\n",
+                                        currentBookAbbrev, chapFormat.Substring(1) + "1",
+                                        usfx.Value.Trim()));
                                 }
                                 break;
                             case "cl":
@@ -5791,12 +5799,26 @@ namespace WordSend
                 bookRecord = (BibleBookRecord)bookList[bookListIndex];
                 if (bookRecord.tla.CompareTo("PSA") == 0)
                     chapFormat = "000";
+                int i;
+                BibleBookRecord br;
+                for (i = 0; i < bookList.Count; i++)
+                {
+                    br = (BibleBookRecord)bookList[i];
+                    if (i == bookListIndex)
+                    {
+                        htm.WriteLine("<div class=\"bookLine\">{0}</div>", br.vernacularHeader);
+                    }
                 else
                     chapFormat = "00";
                 htm.WriteLine("<div class=\"toc\"><a href=\"{0}{1}.htm\">Read the Holy Bible now. / Ritim Buk Baibel nau yet.</a></div>",
                     bookRecord.tla, one.ToString(chapFormat));
                 CloseHtmlFile();
 
+                    }
+                }
+                htm.WriteLine("</div></body></html>");
+                htm.Close();
+                htm = null;
 
                 // Pass 2: content generation
 
