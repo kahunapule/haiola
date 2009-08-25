@@ -58,9 +58,9 @@ span.k { font-weight: bold }
 div.keyword, div.keyword1 { font-family: "Arial", "Helvetica", san-serif; font-size: 10pt; font-weight: bold; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; margin-right: 12em; text-indent: -12em }
 div.keyword2 { font-family: "Arial", "Helvetica", san-serif; font-size: 10pt; font-weight: bold; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; margin-right: 12em; text-indent: -4em }
 div.keyword3 { font-family: "Arial", "Helvetica", san-serif; font-size: 10pt; font-weight: bold; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; margin-right: 12em; text-indent: -2em }
-div.li, div.li1, div.ph, div.ph1 { display: list-item; list-style-type: square; text-align:left; text-indent: 2em }
-div.li2, div.ph2, div.phi { display: list-item; list-style-type: square; text-align:left; text-indent: 4em }
-div.li3, div.ph3 { display: list-item; list-style-type: square; text-align:left; text-indent: 12em }
+div.li, div.li1, div.ph, div.ph1 { display: list-item; list-style-type: none; text-align:left; text-indent: 2em }
+div.li2, div.ph2, div.phi { display: list-item; list-style-type: none; text-align:left; text-indent: 4em }
+div.li3, div.ph3 { display: list-item; list-style-type: none; text-align:left; text-indent: 12em }
 div.lit { text-align: right }
 div.m { text-indent: 0em; margin-top: 0 }
 div.mi { text-indent: 2em; text-align: left; margin-top: 0 }
@@ -114,9 +114,9 @@ div.maintitle        { display: block; text-align: center; font-family: Arial; f
 div.maintitle1       { display: block; text-align: center; font-family: Arial; font-size: 22pt; font-weight: bold; margin-top: 2pt }
 div.maintitle2       { display: block; text-align: center; font-size: 14pt; font-weight: bold; font-style: italic; margin-bottom: 2pt }
 div.copyright       { display: block; text-align: center; font-family: Arial; font-size: 12pt; color: red; margin-bottom: 2pt }
-div.toc { text-indent: -1em; text-align: left; margin-left: 1em; line-height: 1.2em; }
-div.toc1 { text-indent: -1em; text-align: left; margin-left: 2em; line-height: 1.2em; }
-div.toc2 { text-indent: -1em; text-align: left; margin-left: 3em; line-height: 1.2em; }
+div.toc {display: block; font-family: "Arial", "Helvetica", san-serif; font-size: 12pt; text-align: left; text-indent: -1em; margin-left: 1em }
+div.toc1 {display: block; font-family: "Arial", "Helvetica", san-serif; font-size: 12pt; text-align: left; text-indent: -1em; margin-left: 2em }
+div.toc2 {display: block; font-family: "Arial", "Helvetica", san-serif; font-size: 9pt; text-align: left; text-indent: -1em; margin-left: 3em }
 
 div.sectionheading, div.chapterlabel   { display: block; text-align: center; font-family: Arial, "Helvetica", san-serif; font-size: 14pt; font-weight: bold; margin-top: 12pt }
 div.sectionsubheading   { display: block; text-align: center; font-family: Arial; font-weight: bold; font-style: italic; margin-top: 6pt; margin-left: 12pt } /* JohnT */
@@ -157,8 +157,6 @@ div.bookLine a { display: block; padding: 3px; background-color: #036; border-bo
 div.bookLine a:visited { color: #ffff66; text-decoration: none; }
 div.bookLine a:link { color: #ffffff; text-decoration: none; }
 div.bookLine a:hover { background-color: #0505ab; color: #fff; }
-div.toc1 {display: block; font-family: "Arial", "Helvetica", san-serif; font-size: 12pt; text-align: left }
-div.toc2 {display: block; font-family: "Arial", "Helvetica", san-serif; font-size: 9pt; text-align: left; margin-left: 2em }
 
 p.footnote, p.crossRefNote { display: block; font-family:Charis SIL, Times New Roman; margin-top: 3pt; font-size: 10pt; text-align: left; margin-left: 0em }
 
