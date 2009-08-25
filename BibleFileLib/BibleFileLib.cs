@@ -5261,7 +5261,6 @@ namespace WordSend
             string formatString = "00";
             if (currentBookAbbrev.CompareTo("PSA") == 0)
                 formatString = "000";
-            sb.Append("<a href=\"index.htm\">^</a>&nbsp;&nbsp;&nbsp;&nbsp;");
             int i;
             for (i = 0; i <= bookRecord.numChapters; i++)
             {
@@ -5271,7 +5270,7 @@ namespace WordSend
                     sb.Append(String.Format(" <a href=\"{0}\">{1}</a>", 
                         String.Format("{0}{1}.htm", currentBookAbbrev, i.ToString(formatString)), i));
             }
-            sb.Append("&nbsp;&nbsp;&nbsp;&nbsp;<a href=\"copyright.htm\">©</a></div>\r\n");
+            sb.Append("</div>\r\n");
             navButtonCode = sb.ToString();
             htm.WriteLine(navButtonCode);
         }
@@ -5787,38 +5786,22 @@ namespace WordSend
 
                 currentChapter = "";
                 chapterNumber = 0;
-                bookListIndex = -1;
                 OpenHtmlFile("index.htm");
-                htm.WriteLine("<div class=\"toc\"><a href=\"../index.htm\">Other language / Narapela tok ples</a></div>\r\n");
+                htm.WriteLine("<div class=\"toc\"><a href=\"../index.htm\">Other language / Narapela tok ples</a></div>");
                 htm.WriteLine("<div class=\"toc\">Download / kisim fail</div>");
                 htm.WriteLine("<div class=\"toc1\"><a href=\"{0}.pdf\">{0}.pdf</a> <a href=\"http://get.adobe.com/reader/\">Portable Document Format (PDF)</a></div>", langId);
                 htm.WriteLine("<div class=\"toc1\"><a href=\"{0}_usfm.zip\">{0}_usfm.zip</a> <a href=\"http://ubs-icap.org/usfm\">Unified Standard Format Markers (USFM)</a></div>", langId);
                 htm.WriteLine("<div class=\"toc1\"><a href=\"{0}_html.zip\">{0}_html.zip</a> <a href=\"http://mozilla.com\">HTML</a></div>", langId);
                 htm.WriteLine("<div class=\"toc1\"><a href=\"{0}_sword.zip\">{0}_sword.zip</a> <a href=\"http://crosswire.org/index.jsp\">Sword Module</a></div>", langId);
                 bookListIndex = 0;
-                bookRecord = (BibleBookRecord)bookList[bookListIndex];
+                bookRecord = (BibleBookRecord)bookList[0];
                 if (bookRecord.tla.CompareTo("PSA") == 0)
                     chapFormat = "000";
-                int i;
-                BibleBookRecord br;
-                for (i = 0; i < bookList.Count; i++)
-                {
-                    br = (BibleBookRecord)bookList[i];
-                    if (i == bookListIndex)
-                    {
-                        htm.WriteLine("<div class=\"bookLine\">{0}</div>", br.vernacularHeader);
-                    }
                 else
                     chapFormat = "00";
                 htm.WriteLine("<div class=\"toc\"><a href=\"{0}{1}.htm\">Read the Holy Bible now. / Ritim Buk Baibel nau yet.</a></div>",
                     bookRecord.tla, one.ToString(chapFormat));
                 CloseHtmlFile();
-
-                    }
-                }
-                htm.WriteLine("</div></body></html>");
-                htm.Close();
-                htm = null;
 
                 // Pass 2: content generation
 
@@ -6199,8 +6182,9 @@ namespace WordSend
                             }
                             break;
                     }
+
+                    result = true;
                 }
-                result = true;
             }
             catch (Exception ex)
             {
