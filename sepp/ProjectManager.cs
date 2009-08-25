@@ -22,6 +22,7 @@ namespace sepp
 		{
 			m_workDir = workDir;
 			m_siteDir = siteDir;
+            Text = "Project Tasks - " + workDir;
 			InitializeComponent();
 
 		}
@@ -381,6 +382,7 @@ namespace sepp
             SFConverter.ProcessFilespec(Path.Combine(UsfmPath, "*.ptx"));
 
             // Write out the USFX file.
+            SFConverter.scripture.languageCode = m_options.m_languageId;
             SFConverter.scripture.WriteUSFX(Path.Combine(UsfxPath, "usfx.xml"));
             Logit.CloseFile();
             UsfmToUsfxButton.Enabled = true;
@@ -391,9 +393,9 @@ namespace sepp
             UsfxToHtmlButton.Enabled = false;
             Utils.EnsureDirectory(HtmPath);
             usfxToHtmlConverter toHtm = new usfxToHtmlConverter();
-            Logit.OpenFile(Path.Combine(HtmPath, "ConversionReports.txt"));
-            toHtm.ConvertUsfxToHtml(Path.Combine(UsfxPath, "usfx.xml"), HtmPath, m_options.PreviousChapterText,
-                m_options.NextChapterText, "", "");
+            Logit.OpenFile(Path.Combine(UsfxPath, "HTMLConversionReport.txt"));
+            toHtm.ConvertUsfxToHtml(Path.Combine(UsfxPath, "usfx.xml"), HtmPath, m_options.m_languageName,
+                m_options.m_languageId, "", "");
             Logit.CloseFile();
             UsfxToHtmlButton.Enabled = true;
         }

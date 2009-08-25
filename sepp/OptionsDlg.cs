@@ -133,6 +133,8 @@ namespace sepp
 			listInputProcesses.Items.Clear();
 			foreach (string filename in m_options.PreprocessingTables)
 				listInputProcesses.Items.Add(filename);
+            languageNameTextBox.Text = m_options.m_languageName;
+            ethnologueCodeTextBox.Text = m_options.m_languageId;
 			listInputProcesses.ResumeLayout();
 		}
 
@@ -222,6 +224,9 @@ namespace sepp
 			foreach (string fileName in listInputProcesses.Items)
 				newTables.Add(fileName);
 			m_options.PreprocessingTables = newTables;
+            m_options.m_languageName = languageNameTextBox.Text;
+            m_options.m_languageId = ethnologueCodeTextBox.Text;
+
 		}
 
 		private void SaveConcTab()

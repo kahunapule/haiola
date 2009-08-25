@@ -35,6 +35,8 @@ namespace sepp
 		// rather than an array of paths. Eventually I plan to retire that variable and use this.
 		private List<string> m_tableNames = new List<string>();
 		private string m_inputEncoding;
+        public string m_languageId;
+        public string m_languageName;
 
 		// Localization
 		internal string m_notesRefSrc;
@@ -263,6 +265,8 @@ namespace sepp
 		{
 			m_doc = new XmlDocument();
 			m_doc.Load(optionsPath);
+            m_languageId = "";
+            m_languageName = "";
 			XmlNode root = m_doc.DocumentElement;
 			foreach (XmlNode node in root.ChildNodes)
 			{
@@ -331,6 +335,12 @@ namespace sepp
 					case "bookChap":
 						m_bookChapText = node.InnerText;
 						break;
+                    case "languageId":
+                        m_languageId = node.InnerText;
+                        break;
+                    case "languageName":
+                        m_languageName = node.InnerText;
+                        break;
 					case "nextChapter":
 						m_nextChapText = node.InnerText;
 						break;
@@ -457,6 +467,8 @@ namespace sepp
 			SetInnerText("bookChap", m_bookChapText);
 			SetInnerText("nextChapter", m_nextChapText);
 			SetInnerText("prevChapter", m_prevChapText);
+            SetInnerText("languageId", m_languageId);
+            SetInnerText("languageName", m_languageName);
 			SavePreprocessing();
 			SaveBookNameCols();
 			SaveComparer();

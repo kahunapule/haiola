@@ -1047,9 +1047,11 @@ namespace WordSend
 		public string vernacularName;
         public string vernacularAbbreviation;
 		public string testament;
+        public StringBuilder toc;
 		public BibleBookRecord()
 		{
 			tla = osisName = name = shortName = testament = vernacularAbbreviation = vernacularHeader = vernacularName = "";
+            toc = new StringBuilder();
 		}
 	}
 
@@ -4276,6 +4278,8 @@ namespace WordSend
 			}
 		}
 
+        public string languageCode = "";
+
 		public void WriteUSFX(string fileName)
 		{
 			int j;
@@ -4300,6 +4304,8 @@ namespace WordSend
 				xw.WriteAttributeString("xmlns:ns0", @"http://eBible.org/usfx/usfx-2009-07-12.xsd");
 				xw.WriteAttributeString("xmlns:xsi", @"http://www.w3.org/2001/XMLSchema-instance");
 				xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", @"usfx-2009-07-12.xsd");
+                if (languageCode.Length == 3)
+                    xw.WriteElementString("languageCode", languageCode);
 				for (j = 0; j < BibleBookInfo.MAXNUMBOOKS; j++)
 				{
 					WriteUSFXBook(j);
@@ -5184,6 +5190,8 @@ namespace WordSend
         protected string previousFileName = "";
         protected string chapterLabel = "";
         protected string psalmLabel = "";
+        protected string langName = "";
+        protected string langId = "";
         protected StringBuilder preVerse = new StringBuilder(String.Empty);
         protected string previousChapterText;
         protected string nextChapterText;
@@ -5193,6 +5201,7 @@ namespace WordSend
         protected int bookListIndex = 0;
         protected StringBuilder footnotesToWrite;
         protected StreamWriter htm;
+        int one = 1;
         bool inPreverse;
         bool inFootnote;
         bool inFootnoteStyle;
@@ -5243,7 +5252,8 @@ namespace WordSend
             if (previousFileName.Length > 0)
                 sb.Append(String.Format("<a href=\"{0}\">&lt;&lt;</a>\r\n",
                     Path.GetFileName(previousFileName)/*, previousChapterText*/));
-            sb.Append(String.Format("&nbsp;&nbsp;{0} {1}&nbsp;&nbsp;", bookRecord.vernacularHeader, currentChapter));
+            sb.Append(String.Format("&nbsp;&nbsp;<a href=\"index.htm\">{0} ({1})</a> {2} {3}&nbsp;&nbsp;",
+                langName, langId, bookRecord.vernacularHeader, currentChapter));
             if (nextFileName.Length > 0)
                 sb.Append(String.Format("<a href=\"{0}\">&gt;&gt;</a>",
                     Path.GetFileName(nextFileName)/*, nextChapterText*/));
@@ -5252,7 +5262,7 @@ namespace WordSend
             if (currentBookAbbrev.CompareTo("PSA") == 0)
                 formatString = "000";
             int i;
-            for (i = 1; i <= bookRecord.numChapters; i++)
+            for (i = 0; i <= bookRecord.numChapters; i++)
             {
                 if (i == chapterNumber)
                     sb.Append(String.Format(" {0}", i));
@@ -5272,32 +5282,55 @@ namespace WordSend
 
         protected void OpenHtmlFile()
         {
+            OpenHtmlFile("");
+        }
+
+        protected void OpenHtmlFile(string fileName)
+        {
             CloseHtmlFile();
             footNoteCall.reset();
             string chap = currentChapter;
             noteNumber = 0;
-            if (currentBookAbbrev == "PSA")
-                chap = String.Format("{0}", chapterNumber.ToString("000"));
+            if ((fileName != null) && (fileName.Length > 0))
+            {
+                currentFileName = Path.Combine(htmDir, fileName);
+            }
             else
-                chap = String.Format("{0}", chapterNumber.ToString("00"));
-            currentFileName = Path.Combine(htmDir, currentBookAbbrev + chap + ".htm");
+            {
+                if (currentBookAbbrev == "PSA")
+                    chap = String.Format("{0}", chapterNumber.ToString("000"));
+                else
+                    chap = String.Format("{0}", chapterNumber.ToString("00"));
+                currentFileName = Path.Combine(htmDir, currentBookAbbrev + chap + ".htm");
+            }
             htm = new StreamWriter(currentFileName, false, Encoding.UTF8);
             htm.WriteLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns:msxsl=\"urn:schemas-microsoft-com:xslt\" xmlns:user=\"urn:nowhere\">");
             htm.WriteLine("<head>");
             htm.WriteLine("<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
             htm.WriteLine("<link rel=\"stylesheet\" href=\"../css/prophero.css\" type=\"text/css\">");
-            /*<!--[if IE]>");
-			htm.WriteLine("<link href=\"../css/prophero-ie.css\" rel=\"stylesheet\" type=\"text/css\" />");
-			htm.WriteLine("<![endif]--><!--[if lte IE 6]>");
-			htm.WriteLine("<link href=\"../css/prophero-ie6.css\" rel=\"stylesheet\" type=\"text/css\" />");
-			htm.WriteLine("<![endif]-->");
-            htm.WriteLine("<script src=\"../css/prophero.js\" type=\"text/javascript\"></script><script type=\"text/javascript\">var curBook=\"{0} {1}\"</script>");
-            */
-            htm.WriteLine("<title>{0} {1}</title></head>",
-                currentBookHeader, currentChapter);
-            // htm.WriteLine("<body onload=\"onLoadBook(curBook)\" class=\"mainDoc\">");
+            htm.WriteLine("<title>{0} ({1}) {2} {3}</title></head>",
+                langName, langId, currentBookHeader, currentChapter);
             htm.WriteLine("<body class=\"mainDoc\">");
             WriteNavButtons();
+            htm.WriteLine("<div class=\"bookList\">");
+            int i;
+            BibleBookRecord br;
+            for (i = 0; i < bookList.Count; i++)
+            {
+                br = (BibleBookRecord)bookList[i];
+                if (i == bookListIndex)
+                {
+                    htm.WriteLine("<div class=\"bookLine\">{0}</div>", br.vernacularHeader);
+                }
+                else
+                {
+                    if (br.tla.CompareTo("PSA") == 0)
+                        htm.WriteLine("<div class=\"bookLine\"><a href=\"{0}001.htm\">{1}</a></div>", br.tla, br.vernacularHeader);
+                    else
+                        htm.WriteLine("<div class=\"bookLine\"><a href=\"{0}01.htm\">{1}</a></div>", br.tla, br.vernacularHeader);
+                }
+            }
+            htm.WriteLine("<br><div class=\"bookLine\"><a href=\"../terms.htm\">©</a></div></div>");
             htm.WriteLine("<div class=\"main\"><a name=\"C{0}V0\"><hr></a>", chapterNumber.ToString());
         }
 
@@ -5322,26 +5355,7 @@ namespace WordSend
                 htm.WriteLine("<div class=\"pageFooter\">");
                 WriteHtmlFootnotes();
                 htm.WriteLine("</div></div>"); // end of div.pageFooter and div.main
-                htm.WriteLine("<div class=\"bookList\">");
-                int i;
-                BibleBookRecord br;
-                
-                for (i = 0; i < bookList.Count; i++)
-                {
-                    br = (BibleBookRecord)bookList[i];
-                    if (i == bookListIndex)
-                    {
-                        htm.WriteLine("<div class=\"bookLine\">{0}</div>", br.vernacularHeader);
-                    }
-                    else
-                    {
-                        if (br.tla.CompareTo("PSA") == 0)
-                            htm.WriteLine("<div class=\"bookLine\"><a href=\"{0}001.htm\">{1}</a></div>", br.tla, br.vernacularHeader);
-                        else
-                            htm.WriteLine("<div class=\"bookLine\"><a href=\"{0}01.htm\">{1}</a></div>", br.tla, br.vernacularHeader);
-                    }
-                }
-                htm.WriteLine("</div><div class=\"pageFooter\">");
+                htm.WriteLine("<div class=\"pageFooter\">");
                 RepeatNavButtons();
                 htm.WriteLine("</div></body></html>");
                 htm.Close();
@@ -5527,19 +5541,19 @@ namespace WordSend
         /// </summary>
         /// <param name="usfxName">Name of the USFX file to convert to HTML files</param>
         /// <param name="htmlDir">Directory to put the HTML files into</param>
-        /// <param name="prevButtonName">Vernacular name for the button linked to the previous chapter</param>
-        /// <param name="nextButtonName">Vernacular name for the button linked to the next chapter</param>
+        /// <param name="languageName">Name of the language for page headers</param>
+        /// <param name="languageId">New Ethnologue 3-letter code for this language</param>
         /// <param name="chapterLabelName">Vernacular name for "Chapter"</param>
         /// <param name="psalmLabelName">Vernacular name for "Psalm"</param>
         /// <returns>true iff the conversion succeeded</returns>
-        public bool ConvertUsfxToHtml(string usfxName, string htmlDir, string prevButtonName, string nextButtonName,
+        public bool ConvertUsfxToHtml(string usfxName, string htmlDir, string languageName, string languageId,
             string chapterLabelName, string psalmLabelName)
         {
             bool result = false;
             bool inUsfx = false;
             htmDir = htmlDir;
-            previousChapterText = prevButtonName;
-            nextChapterText = nextButtonName;
+            langId = languageId;
+            langName = languageName;
             chapterLabel = chapterLabelName;
             psalmLabel = psalmLabelName;
             chapterNumber = verseNumber = 0;
@@ -5550,6 +5564,9 @@ namespace WordSend
             bool containsDC = false;
             newChapterFound = false;
             ignore = false;
+            string chapFormat = "00";
+            int i;
+            BibleBookRecord br;
 
             footnotesToWrite = new StringBuilder(String.Empty);
             preVerse = new StringBuilder(String.Empty);
@@ -5591,7 +5608,12 @@ namespace WordSend
                                 {
                                     currentBookAbbrev = id;
                                     bookRecord = (BibleBookRecord)bookInfo.books[currentBookAbbrev];
+                                    bookRecord.toc = new StringBuilder();
                                 }
+                                if (id.CompareTo("PSA") == 0)
+                                    chapFormat = "000";
+                                else
+                                    chapFormat = "00";
                                 chapterNumber = 0;
                                 verseNumber = 0;
                                 if (bookInfo.isApocrypha(id))
@@ -5621,6 +5643,21 @@ namespace WordSend
                                 usfx.Read();
                                 if (usfx.NodeType == XmlNodeType.Text)
                                     currentBookHeader = usfx.Value.Trim();
+                                bookRecord.toc.Append(String.Format("<div class=\"toc1\"><a href=\"{0}{1}.htm\">{2}</a></div>\r\n",
+                                    currentBookAbbrev, chapFormat.Substring(1) + "1",
+                                    currentBookHeader));
+
+                                break;
+                            case "s":
+                            case "d":
+                                usfx.Read();
+                                if (usfx.NodeType == XmlNodeType.Text)
+                                {
+                                    bookRecord.toc.Append(String.Format("<div class=\"toc2\"><a href=\"{0}{1}.htm#C{2}V{3}\">{4}</a></div>\r\n",
+                                        currentBookAbbrev, Math.Max(1, chapterNumber).ToString(chapFormat),
+                                        Math.Max(1, chapterNumber).ToString(),
+                                        verseNumber.ToString(), usfx.Value.Trim()));
+                                }
                                 break;
                             case "cl":
                                 usfx.Read();
@@ -5735,9 +5772,31 @@ namespace WordSend
                     else if ((usfx.NodeType == XmlNodeType.EndElement) && (usfx.Name == "book"))
                     {
                         bookList.Add(bookRecord);
+                        // Write book table of contents
                     }
                 }
                 usfx.Close();
+
+                currentChapter = "";
+                chapterNumber = 0;
+                bookListIndex = -1;
+                OpenHtmlFile("index.htm");
+                htm.WriteLine("<div class=\"toc\"><a href=\"../index.htm\">Other language / Narapela tok ples</a></div>\r\n");
+                htm.WriteLine("<div class=\"toc\">Download / kisim fail</div>");
+                htm.WriteLine("<div class=\"toc1\"><a href=\"{0}.pdf\">{0}.pdf</a> <a href=\"http://get.adobe.com/reader/\">Portable Document Format (PDF)</a></div>", langId);
+                htm.WriteLine("<div class=\"toc1\"><a href=\"{0}_usfm.zip\">{0}_usfm.zip</a> <a href=\"http://ubs-icap.org/usfm\">Unified Standard Format Markers (USFM)</a></div>", langId);
+                htm.WriteLine("<div class=\"toc1\"><a href=\"{0}_html.zip\">{0}_html.zip</a> <a href=\"http://mozilla.com\">HTML</a></div>", langId);
+                htm.WriteLine("<div class=\"toc1\"><a href=\"{0}_sword.zip\">{0}_sword.zip</a> <a href=\"http://crosswire.org/index.jsp\">Sword Module</a></div>", langId);
+                bookListIndex = 0;
+                bookRecord = (BibleBookRecord)bookList[bookListIndex];
+                if (bookRecord.tla.CompareTo("PSA") == 0)
+                    chapFormat = "000";
+                else
+                    chapFormat = "00";
+                htm.WriteLine("<div class=\"toc\"><a href=\"{0}{1}.htm\">Read the Holy Bible now. / Ritim Buk Baibel nau yet.</a></div>",
+                    bookRecord.tla, one.ToString(chapFormat));
+                CloseHtmlFile();
+
 
                 // Pass 2: content generation
 
@@ -5785,6 +5844,11 @@ namespace WordSend
                                             containsDC = true;
                                         bookRecord = (BibleBookRecord)bookList[bookListIndex];
                                         currentBookHeader = bookRecord.vernacularHeader;
+                                        currentChapter = "";
+                                        OpenHtmlFile();
+                                        htm.WriteLine("<div class=\"toc\"><a href=\"../index.htm\">^</a></div>\r\n{0}",
+                                            bookRecord.toc.ToString());
+                                        CloseHtmlFile();
                                         break;
                                     case "id":
                                         if (id.Length > 2)

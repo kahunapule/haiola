@@ -178,8 +178,12 @@ namespace sepp
 
         private void WorkOnAllButton_Click(object sender, EventArgs e)
         {
-            foreach (object o_project in m_projectsList.Items)
+            int i;
+            for (i = 0; i < m_projectsList.Items.Count; i++)
             {
+                m_projectsList.SelectedIndex = i;
+                Application.DoEvents();
+                object o_project = m_projectsList.SelectedItem;
                 string project = (string)o_project;
                 string projectWorkPath = Path.Combine(m_workDirectory, project);
                 string projectSitePath = Path.Combine(m_siteDirectory, project);

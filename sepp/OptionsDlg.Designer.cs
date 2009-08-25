@@ -31,6 +31,7 @@ namespace sepp
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OptionsDlg));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.inputPage = new System.Windows.Forms.TabPage();
+            this.clearReloadButton = new System.Windows.Forms.Button();
             this.btnAdjustFiles = new System.Windows.Forms.Button();
             this.label20 = new System.Windows.Forms.Label();
             this.lstFiles = new System.Windows.Forms.ListView();
@@ -110,7 +111,10 @@ namespace sepp
             this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.clearReloadButton = new System.Windows.Forms.Button();
+            this.label24 = new System.Windows.Forms.Label();
+            this.ethnologueCodeTextBox = new System.Windows.Forms.TextBox();
+            this.label25 = new System.Windows.Forms.Label();
+            this.languageNameTextBox = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.inputPage.SuspendLayout();
             this.tabMisc.SuspendLayout();
@@ -151,6 +155,16 @@ namespace sepp
             this.inputPage.TabIndex = 1;
             this.inputPage.Text = "Input";
             this.inputPage.UseVisualStyleBackColor = true;
+            // 
+            // clearReloadButton
+            // 
+            this.clearReloadButton.Location = new System.Drawing.Point(152, 365);
+            this.clearReloadButton.Name = "clearReloadButton";
+            this.clearReloadButton.Size = new System.Drawing.Size(171, 23);
+            this.clearReloadButton.TabIndex = 4;
+            this.clearReloadButton.Text = "Clear and reload file list";
+            this.clearReloadButton.UseVisualStyleBackColor = true;
+            this.clearReloadButton.Click += new System.EventHandler(this.clearReloadButton_Click);
             // 
             // btnAdjustFiles
             // 
@@ -216,6 +230,10 @@ namespace sepp
             // 
             // tabMisc
             // 
+            this.tabMisc.Controls.Add(this.languageNameTextBox);
+            this.tabMisc.Controls.Add(this.label25);
+            this.tabMisc.Controls.Add(this.ethnologueCodeTextBox);
+            this.tabMisc.Controls.Add(this.label24);
             this.tabMisc.Controls.Add(this.btnRemoveInputProcess);
             this.tabMisc.Controls.Add(this.btnAddInputProcess);
             this.tabMisc.Controls.Add(this.listInputProcesses);
@@ -925,15 +943,38 @@ namespace sepp
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
-            // clearReloadButton
+            // label24
             // 
-            this.clearReloadButton.Location = new System.Drawing.Point(152, 365);
-            this.clearReloadButton.Name = "clearReloadButton";
-            this.clearReloadButton.Size = new System.Drawing.Size(171, 23);
-            this.clearReloadButton.TabIndex = 4;
-            this.clearReloadButton.Text = "Clear and reload file list";
-            this.clearReloadButton.UseVisualStyleBackColor = true;
-            this.clearReloadButton.Click += new System.EventHandler(this.clearReloadButton_Click);
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(18, 230);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(136, 13);
+            this.label24.TabIndex = 5;
+            this.label24.Text = "Language Ethnologe code:";
+            // 
+            // ethnologueCodeTextBox
+            // 
+            this.ethnologueCodeTextBox.Location = new System.Drawing.Point(172, 226);
+            this.ethnologueCodeTextBox.MaxLength = 3;
+            this.ethnologueCodeTextBox.Name = "ethnologueCodeTextBox";
+            this.ethnologueCodeTextBox.Size = new System.Drawing.Size(39, 20);
+            this.ethnologueCodeTextBox.TabIndex = 6;
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(18, 260);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(87, 13);
+            this.label25.TabIndex = 7;
+            this.label25.Text = "Language name:";
+            // 
+            // languageNameTextBox
+            // 
+            this.languageNameTextBox.Location = new System.Drawing.Point(111, 257);
+            this.languageNameTextBox.Name = "languageNameTextBox";
+            this.languageNameTextBox.Size = new System.Drawing.Size(266, 20);
+            this.languageNameTextBox.TabIndex = 8;
             // 
             // OptionsDlg
             // 
@@ -1049,5 +1090,9 @@ namespace sepp
 		private System.Windows.Forms.TextBox tbxTestWords;
 		private System.Windows.Forms.ComboBox comboSort;
         private System.Windows.Forms.Button clearReloadButton;
+        private System.Windows.Forms.TextBox ethnologueCodeTextBox;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.TextBox languageNameTextBox;
+        private System.Windows.Forms.Label label25;
 	}
 }
