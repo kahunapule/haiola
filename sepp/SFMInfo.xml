@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSPY v2004 rel. 3 U (http://www.xmlspy.com) by Michael Paul Johnson (private) -->
+<!-- created by Kahunapule Michael Johnson, and released under LGPL 3 or later -->
 <SFMInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="SFMInfo.xsd">
 	<sfm kind="ignore">
 		<tag>-tag-</tag>
@@ -33,7 +33,7 @@
 		<levelExpected>false</levelExpected>
 		<milestone>false</milestone>
 		<TeXcode>blankLine</TeXcode>
-		<comment>Blank line between poetry stanzas</comment>
+		<comment>Blank line between poetry stanzas; no text should follow this marker</comment>
 	</sfm>
 	<sfm kind="character">
 		<tag>bd</tag>
@@ -70,7 +70,7 @@
 	</sfm>
 	<sfm kind="meta">
 		<tag>ca</tag>
-		<parameterName>altChapter</parameterName>
+		<endTag>ca*</endTag><parameterName>altChapter</parameterName>
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
 		<milestone>true</milestone>
@@ -346,7 +346,7 @@
 		<TeXcode>introEx</TeXcode>
 		<comment>May explain missing book in partially completed Bible</comment>
 	</sfm>
-	<sfm kind="paragraph">
+	<sfm kind="paragraph"><tag>ili</tag><paragraphStyle>Intro list item</paragraphStyle><nestingAllowed>false</nestingAllowed><levelExpected>false</levelExpected><milestone>false</milestone><TeXcode>introListItem</TeXcode></sfm><sfm kind="paragraph">
 		<tag>im</tag>
 		<paragraphStyle>Intro Paragraph Continuation</paragraphStyle>
 		<nestingAllowed>false</nestingAllowed>
@@ -455,7 +455,7 @@
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>true</levelExpected>
 		<TeXcode>introPoetry#</TeXcode>
-	</sfm>
+	</sfm><sfm kind="character"><tag>iqt</tag><endTag>iqt*</endTag><paragraphStyle>Intro Quoted Text</paragraphStyle><nestingAllowed>false</nestingAllowed><levelExpected>false</levelExpected><milestone>false</milestone><TeXcode>introQuotedText</TeXcode><comment>For Scripture (or other) quotes within introductions.</comment></sfm>
 	<sfm kind="paragraph">
 		<tag>is</tag>
 		<paragraphStyle>Intro Section Head</paragraphStyle>
@@ -632,7 +632,7 @@
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>true</levelExpected>
 		<TeXcode>indentedPara</TeXcode>
-	</sfm>
+	<comment>level indicates amount of indent</comment></sfm>
 	<sfm kind="paragraph">
 		<tag>pm</tag>
 		<paragraphStyle>Embedded Paragraph</paragraphStyle>
@@ -664,7 +664,7 @@
 		<nestingAllowed>true</nestingAllowed>
 		<levelExpected>false</levelExpected>
 	</sfm>
-	<sfm kind="paragraph">
+	<sfm kind="paragraph"><tag>pr</tag><paragraphStyle>Embedded Refrain</paragraphStyle><nestingAllowed>false</nestingAllowed><levelExpected>false</levelExpected></sfm><sfm kind="paragraph">
 		<tag>pref</tag>
 		<paragraphStyle>Preface</paragraphStyle>
 		<levelExpected>false</levelExpected>
@@ -791,7 +791,7 @@
 	</sfm>
 	<sfm kind="paragraph">
 		<tag>rq</tag>
-		<paragraphStyle>Right Reference</paragraphStyle>
+		<endTag>rq*</endTag><paragraphStyle>Right Reference</paragraphStyle>
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
 		<comment>The reference(s) are inteded to be formatted (typeset) within the scripture body text column, and not extracted from the text as are regular cross-references (\x...\x*). (They are also typically separated from the main text of Scripture using a different type style and alignment, such as italic and right alignment).</comment>
@@ -846,7 +846,7 @@
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
 	</sfm>
-	<sfm kind="table">
+	<sfm kind="meta"><tag>sts</tag><parameterName>status</parameterName><nestingAllowed>false</nestingAllowed><levelExpected>false</levelExpected><usfx>sts</usfx><usfxAttribute>status</usfxAttribute><milestone>true</milestone><comment>status is a single digit: 1=first draft, 2=team draft, 3=reviewed draft, 4=clean text</comment></sfm><sfm kind="table">
 		<tag>tc</tag>
 		<endTag>tc, tr,p,q,tcr</endTag>
 		<nestingAllowed>true</nestingAllowed>
@@ -857,18 +857,18 @@
 		<endTag>tc, tr,p,q,tcr</endTag>
 		<nestingAllowed>true</nestingAllowed>
 		<levelExpected>true</levelExpected>
-	</sfm>
+	<comment>right aligned; level is column number</comment></sfm>
 	<sfm kind="table">
 		<tag>th</tag>
 		<characterStyle>Table Cell Head</characterStyle>
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>true</levelExpected>
-	</sfm>
+	<comment>level is column number</comment></sfm>
 	<sfm kind="table">
 		<tag>thr</tag>
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>true</levelExpected>
-	</sfm>
+	<comment>level is column number</comment></sfm>
 	<sfm kind="character">
 		<tag>tl</tag>
 		<endTag>tl*</endTag>
@@ -876,12 +876,12 @@
 		<nestingAllowed>true</nestingAllowed>
 		<levelExpected>false</levelExpected>
 	</sfm>
-	<sfm kind="paragraph">
+	<sfm kind="meta">
 		<tag>toc</tag>
 		<paragraphStyle>TOC</paragraphStyle>
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>true</levelExpected>
-	</sfm>
+	<usfx>toc</usfx><usfxAttribute>level</usfxAttribute><comment>toc1=long table of contents entry for this book; toc2=short table of contents entry for this book; toc3=vernacular abbreviation for this book</comment></sfm>
 	<sfm kind="table">
 		<tag>tr</tag>
 		<nestingAllowed>false</nestingAllowed>
@@ -953,10 +953,10 @@
 	<sfm kind="dc">
 		<tag>xdc</tag>
 		<endTag>xdc*</endTag>
-		<characterStyle>Crossreference Deuterocanon</characterStyle>
+		
 		<nestingAllowed>true</nestingAllowed>
 		<levelExpected>false</levelExpected>
-	</sfm>
+	<usfx>xdc</usfx></sfm>
 	<sfm kind="character">
 		<tag>xk</tag>
 		<endTag>xk*</endTag>
@@ -964,13 +964,13 @@
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
 	</sfm>
-	<sfm kind="character">
+	<sfm kind="meta"><tag>xnt</tag><endTag>xnt*</endTag><nestingAllowed>true</nestingAllowed><levelExpected>false</levelExpected><usfx>xnt</usfx><comment>Cross references and other text to be published only in volumes containing a New Testament</comment></sfm><sfm kind="character">
 		<tag>xo</tag>
 		<endTag>xo*</endTag>
-		<characterStyle>Crossreference origin</characterStyle>
+		
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
-	</sfm>
+	</sfm><sfm kind="meta"><tag>xot</tag><endTag>xot*</endTag><nestingAllowed>true</nestingAllowed><levelExpected>false</levelExpected><usfx>xot</usfx><comment>Cross references to be published only in volumes containing an Old Testament.</comment></sfm>
 	<sfm kind="character">
 		<tag>xq</tag>
 		<endTag>xq*</endTag>
