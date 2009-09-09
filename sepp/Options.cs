@@ -35,8 +35,6 @@ namespace sepp
 		// rather than an array of paths. Eventually I plan to retire that variable and use this.
 		private List<string> m_tableNames = new List<string>();
 		private string m_inputEncoding;
-        public string m_languageId;
-        public string m_languageName;
 
 		// Localization
 		internal string m_notesRefSrc;
@@ -50,7 +48,14 @@ namespace sepp
 		internal List<BookNameColumnInfo> m_bookNameCclumns = new List<BookNameColumnInfo>();
 		internal string m_sortSpec;
 		internal CollationMode m_collationMode = CollationMode.kDefault;
-		// private string m_supportFilesPath = @"C:\BibleConv\FilesToCopyToOutput"; // Enhance: save to options, edit in dialog.
+        public string m_languageId;
+        public string m_languageName;
+        public string m_chapterLabel;
+        public string m_psalmLabel;
+        public string m_copyrightLink;
+        public string m_homeLink;
+        public string m_footerHtml;
+        
 
 		#endregion Basic Data
 
@@ -341,6 +346,15 @@ namespace sepp
                     case "languageName":
                         m_languageName = node.InnerText;
                         break;
+                    case "copyrightLink":
+                        m_copyrightLink = UnescapeHtml(node.InnerText);
+                        break;
+                    case "homeLink":
+                        m_homeLink = UnescapeHtml(node.InnerText);
+                        break;
+                    case "footerHtml":
+                        m_footerHtml = UnescapeHtml(node.InnerText);
+                        break;
 					case "nextChapter":
 						m_nextChapText = node.InnerText;
 						break;
@@ -356,6 +370,12 @@ namespace sepp
 					case "collation":
 						GetComparer(node);
 						break;
+                    case "chapterLabel":
+                        m_chapterLabel = node.InnerText;
+                        break;
+                    case "psalmLabel":
+                        m_psalmLabel = node.InnerText;
+                        break;
 				}
 			}
 			UpdateDerivedData();
@@ -436,6 +456,21 @@ namespace sepp
 			}
 
 		}
+
+        public string EscapeHtml(string s)
+        {
+            string result = s.Replace("<", "~~lt");
+            result = result.Replace(">", "~~gt");
+            return result;
+        }
+
+        public string UnescapeHtml(string s)
+        {
+            string result = s.Replace("~~gt", ">");
+            result = result.Replace("~~lt", "<");
+            return result;
+        }
+
 		public void SaveOptions(string optionsPath)
 		{
 			if (m_doc == null)
@@ -469,6 +504,11 @@ namespace sepp
 			SetInnerText("prevChapter", m_prevChapText);
             SetInnerText("languageId", m_languageId);
             SetInnerText("languageName", m_languageName);
+            SetInnerText("copyrightLink", EscapeHtml(m_copyrightLink));
+            SetInnerText("homeLink", EscapeHtml(m_homeLink));
+            SetInnerText("footerHtml", EscapeHtml(m_footerHtml));
+            SetInnerText("chapterLabel", m_chapterLabel);
+            SetInnerText("psalmLabel", m_psalmLabel);
 			SavePreprocessing();
 			SaveBookNameCols();
 			SaveComparer();
