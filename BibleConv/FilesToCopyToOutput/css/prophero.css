@@ -72,6 +72,7 @@ div.mt, div.mt1, div.mte, div.mte1 { font-weight: bold; font-size: 20pt; text-al
 div.mt2, div.mte2 { font-weight: bold; font-size: 16pt; text-align: center }
 div.mt3, div.mte3 { font-weight: bold; font-size: 14pt; text-align: center }
 div.nb, div.ps { text-indent: 0em; margin-top: 0em }
+div.k1 { text-indent: 0em; text-align: left; font-weight: bold }
 span.nd, span.sc { font-variant: small-caps }
 span.ndx, span.no { font-style: normal }
 span.ord { vertical-align: super; font-size: 7pt; text-decoration: underline }
@@ -132,12 +133,12 @@ div.navButtons { font-family: "Arial", "Helvetica", san-serif; font-size: 12pt; 
 div.navButtons a { padding: 3px; background-color: #036; border-bottom: 1px solid #eee; }
 div.navButtons a:visited { color: #ffff66; text-decoration: none; }
 div.navButtons a:link { color: #ffffff; text-decoration: none; }
-div.navButtons a:hover { background-color: #0505ab; color: #fff; }
+div.navButtons a:hover { background-color: #0520ff; color: #fff; }
 div.navChapters { font-family: "Arial", "Helvetica", san-serif; font-size: 7pt; display: block; margin-bottom: 10pt; text-align: center }
 div.navChapters a { padding: 3px; background-color: #036; border-bottom: 1px solid #eee; }
 div.navChapters a:visited { color: #ffff66; text-decoration: none; }
 div.navChapters a:link { color: #ffffff; text-decoration: none; }
-div.navChapters a:hover { background-color: #0505ab; color: #fff; }
+div.navChapters a:hover { background-color: #0520ff; color: #fff; }
 div.prose            { display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:justify; margin-top: 6pt}
 div.proseblock       { display: block; line-height: 1.4em; text-align:justify}
 div.proseblockindent { display: block; margin-left: 1cm; line-height: 1.4em; text-align:justify }
@@ -156,7 +157,12 @@ div.bookLine  { font-family: "Arial", "Helvetica", san-serif; font-size: 8pt; li
 div.bookLine a { display: block; padding: 3px; background-color: #036; border-bottom: 1px solid #eee; }
 div.bookLine a:visited { color: #ffff66; text-decoration: none; }
 div.bookLine a:link { color: #ffffff; text-decoration: none; }
-div.bookLine a:hover { background-color: #0505ab; color: #fff; }
+div.bookLine a:hover { background-color: #0520ff; color: #fff; }
+div.dcbookLine  { font-family: "Arial", "Helvetica", san-serif; font-size: 7pt; line-height: 8pt; display: block; text-align:left }
+div.dcbookLine a { display: block; padding: 3px; background-color: #404040; border-bottom: 1px solid #eee; }
+div.dcbookLine a:visited { color: #ffff66; text-decoration: none; }
+div.dcbookLine a:link { color: #ffffff; text-decoration: none; }
+div.dcbookLine a:hover { background-color: #ababab; color: #fff; }
 
 p.footnote, p.crossRefNote { display: block; font-family:Charis SIL, Times New Roman; margin-top: 3pt; font-size: 10pt; text-align: left; margin-left: 0em }
 

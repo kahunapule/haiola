@@ -39,6 +39,7 @@ namespace sepp
 			LoadBookNamesTab();
 			LoadBackMatterTab();
 			LoadAdvancedTab();
+            LoadHtmlTab();
 		}
 
 		private void LoadSortTab()
@@ -125,6 +126,9 @@ namespace sepp
 			tbxBookChap.Text = m_options.m_bookChapText;
 			tbxPrevChap.Text = m_options.m_prevChapText;
 			tbxNextChap.Text = m_options.m_nextChapText;
+            chapterLabelTextBox.Text = m_options.m_chapterLabel;
+            psalmLabelTextBox.Text = m_options.m_psalmLabel;
+
 		}
 		private void LoadMiscTab()
 		{
@@ -150,6 +154,14 @@ namespace sepp
 
 		}
 
+        private void LoadHtmlTab()
+        {
+            copyrightLinkTextBox.Text = m_options.m_copyrightLink;
+            homeLinkTextBox.Text = m_options.m_homeLink;
+            footerHtmlTextBox.Text = m_options.m_footerHtml;
+        }
+
+
 		// Enhance: validate (e.g., numeric fields) before attempting save.
 		void SaveOptions()
 		{
@@ -161,6 +173,7 @@ namespace sepp
 			SaveBookNamesTab();
 			SaveBackMatterTab();
 			SaveAdvancedTab();
+            SaveHtmlTab();
 		}
 
 		private void SaveSortTab()
@@ -205,6 +218,13 @@ namespace sepp
 			m_options.NotesClass = tbxNotesClass.Text;
 		}
 
+        private void SaveHtmlTab()
+        {
+            m_options.m_copyrightLink = copyrightLinkTextBox.Text;
+            m_options.m_homeLink = homeLinkTextBox.Text;
+            m_options.m_footerHtml = footerHtmlTextBox.Text;
+        }
+
 		private void SaveLocalizeTab()
 		{
 			m_options.m_headingRefSrc = tbxHeadingRef.Text;
@@ -215,6 +235,8 @@ namespace sepp
 			m_options.m_bookChapText = tbxBookChap.Text;
 			m_options.m_prevChapText = tbxPrevChap.Text;
 			m_options.m_nextChapText = tbxNextChap.Text;
+            m_options.m_chapterLabel = chapterLabelTextBox.Text;
+            m_options.m_psalmLabel = psalmLabelTextBox.Text;
 		}
 
 		private void SaveMiscTab()
@@ -796,6 +818,9 @@ namespace sepp
             m_options.InputFiles.Clear();
             btnAdjustFiles_Click(sender, e);
         }
+
+
+
 	}
 
 	class FileListAdjuster

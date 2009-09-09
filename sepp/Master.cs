@@ -18,6 +18,7 @@ namespace sepp
         public string dataRootDir; // Default is BibleConv in the user's documents folder
         string m_workDirectory;
         public string m_siteDirectory; // curently Site, always under dataRootDir
+        public bool autorun = false;
 
 		public Master()
 		{
@@ -42,6 +43,8 @@ namespace sepp
             string templateDir = Path.Combine(Utils.ExePath, "BibleConv");
             if (!Directory.Exists(templateDir))
                 templateDir = Path.Combine(Utils.ExePath, Path.Combine("..", Path.Combine("..", Path.Combine("..", "BibleConv"))));
+            if (!Directory.Exists(templateDir))
+                templateDir = Path.Combine(Utils.ExePath, "BibleConv");
             Utils.CopyDirectory(templateDir, dataRootDir);
             return true;
 		}
@@ -67,6 +70,12 @@ namespace sepp
 				if (!GetRootDirectory())
 					Application.Exit();
 			LoadWorkingDirectory();
+            Application.DoEvents();
+            if (autorun)
+            {
+                WorkOnAllButton_Click(sender, e);
+                Close();
+            }
 		}
 
 		private void LoadWorkingDirectory()

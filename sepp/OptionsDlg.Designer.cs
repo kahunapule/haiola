@@ -41,6 +41,10 @@ namespace sepp
             this.colFilesXrefs = new System.Windows.Forms.ColumnHeader();
             this.colFilesIntro = new System.Windows.Forms.ColumnHeader();
             this.tabMisc = new System.Windows.Forms.TabPage();
+            this.languageNameTextBox = new System.Windows.Forms.TextBox();
+            this.label25 = new System.Windows.Forms.Label();
+            this.ethnologueCodeTextBox = new System.Windows.Forms.TextBox();
+            this.label24 = new System.Windows.Forms.Label();
             this.btnRemoveInputProcess = new System.Windows.Forms.Button();
             this.btnAddInputProcess = new System.Windows.Forms.Button();
             this.listInputProcesses = new System.Windows.Forms.ListBox();
@@ -67,6 +71,10 @@ namespace sepp
             this.tbxCollating = new System.Windows.Forms.TextBox();
             this.label23 = new System.Windows.Forms.Label();
             this.tabLocalization = new System.Windows.Forms.TabPage();
+            this.label30 = new System.Windows.Forms.Label();
+            this.psalmLabelTextBox = new System.Windows.Forms.TextBox();
+            this.chapterLabelTextBox = new System.Windows.Forms.TextBox();
+            this.label29 = new System.Windows.Forms.Label();
             this.tbxNextChap = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
             this.tbxPrevChap = new System.Windows.Forms.TextBox();
@@ -107,14 +115,17 @@ namespace sepp
             this.tbxNonCanonical = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.tbxExtraClasses = new System.Windows.Forms.TextBox();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.footerHtmlTextBox = new System.Windows.Forms.TextBox();
+            this.label28 = new System.Windows.Forms.Label();
+            this.homeLinkTextBox = new System.Windows.Forms.TextBox();
+            this.label27 = new System.Windows.Forms.Label();
+            this.copyrightLinkTextBox = new System.Windows.Forms.TextBox();
+            this.label26 = new System.Windows.Forms.Label();
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.label24 = new System.Windows.Forms.Label();
-            this.ethnologueCodeTextBox = new System.Windows.Forms.TextBox();
-            this.label25 = new System.Windows.Forms.Label();
-            this.languageNameTextBox = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.inputPage.SuspendLayout();
             this.tabMisc.SuspendLayout();
@@ -124,6 +135,7 @@ namespace sepp
             this.taBookNames.SuspendLayout();
             this.tabBackMatter.SuspendLayout();
             this.advancedPage.SuspendLayout();
+            this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -136,6 +148,7 @@ namespace sepp
             this.tabControl1.Controls.Add(this.taBookNames);
             this.tabControl1.Controls.Add(this.tabBackMatter);
             this.tabControl1.Controls.Add(this.advancedPage);
+            this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Location = new System.Drawing.Point(11, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -246,6 +259,39 @@ namespace sepp
             this.tabMisc.Text = "Miscellaneous";
             this.tabMisc.UseVisualStyleBackColor = true;
             this.tabMisc.Click += new System.EventHandler(this.tabMisc_Click);
+            // 
+            // languageNameTextBox
+            // 
+            this.languageNameTextBox.Location = new System.Drawing.Point(111, 257);
+            this.languageNameTextBox.Name = "languageNameTextBox";
+            this.languageNameTextBox.Size = new System.Drawing.Size(266, 20);
+            this.languageNameTextBox.TabIndex = 8;
+            // 
+            // label25
+            // 
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(18, 260);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(87, 13);
+            this.label25.TabIndex = 7;
+            this.label25.Text = "Language name:";
+            // 
+            // ethnologueCodeTextBox
+            // 
+            this.ethnologueCodeTextBox.Location = new System.Drawing.Point(172, 226);
+            this.ethnologueCodeTextBox.MaxLength = 3;
+            this.ethnologueCodeTextBox.Name = "ethnologueCodeTextBox";
+            this.ethnologueCodeTextBox.Size = new System.Drawing.Size(39, 20);
+            this.ethnologueCodeTextBox.TabIndex = 6;
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(18, 230);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(136, 13);
+            this.label24.TabIndex = 5;
+            this.label24.Text = "Language Ethnologe code:";
             // 
             // btnRemoveInputProcess
             // 
@@ -514,6 +560,10 @@ namespace sepp
             // 
             // tabLocalization
             // 
+            this.tabLocalization.Controls.Add(this.label30);
+            this.tabLocalization.Controls.Add(this.psalmLabelTextBox);
+            this.tabLocalization.Controls.Add(this.chapterLabelTextBox);
+            this.tabLocalization.Controls.Add(this.label29);
             this.tabLocalization.Controls.Add(this.tbxNextChap);
             this.tabLocalization.Controls.Add(this.label18);
             this.tabLocalization.Controls.Add(this.tbxPrevChap);
@@ -537,18 +587,50 @@ namespace sepp
             this.tabLocalization.Text = "Localization";
             this.tabLocalization.UseVisualStyleBackColor = true;
             // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Location = new System.Drawing.Point(15, 255);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(94, 13);
+            this.label30.TabIndex = 31;
+            this.label30.Text = "Psalm label (if any)";
+            // 
+            // psalmLabelTextBox
+            // 
+            this.psalmLabelTextBox.Location = new System.Drawing.Point(356, 255);
+            this.psalmLabelTextBox.Name = "psalmLabelTextBox";
+            this.psalmLabelTextBox.Size = new System.Drawing.Size(155, 20);
+            this.psalmLabelTextBox.TabIndex = 10;
+            // 
+            // chapterLabelTextBox
+            // 
+            this.chapterLabelTextBox.Location = new System.Drawing.Point(357, 229);
+            this.chapterLabelTextBox.Name = "chapterLabelTextBox";
+            this.chapterLabelTextBox.Size = new System.Drawing.Size(154, 20);
+            this.chapterLabelTextBox.TabIndex = 9;
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(14, 229);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(103, 13);
+            this.label29.TabIndex = 28;
+            this.label29.Text = "Chapter label (if any)";
+            // 
             // tbxNextChap
             // 
-            this.tbxNextChap.Location = new System.Drawing.Point(357, 287);
+            this.tbxNextChap.Location = new System.Drawing.Point(356, 203);
             this.tbxNextChap.Name = "tbxNextChap";
             this.tbxNextChap.Size = new System.Drawing.Size(156, 20);
-            this.tbxNextChap.TabIndex = 27;
+            this.tbxNextChap.TabIndex = 8;
             this.tbxNextChap.Text = "Next Chapter";
             // 
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(15, 290);
+            this.label18.Location = new System.Drawing.Point(14, 203);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(180, 13);
             this.label18.TabIndex = 26;
@@ -556,16 +638,16 @@ namespace sepp
             // 
             // tbxPrevChap
             // 
-            this.tbxPrevChap.Location = new System.Drawing.Point(357, 247);
+            this.tbxPrevChap.Location = new System.Drawing.Point(357, 177);
             this.tbxPrevChap.Name = "tbxPrevChap";
             this.tbxPrevChap.Size = new System.Drawing.Size(156, 20);
-            this.tbxPrevChap.TabIndex = 25;
+            this.tbxPrevChap.TabIndex = 7;
             this.tbxPrevChap.Text = "Previous Chapter";
             // 
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(15, 250);
+            this.label17.Location = new System.Drawing.Point(15, 177);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(200, 13);
             this.label17.TabIndex = 24;
@@ -573,16 +655,16 @@ namespace sepp
             // 
             // tbxLoading
             // 
-            this.tbxLoading.Location = new System.Drawing.Point(357, 207);
+            this.tbxLoading.Location = new System.Drawing.Point(356, 151);
             this.tbxLoading.Name = "tbxLoading";
             this.tbxLoading.Size = new System.Drawing.Size(156, 20);
-            this.tbxLoading.TabIndex = 23;
+            this.tbxLoading.TabIndex = 6;
             this.tbxLoading.Text = "Loading...";
             // 
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(15, 210);
+            this.label14.Location = new System.Drawing.Point(14, 151);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(191, 13);
             this.label14.TabIndex = 22;
@@ -590,16 +672,16 @@ namespace sepp
             // 
             // tbxIntroduction
             // 
-            this.tbxIntroduction.Location = new System.Drawing.Point(357, 174);
+            this.tbxIntroduction.Location = new System.Drawing.Point(357, 125);
             this.tbxIntroduction.Name = "tbxIntroduction";
             this.tbxIntroduction.Size = new System.Drawing.Size(156, 20);
-            this.tbxIntroduction.TabIndex = 21;
+            this.tbxIntroduction.TabIndex = 5;
             this.tbxIntroduction.Text = "Introduction";
             // 
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(15, 177);
+            this.label13.Location = new System.Drawing.Point(15, 125);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(297, 13);
             this.label13.TabIndex = 20;
@@ -607,16 +689,16 @@ namespace sepp
             // 
             // tbxBookChap
             // 
-            this.tbxBookChap.Location = new System.Drawing.Point(357, 139);
+            this.tbxBookChap.Location = new System.Drawing.Point(356, 99);
             this.tbxBookChap.Name = "tbxBookChap";
             this.tbxBookChap.Size = new System.Drawing.Size(156, 20);
-            this.tbxBookChap.TabIndex = 19;
+            this.tbxBookChap.TabIndex = 4;
             this.tbxBookChap.Text = "Books and Chapters";
             // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(15, 139);
+            this.label12.Location = new System.Drawing.Point(15, 99);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(326, 13);
             this.label12.TabIndex = 18;
@@ -624,16 +706,16 @@ namespace sepp
             // 
             // tbxConcordance
             // 
-            this.tbxConcordance.Location = new System.Drawing.Point(357, 101);
+            this.tbxConcordance.Location = new System.Drawing.Point(356, 73);
             this.tbxConcordance.Name = "tbxConcordance";
             this.tbxConcordance.Size = new System.Drawing.Size(156, 20);
-            this.tbxConcordance.TabIndex = 17;
+            this.tbxConcordance.TabIndex = 3;
             this.tbxConcordance.Text = "Concordance";
             // 
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(15, 101);
+            this.label11.Location = new System.Drawing.Point(14, 73);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(273, 13);
             this.label11.TabIndex = 16;
@@ -641,16 +723,16 @@ namespace sepp
             // 
             // tbxNotesRef
             // 
-            this.tbxNotesRef.Location = new System.Drawing.Point(357, 61);
+            this.tbxNotesRef.Location = new System.Drawing.Point(356, 47);
             this.tbxNotesRef.Name = "tbxNotesRef";
             this.tbxNotesRef.Size = new System.Drawing.Size(156, 20);
-            this.tbxNotesRef.TabIndex = 15;
+            this.tbxNotesRef.TabIndex = 2;
             this.tbxNotesRef.Text = "fn";
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(15, 61);
+            this.label10.Location = new System.Drawing.Point(14, 47);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(251, 13);
             this.label10.TabIndex = 14;
@@ -661,7 +743,7 @@ namespace sepp
             this.tbxHeadingRef.Location = new System.Drawing.Point(357, 21);
             this.tbxHeadingRef.Name = "tbxHeadingRef";
             this.tbxHeadingRef.Size = new System.Drawing.Size(156, 20);
-            this.tbxHeadingRef.TabIndex = 13;
+            this.tbxHeadingRef.TabIndex = 1;
             this.tbxHeadingRef.Text = "head";
             // 
             // label9
@@ -910,6 +992,81 @@ namespace sepp
             this.tbxExtraClasses.Text = "verse chapter notemark crmark crossRefNote parallel parallelSub noteBackRef popup" +
                 " crpopup";
             // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.footerHtmlTextBox);
+            this.tabPage1.Controls.Add(this.label28);
+            this.tabPage1.Controls.Add(this.homeLinkTextBox);
+            this.tabPage1.Controls.Add(this.label27);
+            this.tabPage1.Controls.Add(this.copyrightLinkTextBox);
+            this.tabPage1.Controls.Add(this.label26);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(685, 400);
+            this.tabPage1.TabIndex = 8;
+            this.tabPage1.Text = "HTML";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // footerHtmlTextBox
+            // 
+            this.footerHtmlTextBox.AcceptsReturn = true;
+            this.footerHtmlTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.footerHtmlTextBox.Location = new System.Drawing.Point(22, 83);
+            this.footerHtmlTextBox.Multiline = true;
+            this.footerHtmlTextBox.Name = "footerHtmlTextBox";
+            this.footerHtmlTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.footerHtmlTextBox.Size = new System.Drawing.Size(656, 121);
+            this.footerHtmlTextBox.TabIndex = 3;
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Location = new System.Drawing.Point(19, 63);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(37, 13);
+            this.label28.TabIndex = 4;
+            this.label28.Text = "Footer";
+            // 
+            // homeLinkTextBox
+            // 
+            this.homeLinkTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.homeLinkTextBox.Location = new System.Drawing.Point(186, 6);
+            this.homeLinkTextBox.Name = "homeLinkTextBox";
+            this.homeLinkTextBox.Size = new System.Drawing.Size(493, 20);
+            this.homeLinkTextBox.TabIndex = 1;
+            this.homeLinkTextBox.Text = "<a href=\"../index.htm\">^</a>";
+            // 
+            // label27
+            // 
+            this.label27.AutoSize = true;
+            this.label27.Location = new System.Drawing.Point(19, 9);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(131, 13);
+            this.label27.TabIndex = 2;
+            this.label27.Text = "Home link (blank for none)";
+            // 
+            // copyrightLinkTextBox
+            // 
+            this.copyrightLinkTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.copyrightLinkTextBox.Location = new System.Drawing.Point(186, 32);
+            this.copyrightLinkTextBox.Name = "copyrightLinkTextBox";
+            this.copyrightLinkTextBox.Size = new System.Drawing.Size(493, 20);
+            this.copyrightLinkTextBox.TabIndex = 2;
+            this.copyrightLinkTextBox.Text = "<a href=\"../terms.htm\">©</a>";
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(19, 35);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(147, 13);
+            this.label26.TabIndex = 0;
+            this.label26.Text = "Copyright link (blank for none)";
+            // 
             // columnHeader1
             // 
             this.columnHeader1.Text = "File";
@@ -927,7 +1084,7 @@ namespace sepp
             this.btnOK.Location = new System.Drawing.Point(606, 452);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
-            this.btnOK.TabIndex = 1;
+            this.btnOK.TabIndex = 21;
             this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
@@ -939,42 +1096,9 @@ namespace sepp
             this.btnCancel.Location = new System.Drawing.Point(496, 452);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 2;
+            this.btnCancel.TabIndex = 20;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            // 
-            // label24
-            // 
-            this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(18, 230);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(136, 13);
-            this.label24.TabIndex = 5;
-            this.label24.Text = "Language Ethnologe code:";
-            // 
-            // ethnologueCodeTextBox
-            // 
-            this.ethnologueCodeTextBox.Location = new System.Drawing.Point(172, 226);
-            this.ethnologueCodeTextBox.MaxLength = 3;
-            this.ethnologueCodeTextBox.Name = "ethnologueCodeTextBox";
-            this.ethnologueCodeTextBox.Size = new System.Drawing.Size(39, 20);
-            this.ethnologueCodeTextBox.TabIndex = 6;
-            // 
-            // label25
-            // 
-            this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(18, 260);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(87, 13);
-            this.label25.TabIndex = 7;
-            this.label25.Text = "Language name:";
-            // 
-            // languageNameTextBox
-            // 
-            this.languageNameTextBox.Location = new System.Drawing.Point(111, 257);
-            this.languageNameTextBox.Name = "languageNameTextBox";
-            this.languageNameTextBox.Size = new System.Drawing.Size(266, 20);
-            this.languageNameTextBox.TabIndex = 8;
             // 
             // OptionsDlg
             // 
@@ -1002,6 +1126,8 @@ namespace sepp
             this.tabBackMatter.PerformLayout();
             this.advancedPage.ResumeLayout(false);
             this.advancedPage.PerformLayout();
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
             this.ResumeLayout(false);
 
 		}
@@ -1094,5 +1220,16 @@ namespace sepp
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.TextBox languageNameTextBox;
         private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TextBox copyrightLinkTextBox;
+        private System.Windows.Forms.Label label26;
+        private System.Windows.Forms.TextBox homeLinkTextBox;
+        private System.Windows.Forms.Label label27;
+        private System.Windows.Forms.Label label28;
+        private System.Windows.Forms.TextBox footerHtmlTextBox;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.Label label30;
+        private System.Windows.Forms.TextBox psalmLabelTextBox;
+        private System.Windows.Forms.TextBox chapterLabelTextBox;
 	}
 }

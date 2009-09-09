@@ -170,6 +170,7 @@ namespace sepp
 		private void m_button_Input_to_USFM_Click(object sender, EventArgs e)
 		{
             m_button_OW_to_USFM.Enabled = false;
+            Application.DoEvents();
 			string srcDir = OwDir;
 			if (ConvertingSourceToUsfm())
 				srcDir = SourceDir;
@@ -180,6 +181,7 @@ namespace sepp
 			}
 			converter.Run(m_filesList.CheckedItems);
             m_button_OW_to_USFM.Enabled = true;
+            Application.DoEvents();
         }
 
 		private bool ConvertingSourceToUsfm()
@@ -291,7 +293,6 @@ namespace sepp
                 buttonAllSteps.Enabled = false;
                 if (OwCheckBox.Checked && (Directory.Exists(Path.Combine(m_workDir, OwDir)) || ConvertingSourceToUsfm()))
                     m_button_Input_to_USFM_Click(this, e);
-                Application.DoEvents();
                 if (UsfxCheckBox.Checked && Directory.Exists(UsfmPath))
                 {
                     UsfmToUsfxButton_Click(sender, e);
@@ -319,13 +320,13 @@ namespace sepp
                     m_runButton_Click(this, e);
                 if (copySupportFilesCheckBox.Checked)
                     btnCopySupportFiles_Click(this, e);
-                Application.DoEvents();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
             buttonAllSteps.Enabled = true;
+            Refresh();
         }
 
         public void automaticRun()
@@ -336,29 +337,14 @@ namespace sepp
 
 		private void btnCopySupportFiles_Click(object sender, EventArgs e)
 		{
+            btnCopySupportFiles.Enabled = false;
+            Application.DoEvents();
 			string supportDir = Path.Combine(Master.MasterInstance.dataRootDir, "FilesToCopyToOutput");
             if (ConcordanceCheckBox.Checked)
                 Utils.CopyDirectory(Path.Combine(supportDir, "Conc"), Path.Combine(m_siteDir, "Conc"));
             Utils.CopyDirectory(Path.Combine(supportDir, "css"), Path.Combine(Master.MasterInstance.m_siteDirectory, "css"));
-            /*
-			foreach (string path in Directory.GetFiles(supportDir))
-			{
-				string fileName = Path.GetFileName(path);
-				if (fileName == "index.htm")
-				{
-					// This one goes in a different directory. Also make two copies, one for use as a stand-alone,
-					// and one when as part of a larger site.
-					DoCopy(path, Path.Combine(m_siteDir, fileName));
-					DoCopy(path, Path.Combine(m_siteDir, "index.html"));
-
-                    // Only one of the above is really necessary. --Kahunapule
-				}
-				else
-				{
-					DoCopy(path, Path.Combine(ConcPath, fileName));
-				}
-            }
-            */
+            btnCopySupportFiles.Enabled = true;
+            Application.DoEvents();
 		}
 
 		private void DoCopy(string path, string destPath)
@@ -377,6 +363,7 @@ namespace sepp
         private void UsfmToUsfxButton_Click(object sender, EventArgs e)
         {
             UsfmToUsfxButton.Enabled = false;
+            Application.DoEvents();
             Utils.EnsureDirectory(UsfxPath);
 
             Logit.OpenFile(Path.Combine(UsfxPath, "ConversionReports.txt"));
@@ -390,18 +377,27 @@ namespace sepp
             SFConverter.scripture.WriteUSFX(Path.Combine(UsfxPath, "usfx.xml"));
             Logit.CloseFile();
             UsfmToUsfxButton.Enabled = true;
+            Application.DoEvents();
         }
 
         private void UsfxToHtmlButton_Click(object sender, EventArgs e)
         {
             UsfxToHtmlButton.Enabled = false;
+            Application.DoEvents();
             Utils.EnsureDirectory(HtmPath);
             usfxToHtmlConverter toHtm = new usfxToHtmlConverter();
             Logit.OpenFile(Path.Combine(UsfxPath, "HTMLConversionReport.txt"));
-            toHtm.ConvertUsfxToHtml(Path.Combine(UsfxPath, "usfx.xml"), HtmPath, m_options.m_languageName,
-                m_options.m_languageId, "", "");
+            toHtm.ConvertUsfxToHtml(Path.Combine(UsfxPath, "usfx.xml"), HtmPath,
+                m_options.m_languageName,
+                m_options.m_languageId,
+                m_options.m_chapterLabel,
+                m_options.m_psalmLabel,
+                m_options.m_copyrightLink,
+                m_options.m_homeLink,
+                m_options.m_footerHtml);
             Logit.CloseFile();
             UsfxToHtmlButton.Enabled = true;
+            Application.DoEvents();
         }
 	}
 }

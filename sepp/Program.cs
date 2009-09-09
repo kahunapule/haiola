@@ -10,11 +10,16 @@ namespace sepp
 		/// The main entry point for the application.
 		/// </summary>
 		[STAThread]
-		static void Main()
+        static void Main(string[] args)
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new Master());
+            Master masterWindow = new Master();
+            if ((args.Length > 0) && (args[0].CompareTo("-a") == 0))
+            {   // if -a is the first command line parameter, just run selected tasks on all projects then exit.
+                masterWindow.autorun = true;
+            }
+			Application.Run(masterWindow);
 		}
 	}
 }
