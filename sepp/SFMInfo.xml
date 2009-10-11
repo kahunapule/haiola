@@ -455,7 +455,7 @@
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>true</levelExpected>
 		<TeXcode>introPoetry#</TeXcode>
-	</sfm><sfm kind="character"><tag>iqt</tag><endTag>iqt*</endTag><paragraphStyle>Intro Quoted Text</paragraphStyle><nestingAllowed>false</nestingAllowed><levelExpected>false</levelExpected><milestone>false</milestone><TeXcode>introQuotedText</TeXcode><comment>For Scripture (or other) quotes within introductions.</comment></sfm>
+	</sfm><sfm kind="character"><tag>iqt</tag><endTag>iqt*</endTag><characterStyle>Intro Quoted Text</characterStyle><nestingAllowed>false</nestingAllowed><levelExpected>false</levelExpected><milestone>false</milestone><TeXcode>introQuotedText</TeXcode><comment>For Scripture (or other) quotes within introductions.</comment></sfm>
 	<sfm kind="paragraph">
 		<tag>is</tag>
 		<paragraphStyle>Intro Section Head</paragraphStyle>
