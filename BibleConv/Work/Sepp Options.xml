@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- mergeCase="true" means that if both upper and lower case versions of a word occur, they will be merged into the lower case form.
+	   wordFormingCharacters is a list of characters that need to be treated as wordforming though they are usually not in Unicode
+		maxContext is the maximum length (in utf16 code points) of preceding and following context; longer sentences will be truncated.
+		minContext controls how truncation is done: if complete sentence is longer than maxContent, truncate at a word boundary
+		if doing so leaves at least minContext utf16 code points, otherwise, break right at maxContext. Note that actual context
+		may be less than minContext if the sentence is shorter.
+		indexType controls how the main index of the concordance is organized.
+			  rangeTree is a tree where the roots are ranges of words, equal in length.
+			  alphaTree is a tree where the roots are initial letters of the alphabet.
+			  alphaTreeMf is similar in appearance, but only one letter can be open at a time. It uses multiple files and loads much faster.
+			  twoLevelRange is a top-level index using equal word ranges, with multiple second-level files for individual words.
+			  usfmEncoding is used if the original input is the USFM files, and specifies one of the Python codecs-->
+  <options mergeCase="true" wordFormingCharacters="'-ł̣" maxContext="60" minContext="40" indexType="alphaTreeMf" chapterPerFile="true" />
+  <!-- Enter a number to suppress words ocurring more often that the given number. May also give the body of the list as a space-separated
+	   list of specific words to exclude.-->
+  <excludeWords moreFrequentThan="unlimited">- --</excludeWords>
+  <!-- Body of element is a space-separated list of classes of element for which the content should be excluded from concording.-->
+  <excludeClasses>verse chapter notemark crmark crossRefNote parallel parallelSub noteBackRef popup crpopup overlap</excludeClasses>
+  <!-- Body lists element classes whose contents should be treated as non-canonical.
+	   notesClass identifies the class of an element (typically division) containing footnotes
+		which therefore should be listed without reference.-->
+  <specialClasses notesClass="footnotes" notesRef="note" headingRef="head">sectionheading maintitle2 footnote sectionsubheading</specialClasses>
+  <!-- gives vernacular text to include at various points-->
+  <concordance>Concordance</concordance>
+  <bookChap>Books and Chapters</bookChap>
+  <introduction>Introduction</introduction>
+  <loading>Loading…</loading>
+  <!-- Gives the list of files and abbreviations to process. This determines the canonical order as well as the abbreviation used in refs.
+	   eng attribute ties to various other lists. name is the file. abbr appears in concordance. parallel is used to find cross-refs, and
+		various other things. intro specifies a file (in work dir/Intro) to use as introduction for this book-->
+  <files>
+    <file name="Inu-MAT.xml" eng="Mat" abbr="Mat" parallel="Matthew" />
+    <file name="Inu-MRK.xml" eng="Mrk" abbr="Mrk" parallel="Mark" />
+  </files>
+  <!--Files named here are found in folder "Extras" (and copied to output). A link with the given text is put at the end of the chapter index.-->
+  <extraFiles>
+  </extraFiles>
+  <preprocess>
+    <table>fixquotes.re</table>
+  </preprocess>
+  <copyright>
+  </copyright>
+  <phrases />
+  <nextChapter>Next Chapter</nextChapter>
+  <prevChapter>Previous Chapter</prevChapter>
+  <bookNameColumns />
+  <collation />
+</root>
