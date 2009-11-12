@@ -39,6 +39,13 @@ namespace sepp
 			m_optionsPath = Path.Combine(m_workDir, "Sepp Options.xml");
 			if (!File.Exists(m_optionsPath))
 			{
+                if (!GenerateOptions(m_optionsPath))
+                {
+                    this.Close();
+                    return;
+                }
+                /*
+                Don't bother the user with this question, any more. It gets annoying when working with massive numbers of languages.
 				if (MessageBox.Show(
 					"File " + m_optionsPath + " was not found. You must create an options file for your project. Would you like a default options file created automatically?",
 					"Error",
@@ -47,6 +54,7 @@ namespace sepp
 					this.Close();
 					return;
 				}
+                */
 			}
 			optionsDoc.Load(m_optionsPath);
 			XmlNode root = optionsDoc.DocumentElement;
