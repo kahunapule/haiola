@@ -74,9 +74,9 @@ namespace sepp
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(352, 293);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(159, 13);
+            this.label1.Size = new System.Drawing.Size(178, 13);
             this.label1.TabIndex = 10;
-            this.label1.Text = "Version 0.98, 8 September 2009";
+            this.label1.Text = "Version 0.990 of 25 November 2009";
             // 
             // btnSetRootDirectory
             // 
@@ -122,7 +122,7 @@ namespace sepp
             this.Controls.Add(this.m_projectsList);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Master";
-            this.Text = "Prophero Scripture Electonic Publishing Program";
+            this.Text = "Prophero Scripture Electronic Publishing Program";
             this.Load += new System.EventHandler(this.Master_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
