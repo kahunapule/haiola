@@ -310,21 +310,15 @@ namespace sepp
                     m_button_USFM_to_OSIS_Click(this, e);
                 if (HtmlCheckBox.Checked)
                     UsfxToHtmlButton_Click(sender, e);
-                // For now OSIS must exist, somehow.
-                if (!Directory.Exists(OsisPath))
-                {
-                    MessageBox.Show(this, "Could not find or create required OSIS files", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                if (OsisHtmlCheckBox.Checked)
+                if (Directory.Exists(OsisPath) && OsisHtmlCheckBox.Checked)
                     m_buttonOSIS_to_HTML_Click(this, e);
-                if (XhtmlCheckBox.Checked)
+                if (Directory.Exists(OsisPath) && XhtmlCheckBox.Checked)
                     m_buttonHTML_to_XHTML_Click(this, e);
-                if (bookNamePageCheckBox.Checked)
+                if (Directory.Exists(OsisPath) && bookNamePageCheckBox.Checked)
                     m_bookNameButton_Click(this, e);
-                if (ChapterIndexCheckBox.Checked)
+                if (Directory.Exists(OsisPath) && ChapterIndexCheckBox.Checked)
                     m_buttonChapIndex_Click(this, e);
-                if (ConcordanceCheckBox.Checked)
+                if (Directory.Exists(OsisPath) && ConcordanceCheckBox.Checked)
                     m_runButton_Click(this, e);
                 if (copySupportFilesCheckBox.Checked)
                     btnCopySupportFiles_Click(this, e);

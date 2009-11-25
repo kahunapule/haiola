@@ -5420,7 +5420,7 @@ namespace WordSend
                 preVerse = new StringBuilder(String.Empty);
                 inPreverse = false;
             }
-            htm.Write("<span class=\"verse\">{0}</span><a name=\"C{1}V{2}\">&nbsp;</a>",
+            htm.Write(" <span class=\"verse\"> {0}</span><a name=\"C{1}V{2}\">&nbsp;</a>",
                 currentVersePublished, chapterNumber.ToString(), verseNumber.ToString());
         }
 
@@ -5552,7 +5552,7 @@ namespace WordSend
             if (inFootnote)
             {
                 EndHtmlNoteStyle();
-                WriteHtml("</span></a>");   // End popup text
+                WriteHtml("</span></a>\r\n");   // End popup text
                 footnotesToWrite.Append("</p>\r\n");    // End footnote paragraph
                 inFootnote = false;
             }
@@ -5912,10 +5912,6 @@ namespace WordSend
                 chapterNumber = 0;
                 bookListIndex = -1;
                 OpenHtmlFile("index.htm");
-                htm.WriteLine("<div class=\"toc\"><a href=\"{0}{1}.htm\">Read the Holy Bible now. / Ritim Buk Baibel nau yet.</a></div>",
-                    bookRecord.tla, one.ToString(chapFormat));
-                htm.WriteLine("<div class=\"toc\"><a href=\"../index.htm\">Other language / Narapela tok ples</a></div>");
-                htm.WriteLine("<div class=\"toc\"><a href=\"../download.cgi/{0}\">Download / kisim fail</div>", langId);
                 bookListIndex = 0;
                 bookRecord = (BibleBookRecord)bookList[0];
                 if (bookRecord.tla.CompareTo("PSA") == 0)
@@ -5924,6 +5920,8 @@ namespace WordSend
                     chapFormat = "00";
                 htm.WriteLine("<div class=\"toc\"><a href=\"{0}{1}.htm\">Read the Holy Bible now. / Ritim Buk Baibel nau yet.</a></div>",
                     bookRecord.tla, one.ToString(chapFormat));
+                htm.WriteLine("<div class=\"toc1\"><a href=\"http://pngscriptures.org/cgi-bin/lookup.cgi/{0}\">downloads and language information / kisim fail</div>", langId);
+                htm.WriteLine("<div class=\"toc1\"><a href=\"http://pngscriptures.org/cgi-bin/lookup.cgi\">Other languages / Narapela tok ples</a></div>");
                 CloseHtmlFile();
 
                 // Pass 2: content generation
