@@ -1,0 +1,33 @@
+begin >
+c Move footnotes to |fn from following \f text \f*" following OW to PT conversion, jd 2007/Jul/16" nl
+
+store(l) "abcdefghijklmnopqrstuvwxyz+-1234567890"
+store(num) "1234567890-"
+store(sp) " " nl
+endstore
+
+group(main)   c ********************
+
+"|fn" > store(text) use(findf)
+
+group(findf)   c ********************
+"\f" any(sp) > endstore "\f " use(endf)
+nl "\f" any(sp) > endstore "\f " use(endf)
+"\note" any(sp)> dup set(note)
+"\note*" > dup clear(note)
+
+"|fn" > if(note) dup else next endif
+endfile > endstore nl "**** ERROR processing footnote move ****" set(junk) endfile
+
+group(endf)   c ********************
+"\f*" > "\f* " out(text) use(main)
+
+"\f*" nl "\note BT:ft" > dup use(endfnotes)
+
+c "\" > next
+c nl "\" > "\f* " out(text) nl "\" back use(main)
+
+group(endfnotes)   c ********************
+"\note*" > "\note* " out(text) use(main)
+
+
