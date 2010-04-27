@@ -22,7 +22,6 @@ namespace sepp
 		string m_wordformingChars;
 		int m_maxContextLength = 50;
 		int m_minContextLength = 35;
-		ConcGenerator.IndexTypes m_indexType = ConcGenerator.IndexTypes.alphaTree;
 		List<string> m_phrases = new List<string>();
 		bool m_mergeCase; // if wordforms differing only by case occur merge them
 		private List<InputFileInfo> m_inputFiles = new List<InputFileInfo>();
@@ -285,21 +284,6 @@ namespace sepp
 						m_chapterPerFile = Utils.AttVal(node, "chapterPerFile", "false") == "true";
 						string indexType = Utils.AttVal(node, "indexType", "alphaTree");
 						m_inputEncoding = Utils.AttVal(node, "inputEncoding", "utf-8");
-						switch (indexType)
-						{
-							case "alphaTree":
-								m_indexType = ConcGenerator.IndexTypes.alphaTree;
-								break;
-							case "rangeTree":
-								m_indexType = ConcGenerator.IndexTypes.rangeTree;
-								break;
-							case "twoLevelRange":
-								m_indexType = ConcGenerator.IndexTypes.twoLevelRange;
-								break;
-							case "alphaTreeMf":
-								m_indexType = ConcGenerator.IndexTypes.alphaTreeMf;
-								break;
-						}
 						break;
 					case "files":
 						BuildFileList(node);
@@ -483,7 +467,6 @@ namespace sepp
 			SetAttr(optionsNode, "maxContext", m_maxContextLength);
 			SetAttr(optionsNode, "minContext", m_minContextLength);
 			SetAttr(optionsNode, "chapterPerFile", m_chapterPerFile);
-			SetAttr(optionsNode, "indexType", m_indexType.ToString());
 			SaveFileList();
 			SetInnerText("copyright", m_copyright);
 			SetInnerText("introduction", m_introText);
