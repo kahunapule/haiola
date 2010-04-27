@@ -44,10 +44,45 @@ namespace sepp
 			set { m_tablePaths = value; }
 		}
 
+
+        public static WordSend.BibleBookInfo bkInfo = null;
+
+        /// <summary>
+        /// Reads the \id line to get the standard abbreviation of this file to figure out what
+        /// a good name for its standardized file name might be.
+        /// </summary>
+        /// <param name="pathName">Full path to the file to read the \id line from.</param>
+        /// <returns>Sort order plus 3-letter abbreviation of the Bible book (or front/back matter), upper case,
+        /// unless the file lacks an \id line, in which case in returns and empty string.</returns>
+        public string MakeUpUsfmFileName(string pathName)
+        {
+            if (bkInfo == null)
+                bkInfo = new WordSend.BibleBookInfo();
+            // Use the ID line.
+            string result = "";
+            string line;
+            StreamReader sr = new StreamReader(pathName);
+            while ((result.Length < 1) && (!sr.EndOfStream))
+            {
+                line = sr.ReadLine();
+                if (line.StartsWith(@"\id ") && (line.Length > 6))
+                {
+                    result = line.Substring(4, 3).ToUpper(System.Globalization.CultureInfo.InvariantCulture);
+                }
+            }
+            sr.Close();
+            if (result.Length > 0)
+            {
+                result = bkInfo.Order(result).ToString("D2") + "-" + result;
+            }
+            return result;
+        }
+
+
 		/// <summary>
-		/// Run the algorithm (on all files).
+		/// Run the algorithm on all non-backup files in the source directory.
 		/// </summary>
-		public void Run(IList files)
+		public void Run()
 		{
 			if (m_tablePaths == null)
 			{
@@ -107,36 +142,32 @@ namespace sepp
 			// Input is typically db files from OurWord, sfm from TE, or ptx from ParaText.
             // It may also be from Bibledit or another USFM tool. Many archived input files
             // do not have consistent file extensions. Some are named for the language as a
-            // suffix. Bibledit uses .usfm on its exports.
-			string[] inputFileNames = Directory.GetFiles(m_inputDirName, "*.db");
-			if (inputFileNames.Length == 0)
-				inputFileNames = Directory.GetFiles(m_inputDirName, "*.sfm");
-			if (inputFileNames.Length == 0)
-				inputFileNames = Directory.GetFiles(m_inputDirName, "*.ptx");
-			if (inputFileNames.Length == 0)
-				inputFileNames = Directory.GetFiles(m_inputDirName, "*.sfc");
+            // suffix. Some use a book abbreviation as an extension.
+            // Bibledit uses .usfm on its exports.
+			string[] inputFileNames = Directory.GetFiles(m_inputDirName);
             if (inputFileNames.Length == 0)
-                inputFileNames = Directory.GetFiles(m_inputDirName, "*.usfm");
-            if (inputFileNames.Length == 0)
-                inputFileNames = Directory.GetFiles(m_inputDirName, "*.*");
-            Progress status = new Progress(files.Count);
+            {
+                MessageBox.Show("No files found in input directory " + m_inputDirName);
+                return;
+            }
+			Progress status = new Progress(inputFileNames.Length);
 			status.Show();
 			Utils.EnsureDirectory(m_outputDirName);
 			int count = 0;
 			foreach (string inputFile in inputFileNames)
 			{
 				string filename = Path.GetFileName(inputFile);
-				if (files.Contains(Path.ChangeExtension(filename, "xml")))
+				if ((!inputFile.EndsWith(".bak")) && (!inputFile.EndsWith("~")))
 				{
 					status.File = filename;
 					if (!Convert(inputFile))
 					{
 						break;
 					}
-					count++;
-					status.Value = count;
 				}
-			}
+                count++;
+                status.Value = count;
+            }
 
 			status.Close();
 
@@ -181,7 +212,9 @@ namespace sepp
 		private bool Convert(string inputFilePath)
 		{
 			// Name of output file (without path)
-			string outputFileName = Path.ChangeExtension(Path.GetFileName(inputFilePath), "ptx");
+            string outputFileName = MakeUpUsfmFileName(inputFilePath) + ".usfm";
+            if (outputFileName.Length < 8)
+                return false;
 			string outputFilePath = Path.Combine(m_outputDirName, outputFileName);
 
 			return ConvertFileCC(inputFilePath, m_tablePaths, outputFilePath);

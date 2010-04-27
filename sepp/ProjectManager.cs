@@ -22,9 +22,8 @@ namespace sepp
 		{
 			m_workDir = workDir;
 			m_siteDir = siteDir;
-            Text = "Project Tasks - " + workDir;
 			InitializeComponent();
-
+            Text = "Project Tasks - " + workDir;
 		}
 
 		protected override void OnLoad(EventArgs e)
@@ -161,13 +160,6 @@ namespace sepp
 			get { return Path.Combine(m_siteDir, @"Conc"); }
 		}
 
-		private void m_runButton_Click(object sender, EventArgs e)
-		{
-			ConcGenerator generator = new ConcGenerator(
-				Path.Combine(m_workDir, @"ConcInput"), ConcPath, m_optionsPath, m_options);
-			generator.Run(m_filesList.CheckedItems);
-		}
-
 		const string OwDir = "OW";
 		private const string SourceDir = "Source";
 		internal string SourcePath
@@ -187,7 +179,7 @@ namespace sepp
 			{
 				converter.TablePaths = m_tablePaths;
 			}
-			converter.Run(m_filesList.CheckedItems);
+			converter.Run();
             m_button_OW_to_USFM.Enabled = true;
             Application.DoEvents();
         }
@@ -220,16 +212,6 @@ namespace sepp
             get { return Path.Combine(m_workDir, "usfx"); }
         }
 
-		private void m_buttonOSIS_to_HTML_Click(object sender, EventArgs e)
-		{
-			OSIS_to_HTML converter = new OSIS_to_HTML(
-				Path.Combine(m_workDir, @"OSIS"), HtmlPath(),
-				Path.Combine(m_siteDir, @"Conc"), Path.Combine(m_workDir, @"Sepp Options.xml"),
-				m_options);
-			converter.Run(m_filesList.CheckedItems);
-
-		}
-
 		private string HtmlPath()
 		{
 			return Path.Combine(m_workDir, @"HTML");
@@ -240,26 +222,11 @@ namespace sepp
             get { return m_siteDir; /* was Path.Combine(m_workDir, "htm");*/ }
         }
 
-		private void m_buttonHTML_to_XHTML_Click(object sender, EventArgs e)
-		{
-			HTML_TO_XHTML converter = new HTML_TO_XHTML(Path.Combine(m_workDir, @"HTML"), Path.Combine(m_workDir, @"ConcInput"), m_options);
-			converter.Run(m_filesList.CheckedItems);
-
-		}
-
 		internal string IntroDir
 		{
 			get { return Path.Combine(m_workDir, @"Intro");  }
 		}
 
-		private void m_buttonChapIndex_Click(object sender, EventArgs e)
-		{
-			OSIS_to_ChapIndex generator = new OSIS_to_ChapIndex(Path.Combine(m_workDir, @"OSIS"), Path.Combine(m_siteDir, @"Conc"),
-				IntroDir, ExtrasPath,
-				m_options);
-			generator.Run(m_filesList.CheckedItems);
-
-		}
 
 		private void m_buttonUncheckAll_Click(object sender, EventArgs e)
 		{
@@ -274,13 +241,6 @@ namespace sepp
 		{
 			for (int i = 0; i < m_filesList.Items.Count; i++)
 				m_filesList.SetItemChecked(i, true);
-		}
-
-		private void m_bookNameButton_Click(object sender, EventArgs e)
-		{
-			BookNamePageGenerator generator = new BookNamePageGenerator(Path.GetDirectoryName(m_workDir), m_workDir,
-				Path.Combine(m_workDir, @"Sepp Options.xml"));
-			generator.Run(m_filesList.CheckedItems);
 		}
 
 		private void optionsButton_Click(object sender, EventArgs e)
@@ -310,22 +270,6 @@ namespace sepp
                     m_button_USFM_to_OSIS_Click(this, e);
                 if (HtmlCheckBox.Checked)
                     UsfxToHtmlButton_Click(sender, e);
-                // For now OSIS must exist, somehow.
-                if (!Directory.Exists(OsisPath))
-                {
-                    MessageBox.Show(this, "Could not find or create required OSIS files", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                if (OsisHtmlCheckBox.Checked)
-                    m_buttonOSIS_to_HTML_Click(this, e);
-                if (XhtmlCheckBox.Checked)
-                    m_buttonHTML_to_XHTML_Click(this, e);
-                if (bookNamePageCheckBox.Checked)
-                    m_bookNameButton_Click(this, e);
-                if (ChapterIndexCheckBox.Checked)
-                    m_buttonChapIndex_Click(this, e);
-                if (ConcordanceCheckBox.Checked)
-                    m_runButton_Click(this, e);
                 if (copySupportFilesCheckBox.Checked)
                     btnCopySupportFiles_Click(this, e);
             }
@@ -348,8 +292,6 @@ namespace sepp
             btnCopySupportFiles.Enabled = false;
             Application.DoEvents();
 			string supportDir = Path.Combine(Master.MasterInstance.dataRootDir, "FilesToCopyToOutput");
-            if (ConcordanceCheckBox.Checked)
-                Utils.CopyDirectory(Path.Combine(supportDir, "Conc"), Path.Combine(m_siteDir, "Conc"));
             Utils.CopyDirectory(Path.Combine(supportDir, "css"), Path.Combine(Master.MasterInstance.m_siteDirectory, "css"));
             btnCopySupportFiles.Enabled = true;
             Application.DoEvents();
@@ -378,7 +320,7 @@ namespace sepp
             SFConverter.scripture = new Scriptures();
 
             // Read the input USFM files into internal data structures.
-            SFConverter.ProcessFilespec(Path.Combine(UsfmPath, "*.ptx"));
+            SFConverter.ProcessFilespec(Path.Combine(UsfmPath, "*.usfm"));
 
             // Write out the USFX file.
             SFConverter.scripture.languageCode = m_options.m_languageId;
