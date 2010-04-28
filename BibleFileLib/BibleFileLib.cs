@@ -3174,7 +3174,7 @@ namespace WordSend
 			string chapterModifier;
 			book = books[bknum];
 			bookStarted = false;
-            Figure fig;
+            // Figure fig;
 			if ((bkInfo.bookArray[bknum] != null) && (book != null))
 			{
 				inPsalms = (book.bookCode == "PSA");

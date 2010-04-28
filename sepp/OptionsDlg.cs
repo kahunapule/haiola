@@ -15,7 +15,6 @@ namespace sepp
 	{
 		private Options m_options;
 		private ProjectManager m_manager;
-		private string m_originalCollation;
 
 		public OptionsDlg(ProjectManager manager)
 		{
@@ -31,43 +30,13 @@ namespace sepp
 
 		void LoadOptions()
 		{
-			LoadInfoTab();
 			LoadMiscTab();
-			LoadConcTab();
-			LoadSortTab();
 			LoadLocalizeTab();
-			LoadBookNamesTab();
 			LoadBackMatterTab();
-			LoadAdvancedTab();
             LoadHtmlTab();
 		}
 
-		private void LoadSortTab()
-		{
-			m_originalCollation = tbxCollating.Text;
-			foreach (CultureInfo info in CultureInfo.GetCultures(CultureTypes.AllCultures))
-				comboSort.Items.Add(info.Name);
-			switch(m_options.m_collationMode)
-			{
-				case CollationMode.kDefault:
-					comboSort.SelectedIndex = 0;
-					tbxCollating.Text = "";
-					break;
-				case CollationMode.kLocale:
-					comboSort.SelectedItem = m_options.m_sortSpec;
-					// Enhance JohnT: do something intelligent if it fails?
-					tbxCollating.Text = "";
-					break;
-				case CollationMode.kCustomSimple:
-					comboSort.SelectedIndex = 1;
-					tbxCollating.Text = m_options.m_sortSpec;
-					break;
-				case CollationMode.kCustomICU:
-					comboSort.SelectedIndex = 2;
-					tbxCollating.Text = m_options.m_sortSpec;
-					break;
-			}
-		}
+
 
 		private void LoadBackMatterTab()
 		{
@@ -82,38 +51,11 @@ namespace sepp
 			lstBackMatter.ResumeLayout();
 		}
 
-		private void LoadBookNamesTab()
-		{
-			lstBookNames.SuspendLayout();
-			bool fGotAsterisk = false;
-			foreach (BookNameColumnInfo info in m_options.BookNameColumns)
-			{
-				string langName = info.LanguageName;
-				if (langName == "*")
-				{
-					langName = projectColName;
-					fGotAsterisk = true;
-				}
-				MakeBookNameItem(langName, info.ColuumnHeaderText);
-			}
-			if (!fGotAsterisk)
-				MakeBookNameItem(projectColName, "");
-			lstBookNames.ResumeLayout();
-		}
-
 		private void MakeBookNameItem(string langName, string colHeader)
 		{
 			ListViewItem item = new ListViewItem(langName);
-			lstBookNames.Items.Add(item);
 			item.SubItems.Add(colHeader);
 			SetLastSubItemName(item, "Edit");
-		}
-
-		private void LoadAdvancedTab()
-		{
-			tbxNonCanonical.Text = m_options.m_nonCanonicalClassesSrc;
-			tbxExtraClasses.Text = m_options.m_excludeClassesSrc;
-			tbxNotesClass.Text= m_options.NotesClass;
 		}
 
 		private void LoadLocalizeTab()
@@ -132,7 +74,6 @@ namespace sepp
 		}
 		private void LoadMiscTab()
 		{
-			chkChapterPerfile.Checked = m_options.ChapterPerFile;
 			listInputProcesses.SuspendLayout();
 			listInputProcesses.Items.Clear();
 			foreach (string filename in m_options.PreprocessingTables)
@@ -142,18 +83,7 @@ namespace sepp
 			listInputProcesses.ResumeLayout();
 		}
 
-		private void LoadConcTab()
-		{
-			chkMergeCase.Checked = m_options.MergeCase;
-			tbxWordformingChars.Text = m_options.WordformingChars;
-			tbxExcludeWords.Text = m_options.ExcludeWordsSrc;
-			tbxMaxFreq.Text = m_options.MaxFreqSrc;
-			tbxPhrases.Text = m_options.PhrasesSrc;
-			tbxMinContext.Text = m_options.MinContextLength.ToString();
-			tbxMaxContext.Text = m_options.MaxContextLength.ToString();
-
-		}
-
+		
         private void LoadHtmlTab()
         {
             copyrightLinkTextBox.Text = m_options.m_copyrightLink;
@@ -165,21 +95,10 @@ namespace sepp
 		// Enhance: validate (e.g., numeric fields) before attempting save.
 		void SaveOptions()
 		{
-			SaveInfoTab();
 			SaveMiscTab();
-			SaveConcTab();
-			SaveSortTab();
 			SaveLocalizeTab();
-			SaveBookNamesTab();
 			SaveBackMatterTab();
-			SaveAdvancedTab();
             SaveHtmlTab();
-		}
-
-		private void SaveSortTab()
-		{
-			m_options.m_sortSpec = GetCollationData();
-			m_options.m_collationMode = GetCollationMode();
 		}
 
 		private void SaveBackMatterTab()
@@ -195,28 +114,6 @@ namespace sepp
 
 		internal const string projectColName = "<project>"; // Enhance: init from first item originally in lstBookNames
 
-		private void SaveBookNamesTab()
-		{
-			List<BookNameColumnInfo> cols = new List<BookNameColumnInfo>();
-			foreach (ListViewItem item in lstBookNames.Items)
-			{
-				if (!string.IsNullOrEmpty(item.SubItems[1].Text))
-				{
-					string name = item.Text;
-					if (name == projectColName)
-						name = "*";
-					cols.Add(new BookNameColumnInfo(name, item.SubItems[1].Text));
-				}
-			}
-			m_options.BookNameColumns = cols;
-		}
-
-		private void SaveAdvancedTab()
-		{
-			m_options.m_nonCanonicalClassesSrc = tbxNonCanonical.Text;
-			m_options.m_excludeClassesSrc = tbxExtraClasses.Text;
-			m_options.NotesClass = tbxNotesClass.Text;
-		}
 
         private void SaveHtmlTab()
         {
@@ -241,7 +138,6 @@ namespace sepp
 
 		private void SaveMiscTab()
 		{
-			m_options.ChapterPerFile = chkChapterPerfile.Checked;
 			List<string> newTables = new List<string>(listInputProcesses.Items.Count);
 			foreach (string fileName in listInputProcesses.Items)
 				newTables.Add(fileName);
@@ -249,29 +145,6 @@ namespace sepp
             m_options.m_languageName = languageNameTextBox.Text;
             m_options.m_languageId = ethnologueCodeTextBox.Text;
 
-		}
-
-		private void SaveConcTab()
-		{
-			m_options.MergeCase = chkMergeCase.Checked;
-			m_options.WordformingChars = tbxWordformingChars.Text;
-			m_options.ExcludeWordsSrc = tbxExcludeWords.Text;
-			m_options.MaxFreqSrc = tbxMaxFreq.Text; // Enhance: validate
-			m_options.PhrasesSrc = tbxPhrases.Text;
-			int temp;
-			if (int.TryParse(tbxMinContext.Text, out temp))
-				m_options.MinContextLength = temp;
-			if (int.TryParse(tbxMaxContext.Text, out temp))
-				m_options.MaxContextLength = temp;
-		}
-
-		private void LoadInfoTab()
-		{
-			lstFiles.SuspendLayout();
-			lstFiles.Items.Clear();
-			foreach (InputFileInfo info in m_options.InputFiles)
-				lstFiles.Items.Add(MakeFileItem(info.StandardAbbr, info.FileName, info.VernAbbr, info.CrossRefName, info.IntroFileName));
-			lstFiles.ResumeLayout();
 		}
 
 		ListViewItem MakeFileItem(string abbr, string fileName, string vernAbbr, string xrefName, string introFile)
@@ -288,41 +161,14 @@ namespace sepp
 			return item;
 		}
 
-		private void SaveInfoTab()
-		{
-			List<InputFileInfo> result = new List<InputFileInfo>();
-			foreach (ListViewItem item in lstFiles.Items)
-			{
-				result.Add(new InputFileInfo(
-					item.SubItems[1].Text,
-					item.Text,
-					item.SubItems[2].Text,
-					item.SubItems[3].Text,
-					item.SubItems[4].Text));
-			}
-			m_options.InputFiles = result;
-		}
-
 		internal void SetLastSubItemName(ListViewItem item, string val)
 		{
 			ListViewItem.ListViewSubItem lastItem = item.SubItems[item.SubItems.Count - 1];
 			lastItem.Name = val;
 		}
 
-
 		private void taBookNames_Click(object sender, EventArgs e)
 		{
-
-		}
-
-		private void btnMoveBookNameUp_Click(object sender, EventArgs e)
-		{
-			MoveListItem(lstBookNames, -1);
-		}
-
-		private void btnMoveBookNameDown_Click(object sender, EventArgs e)
-		{
-			MoveListItem(lstBookNames, 1);
 
 		}
 
@@ -403,12 +249,6 @@ namespace sepp
 
 		private void btnAdjustFiles_Click(object sender, EventArgs e)
 		{
-			if (AdjustFileList(m_manager.OurWordPath))
-				return;
-			if (AdjustFileList(m_manager.PreProcessPath))
-				return;
-			if (AdjustFileList(m_manager.UsfmPath))
-				return;
 		}
 
 		private readonly string[] canonicalAbbrs = {
@@ -482,58 +322,6 @@ namespace sepp
     	};
 
 		/// <summary>
-		/// Add missing files from the specified directory.
-		/// We consider any files in the directory candidates, except ones ending in .txt
-		/// which may be reports from earlier runs.
-		/// Also remove any files no longer present from the list.
-		/// </summary>
-		/// <param name="sourceDir"></param>
-		/// <returns></returns>
-		private bool AdjustFileList(string sourceDir)
-		{
-			if (!Directory.Exists(sourceDir))
-				return false;
-			Dictionary<string, ListViewItem> existingFiles = new Dictionary<string, ListViewItem>();
-			foreach (ListViewItem item in lstFiles.Items)
-				existingFiles[item.SubItems[1].Text.ToLowerInvariant()] = item;
-
-			lstFiles.SuspendLayout();
-
-			foreach (string path in Directory.GetFiles(sourceDir))
-			{
-                string lcpath = Path.GetFileName(path).ToLowerInvariant();
-				if ((lcpath.CompareTo("conversionreports.txt") == 0) || (Path.GetExtension(lcpath).CompareTo(".bak")== 0))
-					continue;
-				string fileName = Path.ChangeExtension(Path.GetFileName(path), "xml").ToLowerInvariant();
-				ListViewItem existingItem;
-				string key = Path.GetFileNameWithoutExtension(fileName).ToLowerInvariant();
-				if (existingFiles.TryGetValue(key, out existingItem))
-				{
-					existingFiles.Remove(key);
-					continue;
-				}
-				// Try to guess the abbreviation from the file name
-				string stdAbbr = GuessStandardAbbr(path);
-                string xrefAbbr = GuessXRef(path);
-				int insertAt = FigureInsertPosition(stdAbbr);
-				// Enhance JohnT: is there a way to obtain a better guess from a USFM/OW file?
-				// Enhance JohnT: almost sure there is a field from which we can get a good guess for this.
-				// Enhance JohnT: If there is a file in the Intro directory whose name contains fileName, guess that.
-                // Kahunapule: default the crossreference abbreviations to non-abbreviated vernacular book names, not
-                // English abbreviations, assuming that the reader will understand those better. They don't have to be
-                // abbreviated, but they do have to be understandable to the target audience.
-				lstFiles.Items.Insert(insertAt, MakeFileItem(stdAbbr, Path.GetFileNameWithoutExtension(path), xrefAbbr,
-					xrefAbbr, ""));
-			}
-			// Remove any items for which files no longer exist.
-			foreach(ListViewItem item in existingFiles.Values)
-				lstFiles.Items.Remove(item);
-			lstFiles.ResumeLayout();
-
-			return true;
-		}
-
-		/// <summary>
 		/// Guess the book name to look for in cross-refs. We use \h if we can find one at all, otherwise, \mt1
         /// or \mt (omitting \mt2 and \mt3).
 		/// </summary>
@@ -558,156 +346,6 @@ namespace sepp
 			return fallback;
 		}
 
-		private Dictionary<string, int> canonicalIndex;
-
-		// Decide where in the list to insert the item.
-		private int FigureInsertPosition(string stdAbbr)
-		{
-			if (canonicalIndex == null)
-			{
-				canonicalIndex = new Dictionary<string, int>();
-				for (int i = 0; i < canonicalAbbrs.Length; i++)
-					canonicalIndex[canonicalAbbrs[i].ToLowerInvariant()] = i;
-			}
-			int index = GetIndexOfAbbr(stdAbbr.ToLowerInvariant());
-			int result = 0;
-			// return the index in lstFiles.Items of the first item whose abbr comes after the new one.
-			// If there is no such we will insert at the end.
-			// If there are duplicates the new one will go after the old.
-			foreach (ListViewItem item in lstFiles.Items)
-			{
-				int itemIndex = GetIndexOfAbbr(item.Text.ToLowerInvariant());
-				if (itemIndex > index)
-					return result; // index of item in Items, not of abbr in canonicalAbbrs
-				result++;
-			}
-			return result; // by now after end.
-		}
-
-		private int GetIndexOfAbbr(string stdAbbr)
-		{
-			int index = canonicalAbbrs.Length;
-			canonicalIndex.TryGetValue(stdAbbr, out index);
-			return index;
-		}
-
-		private string GuessStandardAbbr(string pathName)
-		{
-            // First guess: use the ID line.
-            string result = "";
-            string line;
-            StreamReader sr = new StreamReader(pathName);
-            while ((result.Length < 1) && (!sr.EndOfStream))
-            {
-                line = sr.ReadLine();
-                if (line.StartsWith(@"\id ") && (line.Length > 6))
-                {
-                    result = line.Substring(4, 3).ToUpper(CultureInfo.InvariantCulture);
-                }
-            }
-            sr.Close();
-            if (result.Length > 0)
-                return result;
-            // Second guess: ask the user with a triple question mark.
-            return "???";
-
-		}
-
-
-		private void lstFiles_MouseUp(object sender, MouseEventArgs e)
-		{
-			MouseUpInList(lstFiles, e);
-		}
-
-		/// <summary>
-		/// Some cases below are unique to a particular list.
-		/// </summary>
-		/// <param name="list"></param>
-		/// <param name="e"></param>
-		private void MouseUpInList(ListView list, MouseEventArgs e)
-		{
-			ListViewHitTestInfo hti = list.HitTest(e.Location);
-			ListViewItem.ListViewSubItem si = hti.SubItem;
-			if (si == null || string.IsNullOrEmpty(si.Name))
-				return;
-			if (si.Name == "StdAbbr")
-			{
-				// Click on the item itself...that is the canonical abbreviation...make a combo.
-				ComboBox cb = new ComboBox();
-				Rectangle bounds = new Rectangle(si.Bounds.Left, si.Bounds.Top,
-					list.Columns[0].Width, si.Bounds.Height);
-				bounds.Intersect(list.ClientRectangle);
-				cb.Bounds = bounds;
-				cb.Tag = hti.Item;
-				cb.DropDownStyle = ComboBoxStyle.DropDownList;
-				foreach (string abbr in canonicalAbbrs)
-				{
-					cb.Items.Add(abbr);
-					if (abbr == hti.Item.Text)
-						cb.SelectedIndex = cb.Items.Count - 1;
-				}
-				// Enhance JohnT: what should we do if no item is selected at this point and si.Text is not null?
-				// That means a non-standard standard abbreviation!
-				list.Controls.Add(cb);
-				// Set these up last, especially selected index changed, which can get fired as we set up the items.
-				cb.LostFocus += new EventHandler(cb_LostFocus_Abbr);
-				cb.SelectedIndexChanged += new EventHandler(cb_LostFocus_Abbr);
-				cb.Focus();
-				return;
-			}
-			if (si.Name == "Edit")
-			{
-				// Make a text box to edit the subitem contents.
-				TextBox tb = new TextBox();
-				tb.Bounds = si.Bounds;
-				tb.Text = si.Text;
-				tb.LostFocus += new EventHandler(tb_LostFocus);
-				tb.Tag = si;
-				list.Controls.Add(tb);
-				tb.SelectAll();
-				tb.Focus();
-			}
-			else if (Directory.Exists(si.Name))
-			{
-				// Make a combo box to select one of the files in the directory.
-				ComboBox cb = new ComboBox();
-				Rectangle bounds = si.Bounds;
-				bounds.Intersect(list.ClientRectangle);
-				cb.Bounds = bounds;
-				cb.LostFocus += new EventHandler(cb_LostFocus);
-				cb.Tag = si;
-				cb.DropDownStyle = ComboBoxStyle.DropDownList;
-				foreach (string filePath in Directory.GetFiles(si.Name))
-				{
-					string fileName = Path.GetFileName(filePath);
-					cb.Items.Add(fileName);
-					if (fileName == si.Text)
-						cb.SelectedIndex = cb.Items.Count - 1;
-				}
-				// Enhance JohnT: what should we do if no item is selected at this point and si.Text is not null?
-				// That means the file name found in the options file is not present!
-				list.Controls.Add(cb);
-				cb.Focus();
-			}
-		}
-		void cb_LostFocus_Abbr(object sender, EventArgs e)
-		{
-			ComboBox cb = sender as ComboBox;
-			ListViewItem item = (cb).Tag as ListViewItem;
-			string newText = cb.Text;
-			cb.Parent.Controls.Remove(cb);
-			if (String.IsNullOrEmpty(newText))
-				return;
-			item.Text = newText;
-			int index = FigureInsertPosition(newText);
-			if (index != 0 && lstFiles.Items[index - 1] == item)
-				return; // already in correct position.
-			lstFiles.SuspendLayout();
-			lstFiles.Items.Remove(item);
-			lstFiles.Items.Insert(FigureInsertPosition(newText), item);
-			lstFiles.ResumeLayout();
-		}
-
 		void cb_LostFocus(object sender, EventArgs e)
 		{
 			ComboBox cb = sender as ComboBox;
@@ -722,11 +360,6 @@ namespace sepp
 			ListViewItem.ListViewSubItem si = (tb).Tag as ListViewItem.ListViewSubItem;
 			si.Text = tb.Text;
 			tb.Parent.Controls.Remove(tb);
-		}
-
-		private void OptionsDlg_Load(object sender, EventArgs e)
-		{
-
 		}
 
 		private void btnOK_Click(object sender, EventArgs e)
@@ -744,82 +377,6 @@ namespace sepp
 		{
 			new FileListAdjuster().Run(this, lstBackMatter, m_manager.ExtrasPath, "*.*");
 		}
-
-		private void lstBackMatter_MouseUp(object sender, MouseEventArgs e)
-		{
-			MouseUpInList(lstBackMatter, e);
-		}
-
-		private void lstBookNames_MouseUp(object sender, MouseEventArgs e)
-		{
-			MouseUpInList(lstBookNames, e);
-		}
-
-		private void btnAdjustBookNamesList_Click(object sender, EventArgs e)
-		{
-			new BookNamesFileAdjuster().Run(this, lstBookNames, m_manager.RootWorkPath, "BookNames_*.*");
-		}
-
-		CollationMode GetCollationMode()
-		{
-			if (comboSort.SelectedIndex <= 0)
-				return CollationMode.kDefault;
-			if (comboSort.SelectedIndex == 1)
-				return CollationMode.kCustomSimple;
-			if (comboSort.SelectedIndex == 2)
-				return CollationMode.kCustomICU;
-			return CollationMode.kLocale;
-		}
-
-		string GetCollationData()
-		{
-			switch(GetCollationMode())
-			{
-				case CollationMode.kDefault:
-					return "";
-				case CollationMode.kLocale:
-					return comboSort.SelectedItem.ToString();
-				case CollationMode.kCustomSimple:
-				case CollationMode.kCustomICU:
-					return tbxCollating.Text;
-			}
-			return ""; // unreachable.
-		}
-
-		private void btnTestSort_Click(object sender, EventArgs e)
-		{
-
-			List<string> words = new List<string>(tbxTestWords.Text.Split(new string[] {Environment.NewLine},
-				StringSplitOptions.RemoveEmptyEntries));
-			IComparer<string> comp = m_options.ComparerFor(GetCollationMode(), GetCollationData());
-			words.Sort(comp);
-			StringBuilder bldr = new StringBuilder();
-			foreach (string word in words)
-				bldr.AppendLine(word);
-			tbxTestWords.Text = bldr.ToString();
-		}
-
-		private void comboSort_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			switch (GetCollationMode())
-			{
-				case CollationMode.kCustomSimple:
-					tbxCollating.Text = m_originalCollation;
-					break;
-				default:
-					tbxCollating.Text = "";
-					break;
-			}
-		}
-
-        private void clearReloadButton_Click(object sender, EventArgs e)
-        {
-            lstFiles.Items.Clear();
-            m_options.InputFiles.Clear();
-            btnAdjustFiles_Click(sender, e);
-        }
-
-
 
 	}
 

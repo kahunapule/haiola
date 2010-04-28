@@ -85,9 +85,11 @@ namespace sepp
 			foreach (string path in Directory.GetDirectories(m_workDirectory))
 			{
 				m_projectsList.Items.Add(Path.GetFileName(path));
-			}
-			for (int i = 0; i < m_projectsList.Items.Count; i++)
-				m_projectsList.SetItemChecked(i, true);
+                if (File.Exists(Path.Combine(path, "Sepp Options.xml")))
+                    m_projectsList.SetItemChecked(m_projectsList.Items.Count - 1, true);
+                else
+                    m_projectsList.SetItemChecked(m_projectsList.Items.Count - 1, false);
+            }
 			if (m_projectsList.Items.Count != 0)
 			{
 				m_projectsList.SetSelected(0, true);
@@ -114,6 +116,8 @@ namespace sepp
 
 		private void MasterIndexButton_Click(object sender, EventArgs e)
 		{
+            /* Removed because I don't want to use or support this function.
+             * Feel free to put it back if you do...
 			string m_outputDirName = Path.Combine(m_siteDirectory, "Resources");
 			Utils.EnsureDirectory(m_outputDirName);
 			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n"
@@ -143,6 +147,7 @@ namespace sepp
 			writer.Close();
 
 			status.Close();
+             */
 		}
 
 		private void btnSetRootDirectory_Click(object sender, EventArgs e)
@@ -187,6 +192,22 @@ namespace sepp
 
         private void WorkOnAllButton_Click(object sender, EventArgs e)
         {
+            WorkOnAllButton.Enabled = false;
+            ProjectButton.Enabled = false;
+            Application.DoEvents();
+            foreach (object o in m_projectsList.CheckedItems)
+            {
+                // m_projectsList.SelectedIndex = m_projectsList.Items.IndexOf(o);
+                string project = (string)o;
+                string projectWorkPath = Path.Combine(m_workDirectory, project);
+                string projectSitePath = Path.Combine(m_siteDirectory, project);
+                ProjectManager manager = new ProjectManager(projectWorkPath, projectSitePath);
+                manager.Show();
+                manager.automaticRun();
+            }
+            ProjectButton.Enabled = true;
+            WorkOnAllButton.Enabled = true;
+/*
             int i;
             for (i = 0; i < m_projectsList.Items.Count; i++)
             {
@@ -200,6 +221,7 @@ namespace sepp
                 manager.Show();
                 manager.automaticRun();
             }
+*/
         }
 	}
 }
