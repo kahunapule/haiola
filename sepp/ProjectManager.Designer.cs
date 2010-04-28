@@ -29,23 +29,13 @@ namespace sepp
 		private void InitializeComponent()
 		{
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProjectManager));
-            this.m_runButton = new System.Windows.Forms.Button();
             this.m_button_OW_to_USFM = new System.Windows.Forms.Button();
             this.m_button_USFM_to_OSIS = new System.Windows.Forms.Button();
-            this.m_buttonOSIS_to_HTML = new System.Windows.Forms.Button();
-            this.m_buttonHTML_to_XHTML = new System.Windows.Forms.Button();
-            this.m_buttonChapIndex = new System.Windows.Forms.Button();
             this.m_filesList = new System.Windows.Forms.CheckedListBox();
             this.m_buttonCheckAll = new System.Windows.Forms.Button();
             this.m_buttonUncheckAll = new System.Windows.Forms.Button();
-            this.m_bookNameButton = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.copySupportFilesCheckBox = new System.Windows.Forms.CheckBox();
-            this.ConcordanceCheckBox = new System.Windows.Forms.CheckBox();
-            this.ChapterIndexCheckBox = new System.Windows.Forms.CheckBox();
-            this.bookNamePageCheckBox = new System.Windows.Forms.CheckBox();
-            this.XhtmlCheckBox = new System.Windows.Forms.CheckBox();
-            this.OsisHtmlCheckBox = new System.Windows.Forms.CheckBox();
             this.OsisCheckBox = new System.Windows.Forms.CheckBox();
             this.HtmlCheckBox = new System.Windows.Forms.CheckBox();
             this.UsfxCheckBox = new System.Windows.Forms.CheckBox();
@@ -57,16 +47,6 @@ namespace sepp
             this.buttonAllSteps = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // m_runButton
-            // 
-            this.m_runButton.Location = new System.Drawing.Point(17, 293);
-            this.m_runButton.Name = "m_runButton";
-            this.m_runButton.Size = new System.Drawing.Size(143, 23);
-            this.m_runButton.TabIndex = 18;
-            this.m_runButton.Text = "Build concordance";
-            this.m_runButton.UseVisualStyleBackColor = true;
-            this.m_runButton.Click += new System.EventHandler(this.m_runButton_Click);
             // 
             // m_button_OW_to_USFM
             // 
@@ -87,36 +67,6 @@ namespace sepp
             this.m_button_USFM_to_OSIS.Text = "USFM to OSIS";
             this.m_button_USFM_to_OSIS.UseVisualStyleBackColor = true;
             this.m_button_USFM_to_OSIS.Click += new System.EventHandler(this.m_button_USFM_to_OSIS_Click);
-            // 
-            // m_buttonOSIS_to_HTML
-            // 
-            this.m_buttonOSIS_to_HTML.Location = new System.Drawing.Point(17, 177);
-            this.m_buttonOSIS_to_HTML.Name = "m_buttonOSIS_to_HTML";
-            this.m_buttonOSIS_to_HTML.Size = new System.Drawing.Size(143, 23);
-            this.m_buttonOSIS_to_HTML.TabIndex = 10;
-            this.m_buttonOSIS_to_HTML.Text = "OSIS to HTML";
-            this.m_buttonOSIS_to_HTML.UseVisualStyleBackColor = true;
-            this.m_buttonOSIS_to_HTML.Click += new System.EventHandler(this.m_buttonOSIS_to_HTML_Click);
-            // 
-            // m_buttonHTML_to_XHTML
-            // 
-            this.m_buttonHTML_to_XHTML.Location = new System.Drawing.Point(17, 206);
-            this.m_buttonHTML_to_XHTML.Name = "m_buttonHTML_to_XHTML";
-            this.m_buttonHTML_to_XHTML.Size = new System.Drawing.Size(143, 23);
-            this.m_buttonHTML_to_XHTML.TabIndex = 12;
-            this.m_buttonHTML_to_XHTML.Text = "HTML to XHTML";
-            this.m_buttonHTML_to_XHTML.UseVisualStyleBackColor = true;
-            this.m_buttonHTML_to_XHTML.Click += new System.EventHandler(this.m_buttonHTML_to_XHTML_Click);
-            // 
-            // m_buttonChapIndex
-            // 
-            this.m_buttonChapIndex.Location = new System.Drawing.Point(17, 264);
-            this.m_buttonChapIndex.Name = "m_buttonChapIndex";
-            this.m_buttonChapIndex.Size = new System.Drawing.Size(143, 23);
-            this.m_buttonChapIndex.TabIndex = 16;
-            this.m_buttonChapIndex.Text = "Build chapter index";
-            this.m_buttonChapIndex.UseVisualStyleBackColor = true;
-            this.m_buttonChapIndex.Click += new System.EventHandler(this.m_buttonChapIndex_Click);
             // 
             // m_filesList
             // 
@@ -146,24 +96,9 @@ namespace sepp
             this.m_buttonUncheckAll.UseVisualStyleBackColor = true;
             this.m_buttonUncheckAll.Click += new System.EventHandler(this.m_buttonUncheckAll_Click);
             // 
-            // m_bookNameButton
-            // 
-            this.m_bookNameButton.Location = new System.Drawing.Point(17, 235);
-            this.m_bookNameButton.Name = "m_bookNameButton";
-            this.m_bookNameButton.Size = new System.Drawing.Size(143, 23);
-            this.m_bookNameButton.TabIndex = 14;
-            this.m_bookNameButton.Text = "Build book name page";
-            this.m_bookNameButton.UseVisualStyleBackColor = true;
-            this.m_bookNameButton.Click += new System.EventHandler(this.m_bookNameButton_Click);
-            // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.copySupportFilesCheckBox);
-            this.groupBox1.Controls.Add(this.ConcordanceCheckBox);
-            this.groupBox1.Controls.Add(this.ChapterIndexCheckBox);
-            this.groupBox1.Controls.Add(this.bookNamePageCheckBox);
-            this.groupBox1.Controls.Add(this.XhtmlCheckBox);
-            this.groupBox1.Controls.Add(this.OsisHtmlCheckBox);
             this.groupBox1.Controls.Add(this.OsisCheckBox);
             this.groupBox1.Controls.Add(this.HtmlCheckBox);
             this.groupBox1.Controls.Add(this.UsfxCheckBox);
@@ -171,16 +106,11 @@ namespace sepp
             this.groupBox1.Controls.Add(this.UsfxToHtmlButton);
             this.groupBox1.Controls.Add(this.UsfmToUsfxButton);
             this.groupBox1.Controls.Add(this.btnCopySupportFiles);
-            this.groupBox1.Controls.Add(this.m_bookNameButton);
             this.groupBox1.Controls.Add(this.m_buttonUncheckAll);
             this.groupBox1.Controls.Add(this.m_buttonCheckAll);
             this.groupBox1.Controls.Add(this.m_filesList);
-            this.groupBox1.Controls.Add(this.m_buttonChapIndex);
-            this.groupBox1.Controls.Add(this.m_buttonHTML_to_XHTML);
-            this.groupBox1.Controls.Add(this.m_buttonOSIS_to_HTML);
             this.groupBox1.Controls.Add(this.m_button_USFM_to_OSIS);
             this.groupBox1.Controls.Add(this.m_button_OW_to_USFM);
-            this.groupBox1.Controls.Add(this.m_runButton);
             this.groupBox1.Location = new System.Drawing.Point(113, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(415, 364);
@@ -198,51 +128,6 @@ namespace sepp
             this.copySupportFilesCheckBox.Size = new System.Drawing.Size(15, 14);
             this.copySupportFilesCheckBox.TabIndex = 21;
             this.copySupportFilesCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // ConcordanceCheckBox
-            // 
-            this.ConcordanceCheckBox.AutoSize = true;
-            this.ConcordanceCheckBox.Location = new System.Drawing.Point(166, 297);
-            this.ConcordanceCheckBox.Name = "ConcordanceCheckBox";
-            this.ConcordanceCheckBox.Size = new System.Drawing.Size(15, 14);
-            this.ConcordanceCheckBox.TabIndex = 19;
-            this.ConcordanceCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // ChapterIndexCheckBox
-            // 
-            this.ChapterIndexCheckBox.AutoSize = true;
-            this.ChapterIndexCheckBox.Location = new System.Drawing.Point(166, 268);
-            this.ChapterIndexCheckBox.Name = "ChapterIndexCheckBox";
-            this.ChapterIndexCheckBox.Size = new System.Drawing.Size(15, 14);
-            this.ChapterIndexCheckBox.TabIndex = 17;
-            this.ChapterIndexCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // bookNamePageCheckBox
-            // 
-            this.bookNamePageCheckBox.AutoSize = true;
-            this.bookNamePageCheckBox.Location = new System.Drawing.Point(166, 239);
-            this.bookNamePageCheckBox.Name = "bookNamePageCheckBox";
-            this.bookNamePageCheckBox.Size = new System.Drawing.Size(15, 14);
-            this.bookNamePageCheckBox.TabIndex = 15;
-            this.bookNamePageCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // XhtmlCheckBox
-            // 
-            this.XhtmlCheckBox.AutoSize = true;
-            this.XhtmlCheckBox.Location = new System.Drawing.Point(166, 210);
-            this.XhtmlCheckBox.Name = "XhtmlCheckBox";
-            this.XhtmlCheckBox.Size = new System.Drawing.Size(15, 14);
-            this.XhtmlCheckBox.TabIndex = 13;
-            this.XhtmlCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // OsisHtmlCheckBox
-            // 
-            this.OsisHtmlCheckBox.AutoSize = true;
-            this.OsisHtmlCheckBox.Location = new System.Drawing.Point(166, 181);
-            this.OsisHtmlCheckBox.Name = "OsisHtmlCheckBox";
-            this.OsisHtmlCheckBox.Size = new System.Drawing.Size(15, 14);
-            this.OsisHtmlCheckBox.TabIndex = 11;
-            this.OsisHtmlCheckBox.UseVisualStyleBackColor = true;
             // 
             // OsisCheckBox
             // 
@@ -356,16 +241,11 @@ namespace sepp
 
 		#endregion
 
-		private System.Windows.Forms.Button m_runButton;
-		private System.Windows.Forms.Button m_button_OW_to_USFM;
-		private System.Windows.Forms.Button m_button_USFM_to_OSIS;
-		private System.Windows.Forms.Button m_buttonOSIS_to_HTML;
-		private System.Windows.Forms.Button m_buttonHTML_to_XHTML;
-		private System.Windows.Forms.Button m_buttonChapIndex;
+        private System.Windows.Forms.Button m_button_OW_to_USFM;
+        private System.Windows.Forms.Button m_button_USFM_to_OSIS;
 		private System.Windows.Forms.CheckedListBox m_filesList;
 		private System.Windows.Forms.Button m_buttonCheckAll;
-		private System.Windows.Forms.Button m_buttonUncheckAll;
-		private System.Windows.Forms.Button m_bookNameButton;
+        private System.Windows.Forms.Button m_buttonUncheckAll;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Button optionsButton;
 		private System.Windows.Forms.Button buttonAllSteps;
@@ -373,11 +253,6 @@ namespace sepp
         private System.Windows.Forms.Button UsfmToUsfxButton;
         private System.Windows.Forms.Button UsfxToHtmlButton;
         private System.Windows.Forms.CheckBox copySupportFilesCheckBox;
-        private System.Windows.Forms.CheckBox ConcordanceCheckBox;
-        private System.Windows.Forms.CheckBox ChapterIndexCheckBox;
-        private System.Windows.Forms.CheckBox bookNamePageCheckBox;
-        private System.Windows.Forms.CheckBox XhtmlCheckBox;
-        private System.Windows.Forms.CheckBox OsisHtmlCheckBox;
         private System.Windows.Forms.CheckBox OsisCheckBox;
         private System.Windows.Forms.CheckBox HtmlCheckBox;
         private System.Windows.Forms.CheckBox UsfxCheckBox;
