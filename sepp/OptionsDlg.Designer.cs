@@ -29,8 +29,8 @@ namespace sepp
 		private void InitializeComponent()
 		{
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OptionsDlg));
-            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -47,8 +47,8 @@ namespace sepp
             this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.lstBackMatter = new System.Windows.Forms.ListView();
-            this.columnFiles = new System.Windows.Forms.ColumnHeader();
-            this.columnHotlink = new System.Windows.Forms.ColumnHeader();
+            this.columnFiles = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHotlink = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabLocalization = new System.Windows.Forms.TabPage();
             this.label30 = new System.Windows.Forms.Label();
             this.psalmLabelTextBox = new System.Windows.Forms.TextBox();
@@ -166,7 +166,7 @@ namespace sepp
             this.copyrightLinkTextBox.Name = "copyrightLinkTextBox";
             this.copyrightLinkTextBox.Size = new System.Drawing.Size(493, 20);
             this.copyrightLinkTextBox.TabIndex = 2;
-            this.copyrightLinkTextBox.Text = "<a href=\"../terms.htm\">©</a>";
+            this.copyrightLinkTextBox.Text = "<a href=\"copyright.htm\">©</a>";
             // 
             // label28
             // 

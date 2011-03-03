@@ -432,6 +432,89 @@ namespace WordSend
 		}
 	}
 
+    /// <summary>
+    /// File-related helper functions.
+    /// </summary>
+    public class fileHelper
+    {
+        protected static readonly int CHUNK_SIZE = 1048576;
+
+        /// <summary>
+        /// Returns the Unicode file encoding if there are proper byte order marks;
+        /// otherwise guesses if this is a UTF-8 (no BOM) file or ANSI file.
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        public static Encoding IdentifyFileCharset(string fileName)
+        {
+            int i;
+            int oddNullCount = 0;   // Bigger on Big Endian UTF-16
+            int evenNullCount = 0;  // Bigger on Little Endian UTF-16
+            int e2Count = 0;
+            bool odd = true;
+            Encoding result = Encoding.ASCII;
+            try
+            {
+                FileStream fs;
+                fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+                // use one byte per character encoding for reading dump data
+                BinaryReader br = new BinaryReader(fs, new ASCIIEncoding());
+                byte[] chunk;
+
+                // read one chunk
+                // chunk.Length will be 0 if end of file is reached.
+                chunk = br.ReadBytes(CHUNK_SIZE);
+                if (chunk.Length > 4)
+                {
+                    if ((chunk[0] == 0xFF) && (chunk[1] == 0xFE))
+                    {
+                        result = Encoding.Unicode;
+                        if ((chunk[2] == 0) && (chunk[3] == 0))
+                            result = Encoding.UTF32;
+                    }
+                    else if ((chunk[0] == 0xFE) && (chunk[1] == 0xFF))
+                    {
+                        result = Encoding.BigEndianUnicode;
+                    }
+                    else if ((chunk[0] == 0xEF) && (chunk[1] == 0xBB) && (chunk[2] == 0xBF))
+                    {
+                        result = Encoding.UTF8;
+                    }
+                    else
+                    {
+                        for (i = 0; i < chunk.Length; i++)
+                        {
+                            if (chunk[i] == 0)
+                            {
+                                if (odd)
+                                    oddNullCount++;
+                                else
+                                    evenNullCount++;
+                            }
+                            else if (chunk[i] == 0xE2)
+                                e2Count++;
+                            odd = !odd;
+                        }
+                        if (e2Count >= oddNullCount + evenNullCount + 1)
+                            result = Encoding.UTF8;
+                        else if (oddNullCount > (evenNullCount * 2))
+                            result = Encoding.BigEndianUnicode;
+                        else if (evenNullCount > (oddNullCount * 2))
+                            result = Encoding.Unicode;
+                    }
+                }
+                fs.Close();
+            }
+            catch (Exception err)
+            {
+                result = Encoding.UTF8;
+                Logit.WriteLine("Cannot read " + fileName + "\r\n" + err.Message +
+                    "\r\n" + err.StackTrace);
+            }
+            return result;
+        }
+    }
+
 
 	/// <summary>
 	/// This class provides a consistent way to write USFM files.
@@ -1213,12 +1296,71 @@ namespace WordSend
 		public string attribute; // i. e. chapter or verse number, footnote marker
 		public string text;	// Text up to the next \.
 		public bool isEndTag;	// True for explicit end tags (tag ends in *)
-		public TagRecord info;
+		public TagRecord info;  // Information about this particular tag
+
+        // The following state variables are used for input context validation on read.
+        private static string prevTag = String.Empty;
+        private static string expectedEndTag = String.Empty;
+        private static string tagToTerminate = String.Empty;
+        private static string currentBook = String.Empty;
+        private static string currentChapter = String.Empty;
+        private static string currentVerse = String.Empty;
 
 		public SfmObject()
 		{
-			tag = attribute = text = "";
+			tag = attribute = text = String.Empty;
 		}
+
+        private void validate()
+        {
+            bool endFound = false;
+
+            if (tag.Length < 1)
+                return;  // Nothing to do.
+
+            // Track where we are.
+            if ((info.kind != null) && (info.kind.CompareTo("meta") == 0))
+            {
+                if (tag.CompareTo("id") == 0)
+                    currentBook = attribute;
+                else if (tag.CompareTo("c") == 0)
+                    currentChapter = attribute;
+                else if (tag.CompareTo("v") == 0)
+                    currentVerse = attribute;
+            }
+
+            // Check to see if we have properly ended a tag range.
+            if (expectedEndTag.Length > 0)
+            {
+                if (isEndTag && (tag.CompareTo(tagToTerminate) == 0))
+                {
+                    tagToTerminate = expectedEndTag = String.Empty;
+                    endFound = true;
+                    // Logit.WriteLine(tagToTerminate + " properly terminated with " + tag + "*");
+                }
+                else if (expectedEndTag.Contains(tag))
+                {
+                    // Logit.WriteLine(tagToTerminate + " terminated with " + tag + (isEndTag ? "*" : "") + " at " +
+                    //    currentBook + " " + currentChapter + ":" + currentVerse);
+                    tagToTerminate = expectedEndTag = String.Empty;
+                    endFound = true;
+                }
+                if ((info.kind != null) && (info.kind.CompareTo("meta") == 0) && (expectedEndTag.Length > 0))
+                {
+                    Logit.WriteLine("UNTERMINATED TAG: " + tagToTerminate + " before " +
+                        currentBook + " " + currentChapter + ":" + currentVerse);
+                }
+            }
+
+
+            // Set up for next check
+            prevTag = tag;
+            if ((!endFound) && (!isEndTag) && (info.endTag.Length > 0))
+            {
+                tagToTerminate = tag;
+                expectedEndTag = info.endTag;
+            }
+        }
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -1384,6 +1526,7 @@ namespace WordSend
 					SFConverter.scripture.tags.inCanon = true;
 				}
 			}
+            validate();
 			return true;
 		}
 	}
@@ -2188,7 +2331,7 @@ namespace WordSend
 			int  vs = 0;
 
 			Logit.WriteLine("Reading "+ fileName);
-			sr = new StreamReader(fileName, System.Text.Encoding.UTF8);
+			sr = new StreamReader(fileName, fileHelper.IdentifyFileCharset(fileName));
 			book = new BibleBook();
 			// Read in the book, one SFM record at a time. We'll sort out the
 			// symantics and hierarchy once the book is in memory.
@@ -3761,7 +3904,13 @@ namespace WordSend
 							default:
                                 // in WriteUSFXBook
 								WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, sf.text);
+                                if (inFootnote)
+                                {
+                                    Logit.WriteLine("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
+                                        ":" + verseMark);
+                                }
 								break;
+
 						}
 							break;
 						case "note":

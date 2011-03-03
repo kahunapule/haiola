@@ -275,7 +275,7 @@ namespace sepp
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message + "\r\n" + ex.StackTrace);
             }
             buttonAllSteps.Enabled = true;
             Refresh();
