@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="indexPageTextBox.Text" xml:space="preserve">
+    <value>&lt;div class=\"toc1\"&gt;&lt;a href=\"http://pngscriptures.org/{0}/{0}_html.zip\"&gt;{0}_html.zip&lt;/div&gt;
+&lt;div class=\"toc1\"&gt;&lt;a href=\"http://pngscriptures.org/resources.php?id={0}\"&gt;Downloads and language information&lt;/div&gt;
+&lt;div class=\"toc1\"&gt;&lt;a href=\"http://pnglanguages.org/pacific/png/show_lang_entry.asp?id={0}\"&gt;Linguistic publications&lt;/a&gt;&lt;/div&gt;
+&lt;div class=\"toc1\"&gt;&lt;a href=\"http://www.ethnologue.org/show_language.asp?code={0}\"&gt;Ethnologue&lt;/a&gt;&lt;/div&gt;</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

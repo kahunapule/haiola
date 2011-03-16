@@ -47,13 +47,48 @@ namespace sepp
 		internal List<BookNameColumnInfo> m_bookNameCclumns = new List<BookNameColumnInfo>();
 		internal string m_sortSpec;
 		internal CollationMode m_collationMode = CollationMode.kDefault;
-        public string m_languageId;
-        public string m_languageName;
-        public string m_chapterLabel;
-        public string m_psalmLabel;
-        public string m_copyrightLink;
-        public string m_homeLink;
-        public string m_footerHtml;
+        public string m_languageId = string.Empty;
+        public string m_languageName = string.Empty;
+        public string m_chapterLabel = string.Empty;
+        public string m_psalmLabel = string.Empty;
+        public string m_copyrightLink = "<a href=\"copyright.htm\">©</a>";
+        public string m_homeLink = "<a href=\"../index.htm\"><img alt=\"^\" src=\"../css/home_sm.png\" border=\"0\" /></a>";
+        public string m_footerHtml = string.Empty;
+        public string m_indexHtml = "<div class=\"toc1\"><a href=\"http://pngscriptures.org/{0}/{0}_html.zip\">{0}_html.zip</a></div>\r\n"+
+"<div class=\"toc1\"><a href=\"http://pngscriptures.org/resources.php?id={0}\">More downloads</a></div>\r\n"+
+"<div class=\"toc1\"><a href=\"http://pnglanguages.org/pacific/png/show_lang_entry.asp?id={0}\">Linguistic publications</a></div>\r\n"+
+"<div class=\"toc1\"><a href=\"http://www.ethnologue.org/show_language.asp?code={0}\">Ethnologue</a></div>\r\n";
+        public string m_licenseHtml = "<h1>The New Testament in the ____ Language</h1>\r\n"+
+"<p>Copyright © ____ <a href=\"http://www.wycliffe.org/\">Wycliffe Bible Translators</a></p>\r\n"+
+"<p>This translation is made available to you under the terms of the <a href=\"http://creativecommons.org/licenses/by-nc-nd/3.0/\">Creative\r\n"+
+"Commons Attribution-Noncommercial-No Derivative Works license.</a> \r\n"+
+"In addition, you have permission to port the text to different file\r\n"+
+"formats, as long as you don't change any of the text or punctuation of\r\n"+
+"the Bible.</p>\r\n"+
+"<p>You may share, copy, distribute, transmit, and extract portions or\r\n"+
+"quotations from this work, provided that:<br />\r\n"+
+"</p>\r\n"+
+"<ul>\r\n"+
+"<li>You include the above copyright information and that you make it\r\n"+
+"clear that the work came from <a href=\"http://pngscriptures.org/\">http://pngscriptures.org/</a>.</li>\r\n"+
+"<li>You do not sell this work for a profit.<br />\r\n"+
+"</li>\r\n"+
+"<li>You do not make any derivative works that change any of the\r\n"+
+"actual words or punctuation of the Scriptures.</li>\r\n"+
+"</ul>\r\n"+
+"<p>Permissions beyond the scope of this license may be available if you\r\n"+
+"<a href=\"http://pngscriptures.org/contact.htm\">contact us</a>\r\n"+
+"with your request. If you want to revise a\r\n"+
+"translation, use a translation in an adaptation, or use a translation\r\n"+
+"commercially, we will relay your request to the appropriate copyright\r\n"+
+"owner.</p>\r\n"+
+"<p><a rel=\"license\"\r\n"+
+"href=\"http://creativecommons.org/licenses/by-nc-nd/3.0/\"><img\r\n"+
+"alt=\"Creative Commons License\" style=\"border-width: 0pt;\"\r\n"+
+"src=\"http://i.creativecommons.org/l/by-nc-nd/3.0/88x31.png\" /></a></p>\r\n"+
+"<p>If you have further questions about this web site or the <a href=\"../terms.htm\">Terms of\r\n"+
+"Use</a>, <a href=\"http://pngscriptures.org/contact.htm\">please contact us</a>.\r\n"+
+"</p>";
         
 
 		#endregion Basic Data
@@ -360,6 +395,12 @@ namespace sepp
                     case "psalmLabel":
                         m_psalmLabel = node.InnerText;
                         break;
+                    case "indexHtml":
+                        m_indexHtml = node.InnerText;
+                        break;
+                    case "licenseHtml":
+                        m_licenseHtml = node.InnerText;
+                        break;
 				}
 			}
 			UpdateDerivedData();
@@ -492,6 +533,8 @@ namespace sepp
             SetInnerText("footerHtml", EscapeHtml(m_footerHtml));
             SetInnerText("chapterLabel", m_chapterLabel);
             SetInnerText("psalmLabel", m_psalmLabel);
+            SetInnerText("indexHtml", m_indexHtml);
+            SetInnerText("licenseHtml", m_licenseHtml);
 			SavePreprocessing();
 			SaveBookNameCols();
 			SaveComparer();

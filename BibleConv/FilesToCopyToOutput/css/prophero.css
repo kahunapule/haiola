@@ -46,9 +46,9 @@ div.imt3, div.imte { font-weight: bold; font-family: "Arial", "Helvetica", san-s
 span.ior { font-weight: bold }
 div.ipi, div.ipq, div.pref, div.pub, div.pubinfo, div.spine { font-family: "Arial", "Helvetica", san-serif; font-size: 8pt; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; margin-left: 2em; text-indent: 2em }
 div.ipr { font-family: "Arial", "Helvetica", san-serif; font-size: 8pt; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align: right; margin-top: 6pt; margin-left: 2em; text-indent: 2em }
-div.iq, div.iq1 { font-family: "Arial", "Helvetica", san-serif; font-size: 8pt; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; text-indent: -12em; margin-left: 8em }
-div.iq2 { font-family: "Arial", "Helvetica", san-serif; font-size: 8pt; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; text-indent: -4em; margin-left: 8em }
-div.iq3 { font-family: "Arial", "Helvetica", san-serif; font-size: 8pt; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; text-indent: -2em; margin-left: 8em }
+div.iq, div.iq1 { font-family: "Arial", "Helvetica", san-serif; font-size: 8pt; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; text-indent: -8em; margin-left: 12em }
+div.iq2 { font-family: "Arial", "Helvetica", san-serif; font-size: 8pt; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; text-indent: -4em; margin-left: 12em }
+div.iq3 { font-family: "Arial", "Helvetica", san-serif; font-size: 8pt; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; text-indent: -2em; margin-left: 12em }
 span.iqt { color: rgb(0,0,16) }
 div.is, div.is1 { font-family: "Arial", "Helvetica", san-serif; font-size: 10pt; font-weight: bold; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt }
 div.is2 { font-family: "Arial", "Helvetica", san-serif; font-size: 9pt; font-weight: bold; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt }

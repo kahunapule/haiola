@@ -212,7 +212,7 @@
 	</sfm>
 	<sfm kind="note">
 		<tag>fl</tag>
-		<endTag>fl*,ft,fk,fq,fv,fqa</endTag>
+		<endTag>fl*,ft,fk,fq,fv,fqa, f*</endTag>
 		<characterStyle>Footnote Label</characterStyle>
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
@@ -235,21 +235,21 @@
 	</sfm>
 	<sfm kind="character">
 		<tag>fq</tag>
-		<endTag>fq*,ft,fk,fq,fv,fqa</endTag>
+		<endTag>fq*,ft,fk,fq,fv,fqa, f*</endTag>
 		<characterStyle>Quoted from text</characterStyle>
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
 	</sfm>
 	<sfm kind="character">
 		<tag>fqa</tag>
-		<endTag>fqa*,fq,ft,fk,fv</endTag>
+		<endTag>fqa*,fq,ft,fk,fv, f*</endTag>
 		<characterStyle>Alternate Reading</characterStyle>
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
 	</sfm>
 	<sfm kind="character">
 		<tag>fr</tag>
-		<endTag>fr*</endTag>
+		<endTag>fr*, f*</endTag>
 		<characterStyle>Note Target Reference</characterStyle>
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
@@ -959,28 +959,28 @@
 	<usfx>xdc</usfx></sfm>
 	<sfm kind="character">
 		<tag>xk</tag>
-		<endTag>xk*</endTag>
+		<endTag>xk*, xo, xk, xq, xot, xnt, xdc</endTag>
 		<characterStyle>Crossreference keywords</characterStyle>
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
 	</sfm>
-	<sfm kind="meta"><tag>xnt</tag><endTag>xnt*</endTag><nestingAllowed>true</nestingAllowed><levelExpected>false</levelExpected><usfx>xnt</usfx><comment>Cross references and other text to be published only in volumes containing a New Testament</comment></sfm><sfm kind="character">
+	<sfm kind="meta"><tag>xnt</tag><endTag>xnt*, xo, xk, xq, xot, xdc</endTag><nestingAllowed>true</nestingAllowed><levelExpected>false</levelExpected><usfx>xnt</usfx><comment>Cross references and other text to be published only in volumes containing a New Testament</comment></sfm><sfm kind="character">
 		<tag>xo</tag>
 		<endTag>xo*</endTag>
 		
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
-	</sfm><sfm kind="meta"><tag>xot</tag><endTag>xot*</endTag><nestingAllowed>true</nestingAllowed><levelExpected>false</levelExpected><usfx>xot</usfx><comment>Cross references to be published only in volumes containing an Old Testament.</comment></sfm>
+	</sfm><sfm kind="meta"><tag>xot</tag><endTag>xot*, xo, xk, xq, xnt, xdc</endTag><nestingAllowed>true</nestingAllowed><levelExpected>false</levelExpected><usfx>xot</usfx><comment>Cross references to be published only in volumes containing an Old Testament.</comment></sfm>
 	<sfm kind="character">
 		<tag>xq</tag>
-		<endTag>xq*</endTag>
+		<endTag>xq*, xo, xk, xq, xot, xnt, xdc</endTag>
 		<characterStyle>Crossreference Scripture quote</characterStyle>
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
 	</sfm>
 	<sfm kind="character">
 		<tag>xt</tag>
-		<endTag>xt*</endTag>
+		<endTag>xt*, xo, xk, xq, xot, xnt, xdc</endTag>
 		<characterStyle>Crossreference target references</characterStyle>
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>

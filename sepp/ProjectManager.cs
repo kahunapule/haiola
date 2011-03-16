@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using System.IO;
+using System.Diagnostics;
 using WordSend;
 
 namespace sepp
@@ -344,8 +345,14 @@ namespace sepp
                 m_options.m_psalmLabel,
                 m_options.m_copyrightLink,
                 m_options.m_homeLink,
-                m_options.m_footerHtml);
+                m_options.m_footerHtml,
+                m_options.m_indexHtml,
+                m_options.m_licenseHtml);
             Logit.CloseFile();
+            string postprocess = Path.Combine(Master.MasterInstance.m_siteDirectory, "postprocess.bat");
+            if (File.Exists(postprocess))
+                Process.Start(postprocess, m_options.m_languageId);
+
             UsfxToHtmlButton.Enabled = true;
             Application.DoEvents();
         }

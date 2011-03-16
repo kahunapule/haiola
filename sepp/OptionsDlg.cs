@@ -89,6 +89,8 @@ namespace sepp
             copyrightLinkTextBox.Text = m_options.m_copyrightLink;
             homeLinkTextBox.Text = m_options.m_homeLink;
             footerHtmlTextBox.Text = m_options.m_footerHtml;
+            indexPageTextBox.Text = m_options.m_indexHtml;
+            licenseTextBox.Text = m_options.m_licenseHtml;
         }
 
 
@@ -120,6 +122,8 @@ namespace sepp
             m_options.m_copyrightLink = copyrightLinkTextBox.Text;
             m_options.m_homeLink = homeLinkTextBox.Text;
             m_options.m_footerHtml = footerHtmlTextBox.Text;
+            m_options.m_indexHtml = indexPageTextBox.Text;
+            m_options.m_licenseHtml = licenseTextBox.Text;
         }
 
 		private void SaveLocalizeTab()
