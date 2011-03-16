@@ -63,9 +63,9 @@ namespace sepp
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(352, 293);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(153, 13);
+            this.label1.Size = new System.Drawing.Size(159, 13);
             this.label1.TabIndex = 10;
-            this.label1.Text = "Version 0.991 of 2 March 2011";
+            this.label1.Text = "Version 0.991 of 11 March 2011";
             // 
             // btnSetRootDirectory
             // 
@@ -93,7 +93,7 @@ namespace sepp
             this.WorkOnAllButton.Name = "WorkOnAllButton";
             this.WorkOnAllButton.Size = new System.Drawing.Size(244, 23);
             this.WorkOnAllButton.TabIndex = 2;
-            this.WorkOnAllButton.Text = "Run selected steps on selected projects";
+            this.WorkOnAllButton.Text = "Run selected steps on checked projects";
             this.WorkOnAllButton.UseVisualStyleBackColor = true;
             this.WorkOnAllButton.Click += new System.EventHandler(this.WorkOnAllButton_Click);
             // 

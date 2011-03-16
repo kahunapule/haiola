@@ -1309,6 +1309,8 @@ namespace WordSend
 		public SfmObject()
 		{
 			tag = attribute = text = String.Empty;
+            tagToTerminate = String.Empty;
+            // currentBook = currentChapter = currentVerse = String.Empty;
 		}
 
         private void validate()
@@ -1355,7 +1357,7 @@ namespace WordSend
 
             // Set up for next check
             prevTag = tag;
-            if ((!endFound) && (!isEndTag) && (info.endTag.Length > 0))
+            if ((!endFound) && (!isEndTag) && (info.endTag.Length > 0) && (info.kind.CompareTo("note") == 0))
             {
                 tagToTerminate = tag;
                 expectedEndTag = info.endTag;
@@ -5408,16 +5410,13 @@ namespace WordSend
         {
             StringBuilder sb = new StringBuilder("<div class=\"navButtons\">\r\n");
             if (bookListIndex >= 0)
-            {
-                if (previousFileName.Length > 0)
-                    sb.Append(String.Format("<a href=\"{0}\">&lt;&lt;</a>\r\n",
-                        Path.GetFileName(previousFileName)/*, previousChapterText*/));
-                sb.Append(String.Format("&nbsp;&nbsp; <a href=\"index.htm\">{0}</a> {1} {2}&nbsp;&nbsp; ",
+            {   
+                sb.Append(String.Format("<a href=\"index.htm\">{0}</a> &nbsp; {1} {2}",
                     langName, bookRecord.vernacularHeader, currentChapter));
-                if (nextFileName.Length > 0)
-                    sb.Append(String.Format("<a href=\"{0}\">&gt;&gt;</a>",
-                        Path.GetFileName(nextFileName)/*, nextChapterText*/));
                 sb.Append("</div>\r\n<div class=\"navChapters\">");
+                if (previousFileName.Length > 0)
+                    sb.Append(String.Format("<a href=\"{0}\">&nbsp;&nbsp;&nbsp;&lt;&nbsp;&nbsp;&nbsp;</a>\r\n",
+                        Path.GetFileName(previousFileName)/*, previousChapterText*/));
                 string formatString = "00";
                 if (currentBookAbbrev.CompareTo("PSA") == 0)
                     formatString = "000";
@@ -5434,6 +5433,10 @@ namespace WordSend
                         sb.Append(String.Format(" <a href=\"{0}\">{1}</a>",
                             String.Format("{0}{1}.htm", currentBookAbbrev, i.ToString(formatString)), i));
                 }
+                if (nextFileName.Length > 0)
+                    sb.Append(String.Format(" <a href=\"{0}\">&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;</a>",
+                        Path.GetFileName(nextFileName)/*, nextChapterText*/));
+
             }
             else
             {
@@ -5789,7 +5792,8 @@ namespace WordSend
         /// <param name="footerHtml">HTML for footer "fine print" text</param>
         /// <returns>true iff the conversion succeeded</returns>
         public bool ConvertUsfxToHtml(string usfxName, string htmlDir, string languageName, string languageId,
-            string chapterLabelName, string psalmLabelName, string copyrightLink, string homeLink, string footerHtml)
+            string chapterLabelName, string psalmLabelName, string copyrightLink, string homeLink, string footerHtml,
+            string indexHtml, string licenseHtml)
         {
             bool result = false;
             bool inUsfx = false;
@@ -6057,9 +6061,12 @@ namespace WordSend
                 }
                 usfx.Close();
 
+                // Index page
                 currentChapter = "";
                 chapterNumber = 0;
                 bookListIndex = -1;
+                currentBookAbbrev = string.Empty;
+                currentBookHeader = string.Empty;
                 OpenHtmlFile("index.htm");
                 bookListIndex = 0;
                 bookRecord = (BibleBookRecord)bookList[0];
@@ -6067,10 +6074,29 @@ namespace WordSend
                     chapFormat = "000";
                 else
                     chapFormat = "00";
-                htm.WriteLine("<div class=\"toc\"><a href=\"{0}{1}.htm\">Read the Holy Bible now. / Ritim Buk Baibel nau yet.</a></div>",
+                htm.WriteLine("<div class=\"toc\"><a href=\"{0}{1}.htm\">Go!</a></div>",
                     bookRecord.tla, one.ToString(chapFormat));
-                htm.WriteLine("<div class=\"toc1\"><a href=\"http://pngscriptures.org/cgi-bin/lookup.cgi/{0}\">downloads and language information / kisim fail</div>", langId);
-                htm.WriteLine("<div class=\"toc1\"><a href=\"http://pngscriptures.org/cgi-bin/lookup.cgi\">Other languages / Narapela tok ples</a></div>");
+                htm.WriteLine(indexHtml, langId);
+                htm.WriteLine("<p>&nbsp;<br/><br/></p>");
+                string today = DateTime.Now.ToString("d MMM yyyy");
+                htm.WriteLine("<p>HTML generated {0}</p>", today);
+                CloseHtmlFile();
+
+                // Copyright page
+                currentBookAbbrev = "CPR";
+                bookListIndex = -1;
+                OpenHtmlFile("copyright.htm");
+                bookListIndex = 0;
+                bookRecord = (BibleBookRecord)bookList[0];
+                if (bookRecord.tla.CompareTo("PSA") == 0)
+                    chapFormat = "000";
+                else
+                    chapFormat = "00";
+                htm.WriteLine("<div class=\"toc\"><a href=\"{0}{1}.htm\">Go!</a></div>",
+                    bookRecord.tla, one.ToString(chapFormat));
+                htm.WriteLine(licenseHtml);
+                htm.WriteLine("<p>&nbsp;<br/><br/></p>");
+                htm.WriteLine("<p>HTML generated {0}</p>", today);
                 CloseHtmlFile();
 
                 // Pass 2: content generation

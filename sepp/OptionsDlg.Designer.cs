@@ -34,6 +34,10 @@ namespace sepp
             this.btnOK = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.licenseTextBox = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.indexPageTextBox = new System.Windows.Forms.TextBox();
             this.footerHtmlTextBox = new System.Windows.Forms.TextBox();
             this.homeLinkTextBox = new System.Windows.Forms.TextBox();
             this.copyrightLinkTextBox = new System.Windows.Forms.TextBox();
@@ -122,6 +126,10 @@ namespace sepp
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.licenseTextBox);
+            this.tabPage1.Controls.Add(this.label2);
+            this.tabPage1.Controls.Add(this.label1);
+            this.tabPage1.Controls.Add(this.indexPageTextBox);
             this.tabPage1.Controls.Add(this.footerHtmlTextBox);
             this.tabPage1.Controls.Add(this.homeLinkTextBox);
             this.tabPage1.Controls.Add(this.copyrightLinkTextBox);
@@ -136,6 +144,48 @@ namespace sepp
             this.tabPage1.Text = "HTML";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // licenseTextBox
+            // 
+            this.licenseTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.licenseTextBox.Location = new System.Drawing.Point(25, 319);
+            this.licenseTextBox.Multiline = true;
+            this.licenseTextBox.Name = "licenseTextBox";
+            this.licenseTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.licenseTextBox.Size = new System.Drawing.Size(651, 66);
+            this.licenseTextBox.TabIndex = 8;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(19, 299);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(275, 13);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "HTML full copyright, permissions, and acknowledgments ";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(19, 180);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(334, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "HTML to insert into index page. {0} will be replaced with language ID.";
+            // 
+            // indexPageTextBox
+            // 
+            this.indexPageTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.indexPageTextBox.Location = new System.Drawing.Point(21, 196);
+            this.indexPageTextBox.Multiline = true;
+            this.indexPageTextBox.Name = "indexPageTextBox";
+            this.indexPageTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.indexPageTextBox.Size = new System.Drawing.Size(656, 100);
+            this.indexPageTextBox.TabIndex = 5;
+            this.indexPageTextBox.Text = resources.GetString("indexPageTextBox.Text");
+            // 
             // footerHtmlTextBox
             // 
             this.footerHtmlTextBox.AcceptsReturn = true;
@@ -145,7 +195,7 @@ namespace sepp
             this.footerHtmlTextBox.Multiline = true;
             this.footerHtmlTextBox.Name = "footerHtmlTextBox";
             this.footerHtmlTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.footerHtmlTextBox.Size = new System.Drawing.Size(656, 121);
+            this.footerHtmlTextBox.Size = new System.Drawing.Size(656, 94);
             this.footerHtmlTextBox.TabIndex = 3;
             // 
             // homeLinkTextBox
@@ -570,6 +620,9 @@ namespace sepp
             // 
             // tabControl1
             // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabMisc);
             this.tabControl1.Controls.Add(this.tabLocalization);
             this.tabControl1.Controls.Add(this.tabBackMatter);
@@ -657,5 +710,9 @@ namespace sepp
         private System.Windows.Forms.ListBox listInputProcesses;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TextBox indexPageTextBox;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox licenseTextBox;
+        private System.Windows.Forms.Label label2;
 	}
 }
