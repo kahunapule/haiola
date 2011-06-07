@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Prophero", "PropheroSetup.vdproj", "{55C0BC73-B28B-4A98-89B4-AA75E6F4F9B0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Default = Debug|Default
+		Release|Default = Release|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{55C0BC73-B28B-4A98-89B4-AA75E6F4F9B0}.Debug|Default.ActiveCfg = Debug
+		{55C0BC73-B28B-4A98-89B4-AA75E6F4F9B0}.Debug|Default.Build.0 = Debug
+		{55C0BC73-B28B-4A98-89B4-AA75E6F4F9B0}.Release|Default.ActiveCfg = Release
+		{55C0BC73-B28B-4A98-89B4-AA75E6F4F9B0}.Release|Default.Build.0 = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

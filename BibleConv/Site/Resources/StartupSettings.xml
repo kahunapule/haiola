@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<shortcutName>Alkitab Bahasa.lnk</shortcutName><!-- MUST end in .lnk-->
+	<defaultInstallDir>TSC\e-Bibles</defaultInstallDir>
+	<browserExe>Firefox Setup 2.0.0.6.exe</browserExe>
+</root>
