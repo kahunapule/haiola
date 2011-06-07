@@ -1461,6 +1461,7 @@ namespace WordSend
 				{
 					ch = sr.Read();
 					lookAhead = sr.Peek();
+                    break; // workaround for spacing problem (eg. Mat 5:4 "Blessed arethey that mourn (KJV)")
 				}
 			}
 			// Read text up to next \, collapsing all white space to a single space.
