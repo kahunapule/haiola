@@ -491,11 +491,11 @@ namespace WordSend
                                 else
                                     evenNullCount++;
                             }
-                            else if (chunk[i] == 0xE2)
+                            else if ((chunk[i] == 0xE2) || (chunk[i] == 0xC3))
                                 e2Count++;
                             odd = !odd;
                         }
-                        if (e2Count >= oddNullCount + evenNullCount + 1)
+                        if (e2Count >= oddNullCount + evenNullCount + 1 + (chunk.Length/1000))
                             result = Encoding.UTF8;
                         else if (oddNullCount > (evenNullCount * 2))
                             result = Encoding.BigEndianUnicode;

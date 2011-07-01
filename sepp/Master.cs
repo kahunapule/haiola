@@ -110,7 +110,7 @@ namespace sepp
 			string project = m_projectsList.SelectedItem as string;
 			string projectWorkPath = Path.Combine(m_workDirectory, project);
 			string projectSitePath = Path.Combine(m_siteDirectory, project);
-			ProjectManager manager = new ProjectManager(projectWorkPath, projectSitePath);
+			ProjectManager manager = new ProjectManager(projectWorkPath, projectSitePath, project);
 			manager.ShowDialog();
 		}
 
@@ -201,7 +201,7 @@ namespace sepp
                 string project = (string)o;
                 string projectWorkPath = Path.Combine(m_workDirectory, project);
                 string projectSitePath = Path.Combine(m_siteDirectory, project);
-                ProjectManager manager = new ProjectManager(projectWorkPath, projectSitePath);
+                ProjectManager manager = new ProjectManager(projectWorkPath, projectSitePath, project);
                 manager.Show();
                 manager.automaticRun();
             }
