@@ -18,11 +18,14 @@ namespace sepp
 		private Options m_options;
 		string m_workDir; //e.g., @"C:\BibleConv\Work\Kupang"
 		string m_siteDir; // e.g., c:\BibleConv\Site\Kupang
+        string m_project; // e.g., Kupang
 		string[] m_tablePaths; // if non-null, OW_TO_USFM is replaced with Preprocess from Source directory using these tables.
-		public ProjectManager(string workDir, string siteDir)
+
+		public ProjectManager(string workDir, string siteDir, string project)
 		{
 			m_workDir = workDir;
 			m_siteDir = siteDir;
+            m_project = project;
 			InitializeComponent();
             Text = "Project Tasks - " + workDir;
 		}
@@ -351,7 +354,7 @@ namespace sepp
             Logit.CloseFile();
             string postprocess = Path.Combine(Master.MasterInstance.m_siteDirectory, "postprocess.bat");
             if (File.Exists(postprocess))
-                Process.Start(postprocess, m_options.m_languageId);
+                Process.Start(postprocess, m_project);
 
             UsfxToHtmlButton.Enabled = true;
             Application.DoEvents();
