@@ -452,7 +452,7 @@ namespace WordSend
             int evenNullCount = 0;  // Bigger on Little Endian UTF-16
             int e2Count = 0;
             bool odd = true;
-            Encoding result = Encoding.ASCII;
+            Encoding result = Encoding.GetEncoding(1252);
             try
             {
                 FileStream fs;
@@ -482,7 +482,7 @@ namespace WordSend
                     }
                     else
                     {
-                        for (i = 0; i < chunk.Length; i++)
+                        for (i = 0; i < (chunk.Length - 1); i++)
                         {
                             if (chunk[i] == 0)
                             {
@@ -491,11 +491,13 @@ namespace WordSend
                                 else
                                     evenNullCount++;
                             }
-                            else if ((chunk[i] == 0xE2) || (chunk[i] == 0xC3))
+                            else if ((chunk[i] == 0xE2) && (chunk[i+1] == 0x80))
+                            {
                                 e2Count++;
+                            }
                             odd = !odd;
                         }
-                        if (e2Count >= oddNullCount + evenNullCount + 1 + (chunk.Length/1000))
+                        if (e2Count >= oddNullCount + evenNullCount + 1)
                             result = Encoding.UTF8;
                         else if (oddNullCount > (evenNullCount * 2))
                             result = Encoding.BigEndianUnicode;
@@ -511,6 +513,7 @@ namespace WordSend
                 Logit.WriteLine("Cannot read " + fileName + "\r\n" + err.Message +
                     "\r\n" + err.StackTrace);
             }
+            // Logit.WriteLine("Identified " + fileName + " as " + result.ToString());
             return result;
         }
     }
@@ -1324,30 +1327,30 @@ namespace WordSend
             if ((info.kind != null) && (info.kind.CompareTo("meta") == 0))
             {
                 if (tag.CompareTo("id") == 0)
+                {
                     currentBook = attribute;
+                    currentChapter = "0";
+                    currentVerse = "0";
+                }
                 else if (tag.CompareTo("c") == 0)
+                {
                     currentChapter = attribute;
+                    currentVerse = "0";
+                }
                 else if (tag.CompareTo("v") == 0)
                     currentVerse = attribute;
             }
 
             // Check to see if we have properly ended a tag range.
-            if (expectedEndTag.Length > 0)
+            if ((expectedEndTag.Length > 0) && (tagToTerminate.Length > 0))
             {
-                if (isEndTag && (tag.CompareTo(tagToTerminate) == 0))
+                if ((isEndTag && (tag.CompareTo(tagToTerminate) == 0)) || (expectedEndTag.Contains(tag)))
                 {
                     tagToTerminate = expectedEndTag = String.Empty;
                     endFound = true;
                     // Logit.WriteLine(tagToTerminate + " properly terminated with " + tag + "*");
                 }
-                else if (expectedEndTag.Contains(tag))
-                {
-                    // Logit.WriteLine(tagToTerminate + " terminated with " + tag + (isEndTag ? "*" : "") + " at " +
-                    //    currentBook + " " + currentChapter + ":" + currentVerse);
-                    tagToTerminate = expectedEndTag = String.Empty;
-                    endFound = true;
-                }
-                if ((info.kind != null) && (info.kind.CompareTo("meta") == 0) && (expectedEndTag.Length > 0))
+                else if ((info.kind != null) && (info.kind.CompareTo("meta") == 0) && (expectedEndTag.Length > 0) && (info.tag.Length > 0))
                 {
                     Logit.WriteLine("UNTERMINATED TAG: " + tagToTerminate + " before " +
                         currentBook + " " + currentChapter + ":" + currentVerse);
@@ -1383,11 +1386,12 @@ namespace WordSend
 			} while (((char)ch != '\\') && (ch != -1));
 			if (ch == -1)	// eof
 				return false;	// Failed to find \.
-			// Found \. Copy characters to tag until white space or anything after *.
+			// Found \. Copy characters to tag until white space or anything after * or anything before \.
 			do
 			{
 				ch = sr.Read();
-				if ((ch != -1) && (!Char.IsWhiteSpace((char)ch)) && (!Char.IsDigit((char)ch)))
+                lookAhead = sr.Peek();
+                if ((ch != -1) && (!Char.IsWhiteSpace((char)ch)) && (!Char.IsDigit((char)ch)))
 				{
 					sb.Append((char)ch);
 				}
@@ -1396,7 +1400,7 @@ namespace WordSend
 					isEndTag = true;
 				}
 			} while ((ch != -1) && (!Char.IsWhiteSpace((char)ch)) &&
-				(!isEndTag) && !Char.IsDigit((char)ch));
+				(!isEndTag) && !Char.IsDigit((char)ch) && (char)lookAhead != '\\');
 			tag = sb.ToString();
 			info = SFConverter.scripture.tags.info(tag);
 			// Special logic to disambiguate \k # in helps vs \k...\k* in canon.
@@ -1404,7 +1408,9 @@ namespace WordSend
 				info = SFConverter.scripture.tags.info("keyword");
 			if ((info == null) || (info.tag == ""))
 			{
-				Logit.WriteLine("ERROR! Unrecognized marker in "+fileName+": \\"+tag);
+                Logit.WriteLine("ERROR! Unrecognized marker in " + fileName + 
+                    ": [\\" + tag + "] after " + currentBook + " " + currentChapter +
+                    ":" + currentVerse);
 			}
 			sb.Length = 0;
 			level = 0;
@@ -1456,12 +1462,12 @@ namespace WordSend
 					sb.Length = 0;
 				}
 				lookAhead = sr.Peek();
-				// Discard all contiguous white space characters after a tag (i.e. space CR LF)
-				while (Char.IsWhiteSpace((char)ch) && ((char)lookAhead != '\\') && (ch != -1))
+				// Collapse all contiguous white space characters after a tag to one space (i.e. space CR LF to space)
+				while (Char.IsWhiteSpace((char)ch) && Char.IsWhiteSpace((char)lookAhead) && (ch != -1))
 				{
 					ch = sr.Read();
 					lookAhead = sr.Peek();
-                    break; // workaround for spacing problem (eg. Mat 5:4 "Blessed arethey that mourn (KJV)")
+                    // No need to bail out here due to lookahead check to make sure we don't kill the only space
 				}
 			}
 			// Read text up to next \, collapsing all white space to a single space.
@@ -2325,7 +2331,12 @@ namespace WordSend
 		protected StreamReader sr;
 		protected XmlTextWriter xw;
 
-		public void ReadUSFM(string fileName)
+        public void ReadUSFM(string fileName)
+        {
+            ReadUSFM(fileName, null);
+        }
+
+		public void ReadUSFM(string fileName, Encoding textEncoding)
 		{
 			bool foundAnSfm;
 			SfmObject sfm;
@@ -2334,7 +2345,9 @@ namespace WordSend
 			int  vs = 0;
 
 			Logit.WriteLine("Reading "+ fileName);
-			sr = new StreamReader(fileName, fileHelper.IdentifyFileCharset(fileName));
+            if (textEncoding == null)
+                textEncoding = fileHelper.IdentifyFileCharset(fileName);
+			sr = new StreamReader(fileName, textEncoding);
 			book = new BibleBook();
 			// Read in the book, one SFM record at a time. We'll sort out the
 			// symantics and hierarchy once the book is in memory.
@@ -5041,8 +5054,9 @@ namespace WordSend
 				{
 					Directory.CreateDirectory(outDir);
 				}
-				bblFile = new StreamWriter(Path.Combine(outDir, outFileName + "_bbl.csv"), false, System.Text.Encoding.ASCII);
-				cmtFile = new StreamWriter(Path.Combine(outDir, outFileName + "_cmt.csv"), false, System.Text.Encoding.ASCII);
+                Encoding WesternEuropean = Encoding.GetEncoding(1252);
+				bblFile = new StreamWriter(Path.Combine(outDir, outFileName + "_bbl.csv"), false, WesternEuropean);
+				cmtFile = new StreamWriter(Path.Combine(outDir, outFileName + "_cmt.csv"), false, WesternEuropean);
 				usfxFile.Read();
 				while (!usfxFile.EOF)
 				{
@@ -6531,7 +6545,12 @@ namespace WordSend
             return result;
         }
 
-		static public void ProcessFilespec(string fileSpec)
+        static public void ProcessFilespec(string fileSpec)
+        {
+            ProcessFilespec(fileSpec, null);
+        }
+
+		static public void ProcessFilespec(string fileSpec, Encoding textEncoding)
 		{
 			string dirPath = Path.GetDirectoryName(fileSpec);
 			if ((dirPath == null) || (dirPath == ""))
@@ -6542,7 +6561,7 @@ namespace WordSend
 			DirectoryInfo dir = new DirectoryInfo(dirPath);
 			foreach (FileInfo f in dir.GetFiles(fileName))
 			{
-				SFConverter.scripture.ReadUSFM(f.FullName);
+				SFConverter.scripture.ReadUSFM(f.FullName, textEncoding);
 			}
 		}
 
