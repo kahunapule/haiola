@@ -324,7 +324,7 @@ namespace sepp
             SFConverter.scripture = new Scriptures();
 
             // Read the input USFM files into internal data structures.
-            SFConverter.ProcessFilespec(Path.Combine(UsfmPath, "*.usfm"));
+            SFConverter.ProcessFilespec(Path.Combine(UsfmPath, "*.usfm"), Encoding.UTF8);
 
             // Write out the USFX file.
             SFConverter.scripture.languageCode = m_options.m_languageId;
@@ -352,9 +352,15 @@ namespace sepp
                 m_options.m_indexHtml,
                 m_options.m_licenseHtml);
             Logit.CloseFile();
-            string postprocess = Path.Combine(Master.MasterInstance.m_siteDirectory, "postprocess.bat");
+            string postprocess = Path.Combine(WorkPath, "postprocess.bat");
             if (File.Exists(postprocess))
                 Process.Start(postprocess, m_project);
+            else
+            {
+                postprocess = Path.Combine(Master.MasterInstance.m_siteDirectory, "postprocess.bat");
+                if (File.Exists(postprocess))
+                    Process.Start(postprocess, m_project);
+            }
 
             UsfxToHtmlButton.Enabled = true;
             Application.DoEvents();

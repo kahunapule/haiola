@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Collections;
 using System.Text.RegularExpressions;
+using WordSend;
 
 namespace sepp
 {
@@ -232,7 +233,10 @@ namespace sepp
 		{
 			string input;
 			// Read file into input
-			StreamReader reader = new StreamReader(inputPath, Encoding.GetEncoding(m_options.InputEncoding));
+            // Instead of asking the user what the character encoding is, we guess that it is either
+            // Windows 1252 or UTF-8, and choose which one of those based on the assumed presence of
+            // surrogates in UTF-8, unless there is a byte-order mark.
+			StreamReader reader = new StreamReader(inputPath, fileHelper.IdentifyFileCharset(inputPath) /* Encoding.GetEncoding(m_options.InputEncoding) */);
 			input = reader.ReadToEnd() + "\0";
 			reader.Close();
 
