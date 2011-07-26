@@ -31,25 +31,10 @@ namespace sepp
 		void LoadOptions()
 		{
 			LoadMiscTab();
-			LoadLocalizeTab();
-			LoadBackMatterTab();
-            LoadHtmlTab();
+			LoadHtmlTab();
 		}
 
 
-
-		private void LoadBackMatterTab()
-		{
-			lstBackMatter.SuspendLayout();
-			foreach(ExtraFileInfo info in m_options.ExtraFiles)
-			{
-				ListViewItem item = new ListViewItem(info.FileName);
-				lstBackMatter.Items.Add(item);
-				item.SubItems.Add(info.HotLinkText);
-				SetLastSubItemName(item, "Edit");
-			}
-			lstBackMatter.ResumeLayout();
-		}
 
 		private void MakeBookNameItem(string langName, string colHeader)
 		{
@@ -58,20 +43,6 @@ namespace sepp
 			SetLastSubItemName(item, "Edit");
 		}
 
-		private void LoadLocalizeTab()
-		{
-			tbxHeadingRef.Text = m_options.m_headingRefSrc;
-			tbxNotesRef.Text = m_options.m_notesRefSrc;
-			tbxConcordance.Text = m_options.ConcordanceLinkText;
-			tbxLoading.Text = m_options.LoadingLabelText;
-			tbxIntroduction.Text = m_options.IntroductionLinkText;
-			tbxBookChap.Text = m_options.m_bookChapText;
-			tbxPrevChap.Text = m_options.m_prevChapText;
-			tbxNextChap.Text = m_options.m_nextChapText;
-            chapterLabelTextBox.Text = m_options.m_chapterLabel;
-            psalmLabelTextBox.Text = m_options.m_psalmLabel;
-
-		}
 		private void LoadMiscTab()
 		{
 			listInputProcesses.SuspendLayout();
@@ -98,20 +69,7 @@ namespace sepp
 		void SaveOptions()
 		{
 			SaveMiscTab();
-			SaveLocalizeTab();
-			SaveBackMatterTab();
             SaveHtmlTab();
-		}
-
-		private void SaveBackMatterTab()
-		{
-			List<ExtraFileInfo> extraFiles = new List<ExtraFileInfo>();
-			foreach (ListViewItem item in lstBackMatter.Items)
-			{
-				if (!string.IsNullOrEmpty(item.SubItems[1].Text))
-					extraFiles.Add(new ExtraFileInfo(item.Text, item.SubItems[1].Text));
-			}
-			m_options.ExtraFiles = extraFiles;
 		}
 
 		internal const string projectColName = "<project>"; // Enhance: init from first item originally in lstBookNames
@@ -125,20 +83,6 @@ namespace sepp
             m_options.m_indexHtml = indexPageTextBox.Text;
             m_options.m_licenseHtml = licenseTextBox.Text;
         }
-
-		private void SaveLocalizeTab()
-		{
-			m_options.m_headingRefSrc = tbxHeadingRef.Text;
-			m_options.m_notesRefSrc = tbxNotesRef.Text;
-			m_options.ConcordanceLinkText = tbxConcordance.Text;
-			m_options.LoadingLabelText = tbxLoading.Text;
-			m_options.IntroductionLinkText = tbxIntroduction.Text;
-			m_options.m_bookChapText = tbxBookChap.Text;
-			m_options.m_prevChapText = tbxPrevChap.Text;
-			m_options.m_nextChapText = tbxNextChap.Text;
-            m_options.m_chapterLabel = chapterLabelTextBox.Text;
-            m_options.m_psalmLabel = psalmLabelTextBox.Text;
-		}
 
 		private void SaveMiscTab()
 		{
@@ -176,11 +120,6 @@ namespace sepp
 
 		}
 
-		private void btnMoveUpBackMatter_Click(object sender, EventArgs e)
-		{
-			MoveListItem(lstBackMatter, -1);
-		}
-
 		private void MoveListItem(ListView list, int delta)
 		{
 
@@ -197,11 +136,6 @@ namespace sepp
 			item.Selected = true;
 			list.Focus(); // Seems to be necessary to get the highlight to show up.
 			list.ResumeLayout();
-		}
-
-		private void btnMoveDownBackMatter_Click(object sender, EventArgs e)
-		{
-			MoveListItem(lstBackMatter, 1);
 		}
 
 		private void lstFiles_SelectedIndexChanged(object sender, EventArgs e)
@@ -375,11 +309,6 @@ namespace sepp
 		{
 			if (listInputProcesses.SelectedIndices.Count > 0)
 				listInputProcesses.Items.RemoveAt(listInputProcesses.SelectedIndices[0]);
-		}
-
-		private void btnAdjustBmFiles_Click(object sender, EventArgs e)
-		{
-			new FileListAdjuster().Run(this, lstBackMatter, m_manager.ExtrasPath, "*.*");
 		}
 
 	}
