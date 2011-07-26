@@ -432,96 +432,6 @@ namespace WordSend
 		}
 	}
 
-    /// <summary>
-    /// File-related helper functions.
-    /// </summary>
-    public class fileHelper
-    {
-        protected static readonly int CHUNK_SIZE = 1048576;
-
-        /// <summary>
-        /// Returns the Unicode file encoding if there are proper byte order marks;
-        /// otherwise guesses if this is a UTF-8 (no BOM) file or ANSI file.
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
-        public static Encoding IdentifyFileCharset(string fileName)
-        {
-            int i;
-            int oddNullCount = 0;   // Bigger on Big Endian UTF-16
-            int evenNullCount = 0;  // Bigger on Little Endian UTF-16
-            int e2Count = 0;
-            bool odd = true;
-            Encoding result = Encoding.GetEncoding(1252);
-            try
-            {
-                FileStream fs;
-                fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-                // use one byte per character encoding for reading dump data
-                BinaryReader br = new BinaryReader(fs, new ASCIIEncoding());
-                byte[] chunk;
-
-                // read one chunk
-                // chunk.Length will be 0 if end of file is reached.
-                chunk = br.ReadBytes(CHUNK_SIZE);
-                if (chunk.Length > 4)
-                {
-                    if ((chunk[0] == 0xFF) && (chunk[1] == 0xFE))
-                    {
-                        result = Encoding.Unicode;
-                        if ((chunk[2] == 0) && (chunk[3] == 0))
-                            result = Encoding.UTF32;
-                    }
-                    else if ((chunk[0] == 0xFE) && (chunk[1] == 0xFF))
-                    {
-                        result = Encoding.BigEndianUnicode;
-                    }
-                    else if ((chunk[0] == 0xEF) && (chunk[1] == 0xBB) && (chunk[2] == 0xBF))
-                    {
-                        result = Encoding.UTF8;
-                    }
-                    else
-                    {
-                        for (i = 0; i < (chunk.Length - 1); i++)
-                        {
-                            if (chunk[i] == 0)
-                            {
-                                if (odd)
-                                    oddNullCount++;
-                                else
-                                    evenNullCount++;
-                            }
-                            else if ((((chunk[i] & 0xE0) == 0xC0) && ((chunk[i+1] & 0xC0) == 0x80)) ||
-                                (((chunk[i] & 0xF0) == 0xE0) && ((chunk[i+1] & 0xC0) == 0x80)) ||
-                                (((chunk[i] & 0xF8) == 0xF0) && ((chunk[i+1] & 0xC0) == 0x80)) ||
-                                (((chunk[i] & 0xFC) == 0xF8) && ((chunk[i+1] & 0xC0) == 0x80)) ||
-                                (((chunk[i] & 0xFE) == 0xFC) && ((chunk[i+1] & 0xC0) == 0x80)))
-                            {
-                                e2Count++;
-                            }
-                            odd = !odd;
-                        }
-                        if (e2Count >= oddNullCount + evenNullCount)
-                            result = Encoding.UTF8;
-                        else if (oddNullCount > (evenNullCount * 2))
-                            result = Encoding.BigEndianUnicode;
-                        else if (evenNullCount > (oddNullCount * 2))
-                            result = Encoding.Unicode;
-                    }
-                }
-                fs.Close();
-            }
-            catch (Exception err)
-            {
-                result = Encoding.UTF8;
-                Logit.WriteLine("Cannot read " + fileName + "\r\n" + err.Message +
-                    "\r\n" + err.StackTrace);
-            }
-            // Logit.WriteLine("Identified " + fileName + " as " + result.ToString());
-            return result;
-        }
-    }
-
 
 	/// <summary>
 	/// This class provides a consistent way to write USFM files.
@@ -1303,73 +1213,12 @@ namespace WordSend
 		public string attribute; // i. e. chapter or verse number, footnote marker
 		public string text;	// Text up to the next \.
 		public bool isEndTag;	// True for explicit end tags (tag ends in *)
-		public TagRecord info;  // Information about this particular tag
-
-        // The following state variables are used for input context validation on read.
-        private static string prevTag = String.Empty;
-        private static string expectedEndTag = String.Empty;
-        private static string tagToTerminate = String.Empty;
-        private static string currentBook = String.Empty;
-        private static string currentChapter = String.Empty;
-        private static string currentVerse = String.Empty;
+		public TagRecord info;
 
 		public SfmObject()
 		{
-			tag = attribute = text = String.Empty;
-            tagToTerminate = String.Empty;
-            // currentBook = currentChapter = currentVerse = String.Empty;
+			tag = attribute = text = "";
 		}
-
-        private void validate()
-        {
-            bool endFound = false;
-
-            if (tag.Length < 1)
-                return;  // Nothing to do.
-
-            // Track where we are.
-            if ((info.kind != null) && (info.kind.CompareTo("meta") == 0))
-            {
-                if (tag.CompareTo("id") == 0)
-                {
-                    currentBook = attribute;
-                    currentChapter = "0";
-                    currentVerse = "0";
-                }
-                else if (tag.CompareTo("c") == 0)
-                {
-                    currentChapter = attribute;
-                    currentVerse = "0";
-                }
-                else if (tag.CompareTo("v") == 0)
-                    currentVerse = attribute;
-            }
-
-            // Check to see if we have properly ended a tag range.
-            if ((expectedEndTag.Length > 0) && (tagToTerminate.Length > 0))
-            {
-                if ((isEndTag && (tag.CompareTo(tagToTerminate) == 0)) || (expectedEndTag.Contains(tag)))
-                {
-                    tagToTerminate = expectedEndTag = String.Empty;
-                    endFound = true;
-                    // Logit.WriteLine(tagToTerminate + " properly terminated with " + tag + "*");
-                }
-                else if ((info.kind != null) && (info.kind.CompareTo("meta") == 0) && (expectedEndTag.Length > 0) && (info.tag.Length > 0))
-                {
-                    Logit.WriteLine("UNTERMINATED TAG: " + tagToTerminate + " before " +
-                        currentBook + " " + currentChapter + ":" + currentVerse);
-                }
-            }
-
-
-            // Set up for next check
-            prevTag = tag;
-            if ((!endFound) && (!isEndTag) && (info.endTag.Length > 0) && (info.kind.CompareTo("note") == 0))
-            {
-                tagToTerminate = tag;
-                expectedEndTag = info.endTag;
-            }
-        }
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
@@ -1390,12 +1239,11 @@ namespace WordSend
 			} while (((char)ch != '\\') && (ch != -1));
 			if (ch == -1)	// eof
 				return false;	// Failed to find \.
-			// Found \. Copy characters to tag until white space or anything after * or anything before \.
+			// Found \. Copy characters to tag until white space or anything after *.
 			do
 			{
 				ch = sr.Read();
-                lookAhead = sr.Peek();
-                if ((ch != -1) && (!Char.IsWhiteSpace((char)ch)) && (!Char.IsDigit((char)ch)))
+				if ((ch != -1) && (!Char.IsWhiteSpace((char)ch)) && (!Char.IsDigit((char)ch)))
 				{
 					sb.Append((char)ch);
 				}
@@ -1404,7 +1252,7 @@ namespace WordSend
 					isEndTag = true;
 				}
 			} while ((ch != -1) && (!Char.IsWhiteSpace((char)ch)) &&
-				(!isEndTag) && !Char.IsDigit((char)ch) && (char)lookAhead != '\\');
+				(!isEndTag) && !Char.IsDigit((char)ch));
 			tag = sb.ToString();
 			info = SFConverter.scripture.tags.info(tag);
 			// Special logic to disambiguate \k # in helps vs \k...\k* in canon.
@@ -1412,9 +1260,7 @@ namespace WordSend
 				info = SFConverter.scripture.tags.info("keyword");
 			if ((info == null) || (info.tag == ""))
 			{
-                Logit.WriteLine("ERROR! Unrecognized marker in " + fileName + 
-                    ": [\\" + tag + "] after " + currentBook + " " + currentChapter +
-                    ":" + currentVerse);
+				Logit.WriteLine("ERROR! Unrecognized marker in "+fileName+": \\"+tag);
 			}
 			sb.Length = 0;
 			level = 0;
@@ -1466,12 +1312,11 @@ namespace WordSend
 					sb.Length = 0;
 				}
 				lookAhead = sr.Peek();
-				// Collapse all contiguous white space characters after a tag to one space (i.e. space CR LF to space)
-				while (Char.IsWhiteSpace((char)ch) && Char.IsWhiteSpace((char)lookAhead) && (ch != -1))
+				// Discard all contiguous white space characters after a tag (i.e. space CR LF)
+				while (Char.IsWhiteSpace((char)ch) && ((char)lookAhead != '\\') && (ch != -1))
 				{
 					ch = sr.Read();
 					lookAhead = sr.Peek();
-                    // No need to bail out here due to lookahead check to make sure we don't kill the only space
 				}
 			}
 			// Read text up to next \, collapsing all white space to a single space.
@@ -1539,7 +1384,6 @@ namespace WordSend
 					SFConverter.scripture.tags.inCanon = true;
 				}
 			}
-            validate();
 			return true;
 		}
 	}
@@ -2335,12 +2179,7 @@ namespace WordSend
 		protected StreamReader sr;
 		protected XmlTextWriter xw;
 
-        public void ReadUSFM(string fileName)
-        {
-            ReadUSFM(fileName, null);
-        }
-
-		public void ReadUSFM(string fileName, Encoding textEncoding)
+		public void ReadUSFM(string fileName)
 		{
 			bool foundAnSfm;
 			SfmObject sfm;
@@ -2349,9 +2188,7 @@ namespace WordSend
 			int  vs = 0;
 
 			Logit.WriteLine("Reading "+ fileName);
-            if (textEncoding == null)
-                textEncoding = fileHelper.IdentifyFileCharset(fileName);
-			sr = new StreamReader(fileName, textEncoding);
+			sr = new StreamReader(fileName, System.Text.Encoding.UTF8);
 			book = new BibleBook();
 			// Read in the book, one SFM record at a time. We'll sort out the
 			// symantics and hierarchy once the book is in memory.
@@ -3924,13 +3761,7 @@ namespace WordSend
 							default:
                                 // in WriteUSFXBook
 								WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, sf.text);
-                                if (inFootnote)
-                                {
-                                    Logit.WriteLine("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
-                                        ":" + verseMark);
-                                }
 								break;
-
 						}
 							break;
 						case "note":
@@ -5058,9 +4889,8 @@ namespace WordSend
 				{
 					Directory.CreateDirectory(outDir);
 				}
-                Encoding WesternEuropean = Encoding.GetEncoding(1252);
-				bblFile = new StreamWriter(Path.Combine(outDir, outFileName + "_bbl.csv"), false, WesternEuropean);
-				cmtFile = new StreamWriter(Path.Combine(outDir, outFileName + "_cmt.csv"), false, WesternEuropean);
+				bblFile = new StreamWriter(Path.Combine(outDir, outFileName + "_bbl.csv"), false, System.Text.Encoding.ASCII);
+				cmtFile = new StreamWriter(Path.Combine(outDir, outFileName + "_cmt.csv"), false, System.Text.Encoding.ASCII);
 				usfxFile.Read();
 				while (!usfxFile.EOF)
 				{
@@ -5429,13 +5259,16 @@ namespace WordSend
         {
             StringBuilder sb = new StringBuilder("<div class=\"navButtons\">\r\n");
             if (bookListIndex >= 0)
-            {   
-                sb.Append(String.Format("<a href=\"index.htm\">{0}</a> &nbsp; {1} {2}",
-                    langName, bookRecord.vernacularHeader, currentChapter));
-                sb.Append("</div>\r\n<div class=\"navChapters\">");
+            {
                 if (previousFileName.Length > 0)
-                    sb.Append(String.Format("<a href=\"{0}\">&nbsp;&nbsp;&nbsp;&lt;&nbsp;&nbsp;&nbsp;</a>\r\n",
+                    sb.Append(String.Format("<a href=\"{0}\">&lt;&lt;</a>\r\n",
                         Path.GetFileName(previousFileName)/*, previousChapterText*/));
+                sb.Append(String.Format("&nbsp;&nbsp; <a href=\"index.htm\">{0}</a> {1} {2}&nbsp;&nbsp; ",
+                    langName, bookRecord.vernacularHeader, currentChapter));
+                if (nextFileName.Length > 0)
+                    sb.Append(String.Format("<a href=\"{0}\">&gt;&gt;</a>",
+                        Path.GetFileName(nextFileName)/*, nextChapterText*/));
+                sb.Append("</div>\r\n<div class=\"navChapters\">");
                 string formatString = "00";
                 if (currentBookAbbrev.CompareTo("PSA") == 0)
                     formatString = "000";
@@ -5452,10 +5285,6 @@ namespace WordSend
                         sb.Append(String.Format(" <a href=\"{0}\">{1}</a>",
                             String.Format("{0}{1}.htm", currentBookAbbrev, i.ToString(formatString)), i));
                 }
-                if (nextFileName.Length > 0)
-                    sb.Append(String.Format(" <a href=\"{0}\">&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;</a>",
-                        Path.GetFileName(nextFileName)/*, nextChapterText*/));
-
             }
             else
             {
@@ -5811,8 +5640,7 @@ namespace WordSend
         /// <param name="footerHtml">HTML for footer "fine print" text</param>
         /// <returns>true iff the conversion succeeded</returns>
         public bool ConvertUsfxToHtml(string usfxName, string htmlDir, string languageName, string languageId,
-            string chapterLabelName, string psalmLabelName, string copyrightLink, string homeLink, string footerHtml,
-            string indexHtml, string licenseHtml)
+            string chapterLabelName, string psalmLabelName, string copyrightLink, string homeLink, string footerHtml)
         {
             bool result = false;
             bool inUsfx = false;
@@ -6080,12 +5908,9 @@ namespace WordSend
                 }
                 usfx.Close();
 
-                // Index page
                 currentChapter = "";
                 chapterNumber = 0;
                 bookListIndex = -1;
-                currentBookAbbrev = string.Empty;
-                currentBookHeader = string.Empty;
                 OpenHtmlFile("index.htm");
                 bookListIndex = 0;
                 bookRecord = (BibleBookRecord)bookList[0];
@@ -6093,29 +5918,10 @@ namespace WordSend
                     chapFormat = "000";
                 else
                     chapFormat = "00";
-                htm.WriteLine("<div class=\"toc\"><a href=\"{0}{1}.htm\">Go!</a></div>",
+                htm.WriteLine("<div class=\"toc\"><a href=\"{0}{1}.htm\">Read the Holy Bible now. / Ritim Buk Baibel nau yet.</a></div>",
                     bookRecord.tla, one.ToString(chapFormat));
-                htm.WriteLine(indexHtml, langId);
-                htm.WriteLine("<p>&nbsp;<br/><br/></p>");
-                string today = DateTime.Now.ToString("d MMM yyyy");
-                htm.WriteLine("<p>HTML generated {0}</p>", today);
-                CloseHtmlFile();
-
-                // Copyright page
-                currentBookAbbrev = "CPR";
-                bookListIndex = -1;
-                OpenHtmlFile("copyright.htm");
-                bookListIndex = 0;
-                bookRecord = (BibleBookRecord)bookList[0];
-                if (bookRecord.tla.CompareTo("PSA") == 0)
-                    chapFormat = "000";
-                else
-                    chapFormat = "00";
-                htm.WriteLine("<div class=\"toc\"><a href=\"{0}{1}.htm\">Go!</a></div>",
-                    bookRecord.tla, one.ToString(chapFormat));
-                htm.WriteLine(licenseHtml);
-                htm.WriteLine("<p>&nbsp;<br/><br/></p>");
-                htm.WriteLine("<p>HTML generated {0}</p>", today);
+                htm.WriteLine("<div class=\"toc1\"><a href=\"http://pngscriptures.org/cgi-bin/lookup.cgi/{0}\">downloads and language information / kisim fail</div>", langId);
+                htm.WriteLine("<div class=\"toc1\"><a href=\"http://pngscriptures.org/cgi-bin/lookup.cgi\">Other languages / Narapela tok ples</a></div>");
                 CloseHtmlFile();
 
                 // Pass 2: content generation
@@ -6549,12 +6355,7 @@ namespace WordSend
             return result;
         }
 
-        static public void ProcessFilespec(string fileSpec)
-        {
-            ProcessFilespec(fileSpec, null);
-        }
-
-		static public void ProcessFilespec(string fileSpec, Encoding textEncoding)
+		static public void ProcessFilespec(string fileSpec)
 		{
 			string dirPath = Path.GetDirectoryName(fileSpec);
 			if ((dirPath == null) || (dirPath == ""))
@@ -6565,7 +6366,7 @@ namespace WordSend
 			DirectoryInfo dir = new DirectoryInfo(dirPath);
 			foreach (FileInfo f in dir.GetFiles(fileName))
 			{
-				SFConverter.scripture.ReadUSFM(f.FullName, textEncoding);
+				SFConverter.scripture.ReadUSFM(f.FullName);
 			}
 		}
 
