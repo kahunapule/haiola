@@ -129,7 +129,7 @@ namespace WordSend
                     }
                     catch
                     {
-                        Logit.WriteLine("Bad input format in file " + fileName + "; using defaults.");
+                        Logit.WriteError("Bad input format in file " + fileName + "; using defaults.");
                     }
 				}
 				finally
@@ -234,7 +234,7 @@ namespace WordSend
 			}
 			catch
 			{
-				Logit.WriteLine("Can't write to "+fileName);
+				Logit.WriteError("Can't write to "+fileName);
 			}
 			return result;
 		}
@@ -389,6 +389,13 @@ namespace WordSend
 		public static bool useConsole;
 //		public static System.Windows.Forms.ListBox lstBox;
 		protected static System.IO.StreamWriter sw;
+        public static bool loggedError = false;
+
+        public static void WriteError(string s)
+        {
+            WriteLine(s);
+            loggedError = true;
+        }
 
 		public static void WriteLine(string s)
 		{
@@ -491,13 +498,70 @@ namespace WordSend
                                 else
                                     evenNullCount++;
                             }
-                            else if ((chunk[i] == 0xE2) && (chunk[i+1] == 0x80))
+                            // UTF-8 encoding of any Unicode code point greater than 127 fit the
+                            // following pattern for the first 2 of 2, 3, 4, 5, or 6 bytes.
+                            // If this pattern isn't followed, it isn't UTF-8. If it is found,
+                            // it probably is UTF-8.
+
+                            if ((chunk[i] & 0xE0) == 0xC0)
                             {
-                                e2Count++;
+                                if ((chunk[i+1] & 0xC0) == 0x80)
+                                {
+                                    e2Count++;
+                                }
+                                else
+                                {
+                                    e2Count = -1000;
+                                    i = chunk.Length;
+                                }
                             }
+                            else if ((i < chunk.Length - 2) && ((chunk[i] & 0xF0) == 0xE0))
+                                if (((chunk[i+1] & 0xC0) == 0x80) && ((chunk[i+2] & 0xC0) == 0x80))
+                                {
+                                    e2Count++;
+                                }
+                                else
+                                {
+                                    e2Count = -1000;
+                                    i = chunk.Length;
+                                }
+                            else if ((i < chunk.Length - 3) && ((chunk[i] & 0xF8) == 0xF0))
+                                if (((chunk[i + 1] & 0xC0) == 0x80) && ((chunk[i + 2] & 0xC0) == 0x80) &&
+                                    ((chunk[i + 3] & 0xC0) == 0x80))
+                                {
+                                    e2Count++;
+                                }
+                                else
+                                {
+                                    e2Count = -1000;
+                                    i = chunk.Length;
+                                }
+                            else if ((i < chunk.Length - 4) && ((chunk[i] & 0xFC) == 0xF8))
+                                if (((chunk[i + 1] & 0xC0) == 0x80) && ((chunk[i + 2] & 0xC0) == 0x80) &&
+                                    ((chunk[i + 3] & 0xC0) == 0x80) && ((chunk[i + 4] & 0xC0) == 0x80))
+                                {
+                                    e2Count++;
+                                }
+                                else
+                                {
+                                    e2Count = -1000;
+                                    i = chunk.Length;
+                                }
+                            else if ((i < chunk.Length - 5) && ((chunk[i] & 0xFE) == 0xFC))
+                                if (((chunk[i + 1] & 0xC0) == 0x80) && ((chunk[i + 2] & 0xC0) == 0x80) &&
+                                    ((chunk[i + 3] & 0xC0) == 0x80) && ((chunk[i + 4] & 0xC0) == 0x80) &&
+                                    ((chunk[i + 5] & 0xC0) == 0x80))
+                                {
+                                    e2Count++;
+                                }
+                                else
+                                {
+                                    e2Count = -1000;
+                                    i = chunk.Length;
+                                }
                             odd = !odd;
                         }
-                        if (e2Count >= oddNullCount + evenNullCount + 1)
+                        if (e2Count >= oddNullCount + evenNullCount)
                             result = Encoding.UTF8;
                         else if (oddNullCount > (evenNullCount * 2))
                             result = Encoding.BigEndianUnicode;
@@ -510,7 +574,7 @@ namespace WordSend
             catch (Exception err)
             {
                 result = Encoding.UTF8;
-                Logit.WriteLine("Cannot read " + fileName + "\r\n" + err.Message +
+                Logit.WriteError("Cannot read " + fileName + "\r\n" + err.Message +
                     "\r\n" + err.StackTrace);
             }
             // Logit.WriteLine("Identified " + fileName + " as " + result.ToString());
@@ -573,7 +637,7 @@ namespace WordSend
 		{
 			if (!fileIsOpen)
 			{
-				Logit.WriteLine("Error: attempt to write to closed file.");
+				Logit.WriteError("Error: attempt to write to closed file.");
 				Logit.WriteLine("\\"+marker+level+" "+content);
 				return;
 			}
@@ -634,7 +698,7 @@ namespace WordSend
 
 			if (!fileIsOpen)
 			{
-				Logit.WriteLine("Error: attempt to write to closed file.");
+				Logit.WriteError("Error: attempt to write to closed file.");
 				Logit.WriteLine(s);
 				return;
 			}
@@ -863,7 +927,7 @@ namespace WordSend
 								}
 								catch (System.Exception ex)
 								{
-									Logit.WriteLine(ex.ToString());
+									Logit.WriteError(ex.ToString());
 									Logit.WriteLine("Error found in line "+xr.LineNumber.ToString()+" of "+fname);
 								}
 								break;
@@ -1251,7 +1315,7 @@ namespace WordSend
 							bkRecord.verseCount = new int[bkRecord.numChapters+1];
 							if ((bkRecord.sortOrder < 0) || (bkRecord.sortOrder >= BibleBookInfo.MAXNUMBOOKS))
 							{
-								Logit.WriteLine("ERROR: bad sort order number:"+bkRecord.sortOrder.ToString());
+								Logit.WriteError("ERROR: bad sort order number:"+bkRecord.sortOrder.ToString());
 								bkRecord.sortOrder = 0;
 							}
 							break;
@@ -1352,7 +1416,7 @@ namespace WordSend
                 }
                 else if ((info.kind != null) && (info.kind.CompareTo("meta") == 0) && (expectedEndTag.Length > 0) && (info.tag.Length > 0))
                 {
-                    Logit.WriteLine("UNTERMINATED TAG: " + tagToTerminate + " before " +
+                    Logit.WriteError("UNTERMINATED TAG: " + tagToTerminate + " before " +
                         currentBook + " " + currentChapter + ":" + currentVerse);
                 }
             }
@@ -1408,7 +1472,7 @@ namespace WordSend
 				info = SFConverter.scripture.tags.info("keyword");
 			if ((info == null) || (info.tag == ""))
 			{
-                Logit.WriteLine("ERROR! Unrecognized marker in " + fileName + 
+                Logit.WriteError("ERROR! Unrecognized marker in " + fileName + 
                     ": [\\" + tag + "] after " + currentBook + " " + currentChapter +
                     ":" + currentVerse);
 			}
@@ -1478,6 +1542,12 @@ namespace WordSend
             // 
             if (tag == "fig")
             {
+                if ((sb.ToString().EndsWith("\fi") && (ch == 'g') && (lookAhead == '*')))
+                {
+                    barCount += 7;
+                    Logit.WriteError("Bad figure markup | count " + sb.ToString() + "g*" + " near " +
+                        currentBook + " " + currentChapter + ":" + currentVerse);
+                }
                 while ((ch != -1) && ((ch != '\\') || (barCount < 2)))
                 {
                     if (Char.IsWhiteSpace((char)ch))
@@ -1903,7 +1973,7 @@ namespace WordSend
 				else
 				{
 					stackPointer = STACKSIZE - 1;
-					Logit.WriteLine("WARNING: Too many stacked styles! Reverting to flat mode!");
+					Logit.WriteError("WARNING: Too many stacked styles! Reverting to flat mode!");
 					forbidStackedStyles = true;
 					result = true;
 				}
@@ -2344,7 +2414,6 @@ namespace WordSend
             currentChapter = 0;
 			int  vs = 0;
 
-			Logit.WriteLine("Reading "+ fileName);
             if (textEncoding == null)
                 textEncoding = fileHelper.IdentifyFileCharset(fileName);
 			sr = new StreamReader(fileName, textEncoding);
@@ -2397,7 +2466,7 @@ namespace WordSend
                             book.bookCode = book.bookCode.Remove(book.bookCode.IndexOfAny(".;,:-".ToCharArray()));
                             if (book.bookCode.Length > 3)
                                 book.bookCode = book.bookCode.Substring(0, 3);
-                            Logit.WriteLine("Warning: shortened book code from '" + sfm.attribute + "' to '" + book.bookCode + "'");
+                            Logit.WriteError("Warning: shortened book code from '" + sfm.attribute + "' to '" + book.bookCode + "'");
                             sfm.attribute = book.bookCode;
                         }
 						bookIndex = ((BibleBookRecord)bkInfo.books[book.bookCode]).sortOrder;
@@ -2422,7 +2491,7 @@ namespace WordSend
 				{
                     if (sfm.tag == "id")
                     {
-                        Logit.WriteLine("ERROR in \\id line, invalid book code: '" + sfm.attribute + "'");
+                        Logit.WriteError("ERROR in \\id line, invalid book code: '" + sfm.attribute + "'");
                     }
 					// never mind: ignore non-numeric chapter and verse numbers. May be verse bridge.
 				}
@@ -2562,7 +2631,7 @@ namespace WordSend
 			}
 			catch (System.Exception ex)
 			{
-				Logit.WriteLine(ex.ToString());
+				Logit.WriteError(ex.ToString());
 			}
 		}
 
@@ -3340,7 +3409,7 @@ namespace WordSend
 				bkRec = (BibleBookRecord)bkInfo.bookArray[bknum];
 				if (bkRec == null)
 				{
-					Logit.WriteLine("ERROR: BibleBookInfo array item "+bknum.ToString()+" missing.");
+					Logit.WriteError("ERROR: BibleBookInfo array item "+bknum.ToString()+" missing.");
 					xw.WriteAttributeString("sortOrder", bknum.ToString());
 				}
 				sf = book.FirstSfm();
@@ -3365,19 +3434,19 @@ namespace WordSend
 						case "paragraph":
                             if (inFootnote)
                             {
-                                Logit.WriteLine("ERROR: paragraph tag " + sf.tag + " is not allowed in a footnote. " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                                Logit.WriteError("ERROR: paragraph tag " + sf.tag + " is not allowed in a footnote. " + book.bookCode + " " + chapterMark + ":" + verseMark);
                                 EndFootnote();
                                 fatalError = true;
                             }
                             if (inEndnote)
                             {
-                                Logit.WriteLine("ERROR: paragraph tag " + sf.tag + " is not allowed in an endnote." + book.bookCode + " " + chapterMark + ":" + verseMark);
+                                Logit.WriteError("ERROR: paragraph tag " + sf.tag + " is not allowed in an endnote." + book.bookCode + " " + chapterMark + ":" + verseMark);
                                 EndEndnote();
                                 fatalError = true;
                             }
                             if (inXref)
                             {
-                                Logit.WriteLine("ERROR: paragraph tag " + sf.tag + " is not allowed in a crossreference." + book.bookCode + " " + chapterMark + ":" + verseMark);
+                                Logit.WriteError("ERROR: paragraph tag " + sf.tag + " is not allowed in a crossreference." + book.bookCode + " " + chapterMark + ":" + verseMark);
                                 EndXref();
                                 fatalError = true;
                             }
@@ -3403,19 +3472,19 @@ namespace WordSend
 						case "meta":
                             if (inFootnote)
                             {
-                                Logit.WriteLine("ERROR: tag " + sf.tag + " is not allowed in a footnote." + book.bookCode + " " + chapterMark + ":" + verseMark);
+                                Logit.WriteError("ERROR: tag " + sf.tag + " is not allowed in a footnote." + book.bookCode + " " + chapterMark + ":" + verseMark);
                                 EndFootnote();
                                 fatalError = true;
                             }
                             if (inEndnote)
                             {
-                                Logit.WriteLine("ERROR: tag " + sf.tag + " is not allowed in an endnote." + book.bookCode + " " + chapterMark + ":" + verseMark);
+                                Logit.WriteError("ERROR: tag " + sf.tag + " is not allowed in an endnote." + book.bookCode + " " + chapterMark + ":" + verseMark);
                                 fatalError = true;
                                 EndEndnote();
                             }
                             if (inXref)
                             {
-                                Logit.WriteLine("ERROR: tag " + sf.tag + " is not allowed in a crossreference." + book.bookCode + " " + chapterMark + ":" + verseMark);
+                                Logit.WriteError("ERROR: tag " + sf.tag + " is not allowed in a crossreference." + book.bookCode + " " + chapterMark + ":" + verseMark);
                                 EndXref();
                                 fatalError = true;
                             }
@@ -3632,7 +3701,8 @@ namespace WordSend
                                     badsf += sf.level.ToString();
                                 if (sf.attribute != "")
                                     badsf += " " + sf.attribute;
-                                Logit.WriteLine("ERROR: UNRECOGNIZED TAG " + badsf + " IN " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                                Logit.WriteError("ERROR: UNRECOGNIZED TAG " + badsf + " IN " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                                fatalError = true;
                                 WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, null);
                                 WriteWordMLTextRun(sf.text);
                                 sfmErrorsFound = true;
@@ -3817,7 +3887,8 @@ namespace WordSend
                                 badsf += sf.level.ToString();
                             if (sf.attribute != "")
                                 badsf += " " + sf.attribute;
-                            Logit.WriteLine("ERROR: UNRECOGNIZED TAG " + badsf + " IN " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                            Logit.WriteError("ERROR: UNRECOGNIZED TAG " + badsf + " IN " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                            fatalError = true;
 							WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, null);
                             WriteWordMLTextRun(sf.text);
                             sfmErrorsFound = true;
@@ -3845,7 +3916,8 @@ namespace WordSend
 				bkRec = (BibleBookRecord)bkInfo.bookArray[bknum];
 				if (bkRec == null)
 				{
-					Logit.WriteLine("ERROR: BibleBookInfo array item "+bknum.ToString()+" missing.");
+					Logit.WriteError("ERROR: BibleBookInfo array item "+bknum.ToString()+" missing.");
+                    fatalError = true;
 					xw.WriteAttributeString("sortOrder", bknum.ToString());
 				}
 				sf = book.FirstSfm();
@@ -3922,8 +3994,9 @@ namespace WordSend
 								WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, sf.text);
                                 if (inFootnote)
                                 {
-                                    Logit.WriteLine("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
+                                    Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
                                         ":" + verseMark);
+                                    fatalError = true;
                                 }
 								break;
 
@@ -4006,7 +4079,8 @@ namespace WordSend
                             }
                             else
                             {
-                                Logit.WriteLine("ERROR: INVALID FIGURE TAG \\" + sf.tag);
+                                Logit.WriteError("ERROR: INVALID FIGURE TAG \\" + sf.tag);
+                                fatalError = true;
                                 xw.WriteString("\\" + sf.tag + " " + sf.text);
                             }
                             break;
@@ -4143,7 +4217,7 @@ namespace WordSend
 				}
 				catch (System.Exception ex)
 				{
-					Logit.WriteLine(ex.ToString());
+					Logit.WriteError(ex.ToString());
 					Logit.WriteLine("Failed to read crossreferences from "+xrefName);
 					return;
 				}
@@ -4248,7 +4322,7 @@ namespace WordSend
 
 			catch (System.Exception ex)
 			{
-				Logit.WriteLine(ex.ToString());
+				Logit.WriteError(ex.ToString());
 				Logit.WriteLine("Failed to parse seed file "+templateName);
 				return;
 			}
@@ -4299,7 +4373,7 @@ namespace WordSend
 			}
 			catch (System.Exception ex)
 			{
-				Logit.WriteLine(ex.ToString());
+				Logit.WriteError(ex.ToString());
 				Logit.WriteLine("Failed to open seed file "+templateName);
 				return;
 			}
@@ -4433,7 +4507,7 @@ namespace WordSend
 			}
 			catch (System.Exception ex)
 			{
-				Logit.WriteLine(ex.ToString());
+				Logit.WriteError(ex.ToString());
 				Logit.WriteLine("Failed to write to output file "+fileName);
 				xr.Close();
 				try
@@ -4466,7 +4540,6 @@ namespace WordSend
                 xw.Formatting = Formatting.Indented;
 
 				xw.WriteStartDocument();
-				Logit.WriteLine("Writing USFX data only to "+fileName);
 				usfxNestLevel = 0;
 				inUsfxParagraph = false;
 				usfxStyleCount = 0;
@@ -4483,12 +4556,12 @@ namespace WordSend
 				xw.WriteEndElement();	// ns+usfx
 				xw.WriteEndDocument();
 				xw.Close();
-				Logit.WriteLine(fileName+" written.");
+//				Logit.WriteLine(fileName+" written.");
 			}
 			catch (System.Exception ex)
 			{
-				Logit.WriteLine(ex.ToString());
-				Logit.WriteLine("Failed to write to output file "+fileName);
+				Logit.WriteError(ex.ToString());
+				Logit.WriteLine("Failed to write USFX to output file "+fileName);
 			}
 		}
 
@@ -4703,7 +4776,7 @@ namespace WordSend
 										// ignore these
 										break;
 									default:
-										Logit.WriteLine("Unrecognized attribute: "+usfxFile.Name+"="+usfxFile.Value);
+										Logit.WriteError("Unrecognized attribute: "+usfxFile.Name+"="+usfxFile.Value);
 										break;
 								}
 							}
@@ -4943,7 +5016,7 @@ namespace WordSend
 			}
 			catch (System.Exception ex)
 			{
-				Logit.WriteLine("Conversion of USFX file "+inFileName+" to USFM files in "+outDir+" (named"+outFileName+") FAILED.");
+				Logit.WriteError("Conversion of USFX file "+inFileName+" to USFM files in "+outDir+" (named"+outFileName+") FAILED.");
 				Logit.WriteLine(ex.ToString());
 			}
 		}
@@ -5105,7 +5178,7 @@ namespace WordSend
 										// ignore these
 										break;
 									default:
-										Logit.WriteLine("Unrecognized attribute: "+usfxFile.Name+"="+usfxFile.Value);
+										Logit.WriteError("Unrecognized attribute: "+usfxFile.Name+"="+usfxFile.Value);
 										break;
 								}
 							}
@@ -5326,7 +5399,7 @@ namespace WordSend
 			}
 			catch (System.Exception ex)
 			{
-				Logit.WriteLine("Conversion of USFX file "+inFileName+" to USFM files in "+outDir+" (named"+outFileName+") FAILED.");
+				Logit.WriteError("Conversion of USFX file "+inFileName+" to USFM files in "+outDir+" (named"+outFileName+") FAILED.");
 				Logit.WriteLine(ex.ToString());
 			}
 		}
@@ -5420,6 +5493,7 @@ namespace WordSend
         }
 
         private string navButtonCode;
+        protected Boolean eatSpace = false;
 
         protected void WriteNavButtons()
         {
@@ -5587,8 +5661,9 @@ namespace WordSend
                 preVerse = new StringBuilder(String.Empty);
                 inPreverse = false;
             }
-            htm.Write(" <span class=\"verse\"> {0}</span><a name=\"C{1}V{2}\">&nbsp;</a>",
+            htm.Write(" <span class=\"verse\"> <a name=\"C{1}V{2}\">{0}&nbsp;</a></span>",
                 currentVersePublished, chapterNumber.ToString(), verseNumber.ToString());
+            eatSpace = true;
         }
 
         /// <summary>
@@ -5660,6 +5735,11 @@ namespace WordSend
                 {
                     footnotesToWrite.Append(text);
                     // Also written to main document section for pop-up.
+                }
+                if (eatSpace)
+                {
+                    text = text.TrimStart();
+                    eatSpace = false;
                 }
                 WriteHtml(text);
             }
@@ -5840,7 +5920,7 @@ namespace WordSend
                     usfx.Close();
                 if ((htmlDir == null) || (htmlDir.Length < 1))
                 {
-                    Logit.WriteLine("HTML output directory must be specified.");
+                    Logit.WriteError("HTML output directory must be specified.");
                     return false;
                 }
 
@@ -5913,6 +5993,11 @@ namespace WordSend
                                             "0", usfx.Value.Trim()));
                                     }
                                     hasContentsPage = true;
+                                }
+                                else
+                                {
+                                    if (bookRecord.vernacularName.Length < 1)
+                                        bookRecord.vernacularName = vernacularLongTitle;
                                 }
                                 break;
                             case "h":
@@ -6070,6 +6155,10 @@ namespace WordSend
                                     }
                                     verseNumber++;
                                 }
+                                break;
+                            case "mt":
+                            case "h":
+                                bookRecord.vernacularHeader = currentBookHeader;
                                 break;
                         }
                     }
@@ -6504,7 +6593,7 @@ namespace WordSend
             }
             catch (Exception ex)
             {
-                Logit.WriteLine("Error converting " + usfxName + " to html in " + htmlDir + ": " + ex.Message);
+                Logit.WriteError("Error converting " + usfxName + " to html in " + htmlDir + ": " + ex.Message);
                 Logit.WriteLine(ex.StackTrace);
                 Logit.WriteLine(currentBookAbbrev + " " + currentChapter + ":" + currentVerse);
                 result = false;

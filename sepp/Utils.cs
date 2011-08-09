@@ -58,6 +58,21 @@ namespace sepp
 			return filename.Remove(indexOfHyphen, indexOfDot - indexOfHyphen);
 		}
 
+        public static void DeleteDirectory(string destinationPath)
+        {
+            if (Directory.Exists(destinationPath))
+            {
+                try
+                {
+                    Directory.Delete(destinationPath, true);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(String.Format("Unable to delete directory {0}. Details: {1}", destinationPath, ex.Message), "Error");
+                }
+            }
+        }
+
 		/// Create the directory if it does not exist already. Return true if a problem occurs.
 		/// </summary>
 		/// <param name="destinationPath"></param>

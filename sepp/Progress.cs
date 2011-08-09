@@ -30,5 +30,10 @@ namespace sepp
 			set { m_progressBar.Value = value; Update(); }
 		}
 
+        private void m_progressBar_Click(object sender, EventArgs e)
+        {
+
+        }
+
 	}
 }

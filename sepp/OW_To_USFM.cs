@@ -151,26 +151,28 @@ namespace sepp
                 MessageBox.Show("No files found in input directory " + m_inputDirName);
                 return;
             }
-			Progress status = new Progress(inputFileNames.Length);
-			status.Show();
+//			Progress status = new Progress(inputFileNames.Length);
+//			status.Show();
+            Utils.DeleteDirectory(m_outputDirName);
 			Utils.EnsureDirectory(m_outputDirName);
 			int count = 0;
 			foreach (string inputFile in inputFileNames)
 			{
 				string filename = Path.GetFileName(inputFile);
-				if ((!inputFile.EndsWith(".bak")) && (!inputFile.EndsWith("~")))
+                string fileType = Path.GetExtension(filename).ToUpper();
+                if ((fileType != ".BAK") && (fileType != ".LDS") && (fileType != ".SSF") && (fileType != ".DBG") && (fileType != ".STY") && (!inputFile.EndsWith("~")))
 				{
-					status.File = filename;
+//					status.File = filename;
 					if (!Convert(inputFile))
 					{
 						break;
 					}
 				}
                 count++;
-                status.Value = count;
+//                status.Value = count;
             }
 
-			status.Close();
+//			status.Close();
 
 			if (m_ProblemMarkers.Count > 0 || m_seriousErrorCount > 0)
 			{

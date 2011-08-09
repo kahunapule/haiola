@@ -121,8 +121,8 @@ namespace sepp
 			writer.WriteLine("</thead>");
 			writer.WriteLine("</tbody>");
 
-			Progress status = new Progress(files.Count);
-			status.Show();
+//			Progress status = new Progress(files.Count);
+//			status.Show();
 			int count = 0;
 			foreach (string inputFile in files)
 			{
@@ -130,7 +130,7 @@ namespace sepp
 				string keyFileName = Path.ChangeExtension(filename, "xml");
 				if (files.Contains(keyFileName))
 				{
-					status.File = filename;
+					// status.File = filename;
 					string key = m_fileToKey[keyFileName];
 					if (key == null)
 					{
@@ -164,13 +164,13 @@ namespace sepp
 					writer.WriteLine("</tr>");
 
 					count++;
-					status.Value = count;
+//					status.Value = count;
 				}
 			}
 			writer.Write(trailer);
 			writer.Close();
 
-			status.Close();
+//			status.Close();
 		}
 	}
 }

@@ -75,6 +75,12 @@ namespace sepp
 			}
 			m_options = new Options();
 			m_options.LoadOptions(m_optionsPath);
+            /*
+            buttonAllSteps.Enabled = m_button_OW_to_USFM.Enabled =
+                m_button_USFM_to_OSIS.Enabled = UsfxToHtmlButton.Enabled =
+                (m_options.m_languageId.Length < 3);
+             */
+
 		}
 
 		private void SetupPreprocessing(XmlNode node)
@@ -262,7 +268,10 @@ namespace sepp
 		{
             try
             {
+                Reload();
                 buttonAllSteps.Enabled = false;
+                if (m_options.m_languageId.Length < 3)
+                    return;
                 if (OwCheckBox.Checked && (Directory.Exists(Path.Combine(m_workDir, OwDir)) || ConvertingSourceToUsfm()))
                     m_button_Input_to_USFM_Click(this, e);
                 if (UsfxCheckBox.Checked && Directory.Exists(UsfmPath))
@@ -318,10 +327,14 @@ namespace sepp
         {
             UsfmToUsfxButton.Enabled = false;
             Application.DoEvents();
+            Utils.DeleteDirectory(UsfxPath);
+            if (m_options.m_languageId.Length < 3)
+                return;
             Utils.EnsureDirectory(UsfxPath);
-
-            Logit.OpenFile(Path.Combine(UsfxPath, "ConversionReports.txt"));
+            string logFile = Path.Combine(UsfxPath, "ConversionReports.txt");
+            Logit.OpenFile(logFile);
             SFConverter.scripture = new Scriptures();
+            Logit.loggedError = false;
 
             // Read the input USFM files into internal data structures.
             SFConverter.ProcessFilespec(Path.Combine(UsfmPath, "*.usfm"), Encoding.UTF8);
@@ -330,6 +343,13 @@ namespace sepp
             SFConverter.scripture.languageCode = m_options.m_languageId;
             SFConverter.scripture.WriteUSFX(Path.Combine(UsfxPath, "usfx.xml"));
             Logit.CloseFile();
+            if (Logit.loggedError)
+            {
+                StreamReader log = new StreamReader(logFile);
+                string errors = log.ReadToEnd();
+                log.Close();
+                MessageBox.Show(errors, "Errors in " + logFile);
+            }
             UsfmToUsfxButton.Enabled = true;
             Application.DoEvents();
         }
@@ -338,6 +358,9 @@ namespace sepp
         {
             UsfxToHtmlButton.Enabled = false;
             Application.DoEvents();
+            Utils.DeleteDirectory(HtmPath);
+            if (m_options.m_languageId.Length < 3)
+                return;
             Utils.EnsureDirectory(HtmPath);
             usfxToHtmlConverter toHtm = new usfxToHtmlConverter();
             Logit.OpenFile(Path.Combine(UsfxPath, "HTMLConversionReport.txt"));
@@ -365,5 +388,7 @@ namespace sepp
             UsfxToHtmlButton.Enabled = true;
             Application.DoEvents();
         }
+
+
 	}
 }

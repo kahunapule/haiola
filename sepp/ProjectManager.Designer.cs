@@ -75,6 +75,7 @@ namespace sepp
             this.m_filesList.Name = "m_filesList";
             this.m_filesList.Size = new System.Drawing.Size(209, 274);
             this.m_filesList.TabIndex = 22;
+            this.m_filesList.Visible = false;
             // 
             // m_buttonCheckAll
             // 
@@ -84,6 +85,7 @@ namespace sepp
             this.m_buttonCheckAll.TabIndex = 23;
             this.m_buttonCheckAll.Text = "Check all";
             this.m_buttonCheckAll.UseVisualStyleBackColor = true;
+            this.m_buttonCheckAll.Visible = false;
             this.m_buttonCheckAll.Click += new System.EventHandler(this.m_buttonCheckAll_Click);
             // 
             // m_buttonUncheckAll
@@ -94,6 +96,7 @@ namespace sepp
             this.m_buttonUncheckAll.TabIndex = 24;
             this.m_buttonUncheckAll.Text = "Uncheck all";
             this.m_buttonUncheckAll.UseVisualStyleBackColor = true;
+            this.m_buttonUncheckAll.Visible = false;
             this.m_buttonUncheckAll.Click += new System.EventHandler(this.m_buttonUncheckAll_Click);
             // 
             // groupBox1
