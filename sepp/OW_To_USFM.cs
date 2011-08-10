@@ -160,7 +160,10 @@ namespace sepp
 			{
 				string filename = Path.GetFileName(inputFile);
                 string fileType = Path.GetExtension(filename).ToUpper();
-                if ((fileType != ".BAK") && (fileType != ".LDS") && (fileType != ".SSF") && (fileType != ".DBG") && (fileType != ".STY") && (!inputFile.EndsWith("~")))
+                if ((fileType != ".BAK") && (fileType != ".LDS") &&
+                    (fileType != ".SSF") && (fileType != ".DBG") &&
+                    (fileType != ".WDL") && (fileType != ".STY") &&
+                    (!inputFile.EndsWith("~")))
 				{
 //					status.File = filename;
 					if (!Convert(inputFile))
@@ -238,7 +241,9 @@ namespace sepp
             // Instead of asking the user what the character encoding is, we guess that it is either
             // Windows 1252 or UTF-8, and choose which one of those based on the assumed presence of
             // surrogates in UTF-8, unless there is a byte-order mark.
-			StreamReader reader = new StreamReader(inputPath, fileHelper.IdentifyFileCharset(inputPath) /* Encoding.GetEncoding(m_options.InputEncoding) */);
+            Encoding enc = fileHelper.IdentifyFileCharset(inputPath);
+            // MessageBox.Show(inputPath + " is encoded as " + enc.ToString());
+			StreamReader reader = new StreamReader(inputPath, enc /* Encoding.GetEncoding(m_options.InputEncoding) */);
 			input = reader.ReadToEnd() + "\0";
 			reader.Close();
 
