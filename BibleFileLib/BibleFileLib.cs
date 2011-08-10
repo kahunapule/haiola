@@ -561,7 +561,7 @@ namespace WordSend
                                 }
                             odd = !odd;
                         }
-                        if (e2Count >= oddNullCount + evenNullCount)
+                        if (e2Count > oddNullCount + evenNullCount + 1)
                             result = Encoding.UTF8;
                         else if (oddNullCount > (evenNullCount * 2))
                             result = Encoding.BigEndianUnicode;

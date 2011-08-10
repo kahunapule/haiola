@@ -65,7 +65,7 @@ namespace sepp
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(168, 13);
             this.label1.TabIndex = 10;
-            this.label1.Text = "Version 0.99292 of 8 August 2011";
+            this.label1.Text = "Version 0.99294 of 9 August 2011";
             // 
             // btnSetRootDirectory
             // 
