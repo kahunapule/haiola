@@ -1189,7 +1189,7 @@ namespace WordSend
 		public int sortOrder;
 		public int numChapters;
 		public int[] verseCount;
-		public string tla;
+        public string tla;
 		public string osisName;
 		public string name;
 		public string shortName;
@@ -1312,8 +1312,8 @@ namespace WordSend
 						case "numChapters":
 							xr.Read();
 							bkRecord.numChapters = Convert.ToInt32(xr.Value);
-							bkRecord.verseCount = new int[bkRecord.numChapters+1];
-							if ((bkRecord.sortOrder < 0) || (bkRecord.sortOrder >= BibleBookInfo.MAXNUMBOOKS))
+							bkRecord.verseCount = new int[bkRecord.numChapters + 1];
+                            if ((bkRecord.sortOrder < 0) || (bkRecord.sortOrder >= BibleBookInfo.MAXNUMBOOKS))
 							{
 								Logit.WriteError("ERROR: bad sort order number:"+bkRecord.sortOrder.ToString());
 								bkRecord.sortOrder = 0;
@@ -2497,6 +2497,11 @@ namespace WordSend
 				}
 				sfm = book.NextSfm();
 			}
+            if (book.bookCode == "")
+            {
+                Logit.WriteError("ERROR: No \\id tag found in " + fileName);
+                return;
+            }
 
 			// Insert this file's data into the data structure.
 			if (books[bookIndex] == null)
@@ -5507,14 +5512,37 @@ namespace WordSend
                     sb.Append(String.Format("<a href=\"{0}\">&nbsp;&nbsp;&nbsp;&lt;&nbsp;&nbsp;&nbsp;</a>\r\n",
                         Path.GetFileName(previousFileName)/*, previousChapterText*/));
                 string formatString = "00";
+                int chapNumSize = 2;
                 if (currentBookAbbrev.CompareTo("PSA") == 0)
+                {
                     formatString = "000";
-                int i, j;
+                    chapNumSize = 3;
+                }
+                int i = 0;
                 if (hasContentsPage)
-                    j = 0;
-                else
-                    j = 1;
-                for (i = j; i <= bookRecord.numChapters; i++)
+                {
+                    if (0 == chapterNumber)
+                        sb.Append(" 0");
+                    else
+                        sb.Append(String.Format(" <a href=\"{0}\">{1}</a>",
+                            String.Format("{0}{1}.htm", currentBookAbbrev, i.ToString(formatString)), i));
+                }
+                foreach (string chapFile in chapterFileList)
+                {
+                    int cn;
+                    if (chapFile.StartsWith(currentBookAbbrev) && (int.TryParse(chapFile.Substring(chapFile.Length - chapNumSize), out cn)))
+                    {
+                        if (cn == chapterNumber)
+                            sb.Append(String.Format(" {0}", cn));
+                        else
+                            sb.Append(String.Format(" <a href=\"{0}.htm\">{1}</a>",
+                                chapFile, cn.ToString()));
+                    }
+                    
+
+                }
+/*
+                for (i = 1; i <= bookRecord.numChapters; i++)
                 {
                     if (i == chapterNumber)
                         sb.Append(String.Format(" {0}", i));
@@ -5522,6 +5550,7 @@ namespace WordSend
                         sb.Append(String.Format(" <a href=\"{0}\">{1}</a>",
                             String.Format("{0}{1}.htm", currentBookAbbrev, i.ToString(formatString)), i));
                 }
+ */
                 if (nextFileName.Length > 0)
                     sb.Append(String.Format(" <a href=\"{0}\">&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;</a>",
                         Path.GetFileName(nextFileName)/*, nextChapterText*/));
@@ -5598,10 +5627,21 @@ namespace WordSend
                         buttonClass = "dcbookLine";
                     else
                         buttonClass = "bookLine";
+                    foreach (string chapFile in chapterFileList)
+                    {
+                        if (chapFile.StartsWith(br.tla) && !chapFile.EndsWith("00"))
+                        {
+                            htm.WriteLine("<div class=\"{0}\"><a href=\"{1}.htm\">{2}</a></div>", buttonClass, chapFile, br.vernacularHeader);
+                            break;
+                        }
+                    }
+                    /*
                     if (br.tla.CompareTo("PSA") == 0)
                         htm.WriteLine("<div class=\"{0}\"><a href=\"{1}001.htm\">{2}</a></div>", buttonClass, br.tla, br.vernacularHeader);
                     else
                         htm.WriteLine("<div class=\"{0}\"><a href=\"{1}01.htm\">{2}</a></div>", buttonClass, br.tla, br.vernacularHeader);
+                
+                     */ 
                 }
             }
             if ((copyrightLinkHTML != null) && (copyrightLinkHTML.Trim().Length > 0))
@@ -5736,10 +5776,13 @@ namespace WordSend
                     footnotesToWrite.Append(text);
                     // Also written to main document section for pop-up.
                 }
-                if (eatSpace)
+                else
                 {
-                    text = text.TrimStart();
-                    eatSpace = false;
+                    if (eatSpace)
+                    {
+                        text = text.TrimStart();
+                        eatSpace = false;
+                    }
                 }
                 WriteHtml(text);
             }
@@ -5799,7 +5842,7 @@ namespace WordSend
             if (inFootnote)
             {
                 EndHtmlNoteStyle();
-                WriteHtml("</span></a>\r\n");   // End popup text
+                WriteHtml("</span></a>");   // End popup text
                 footnotesToWrite.Append("</p>\r\n");    // End footnote paragraph
                 inFootnote = false;
             }
@@ -6173,13 +6216,18 @@ namespace WordSend
                 currentBookHeader = string.Empty;
                 OpenHtmlFile("index.htm");
                 bookListIndex = 0;
+                if (bookList.Count < 1)
+                {
+                    Logit.WriteError("No books found to convert in " + usfxName);
+                    return false;
+                }
                 bookRecord = (BibleBookRecord)bookList[0];
                 if (bookRecord.tla.CompareTo("PSA") == 0)
                     chapFormat = "000";
                 else
                     chapFormat = "00";
-                htm.WriteLine("<div class=\"toc\"><a href=\"{0}{1}.htm\">Go!</a></div>",
-                    bookRecord.tla, one.ToString(chapFormat));
+                htm.WriteLine("<div class=\"toc\"><a href=\"{0}.htm\">Go!</a></div>",
+                    chapterFileList[0]/*bookRecord.tla, one.ToString(chapFormat)*/);
                 htm.WriteLine(indexHtml, langId);
                 htm.WriteLine("<p>&nbsp;<br/><br/></p>");
                 string today = DateTime.Now.ToString("d MMM yyyy");
