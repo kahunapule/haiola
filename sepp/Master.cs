@@ -80,16 +80,28 @@ namespace sepp
 
 		private void LoadWorkingDirectory()
 		{
+            int projCount = 0;
+            int projReady = 0;
+            m_projectsList.BeginUpdate();
 			m_projectsList.Items.Clear();
             Utils.EnsureDirectory(m_workDirectory);
+            workDirLabel.Text = m_workDirectory;
 			foreach (string path in Directory.GetDirectories(m_workDirectory))
 			{
 				m_projectsList.Items.Add(Path.GetFileName(path));
+                projCount++;
                 if (File.Exists(Path.Combine(path, "Sepp Options.xml")))
+                {
                     m_projectsList.SetItemChecked(m_projectsList.Items.Count - 1, true);
+                    projReady++;
+                }
                 else
+                {
                     m_projectsList.SetItemChecked(m_projectsList.Items.Count - 1, false);
+                }
             }
+            m_projectsList.EndUpdate();
+            statsLabel.Text = projReady.ToString() + " of " + projCount.ToString() + " project directories are ready to run.";
 			if (m_projectsList.Items.Count != 0)
 			{
 				m_projectsList.SetSelected(0, true);
@@ -222,6 +234,25 @@ namespace sepp
                 manager.automaticRun();
             }
 */
+        }
+
+        private void reloadButton_Click(object sender, EventArgs e)
+        {
+            LoadWorkingDirectory();
+        }
+
+        private void checkAllButton_Click(object sender, EventArgs e)
+        {
+            int i;
+            for (i = 0; i < m_projectsList.Items.Count; i++)
+                m_projectsList.SetItemChecked(i, true);
+        }
+
+        private void unmarkAllButton_Click(object sender, EventArgs e)
+        {
+            int i;
+            for (i = 0; i < m_projectsList.Items.Count; i++)
+                m_projectsList.SetItemChecked(i, false);
         }
 	}
 }
