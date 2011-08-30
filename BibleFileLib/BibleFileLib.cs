@@ -580,6 +580,696 @@ namespace WordSend
             // Logit.WriteLine("Identified " + fileName + " as " + result.ToString());
             return result;
         }
+
+        public static void revisePua(string fName)
+        {
+            // int u;
+            int v, i;
+            int badChar = 0;
+            try
+            {
+                StreamReader sr = new StreamReader(fName);
+                string s;
+                s = sr.ReadToEnd();
+                sr.Close();
+                StringBuilder sb = new StringBuilder(s.Length);
+                for (i = 0; i < s.Length; i++)
+                {
+                    v = (int)s[i];
+                    switch (v)
+                    {
+                        case 0xF134:
+                            v = 0x230A;
+                            break;
+                        case 0xF135:
+                            v = 0x230B;
+                            break;
+                        case 0xF170:
+                            v = 0x1DC2;
+                            break;
+                        case 0xF171:
+                            v = 0x1DC4;
+                            break;
+                        case 0xF172:
+                            v = 0x1DC5;
+                            break;
+                        case 0xF173:
+                            v = 0x1DC6;
+                            break;
+                        case 0xF174:
+                            v = 0x1DC7;
+                            break;
+                        case 0xF175:
+                            v = 0x1DC8;
+                            break;
+                        case 0xF176:
+                            v = 0x035C;
+                            break;
+                        case 0xF177:
+                            v = 0x035E;
+                            break;
+                        case 0xF178:
+                            v = 0x1DCA;
+                            break;
+                        case 0xF179:
+                            v = 0x1DC9;
+                            break;
+                        case 0xF17A:
+                            v = 0x0308;
+                            break;
+                        case 0xF17B:
+                            v = 0x1DFD;
+                            break;
+                        case 0xF180:
+                            v = 0x1D50;
+                            break;
+                        case 0xF181:
+                            v = 0x1DAE;
+                            break;
+                        case 0xF182:
+                            v = 0x1D51;
+                            break;
+                        case 0xF183:
+                            v = 0x1D43;
+                            break;
+                        case 0xF184:
+                            v = 0x1D44;
+                            break;
+                        case 0xF185:
+                            v = 0x1D45;
+                            break;
+                        case 0xF186:
+                            v = 0x1D47;
+                            break;
+                        case 0xF187:
+                            v = 0x1D48;
+                            break;
+                        case 0xF188:
+                            v = 0x1D49;
+                            break;
+                        case 0xF189:
+                            v = 0x1D4A;
+                            break;
+                        case 0xF18A:
+                            v = 0x1D4B;
+                            break;
+                        case 0xF18B:
+                            v = 0x1D9F;
+                            break;
+                        case 0xF18C:
+                            v = 0x1D4D;
+                            break;
+                        case 0xF18D:
+                            v = 0x1D4F;
+                            break;
+                        case 0xF18E:
+                            v = 0x1D52;
+                            break;
+                        case 0xF18F:
+                            v = 0x1D53;
+                            break;
+                        case 0xF190:
+                            v = 0x1D56;
+                            break;
+                        case 0xF191:
+                            v = 0x1D57;
+                            break;
+                        case 0xF192:
+                            v = 0x1D58;
+                            break;
+                        case 0xF193:
+                            v = 0x1D5A;
+                            break;
+                        case 0xF194:
+                            v = 0x1D5B;
+                            break;
+                        case 0xF195:
+                            v = 0x02CB;
+                            break;
+                        case 0xF196:
+                            v = 0x02C8;
+                            break;
+                        case 0xF197:
+                            v = 0x02CA;
+                            break;
+                        case 0xF198:
+                            v = 0xA717;
+                            break;
+                        case 0xF199:
+                            v = 0xA718;
+                            break;
+                        case 0xF19A:
+                            v = 0xA719;
+                            break;
+                        case 0xF19B:
+                            v = 0xA71A;
+                            break;
+                        case 0xF19C:
+                            v = 0xA71B;
+                            break;
+                        case 0xF19D:
+                            v = 0xA71C;
+                            break;
+                        case 0xF19E:
+                            v = 0xA71D;
+                            break;
+                        case 0xF19F:
+                            v = 0xA71E;
+                            break;
+                        case 0xF1A0:
+                            v = 0x1D9B;
+                            break;
+                        case 0xF1A2:
+                            v = 0x1D9D;
+                            break;
+                        case 0xF1A5:
+                            v = 0x1DA0;
+                            break;
+                        case 0xF1A6:
+                            v = 0x1DA2;
+                            break;
+                        case 0xF1A7:
+                            v = 0x1DA4;
+                            break;
+                        case 0xF1A8:
+                            v = 0x1DA6;
+                            break;
+                        case 0xF1A9:
+                            v = 0x1DA1;
+                            break;
+                        case 0xF1AA:
+                            v = 0x1DA9;
+                            break;
+                        case 0xF1AC:
+                            v = 0x1DB1;
+                            break;
+                        case 0xF1AF:
+                            v = 0x1DB4;
+                            break;
+                        case 0xF1B0:
+                            v = 0x1DB6;
+                            break;
+                        case 0xF1B1:
+                            v = 0x1DB7;
+                            break;
+                        case 0xF1B2:
+                            v = 0x1DAD;
+                            break;
+                        case 0xF1B3:
+                            v = 0x1DBA;
+                            break;
+                        case 0xF1B6:
+                            v = 0x1DBB;
+                            break;
+                        case 0xF1B7:
+                            v = 0x1DBD;
+                            break;
+                        case 0xF1B8:
+                            v = 0x1DBE;
+                            break;
+                        case 0xF1B9:
+                            v = 0x1D9C;
+                            break;
+                        case 0xF1BA:
+                            v = 0x1D9E;
+                            break;
+                        case 0xF1BB:
+                            v = 0x1DA3;
+                            break;
+                        case 0xF1BD:
+                            v = 0x1DA8;
+                            break;
+                        case 0xF1BE:
+                            v = 0x1DAA;
+                            break;
+                        case 0xF1BF:
+                            v = 0x1DAB;
+                            break;
+                        case 0xF1C0:
+                            v = 0x1DAC;
+                            break;
+                        case 0xF1C1:
+                            v = 0x1DAF;
+                            break;
+                        case 0xF1C2:
+                            v = 0x1DB0;
+                            break;
+                        case 0xF1C3:
+                            v = 0x1DB2;
+                            break;
+                        case 0xF1C4:
+                            v = 0x1DB3;
+                            break;
+                        case 0xF1C5:
+                            v = 0x1DB5;
+                            break;
+                        case 0xF1C6:
+                            v = 0x1DB9;
+                            break;
+                        case 0xF1C7:
+                            v = 0x1DBC;
+                            break;
+                        case 0xF1C8:
+                            v = 0x02C0;
+                            break;
+                        case 0xF1C9:
+                            v = 0x1DBF;
+                            break;
+                        case 0xF1CA:
+                            v = 0x1DA5;
+                            break;
+                        case 0xF1CB:
+                            v = 0x1DA7;
+                            break;
+                        case 0xF1CC:
+                            v = 0x1DB8;
+                            break;
+                        case 0xF1D0:
+                            v = 0xA712;
+                            break;
+                        case 0xF1D1:
+                            v = 0xA713;
+                            break;
+                        case 0xF1D2:
+                            v = 0xA714;
+                            break;
+                        case 0xF1D3:
+                            v = 0xA715;
+                            break;
+                        case 0xF1D4:
+                            v = 0xA716;
+                            break;
+                        case 0xF1D5:
+                            v = 0xA708;
+                            break;
+                        case 0xF1D6:
+                            v = 0xA709;
+                            break;
+                        case 0xF1D7:
+                            v = 0xA70A;
+                            break;
+                        case 0xF1D8:
+                            v = 0xA70B;
+                            break;
+                        case 0xF1D9:
+                            v = 0xA70C;
+                            break;
+                        case 0xF1DA:
+                            v = 0xA70D;
+                            break;
+                        case 0xF1DB:
+                            v = 0xA70E;
+                            break;
+                        case 0xF1DC:
+                            v = 0xA70F;
+                            break;
+                        case 0xF1DD:
+                            v = 0xA710;
+                            break;
+                        case 0xF1DE:
+                            v = 0xA711;
+                            break;
+                        case 0xF1DF:
+                            v = 0xA700;
+                            break;
+                        case 0xF1E0:
+                            v = 0xA702;
+                            break;
+                        case 0xF1E1:
+                            v = 0xA704;
+                            break;
+                        case 0xF1E2:
+                            v = 0xA706;
+                            break;
+                        case 0xF1E3:
+                            v = 0xA701;
+                            break;
+                        case 0xF1E4:
+                            v = 0xA703;
+                            break;
+                        case 0xF1E5:
+                            v = 0xA705;
+                            break;
+                        case 0xF1E6:
+                            v = 0xA707;
+                            break;
+                        case 0xF1E7:
+                            v = 0xA788;
+                            break;
+                        case 0xF1E8:
+                            v = 0x02EC;
+                            break;
+                        case 0xF1E9:
+                            v = 0xA789;
+                            break;
+                        case 0xF1EA:
+                            v = 0xA78A;
+                            break;
+                        case 0xF200:
+                            v = 0x1D00;
+                            break;
+                        case 0xF201:
+                            v = 0x0221;
+                            break;
+                        case 0xF202:
+                            v = 0x1D07;
+                            break;
+                        case 0xF203:
+                            v = 0x0234;
+                            break;
+                        case 0xF204:
+                            v = 0x0235;
+                            break;
+                        case 0xF205:
+                            v = 0x0236;
+                            break;
+                        case 0xF206:
+                            v = 0x02AE;
+                            break;
+                        case 0xF207:
+                            v = 0x02AF;
+                            break;
+                        case 0xF208:
+                            v = 0x2C6D;
+                            break;
+                        case 0xF209:
+                            v = 0x2C70;
+                            break;
+                        case 0xF20A:
+                            v = 0x0243;
+                            break;
+                        case 0xF20B:
+                            v = 0x023C;
+                            break;
+                        case 0xF20C:
+                            v = 0x1D91;
+                            break;
+                        case 0xF20E:
+                            v = 0x2C61;
+                            break;
+                        case 0xF20F:
+                            v = 0x2C60;
+                            break;
+                        case 0xF210:
+                            v = 0x1D7D;
+                            break;
+                        case 0xF211:
+                            v = 0x024B;
+                            break;
+                        case 0xF212:
+                            v = 0x024A;
+                            break;
+                        case 0xF213:
+                            v = 0x024D;
+                            break;
+                        case 0xF214:
+                            v = 0x024C;
+                            break;
+                        case 0xF215:
+                            v = 0x2C64;
+                            break;
+                        case 0xF216:
+                            v = 0x1D98;
+                            break;
+                        case 0xF217:
+                            v = 0x01B7;
+                            break;
+                        case 0xF218:
+                            v = 0x0244;
+                            break;
+                        case 0xF219:
+                            v = 0x0245;
+                            break;
+                        case 0xF21A:
+                            v = 0x2C73;
+                            break;
+                        case 0xF21B:
+                            v = 0x2C72;
+                            break;
+                        case 0xF21C:
+                            v = 0x1D9A;
+                            break;
+                        case 0xF21D:
+                            v = 0xA78C;
+                            break;
+                        case 0xF21E:
+                            v = 0x0242;
+                            break;
+                        case 0xF21F:
+                            v = 0x023D;
+                            break;
+                        case 0xF220:
+                            v = 0x0247;
+                            break;
+                        case 0xF221:
+                            v = 0x0246;
+                            break;
+                        case 0xF222:
+                            v = 0x2C68;
+                            break;
+                        case 0xF223:
+                            v = 0x2C67;
+                            break;
+                        case 0xF224:
+                            v = 0x1D80;
+                            break;
+                        case 0xF226:
+                            v = 0x1D81;
+                            break;
+                        case 0xF227:
+                            v = 0x1D82;
+                            break;
+                        case 0xF228:
+                            v = 0x1D83;
+                            break;
+                        case 0xF229:
+                            v = 0x1D84;
+                            break;
+                        case 0xF22A:
+                            v = 0x1D85;
+                            break;
+                        case 0xF22B:
+                            v = 0x1D86;
+                            break;
+                        case 0xF22C:
+                            v = 0x1D87;
+                            break;
+                        case 0xF22D:
+                            v = 0x1D88;
+                            break;
+                        case 0xF22E:
+                            v = 0x1D89;
+                            break;
+                        case 0xF22F:
+                            v = 0x1D8A;
+                            break;
+                        case 0xF230:
+                            v = 0x1D8B;
+                            break;
+                        case 0xF231:
+                            v = 0x1D8C;
+                            break;
+                        case 0xF232:
+                            v = 0x1D8D;
+                            break;
+                        case 0xF233:
+                            v = 0x1D8E;
+                            break;
+                        case 0xF236:
+                            v = 0x1D8F;
+                            break;
+                        case 0xF237:
+                            v = 0x1D90;
+                            break;
+                        case 0xF238:
+                            v = 0x1D92;
+                            break;
+                        case 0xF239:
+                            v = 0x1D93;
+                            break;
+                        case 0xF23A:
+                            v = 0x1D94;
+                            break;
+                        case 0xF23B:
+                            v = 0x1D95;
+                            break;
+                        case 0xF23C:
+                            v = 0x1D96;
+                            break;
+                        case 0xF23D:
+                            v = 0x1D97;
+                            break;
+                        case 0xF23E:
+                            v = 0x1D99;
+                            break;
+                        case 0xF23F:
+                            v = 0x1D7E;
+                            break;
+                        case 0xF240:
+                            v = 0x0238;
+                            break;
+                        case 0xF241:
+                            v = 0x0239;
+                            break;
+                        case 0xF242:
+                            v = 0x2C62;
+                            break;
+                        case 0xF243:
+                            v = 0x024F;
+                            break;
+                        case 0xF244:
+                            v = 0x024E;
+                            break;
+                        case 0xF245:
+                            v = 0xA72B;
+                            break;
+                        case 0xF246:
+                            v = 0xA72D;
+                            break;
+                        case 0xF249:
+                            v = 0x1D6C;
+                            break;
+                        case 0xF24A:
+                            v = 0x1D6D;
+                            break;
+                        case 0xF24B:
+                            v = 0x1D6E;
+                            break;
+                        case 0xF24C:
+                            v = 0x1D6F;
+                            break;
+                        case 0xF24D:
+                            v = 0x1D70;
+                            break;
+                        case 0xF24E:
+                            v = 0x1D71;
+                            break;
+                        case 0xF24F:
+                            v = 0x1D72;
+                            break;
+                        case 0xF250:
+                            v = 0x1D73;
+                            break;
+                        case 0xF251:
+                            v = 0x1D74;
+                            break;
+                        case 0xF252:
+                            v = 0x1D75;
+                            break;
+                        case 0xF253:
+                            v = 0x1D76;
+                            break;
+                        case 0xF254:
+                            v = 0x1D7B;
+                            break;
+                        case 0xF255:
+                            v = 0x1D7F;
+                            break;
+                        case 0xF256:
+                            v = 0x023F;
+                            break;
+                        case 0xF257:
+                            v = 0x0240;
+                            break;
+                        case 0xF25A:
+                            v = 0xA727;
+                            break;
+                        case 0xF25B:
+                            v = 0x2C6E;
+                            break;
+                        case 0xF25C:
+                            v = 0x2C63;
+                            break;
+                        case 0xF25D:
+                            v = 0x1D7C;
+                            break;
+                        case 0xF25E:
+                            v = 0x2C74;
+                            break;
+                        case 0xF25F:
+                            v = 0x2C71;
+                            break;
+                        case 0xF260:
+                            v = 0x0249;
+                            break;
+                        case 0xF261:
+                            v = 0x0248;
+                            break;
+                        case 0xF262:
+                            v = 0x2C6A;
+                            break;
+                        case 0xF263:
+                            v = 0x2C69;
+                            break;
+                        case 0xF264:
+                            v = 0x2C6C;
+                            break;
+                        case 0xF265:
+                            v = 0x2C6B;
+                            break;
+                        case 0xF266:
+                            v = 0xA78E;
+                            break;
+                        case 0xF26A:
+                            v = 0xA78B;
+                            break;
+                        case 0xF26B:
+                            v = 0xA78D;
+                            break;
+                        case 0xF320:
+                            v = 0x04F6;
+                            break;
+                        case 0xF321:
+                            v = 0x04F7;
+                            break;
+                        case 0xF322:
+                            v = 0x0512;
+                            break;
+                        case 0xF323:
+                            v = 0x0513;
+                            break;
+                        case 0xF324:
+                            v = 0x04FC;
+                            break;
+                        case 0xF325:
+                            v = 0x04FD;
+                            break;
+                        case 0xF328:
+                            v = 0x04FE;
+                            break;
+                        case 0xF329:
+                            v = 0x04FF;
+                            break;
+                        case 0xF32A:
+                            v = 0x0510;
+                            break;
+                        case 0xF32B:
+                            v = 0x0511;
+                            break;
+                        case 0xF32C:
+                            v = 0x0526;
+                            break;
+                        case 0xF32D:
+                            v = 0x0527;
+                            break;
+                    }
+                    sb.Append((char)v);
+                    if ((v >= 0xE000) && (v <= 0xF8FF) || (v >= 0xF0000))
+                        badChar = v;
+                    // if (u != v)
+                    //    Logit.WriteLine(fName + ": " + u.ToString("X") + "->" + v.ToString("X"));
+                }
+                if (badChar > 0)
+                    Logit.WriteError(fName + " contains strange character U+" + badChar.ToString("X"));
+                StreamWriter sw = new StreamWriter(fName);
+                sw.Write(sb.ToString());
+                sw.Close();
+            }
+            catch(Exception ex)
+            {
+                Logit.WriteError("Unable to correct PUA encoding in "+fName+"\n"+ex.Message);
+            }
+        }
     }
 
 

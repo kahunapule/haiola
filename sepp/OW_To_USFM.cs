@@ -406,6 +406,10 @@ namespace sepp
 			//outputString = FixEmphasis(outputString);
 			output.Write(outputString);
 			output.Close();
+
+            // Eradicate depricated PUA characters
+            fileHelper.revisePua(outputPath);
+
 			// Check for problems indicated by lines starting ***\
 			StringReader checker = new StringReader(outputString);
 			int lineCount = 0;
