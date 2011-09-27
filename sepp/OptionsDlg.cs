@@ -52,6 +52,8 @@ namespace sepp
             languageNameTextBox.Text = m_options.m_languageName;
             ethnologueCodeTextBox.Text = m_options.m_languageId;
 			listInputProcesses.ResumeLayout();
+            KhmerNumeralsRadioButton.Checked = m_options.m_useKhmerDigits;
+            ignoreExtrasCheckBox.Checked = m_options.m_ignoreExtras;
 		}
 
 		
@@ -92,7 +94,8 @@ namespace sepp
 			m_options.PreprocessingTables = newTables;
             m_options.m_languageName = languageNameTextBox.Text;
             m_options.m_languageId = ethnologueCodeTextBox.Text;
-
+            m_options.m_useKhmerDigits = KhmerNumeralsRadioButton.Checked;
+            m_options.m_ignoreExtras = ignoreExtrasCheckBox.Checked;
 		}
 
 		ListViewItem MakeFileItem(string abbr, string fileName, string vernAbbr, string xrefName, string introFile)
