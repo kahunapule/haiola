@@ -373,7 +373,9 @@ namespace sepp
                 m_options.m_homeLink,
                 m_options.m_footerHtml,
                 m_options.m_indexHtml,
-                m_options.m_licenseHtml);
+                m_options.m_licenseHtml,
+                m_options.m_useKhmerDigits,
+                m_options.m_ignoreExtras);
             Logit.CloseFile();
             string postprocess = Path.Combine(WorkPath, "postprocess.bat");
             if (File.Exists(postprocess))

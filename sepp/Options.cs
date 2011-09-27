@@ -59,7 +59,7 @@ namespace sepp
 "<div class=\"toc1\"><a href=\"http://pnglanguages.org/pacific/png/show_lang_entry.asp?id={0}\">Linguistic publications</a></div>\r\n"+
 "<div class=\"toc1\"><a href=\"http://www.ethnologue.org/show_language.asp?code={0}\">Ethnologue</a></div>\r\n";
         public string m_licenseHtml = "<h1>The New Testament in the ____ Language</h1>\r\n"+
-"<p>Copyright © ____ <a href=\"http://www.wycliffe.org/\">Wycliffe Bible Translators</a></p>\r\n"+
+"<p>Copyright © ____ <a href=\"http://www.wycliffe.org/\">Wycliffe, Inc.</a></p>\r\n"+
 "<p>This translation is made available to you under the terms of the <a href=\"http://creativecommons.org/licenses/by-nc-nd/3.0/\">Creative\r\n"+
 "Commons Attribution-Noncommercial-No Derivative Works license.</a> \r\n"+
 "In addition, you have permission to port the text to different file\r\n"+
@@ -89,6 +89,8 @@ namespace sepp
 "<p>If you have further questions about this web site or the <a href=\"../terms.htm\">Terms of\r\n"+
 "Use</a>, <a href=\"http://pngscriptures.org/contact.htm\">please contact us</a>.\r\n"+
 "</p>";
+        public bool m_useKhmerDigits = false;
+        public bool m_ignoreExtras = false;
         
 
 		#endregion Basic Data
@@ -401,6 +403,12 @@ namespace sepp
                     case "licenseHtml":
                         m_licenseHtml = node.InnerText;
                         break;
+                    case "useKhmerDigits":
+                        m_useKhmerDigits = node.InnerText == "yes";
+                        break;
+                    case "ignoreExtras":
+                        m_ignoreExtras = node.InnerText == "yes";
+                        break;
 				}
 			}
 			UpdateDerivedData();
@@ -535,6 +543,8 @@ namespace sepp
             SetInnerText("psalmLabel", m_psalmLabel);
             SetInnerText("indexHtml", m_indexHtml);
             SetInnerText("licenseHtml", m_licenseHtml);
+            SetInnerText("useKhmerDigits", m_useKhmerDigits ? "yes" : "no");
+            SetInnerText("ignoreExtras", m_ignoreExtras ? "yes" : "no");
 			SavePreprocessing();
 			SaveBookNameCols();
 			SaveComparer();

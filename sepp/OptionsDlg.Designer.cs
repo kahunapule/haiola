@@ -45,6 +45,8 @@ namespace sepp
             this.label27 = new System.Windows.Forms.Label();
             this.label26 = new System.Windows.Forms.Label();
             this.tabMisc = new System.Windows.Forms.TabPage();
+            this.KhmerNumeralsRadioButton = new System.Windows.Forms.RadioButton();
+            this.ArabicNumeralsRadioButton = new System.Windows.Forms.RadioButton();
             this.languageNameTextBox = new System.Windows.Forms.TextBox();
             this.ethnologueCodeTextBox = new System.Windows.Forms.TextBox();
             this.label25 = new System.Windows.Forms.Label();
@@ -54,6 +56,7 @@ namespace sepp
             this.listInputProcesses = new System.Windows.Forms.ListBox();
             this.label22 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.ignoreExtrasCheckBox = new System.Windows.Forms.CheckBox();
             this.tabPage1.SuspendLayout();
             this.tabMisc.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -154,7 +157,6 @@ namespace sepp
             this.indexPageTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.indexPageTextBox.Size = new System.Drawing.Size(656, 100);
             this.indexPageTextBox.TabIndex = 5;
-            this.indexPageTextBox.Text = resources.GetString("indexPageTextBox.Text");
             // 
             // footerHtmlTextBox
             // 
@@ -176,7 +178,6 @@ namespace sepp
             this.homeLinkTextBox.Name = "homeLinkTextBox";
             this.homeLinkTextBox.Size = new System.Drawing.Size(493, 20);
             this.homeLinkTextBox.TabIndex = 1;
-            this.homeLinkTextBox.Text = "<a href=\"../index.htm\">^</a>";
             // 
             // copyrightLinkTextBox
             // 
@@ -217,6 +218,9 @@ namespace sepp
             // 
             // tabMisc
             // 
+            this.tabMisc.Controls.Add(this.ignoreExtrasCheckBox);
+            this.tabMisc.Controls.Add(this.KhmerNumeralsRadioButton);
+            this.tabMisc.Controls.Add(this.ArabicNumeralsRadioButton);
             this.tabMisc.Controls.Add(this.languageNameTextBox);
             this.tabMisc.Controls.Add(this.ethnologueCodeTextBox);
             this.tabMisc.Controls.Add(this.label25);
@@ -232,6 +236,28 @@ namespace sepp
             this.tabMisc.Text = "Identification";
             this.tabMisc.UseVisualStyleBackColor = true;
             this.tabMisc.Click += new System.EventHandler(this.tabMisc_Click);
+            // 
+            // KhmerNumeralsRadioButton
+            // 
+            this.KhmerNumeralsRadioButton.AutoSize = true;
+            this.KhmerNumeralsRadioButton.Location = new System.Drawing.Point(31, 282);
+            this.KhmerNumeralsRadioButton.Name = "KhmerNumeralsRadioButton";
+            this.KhmerNumeralsRadioButton.Size = new System.Drawing.Size(100, 17);
+            this.KhmerNumeralsRadioButton.TabIndex = 10;
+            this.KhmerNumeralsRadioButton.Text = "Khmer numerals";
+            this.KhmerNumeralsRadioButton.UseVisualStyleBackColor = true;
+            // 
+            // ArabicNumeralsRadioButton
+            // 
+            this.ArabicNumeralsRadioButton.AutoSize = true;
+            this.ArabicNumeralsRadioButton.Checked = true;
+            this.ArabicNumeralsRadioButton.Location = new System.Drawing.Point(31, 259);
+            this.ArabicNumeralsRadioButton.Name = "ArabicNumeralsRadioButton";
+            this.ArabicNumeralsRadioButton.Size = new System.Drawing.Size(131, 17);
+            this.ArabicNumeralsRadioButton.TabIndex = 9;
+            this.ArabicNumeralsRadioButton.TabStop = true;
+            this.ArabicNumeralsRadioButton.Text = "Hindu-Arabic numerals";
+            this.ArabicNumeralsRadioButton.UseVisualStyleBackColor = true;
             // 
             // languageNameTextBox
             // 
@@ -318,6 +344,16 @@ namespace sepp
             this.tabControl1.Size = new System.Drawing.Size(693, 426);
             this.tabControl1.TabIndex = 0;
             // 
+            // ignoreExtrasCheckBox
+            // 
+            this.ignoreExtrasCheckBox.AutoSize = true;
+            this.ignoreExtrasCheckBox.Location = new System.Drawing.Point(316, 261);
+            this.ignoreExtrasCheckBox.Name = "ignoreExtrasCheckBox";
+            this.ignoreExtrasCheckBox.Size = new System.Drawing.Size(244, 17);
+            this.ignoreExtrasCheckBox.TabIndex = 11;
+            this.ignoreExtrasCheckBox.Text = "Omit notes, crossreferences, and introductions";
+            this.ignoreExtrasCheckBox.UseVisualStyleBackColor = true;
+            // 
             // OptionsDlg
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -365,5 +401,8 @@ namespace sepp
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox licenseTextBox;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.RadioButton KhmerNumeralsRadioButton;
+        private System.Windows.Forms.RadioButton ArabicNumeralsRadioButton;
+        private System.Windows.Forms.CheckBox ignoreExtrasCheckBox;
 	}
 }
