@@ -40,6 +40,7 @@ namespace sepp
             this.statsLabel = new System.Windows.Forms.Label();
             this.checkAllButton = new System.Windows.Forms.Button();
             this.unmarkAllButton = new System.Windows.Forms.Button();
+            this.batchLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // m_projectsList
@@ -67,9 +68,9 @@ namespace sepp
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(312, 408);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(192, 13);
+            this.label1.Size = new System.Drawing.Size(179, 13);
             this.label1.TabIndex = 10;
-            this.label1.Text = "Version 0.99306 of 27 September 2011";
+            this.label1.Text = "Version 0.99317 of 17 October 2011";
             // 
             // btnSetRootDirectory
             // 
@@ -149,11 +150,21 @@ namespace sepp
             this.unmarkAllButton.UseVisualStyleBackColor = true;
             this.unmarkAllButton.Click += new System.EventHandler(this.unmarkAllButton_Click);
             // 
+            // batchLabel
+            // 
+            this.batchLabel.AutoSize = true;
+            this.batchLabel.Location = new System.Drawing.Point(441, 45);
+            this.batchLabel.Name = "batchLabel";
+            this.batchLabel.Size = new System.Drawing.Size(45, 13);
+            this.batchLabel.TabIndex = 16;
+            this.batchLabel.Text = "stopped";
+            // 
             // Master
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 442);
+            this.Controls.Add(this.batchLabel);
             this.Controls.Add(this.unmarkAllButton);
             this.Controls.Add(this.checkAllButton);
             this.Controls.Add(this.statsLabel);
@@ -187,5 +198,6 @@ namespace sepp
         private System.Windows.Forms.Label statsLabel;
         private System.Windows.Forms.Button checkAllButton;
         private System.Windows.Forms.Button unmarkAllButton;
+        private System.Windows.Forms.Label batchLabel;
 	}
 }

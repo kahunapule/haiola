@@ -202,23 +202,40 @@ namespace sepp
             }
         }
 
+        static bool fAllRunning = false;
+
         private void WorkOnAllButton_Click(object sender, EventArgs e)
         {
-            WorkOnAllButton.Enabled = false;
+            if (fAllRunning)
+            {
+                fAllRunning = false;
+                WorkOnAllButton.Enabled = false;
+                WorkOnAllButton.Text = "Stopping...";
+                Application.DoEvents();
+                return;
+            }
+            fAllRunning = true;    
+            WorkOnAllButton.Text = "Stop";
             ProjectButton.Enabled = false;
-            Application.DoEvents();
             foreach (object o in m_projectsList.CheckedItems)
             {
                 // m_projectsList.SelectedIndex = m_projectsList.Items.IndexOf(o);
                 string project = (string)o;
+                batchLabel.Text = project;
+                Application.DoEvents();
                 string projectWorkPath = Path.Combine(m_workDirectory, project);
                 string projectSitePath = Path.Combine(m_siteDirectory, project);
                 ProjectManager manager = new ProjectManager(projectWorkPath, projectSitePath, project);
-                manager.Show();
                 manager.automaticRun();
+                Application.DoEvents();
+                if (!fAllRunning)
+                    break;
             }
+            fAllRunning = false;
+            batchLabel.Text = "Stopped.";
             ProjectButton.Enabled = true;
             WorkOnAllButton.Enabled = true;
+            WorkOnAllButton.Text = "Run marked";
 /*
             int i;
             for (i = 0; i < m_projectsList.Items.Count; i++)
