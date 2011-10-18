@@ -2194,7 +2194,7 @@ namespace WordSend
 			StringBuilder sb = new StringBuilder();
 			int ch;
 			int lookAhead;
-            int barCount = 0;
+            // int barCount = 0;
 			bool isEndTag = false;
 			// Skip to \, parse parts up to but not including next \ or EOF.
 			do
@@ -2203,7 +2203,7 @@ namespace WordSend
 			} while (((char)ch != '\\') && (ch != -1));
 			if (ch == -1)	// eof
 				return false;	// Failed to find \.
-			// Found \. Copy characters to tag until white space or anything after * or anything before \.
+			// Found \. Copy characters to tag until white space or anything after * or anything before \ or digit or end of file.
 			do
 			{
 				ch = sr.Read();
@@ -2234,42 +2234,64 @@ namespace WordSend
 			if (isEndTag)
 			{
 				lookAhead = sr.Peek();
-				if ((lookAhead == -1) || ((char)lookAhead == '\\'))
-				{
-					text = attribute = "";
-					return true;
-				}
-				ch = sr.Read();	// Start reading the non-tag string following the end tag.
+                if ((lookAhead == -1) || ((char)lookAhead == '\\'))
+                {
+                    text = attribute = "";
+                    return true;
+                }
+                else
+                {
+                    ch = sr.Read();
+                    lookAhead = sr.Peek();
+                }
 			}
-			else
+			else // Not an end tag (not terminated in *)
 			{
-				if (info.levelExpected)
-				{
-					level = 1;
-				}
+                level = 1;
 				if (Char.IsDigit((char)ch))
 				{
 					while (Char.IsDigit((char)ch))
 					{
 						sb.Append((char)ch);
-						ch = sr.Read();
+                        if ((char)lookAhead != '\\')
+                        {
+                            ch = sr.Read();
+                            lookAhead = sr.Peek();
+                        }
+                        else
+                        {
+                            // Early termination of tag by starting another tag; pretend it was properly terminated by a space.
+                            ch = (int)' ';
+                        }
 					}
 					level = Convert.ToInt32(sb.ToString());
 				}
 
+                // At this point, ch should be the white space or * after the tag and level.
+
 				sb.Length = 0;
 				if (info.parameterName != "")
 				{	// Tag requires an attribute (Chapter, Verse, footnote marker, book code)
-					ch = sr.Read();	// Read whatever followed the single white space.
-					lookAhead = sr.Peek();
+                    if ((char)lookAhead != '\\')
+                    {
+                        ch = sr.Read();	// Read whatever followed the single white space.
+                        lookAhead = sr.Peek();
+                    }
 					// Allow multiple white spaces before the attribute (like line end between \f and +)
-					while (fileHelper.IsNormalWhiteSpace((char)ch) && (ch != -1))
+					while (fileHelper.IsNormalWhiteSpace((char)ch) && (ch != -1) && (lookAhead != '\\'))
 					{
 						ch = sr.Read();
 						lookAhead = sr.Peek();
 					}
-
-					while ((ch != -1) && (!fileHelper.IsNormalWhiteSpace((char)ch)) && ((char)ch != '\\') && ((char)lookAhead != '\\'))
+                    if ((ch == -1) || (fileHelper.IsNormalWhiteSpace((char)ch)))
+                    {
+                        Logit.WriteError("Error in USFM syntax: missing attribute after \\" + tag +
+                            " in " + fileName +
+                            " after " + currentBook + " " + currentChapter +
+                            ":" + currentVerse);
+                    }
+                    // The first non-whitespace after the tag starts the parameter, like the verse number or footnote marker.
+					while ((ch != -1) && (!fileHelper.IsNormalWhiteSpace((char)ch)) && ((char)lookAhead != '\\'))
 					{
 						sb.Append((char)ch);
 						ch = sr.Read();
@@ -2278,21 +2300,31 @@ namespace WordSend
 					attribute = sb.ToString();
 					sb.Length = 0;
 				}
-				lookAhead = sr.Peek();
+                // Eat the space that serves only to terminate a tag. This is very important with some nonroman scripts.
+                if ((!isEndTag) && (fileHelper.IsNormalWhiteSpace((char)ch)) && ((char)lookAhead != '\\'))
+                {
+                    ch = sr.Read();
+                    lookAhead = sr.Peek();
+                }
 				// Collapse all contiguous white space characters after a tag to one space (i.e. space CR LF to space)
-				while (fileHelper.IsNormalWhiteSpace((char)ch) && fileHelper.IsNormalWhiteSpace((char)lookAhead) && (ch != -1))
+				while ((ch != -1) && fileHelper.IsNormalWhiteSpace((char)ch) && fileHelper.IsNormalWhiteSpace((char)lookAhead))
 				{
 					ch = sr.Read();
 					lookAhead = sr.Peek();
-                    // No need to bail out here due to lookahead check to make sure we don't kill the only space
+                    // No need to bail out here due to lookahead check to make sure we don't kill the only significant space
 				}
-			}
-			// Read text up to next \, collapsing all white space to a single space.
+			}   // End of non-end tag case.
+			// Read text up to next \, collapsing all contiguous white space to a single space.
 			bool inSpace = false;
 			lookAhead = sr.Peek();
             // Special case to skip over \ characters embedded in filename a \fig ...\fig* sequence
             // \ may occur in a filename between the 1st and 2nd | of 6 in a figure specification.
-            // 
+            // However, markup of actual texts often get the | syntax wrong, and we often just strip out
+            // fig tags, anyway, so we are omitting this check for now. This means that we aren't supporting
+            // the \ character in file names. The forward slash, /, however, is OK. Best practice: just put in
+            // the file name and no path in the figure specification, or better yet, use an external figure list
+            // that could be used with multiple sources.
+            /*
             if (tag == "fig")
             {
                 if ((sb.ToString().EndsWith("\fi") && (ch == 'g') && (lookAhead == '*')))
@@ -2321,10 +2353,29 @@ namespace WordSend
                     ch = sr.Read();
                 }
             }
-			while ((ch  !=  -1) && (ch != '\\'))
-			{
-				if (fileHelper.IsNormalWhiteSpace((char)ch))
-				{
+             */
+
+            if (fileHelper.IsNormalWhiteSpace((char)ch))
+            {   // Any run of contiguous normal white space (tab, space, CR, LF) is replaced with
+                // just one space. If spaces must be preserved, use nonbreaking spaces.
+                if (!inSpace)
+                {
+                    inSpace = true;
+                    sb.Append(' ');
+                }
+            }
+            else
+            {   // Nonspaces are appended to the text run as is, up to but not including the next \.
+                sb.Append((char)ch);
+                inSpace = false;
+            }
+            while ((lookAhead != -1) && (lookAhead != '\\'))
+            {
+                ch = sr.Read();
+                lookAhead = sr.Peek();
+                if (fileHelper.IsNormalWhiteSpace((char)ch))
+				{   // Any run of contiguous normal white space (tab, space, CR, LF) is replaced with
+                    // just one space. If spaces must be preserved, use nonbreaking spaces.
 					if (!inSpace)
 					{
 						inSpace = true;
@@ -2332,14 +2383,12 @@ namespace WordSend
 					}
 				}
 				else
-				{
+				{   // Nonspaces are appended to the text run as is, up to but not including the next \.
 					sb.Append((char)ch);
 					inSpace = false;
 				}
-				ch = sr.Peek();
-				if (ch != '\\')
-                ch = sr.Read();
-			}
+            } 
+
             // USFM officially has two markup items that break the \tag and \tag ...\tag* pattern:
             // ~ (non-breaking space) and // (discretional line break). We convert the former here.
             // The later is left for the publication or conversion process to deal with.
@@ -3480,28 +3529,15 @@ namespace WordSend
                 }
                 else
                 {
-                    lineBreakPlace = -1;
-                    if (contents.Length > 100)
+                    if (contents.EndsWith(" "))
                     {
-                        lineBreakPlace = contents.IndexOf(' ', 100);
-                    }
-                    if (lineBreakPlace > 90)
-                    {
-                        xw.WriteString(contents.Substring(0, lineBreakPlace) + "\r\n");
-                        if (contents.Length > (lineBreakPlace + 1))
-                            WriteUSFXText(contents.Substring(lineBreakPlace + 1));
+                        xw.WriteString(contents.TrimEnd() + "\r\n");
                     }
                     else
                     {
-                        if (contents.EndsWith(" "))
-                        {
-                            xw.WriteString(contents.TrimEnd() + "\r\n");
-                        }
-                        else
-                        {
-                            xw.WriteString(contents);
-                        }
+                        xw.WriteString(contents);
                     }
+                    
                 }
 			}
 		}
@@ -4831,9 +4867,10 @@ namespace WordSend
                                 xw.WriteElementString("reference", fig.reference);
                                 xw.WriteEndElement();   // fig
                             }
-                            else if ((sf.tag == "fig*") && (sf.text.Length > 0))
+                            else if (sf.tag == "fig*")
                             {
-                                xw.WriteString(sf.text);
+                                if (sf.text.Length > 0)
+                                    xw.WriteString(sf.text);
                             }
                             else
                             {
@@ -5141,7 +5178,7 @@ namespace WordSend
 				bool needsFooter = true;
 				bool oneshot = true;
 				xw = new XmlTextWriter(fileName, System.Text.Encoding.UTF8);
-				xw.Formatting = System.Xml.Formatting.Indented;
+				xw.Formatting = System.Xml.Formatting.None;
 				xw.Indentation = 1;
 				xw.IndentChar = ' ';
 				xr.Read();
@@ -5295,7 +5332,7 @@ namespace WordSend
 			{
 				xw = new XmlTextWriter(fileName, System.Text.Encoding.UTF8);
 				xw.Namespaces = true;
-                xw.Formatting = Formatting.Indented;
+                xw.Formatting = Formatting.None;
 
 				xw.WriteStartDocument();
 				usfxNestLevel = 0;
@@ -5348,7 +5385,7 @@ namespace WordSend
 				XmlTextWriter xw = new XmlTextWriter(outFileName, System.Text.Encoding.UTF8);
 				Logit.WriteLine("Writing "+outFileName);
 				xw.Namespaces = true;
-				xw.Formatting = Formatting.Indented;
+				xw.Formatting = Formatting.None;
 
 				xw.WriteStartDocument();
 				Logit.WriteLine("Writing USFX data only to "+inFileName);
@@ -6237,7 +6274,9 @@ namespace WordSend
         {
             if (sfm.Length == 0)
                 sfm = usfx.Name;
-            string cssStyle = sfm + level;
+            string cssStyle = sfm;
+            if (level != "1")
+                cssStyle = cssStyle + level;
             StartHtmlParagraph(cssStyle, beforeVerse);
             if (usfx.IsEmptyElement)
                 EndHtmlParagraph();
@@ -6256,15 +6295,46 @@ namespace WordSend
 
         protected void WriteNavButtons()
         {
-            string s = "<div class=\"navButtons\">\r\n";
+            int i;
+            if ((homeLinkHTML != null) && (homeLinkHTML.Trim().Length > 0))
+            {
+                htm.WriteLine("<div class=\"navButtons\">{0}</div>", homeLinkHTML);
+            }
+            string s = string.Empty;
             StringBuilder sb = new StringBuilder(s);
             StringBuilder bsb = new StringBuilder(s);
+            BibleBookRecord br;
+
             if (bookListIndex >= 0)
             {
-                s = String.Format("<a href=\"..\">{0}</a> &nbsp; <a href=\"index.htm\">{1}</a> {2} &nbsp; ",
+                htm.WriteLine("<div class=\"navButtons\"><a href=\"..\">{0}</a> <a href=\"index.htm\">{1}</a> {2}</div>",
                     langName, bookRecord.vernacularHeader, currentChapterPublished);
-                sb.Append(s);
-                bsb.Append("<form name=\"ch1\">\r\n");
+                bsb.Append("<table border=\"0\" align=\"center\"><tbody><tr><td>");
+                bsb.Append("<form name=\"bkch1\"><div class=\"navChapters\">");
+                bsb.Append("<select name=\"bksch1\" onChange=\"location=document.bkch1.bksch1.options[document.bkch1.bksch1.selectedIndex].value;\">\r\n");
+                for (i = 0; i < bookList.Count; i++)
+                {
+                    br = (BibleBookRecord)bookList[i];
+                    if (i == bookListIndex)
+                    {
+                        bsb.Append("<option selected>" + br.vernacularHeader + "</option>\r\n");
+                    }
+                    else
+                    {
+                        foreach (string chapFile in chapterFileList)
+                        {
+                            if (chapFile.StartsWith(br.tla) && !chapFile.EndsWith("00"))
+                            {
+                                bsb.Append("<option value=\"" + chapFile + ".htm\">" + br.vernacularHeader + "</option>\r\n");
+                                break;
+                            }
+                        }
+                    }
+                }
+                bsb.Append("</select></div>");
+                bsb.Append("</form>");
+
+                bsb.Append("</td><td><form name=\"ch1\">\r\n");
 
                 s = "<div class=\"navChapters\">";
                 sb.Append(s);
@@ -6285,7 +6355,7 @@ namespace WordSend
                     formatString = "000";
                     chapNumSize = 3;
                 }
-                int i = 0;
+                i = 0;
                 string linkText = LocalizeNumerals("0");
                 if (hasContentsPage)
                 {
@@ -6333,19 +6403,34 @@ namespace WordSend
                     (string)chapterFileList[nextChapIndex] + ".htm");
                 sb.Append(s);
                 bsb.Append(s);
-                sb.Append("</form>\r\n");
+                bsb.Append("</form></td></tr></tbody></table>");
             }
             else
             {
-                if (homeLinkHTML != null)
-                    sb.Append(homeLinkHTML+ " ");
-                sb.Append(langName);
+                bsb.Append("<form name=\"bkch1\"><div class=\"navChapters\">");
+                bsb.Append("<select name=\"bksch1\" onChange=\"location=document.bkch1.bksch1.options[document.bkch1.bksch1.selectedIndex].value;\">\r\n");
+                bsb.Append("<option selected>---</option>\r\n");
+                for (i = 0; i < bookList.Count; i++)
+                {
+                    br = (BibleBookRecord)bookList[i];
+                    foreach (string chapFile in chapterFileList)
+                    {
+                        if (chapFile.StartsWith(br.tla) && !chapFile.EndsWith("00"))
+                        {
+                            bsb.Append("<option value=\"" + chapFile + ".htm\">" + br.vernacularHeader + "</option>\r\n");
+                            break;
+                        }
+                    }
+                }
+                bsb.Append("</select></div>");
+                bsb.Append("</form>");
             }
-            s = "</div>\r\n";
-            sb.Append(s);
-            bsb.Append(s);
             navButtonCode = bsb.ToString();
-            htm.WriteLine(sb.ToString());
+            if (convertDigitsToKhmer)
+                htm.WriteLine(sb.ToString());
+            else
+                htm.WriteLine(navButtonCode);
+            navButtonCode = navButtonCode.Replace("ch1", "ch2");
         }
 
         protected void RepeatNavButtons()
@@ -6388,84 +6473,8 @@ namespace WordSend
             htm.WriteLine("<meta name=\"keywords\" content=\"{0}, {1}, Holy Bible, Scripture, Bible, Scriptures, New Testament, Old Testament, Gospel\">",
                 langName, langId);
             htm.WriteLine("<body class=\"mainDoc\">");
-            /*
-            htm.WriteLine("<form name=\"jump\">");
-            htm.WriteLine("<select name=\"menu\" onChange=\"location=document.jump.menu.options[document.jump.menu.selectedIndex].value;\">");
-            int i;
-            BibleBookRecord br;
-            string buttonClass = "bookLine";
-            for (i = 0; i < bookList.Count; i++)
-            {
-                br = (BibleBookRecord)bookList[i];
-                if (i == bookListIndex)
-                {
-                    htm.WriteLine("<option selected>{0}</option>", br.vernacularHeader);
-                }
-                else
-                {
-                    if ((br.testament.CompareTo("a") == 0) || (br.testament.CompareTo("x") == 0))
-                        buttonClass = "dcbookLine";
-                    else
-                        buttonClass = "bookLine";
-                    foreach (string chapFile in chapterFileList)
-                    {
-                        if (chapFile.StartsWith(br.tla) && !chapFile.EndsWith("00"))
-                        {
-                            htm.WriteLine("<option value=\"{1}.htm\">{2}</option>", buttonClass, chapFile, br.vernacularHeader);
-                            break;
-                        }
-                    }
-                }
-            }
-
-            htm.WriteLine("</select>");
-            htm.WriteLine("</form>");
-            */
+            
             WriteNavButtons();
-            /*if ((homeLinkHTML != null) && (homeLinkHTML.Trim().Length > 0))
-            {
-                htm.WriteLine("<div class=\"dcbookLine\">{0}</div>", homeLinkHTML);
-            }*/
-
-
-            /*
-            htm.WriteLine("<div class=\"bookList\">");
-            int i;
-            BibleBookRecord br;
-            if ((homeLinkHTML != null) && (homeLinkHTML.Trim().Length > 0))
-            {
-                htm.WriteLine("<div class=\"dcbookLine\">{0}</div>", homeLinkHTML);
-            }
-            string buttonClass = "bookLine";
-            for (i = 0; i < bookList.Count; i++)
-            {
-                br = (BibleBookRecord)bookList[i];
-                if (i == bookListIndex)
-                {
-                    htm.WriteLine("<div class=\"bookLine\">{0}</div>", br.vernacularHeader);
-                }
-                else
-                {
-                    if ((br.testament.CompareTo("a") == 0) || (br.testament.CompareTo("x") == 0))
-                        buttonClass = "dcbookLine";
-                    else
-                        buttonClass = "bookLine";
-                    foreach (string chapFile in chapterFileList)
-                    {
-                        if (chapFile.StartsWith(br.tla) && !chapFile.EndsWith("00"))
-                        {
-                            htm.WriteLine("<div class=\"{0}\"><a href=\"{1}.htm\">{2}</a></div>", buttonClass, chapFile, br.vernacularHeader);
-                            break;
-                        }
-                    }
-                }
-            }
-            if ((copyrightLinkHTML != null) && (copyrightLinkHTML.Trim().Length > 0))
-            {
-                htm.WriteLine("<div class=\"dcbookLine\">{0}</div>", copyrightLinkHTML);
-            }
-    */
-            htm.WriteLine("</div>");
         }
 
         protected void WriteHtmlFootnotes()
@@ -6652,6 +6661,11 @@ namespace WordSend
         protected void StartHtmlNote(string style, string marker)
         {
             EndHtmlNote();
+            if (ignoreNotes)
+            {
+                ignore = true;
+                return;
+            }
             inFootnoteStyle = false;
             inFootnote = true;
             string noteId = noteName();
@@ -7133,7 +7147,7 @@ namespace WordSend
                 usfx.Close();
 
                 // Index page
-                currentChapter = "";
+                currentChapter = currentChapterPublished = "";
                 chapterNumber = 0;
                 bookListIndex = -1;
                 currentBookAbbrev = string.Empty;
@@ -7201,8 +7215,8 @@ namespace WordSend
                     chapFormat = "000";
                 else
                     chapFormat = "00";
-                htm.WriteLine("<div class=\"toc\"><a href=\"{0}{1}.htm\">Go!</a></div>",
-                    bookRecord.tla, one.ToString(chapFormat));
+                htm.WriteLine("<div class=\"toc\"><a href=\"{0}.htm\">Go!</a></div>",
+                    chapterFileList[0]);
                 htm.WriteLine(licenseHtml);
                 htm.WriteLine("<p>&nbsp;<br/><br/></p>");
                 htm.WriteLine("<p>HTML generated {0}</p>", today);
@@ -7211,7 +7225,7 @@ namespace WordSend
                 // Pass 2: content generation
 
                 usfx = new XmlTextReader(usfxName);
-                usfx.WhitespaceHandling = WhitespaceHandling.Significant;
+                usfx.WhitespaceHandling = WhitespaceHandling.All;
 
                 chapterFileIndex = 0;
                 bookListIndex = 0;
@@ -7488,6 +7502,8 @@ namespace WordSend
                                     inUsfx = true;
                             }
                             break;
+                        case XmlNodeType.Whitespace:
+                        case XmlNodeType.SignificantWhitespace:
                         case XmlNodeType.Text:
                             WriteHtmlText(usfx.Value);
                             break;

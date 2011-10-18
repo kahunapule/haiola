@@ -269,11 +269,13 @@ namespace sepp
             try
             {
                 Reload();
+                Application.DoEvents();
                 buttonAllSteps.Enabled = false;
                 if (m_options.m_languageId.Length < 3)
                     return;
                 if (OwCheckBox.Checked && (Directory.Exists(Path.Combine(m_workDir, OwDir)) || ConvertingSourceToUsfm()))
                     m_button_Input_to_USFM_Click(this, e);
+                Application.DoEvents();
                 if (UsfxCheckBox.Checked && Directory.Exists(UsfmPath))
                 {
                     UsfmToUsfxButton_Click(sender, e);
@@ -283,6 +285,7 @@ namespace sepp
                     m_button_USFM_to_OSIS_Click(this, e);
                 if (HtmlCheckBox.Checked)
                     UsfxToHtmlButton_Click(sender, e);
+                Application.DoEvents();
                 if (copySupportFilesCheckBox.Checked)
                     btnCopySupportFiles_Click(this, e);
             }
@@ -296,6 +299,8 @@ namespace sepp
 
         public void automaticRun()
         {
+            WindowState = FormWindowState.Minimized;
+            Show();
             buttonAllSteps_Click(null, null);
             Close();
         }
@@ -358,10 +363,16 @@ namespace sepp
         {
             UsfxToHtmlButton.Enabled = false;
             Application.DoEvents();
-            Utils.DeleteDirectory(HtmPath);
+            // Utils.DeleteDirectory(HtmPath);
             if (m_options.m_languageId.Length < 3)
                 return;
             Utils.EnsureDirectory(HtmPath);
+            string propherocss = Path.Combine(HtmPath, "prophero.css");
+            if (File.Exists(propherocss))
+                File.Delete(propherocss);
+            // Copy prophero.css anyway... overwrite it with postprocess.bat if a special one is needed.
+            File.Copy(Path.Combine(Path.Combine(Path.Combine(Master.MasterInstance.dataRootDir, "FilesToCopyToOutput"), "css"), "prophero.css"), propherocss);
+            
             usfxToHtmlConverter toHtm = new usfxToHtmlConverter();
             Logit.OpenFile(Path.Combine(UsfxPath, "HTMLConversionReport.txt"));
             toHtm.ConvertUsfxToHtml(Path.Combine(UsfxPath, "usfx.xml"), HtmPath,
