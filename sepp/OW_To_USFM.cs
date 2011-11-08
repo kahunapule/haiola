@@ -79,12 +79,14 @@ namespace sepp
             return result;
         }
 
+        public static DateTime sourceDate = new DateTime(1611, 1, 1);
 
 		/// <summary>
 		/// Run the algorithm on all non-backup files in the source directory.
 		/// </summary>
 		public void Run()
 		{
+            DateTime fileDate;
 			if (m_tablePaths == null)
 			{
 				// Use the default
@@ -166,6 +168,9 @@ namespace sepp
                     (!inputFile.EndsWith("~")))
 				{
 //					status.File = filename;
+                    fileDate = File.GetLastWriteTimeUtc(inputFile);
+                    if (fileDate > sourceDate)
+                        sourceDate = fileDate;
 					if (!Convert(inputFile))
 					{
 						break;
@@ -236,6 +241,7 @@ namespace sepp
 		/// <param name="outputPath"></param>
 		private unsafe bool ConvertFileCC(string inputPath, string[] tablePaths, string outputPath)
 		{
+            DateTime fileDate;
 			string input;
 			// Read file into input
             // Instead of asking the user what the character encoding is, we guess that it is either
@@ -308,6 +314,9 @@ namespace sepp
 					// Apply a regular expression substitution
 					string temp = Encoding.UTF8.GetString(inputBytes, 0, cbyteInput - 1); // leave out final null
 					StreamReader tableReader = new StreamReader(tablePath, Encoding.UTF8);
+                    fileDate = File.GetLastWriteTimeUtc(tablePath);
+                    if (fileDate > sourceDate)
+                        sourceDate = fileDate;
 					while (!tableReader.EndOfStream)
 					{
 						string source = tableReader.ReadLine();

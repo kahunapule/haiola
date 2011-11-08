@@ -801,4 +801,12 @@
 		<sortOrder>99</sortOrder>
 		<numChapters>151</numChapters>
 	</Book>
+	<Book testament="x">
+		<sfmTla>GLO</sfmTla>
+		<osisName>Glossary</osisName>
+		<name>Glossary</name>
+		<shortName>Glossary</shortName>
+		<sortOrder>100</sortOrder>
+		<numChapters>1</numChapters>
+	</Book>
 </BibleBookInfo>
