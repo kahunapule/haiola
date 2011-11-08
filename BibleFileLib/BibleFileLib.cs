@@ -591,6 +591,29 @@ namespace WordSend
             return (ch == ' ') || (ch == '\r') || (ch == '\n') || (ch == '\t');
         }
 
+        /// <summary>
+        /// Replaces only the first instance of oldstring in string s with newstring.
+        /// (String.Replace replaces ALL instances of the replacement string. This
+        /// just does the first.)
+        /// </summary>
+        /// <param name="s">String on which the replacement is to be made.</param>
+        /// <param name="oldstring">String to find and overwrite with newstring</param>
+        /// <param name="newstring">New string to replace oldstring</param>
+        /// <returns>s, but with the first instance of oldstring replaced with newstring</returns>
+        public static string ReplaceFirst(string s, string oldstring, string newstring)
+        {
+            if ((oldstring == null) || (s == null) || (s == String.Empty))
+                return s;
+            if (newstring == null)
+                newstring = String.Empty;
+            if (newstring == null)
+                newstring = string.Empty;
+            int pos = s.IndexOf(oldstring);
+            if (pos < 0)
+                return s;
+            return s.Substring(0, pos) + newstring + s.Substring(pos + oldstring.Length);
+        }
+
         public static string KhmerDigits(string s)
         {
             StringBuilder sb = new StringBuilder();
@@ -1380,6 +1403,8 @@ namespace WordSend
 
 		public void WriteSFM(string marker, string level, string content, bool firstcol)
 		{
+            if (level == "1")
+                level = "";
 			if (!fileIsOpen)
 			{
 				Logit.WriteError("Error: attempt to write to closed file.");
@@ -2364,12 +2389,12 @@ namespace WordSend
                     sb.Append(' ');
                 }
             }
-            else
+            else if (ch != -1)
             {   // Nonspaces are appended to the text run as is, up to but not including the next \.
                 sb.Append((char)ch);
                 inSpace = false;
             }
-            while ((lookAhead != -1) && (lookAhead != '\\'))
+            while ((ch != -1) && (lookAhead != -1) && (lookAhead != '\\'))
             {
                 ch = sr.Read();
                 lookAhead = sr.Peek();
@@ -3429,7 +3454,7 @@ namespace WordSend
 							if ((styleName != null) && (styleName != ""))
 								xw.WriteAttributeString("style", styleName);
 						}
-						if (level > 0)
+						if (level > 1)
 							xw.WriteAttributeString("level", level.ToString());
 					}
 				}
@@ -3659,7 +3684,7 @@ namespace WordSend
                 }
                 xw.WriteStartElement(ns + elementname);
                 xw.WriteAttributeString("sfm", sfm);
-                if (level > 0)
+                if (level > 1)
                     xw.WriteAttributeString("level", level.ToString());
                 if (attribute != null)
                     xw.WriteAttributeString("attribute", attribute);
@@ -5607,7 +5632,7 @@ namespace WordSend
 								break;
 							case "c":
 								chapter = id;
-								usfmFile.WriteSFM(sfm, level, id, true);
+								usfmFile.WriteSFM(sfm, "", id, true);
 								if (!usfxFile.IsEmptyElement)
 								{
 									ignore = true;
@@ -5615,7 +5640,7 @@ namespace WordSend
 								break;
 							case "v":
 								verse = id;
-								usfmFile.WriteSFM(sfm, level, id, true);
+								usfmFile.WriteSFM(sfm, "", id, true);
 								if (!usfxFile.IsEmptyElement)
 								{
 									ignore = true;
@@ -6243,7 +6268,7 @@ namespace WordSend
         protected int bookListIndex = 0;
         protected StringBuilder footnotesToWrite;
         protected StreamWriter htm;
-        int one = 1;
+        //int one = 1;
         bool inPreverse;
         bool inFootnote;
         bool inFootnoteStyle;
@@ -6309,9 +6334,9 @@ namespace WordSend
             {
                 htm.WriteLine("<div class=\"navButtons\"><a href=\"..\">{0}</a> <a href=\"index.htm\">{1}</a> {2}</div>",
                     langName, bookRecord.vernacularHeader, currentChapterPublished);
-                bsb.Append("<table border=\"0\" align=\"center\"><tbody><tr><td>");
+                bsb.Append("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" align=\"center\"><tbody><tr><td>");
                 bsb.Append("<form name=\"bkch1\"><div class=\"navChapters\">");
-                bsb.Append("<select name=\"bksch1\" onChange=\"location=document.bkch1.bksch1.options[document.bkch1.bksch1.selectedIndex].value;\">\r\n");
+                bsb.Append("<select name=\"bksch1\" onChange=\"location=document.bkch1.bksch1.options[document.bkch1.bksch1.selectedIndex].value;\">");
                 for (i = 0; i < bookList.Count; i++)
                 {
                     br = (BibleBookRecord)bookList[i];
@@ -6323,7 +6348,7 @@ namespace WordSend
                     {
                         foreach (string chapFile in chapterFileList)
                         {
-                            if (chapFile.StartsWith(br.tla) && !chapFile.EndsWith("00"))
+                            if (chapFile.StartsWith(br.tla))
                             {
                                 bsb.Append("<option value=\"" + chapFile + ".htm\">" + br.vernacularHeader + "</option>\r\n");
                                 break;
@@ -6334,19 +6359,19 @@ namespace WordSend
                 bsb.Append("</select></div>");
                 bsb.Append("</form>");
 
-                bsb.Append("</td><td><form name=\"ch1\">\r\n");
+                bsb.Append("</td><td><form name=\"ch1\">");
 
                 s = "<div class=\"navChapters\">";
                 sb.Append(s);
                 bsb.Append(s);
                 if (previousFileName.Length > 0)
                 {
-                    s = String.Format("<a href=\"{0}#V0\">&nbsp;&nbsp;&nbsp;&lt;&nbsp;&nbsp;&nbsp;</a>\r\n",
+                    s = String.Format("<a href=\"{0}#V0\">&lt;&nbsp;</a>",
                         Path.GetFileName(previousFileName));
                     sb.Append(s);
                     bsb.Append(s);
                 }
-                bsb.Append("<select name=\"ch1sel\" onChange=\"location=document.ch1.ch1sel.options[document.ch1.ch1sel.selectedIndex].value;\">\r\n");
+                bsb.Append("<select name=\"ch1sel\" onChange=\"location=document.ch1.ch1sel.options[document.ch1.ch1sel.selectedIndex].value;\">");
 
                 string formatString = "00";
                 int chapNumSize = 2;
@@ -6372,7 +6397,7 @@ namespace WordSend
                             String.Format("{0}{1}.htm", currentBookAbbrev, i.ToString(formatString)), linkText));
                     }
                 }
-                int nextChapIndex = 0;
+                int nextChapIndex = -1;
                 string chFile;
                 for (i = 0; i < chapterFileList.Count; i++)
                 {
@@ -6380,6 +6405,9 @@ namespace WordSend
                     int cn;
                     if (chFile.StartsWith(currentBookAbbrev) && (int.TryParse(chFile.Substring(chFile.Length - chapNumSize), out cn)))
                     {
+                        // The first match for this book is the next chapter from the contents chapter (0).
+                        if (nextChapIndex == -1)
+                            nextChapIndex = i;
                         linkText = LocalizeNumerals(cn.ToString());
                         if (cn == chapterNumber)
                         {
@@ -6396,10 +6424,10 @@ namespace WordSend
                         }
                     }
                 }
-                bsb.Append("</select>\r\n");
-                if (nextChapIndex >= chapterFileList.Count)
+                bsb.Append("</select>");
+                if ((nextChapIndex >= chapterFileList.Count) || (nextChapIndex < 0))
                     nextChapIndex = 0;
-                s = String.Format(" <a href=\"{0}#V0\">&nbsp;&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;</a></div>",
+                s = String.Format("<a href=\"{0}#V0\">&nbsp;&gt;</a></div>",
                     (string)chapterFileList[nextChapIndex] + ".htm");
                 sb.Append(s);
                 bsb.Append(s);
@@ -6408,14 +6436,14 @@ namespace WordSend
             else
             {
                 bsb.Append("<form name=\"bkch1\"><div class=\"navChapters\">");
-                bsb.Append("<select name=\"bksch1\" onChange=\"location=document.bkch1.bksch1.options[document.bkch1.bksch1.selectedIndex].value;\">\r\n");
+                bsb.Append("<select name=\"bksch1\" onChange=\"location=document.bkch1.bksch1.options[document.bkch1.bksch1.selectedIndex].value;\">");
                 bsb.Append("<option selected>---</option>\r\n");
                 for (i = 0; i < bookList.Count; i++)
                 {
                     br = (BibleBookRecord)bookList[i];
                     foreach (string chapFile in chapterFileList)
                     {
-                        if (chapFile.StartsWith(br.tla) && !chapFile.EndsWith("00"))
+                        if (chapFile.StartsWith(br.tla))
                         {
                             bsb.Append("<option value=\"" + chapFile + ".htm\">" + br.vernacularHeader + "</option>\r\n");
                             break;
@@ -6721,6 +6749,7 @@ namespace WordSend
 
         protected void StartHtmlTable()
         {
+            EndHtmlParagraph();
             if (!inTable)
             {
                 WriteHtml("<table border=\"2\" cellpadding=\"2\" cellspacing=\"2\"><tbody>\r\n");
@@ -6737,7 +6766,7 @@ namespace WordSend
             }
             if (inTableCol)
             {
-                WriteHtml("</tc>");
+                WriteHtml("</td>");
                 inTableCol = false;
             }
         }
@@ -6864,6 +6893,213 @@ namespace WordSend
             StartVerse();
         }
 
+       
+        /// <summary>
+        /// Creates a new USFX file that has the local (location-specific) and global changes made to it
+        /// that are specified in the globalSubstFile and localSubstFile. In those two files, the separator
+        /// character for each line is whatever character is the first one on the line, which can be any
+        /// printing Unicode character that isn't contained within any of the fields on the line.
+        /// </summary>
+        /// <param name="inFile">USFX Scripture input file</param>
+        /// <param name="outFile">USFX Scripture output file with specified changes made</param>
+        /// <param name="globalSubstFile">Regular expression global substitutions, with each line containing
+        /// a separator character, match string, separator character, replacement string, separator character.
+        /// Anything after the 3rd separator character is ignored as a comment. For example:
+        /// /(\W)thee(\W)/$1you$2/ This is a comment.
+        /// /(\W)thou(\W)/$1you$2/
+        /// </param>
+        /// <param name="localSubstFile">Plain text location-based one-time substitutions, with each line
+        /// containing a separator character, book abbreviation, separator character, chapter number,
+        /// separator character, verse number, separator character, 'N' if in a footnote, otherwise space,
+        /// separator character, find text, separator character, replace text, separator character, optional
+        /// comment. Lines must be in canonical order, as written in the input USFX file. For example:
+        /// ,LEV,20,26, ,Yahweh,the LORD, This is a comment.
+        /// ,LEV,21,1, ,Yahweh,The LORD,
+        /// </param>
+        /// <returns></returns>
+        public bool FilterUsfx(string inFile, string outFile, string localSubstFile, bool includeApocrypha)
+        {
+            // Logit.WriteLine("Filtering from " + inFile + " to " + outFile + " using " + localSubstFile);
+            if (includeApocrypha)
+                Logit.WriteLine("Including Apocrypha.");
+            bool result = false;
+            bool doLocalSubst = false;
+            bool lookInFootnote = false;
+            bool includeThis = true;
+            string localSubstLine = String.Empty;
+            string[] localSubstParts={"", "", "", "", "", ""};
+            string phrase;
+            StreamReader dasr = null;
+            string daList = String.Empty;
+            XmlTextWriter usfxOut;
+            chapterNumber = verseNumber = 0;
+            currentBookAbbrev = currentBookTitle = currentChapterPublished = String.Empty;
+            currentChapter = currentFileName = currentVerse = languageCode = String.Empty;
+            inPreverse = inFootnote = inFootnoteStyle = inTextStyle = inParagraph = chopChapter = false;
+            bookRecord = (BibleBookRecord)bookInfo.books["FRT"];
+            try
+            {
+                if ((localSubstFile != null) && (File.Exists(localSubstFile)))
+                {
+                    dasr = new StreamReader(localSubstFile);
+                    localSubstLine = dasr.ReadLine();
+                    localSubstParts = localSubstLine.Split(new char[] { localSubstLine[0] });
+                    lookInFootnote = (localSubstParts[4] == "N");
+                    doLocalSubst = true;
+                }
+                usfx = new XmlTextReader(inFile);
+                usfx.WhitespaceHandling = WhitespaceHandling.Significant;
+                usfxOut = new XmlTextWriter(outFile, Encoding.UTF8);
+                
+                while (usfx.Read())
+                {
+                    // Console.Write("{0} {1}:{2} {3}       \r", currentBookAbbrev, currentChapter, currentVerse, localSubstLine);
+
+                    if (usfx.NodeType == XmlNodeType.Element)
+                    {
+                        
+                        level = GetNamedAttribute("level");
+                        style = GetNamedAttribute("style");
+                        sfm = GetNamedAttribute("sfm");
+                        caller = GetNamedAttribute("caller");
+                        id = GetNamedAttribute("id");
+
+                        switch (usfx.Name)
+                        {
+                            case "book":
+                                if (id.Length > 2)
+                                {
+                                    currentBookAbbrev = id;
+                                    bookRecord = (BibleBookRecord)bookInfo.books[currentBookAbbrev];
+                                }
+                                currentChapter = currentVerse = "0";
+                                chapterNumber = 0;
+                                verseNumber = 0;
+                                // Console.WriteLine("{0} {1}:{2} {3} ", currentBookAbbrev, currentChapter, currentVerse, localSubstLine);
+                                if ((bookRecord == null) || (bookRecord.testament == "a"))
+                                {
+                                    includeThis = includeApocrypha;
+                                    // if (includeThis)
+                                    //     Console.WriteLine("Including {0}", currentBookAbbrev);
+                                    // else
+                                    //     Console.WriteLine("Skipping {0}", currentBookAbbrev);
+                                }
+                                else
+                                {
+                                    includeThis = true;
+                                    // Console.WriteLine("Processing {0}", currentBookAbbrev);
+                                }
+                                break;
+                            case "c":
+                                currentChapter = id;
+                                currentVerse = "0";
+                                verseNumber = 0;
+                                int chNum;
+                                if (Int32.TryParse(id, out chNum))
+                                    chapterNumber = chNum;
+                                else
+                                    chapterNumber++;
+                                bookRecord.numChapters = Math.Max(bookRecord.numChapters, chapterNumber);
+                                break;
+                            case "v":
+                                currentVerse = id;
+                                if (!usfx.IsEmptyElement)
+                                {
+                                    usfx.Read();
+                                    if (usfx.NodeType == XmlNodeType.Text)
+                                    {
+                                        currentVersePublished = LocalizeNumerals(usfx.Value.Trim());
+                                    }
+                                }
+                                int vnum;
+                                if (Int32.TryParse(id, out vnum))
+                                {
+                                    verseNumber = vnum;
+                                }
+                                else
+                                {
+                                    verseNumber++;
+                                }
+                                break;
+                            case "f":
+                                inFootnote = true;
+                                break;
+                        }
+                        if (includeThis)
+                        {
+                            usfxOut.WriteStartElement(usfx.Name);
+                            usfxOut.WriteAttributes(usfx, false);
+                            if (usfx.IsEmptyElement)
+                                usfxOut.WriteEndElement();
+                        }
+                    }
+                    if (includeThis)
+                    {
+                        if (usfx.NodeType == XmlNodeType.EndElement)
+                        {
+                            usfxOut.WriteEndElement();
+                            if (usfx.Name == "f")
+                                inFootnote = false;
+                        }
+                        else if (usfx.NodeType == XmlNodeType.Text)
+                        {
+                            phrase = usfx.Value;
+
+                            // Try local (specific to a verse) substitution first.
+                            while (doLocalSubst && (currentBookAbbrev == localSubstParts[1]) &&
+                                (currentChapter == localSubstParts[2]) &&
+                                (currentVerse == localSubstParts[3]) &&
+                                (lookInFootnote == inFootnote) &&
+                                phrase.Contains(localSubstParts[5]))
+                            {
+                                phrase = fileHelper.ReplaceFirst(phrase, localSubstParts[5], localSubstParts[6]);
+                                if (dasr.EndOfStream)
+                                    doLocalSubst = false;
+                                localSubstLine = dasr.ReadLine();
+                                if ((localSubstLine == null) || (localSubstLine.Length < 6))
+                                {
+                                    doLocalSubst = false;
+                                }
+                                else
+                                {
+                                    localSubstParts = localSubstLine.Split(new char[] { localSubstLine[0] });
+                                    if (localSubstParts.Length < 6)
+                                        doLocalSubst = false;
+                                    else
+                                        lookInFootnote = (localSubstParts[4] == "N");
+                                }
+                                if (!doLocalSubst)
+                                    dasr.Close();
+                            }
+
+                           
+                            // Write out changed text.
+                            if (phrase != null)
+                                usfxOut.WriteString(phrase);
+                        }
+                        else if (usfx.NodeType == XmlNodeType.XmlDeclaration)
+                        {
+                            usfxOut.WriteStartDocument();
+                        }
+                        else if (usfx.NodeType != XmlNodeType.Element)
+                        {
+                            usfxOut.WriteRaw(usfx.ReadString());
+                        }
+                    }
+                }
+                usfxOut.Close();
+                usfx.Close();
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+
+            return result;
+        }
+
+        public string indexDateStamp = String.Empty;
 
         /// <summary>
         /// Converts the USFX file usfxName to a set of HTML files, one file per chapter, in the
@@ -6986,7 +7222,7 @@ namespace WordSend
                                     if (usfx.NodeType == XmlNodeType.Text)
                                     {
                                         bookRecord.toc.Append(String.Format("<div class=\"toc1\"><a href=\"{0}{1}.htm#V{2}\">{3}</a></div>\r\n",
-                                            currentBookAbbrev, Math.Max(1, chapterNumber+1).ToString(chapFormat),
+                                            currentBookAbbrev, Math.Max(1, chapterNumber).ToString(chapFormat),
                                             verseNumber.ToString(), usfx.Value.Trim()));
                                     }
                                     hasContentsPage = true;
@@ -7168,6 +7404,8 @@ namespace WordSend
                 int i;
                 BibleBookRecord br;
                 string buttonClass = "bookLine";
+                string contentsName;
+                string chapFmt;
                 for (i = 0; i < bookList.Count; i++)
                 {
                     br = (BibleBookRecord)bookList[i];
@@ -7175,12 +7413,24 @@ namespace WordSend
                         buttonClass = "dcbookLine";
                     else
                         buttonClass = "bookLine";
-                    foreach (string chapFile in chapterFileList)
+                    if (br.tla == "PSA")
+                        chapFmt = "000";
+                    else
+                        chapFmt = "00";
+                    contentsName = br.tla + chapFmt + ".htm";
+                    if (File.Exists(Path.Combine(htmDir, contentsName)))
                     {
-                        if (chapFile.StartsWith(br.tla) && !chapFile.EndsWith("00"))
+                        htm.WriteLine("<div class=\"{0}\"><a href=\"{1}\">{2}</a></div>", buttonClass, contentsName, br.vernacularHeader);
+                    }
+                    else
+                    {
+                        foreach (string chapFile in chapterFileList)
                         {
-                            htm.WriteLine("<div class=\"{0}\"><a href=\"{1}.htm\">{2}</a></div>", buttonClass, chapFile, br.vernacularHeader);
-                            break;
+                            if (chapFile.StartsWith(br.tla))
+                            {
+                                htm.WriteLine("<div class=\"{0}\"><a href=\"{1}.htm\">{2}</a></div>", buttonClass, chapFile, br.vernacularHeader);
+                                break;
+                            }
                         }
                     }
                 }
@@ -7200,8 +7450,10 @@ namespace WordSend
                     chapterFileList[0]);
                 htm.WriteLine(indexHtml, langId);
                 htm.WriteLine("<p>&nbsp;<br/><br/></p>");
-                string today = DateTime.Now.ToString("d MMM yyyy");
-                htm.WriteLine("<p>HTML generated {0}</p>", today);
+                if (indexDateStamp != String.Empty)
+                {
+                    htm.WriteLine("<div class=\"fine\">{0}</div>", indexDateStamp);
+                }
                 CloseHtmlFile();
 
                 // Copyright page
@@ -7219,8 +7471,10 @@ namespace WordSend
                     chapterFileList[0]);
                 htm.WriteLine(licenseHtml);
                 htm.WriteLine("<p>&nbsp;<br/><br/></p>");
-                htm.WriteLine("<p>HTML generated {0}</p>", today);
+                if (indexDateStamp != String.Empty)
+                  htm.WriteLine("<div class=\"fine\">{0}</div>", indexDateStamp);
                 CloseHtmlFile();
+                indexDateStamp = String.Empty;
 
                 // Pass 2: content generation
 

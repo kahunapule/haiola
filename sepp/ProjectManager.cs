@@ -375,6 +375,9 @@ namespace sepp
             
             usfxToHtmlConverter toHtm = new usfxToHtmlConverter();
             Logit.OpenFile(Path.Combine(UsfxPath, "HTMLConversionReport.txt"));
+
+            toHtm.indexDateStamp = "HTML generated " + DateTime.UtcNow.ToString("d MMM yyyy") +
+                " from source files dated " + OW_To_USFM.sourceDate.ToString("d MMM yyyy");
             toHtm.ConvertUsfxToHtml(Path.Combine(UsfxPath, "usfx.xml"), HtmPath,
                 m_options.m_languageName,
                 m_options.m_languageId,
