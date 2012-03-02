@@ -947,9 +947,9 @@
 		<tag>x</tag>
 		<endTag>x*</endTag>
 		<characterStyle>Note Xref</characterStyle>
-		<parameterName>footnoteCaller</parameterName><nestingAllowed>true</nestingAllowed>
+		<nestingAllowed>true</nestingAllowed>
 		<levelExpected>false</levelExpected>
-	<usfx>x</usfx><usfxAttribute>caller</usfxAttribute></sfm>
+	</sfm>
 	<sfm kind="dc">
 		<tag>xdc</tag>
 		<endTag>xdc*</endTag>

@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2003-2004, SIL International. All Rights Reserved.   
-// <copyright from='2003' to='2004' company='SIL International'>
+#region // Copyright (c) 2003-2011, SIL International and Youth With A Mission
+// <copyright from='2003' to='2011' company='SIL International and Youth With A Mission'>
 //		Copyright © 2004, SIL International. All Rights Reserved.   
 //    
 //		Distributable under the terms of either the Common Public License or the
@@ -61,6 +61,7 @@ namespace WordSend
             if (!Directory.Exists(dirName))
                 Directory.CreateDirectory(dirName);
 
+            /****
 			string dtdname = Path.Combine(Path.GetDirectoryName(iniName),"ini.dtd");
 			if (!File.Exists(dtdname))
 			{
@@ -81,6 +82,7 @@ namespace WordSend
 					// Probably a path to removed or read-only media
 				}
 			}
+            ****/
 
 			// Open the named XML file and read in all entries into keys and values
 			// arrays.
@@ -140,9 +142,42 @@ namespace WordSend
 			}
 		}
 
+        /// <summary>
+        /// Using ~ as an escape character, ensure the output string has no <, >, or & characters
+        /// in a reversible way. Expands the string when any of those 4 characters are in it.
+        /// </summary>
+        /// <param name="s">unencoded string</param>
+        /// <returns>encoded string</returns>
+        public static string encodeStringForXml(string s)
+        {
+            if ((s == null) || (s == String.Empty))
+                return s;
+            string result = s.Replace("~", "~~");
+            result = result.Replace("<", "~l");
+            result = result.Replace(">", "~g");
+            result = result.Replace("&", "~a");
+            return result;
+        }
+
+        /// <summary>
+        /// Undoes what encodeStringForXml does.
+        /// </summary>
+        /// <param name="s">encoded string</param>
+        /// <returns>unencoded (plain, original) string</returns>
+        public static string unencodeStringForXml(string s)
+        {
+            if ((s == null) || (s == String.Empty))
+                return s;
+            string result = s.Replace("~a", "&");
+            result = result.Replace("~g", ">");
+            result = result.Replace("~l", "<");
+            result = result.Replace("~~", "~");
+            return result;
+        }
+
 		public void WriteString(string key, string val)
 		{
-			hashTbl[key] = val;
+			hashTbl[key] = encodeStringForXml(val);
 		}
 
 		public void WriteInt(string key, int i)
@@ -157,7 +192,7 @@ namespace WordSend
 
 		public string ReadString(string key, string deflt)
 		{
-			string result = (string) hashTbl[key];
+			string result = unencodeStringForXml((string) hashTbl[key]);
 			if (result == null)
 			{
 				result = deflt;
@@ -199,6 +234,27 @@ namespace WordSend
 			return result;
 		}
 
+        public void WriteDateTime(string key, DateTime dt)
+        {
+            hashTbl[key] = dt.ToString("o");
+        }
+
+        public DateTime ReadDateTime(string key, DateTime deflt)
+        {
+            DateTime result = deflt;
+            try
+            {
+                string s = (string)hashTbl[key];
+                if ((s == null) || (s == ""))
+                    return deflt;
+                result = DateTime.Parse(s, null, System.Globalization.DateTimeStyles.RoundtripKind);
+            }
+            catch
+            {
+            }
+            return result;
+        }
+
 		// Flush the hash table to an XML file ("save").
 		public bool Write()
 		{
@@ -211,7 +267,7 @@ namespace WordSend
 					xml = new XmlTextWriter(fileName, System.Text.Encoding.UTF8);
 					xml.WriteStartDocument();
 					xml.Formatting = Formatting.Indented;
-					xml.WriteDocType("ini", null, "ini.dtd", null);
+					xml.WriteDocType("ini", null, null/* "ini.dtd" */, null);
 					xml.WriteStartElement("ini");
 
 					IDictionaryEnumerator enu = hashTbl.GetEnumerator();
@@ -459,7 +515,7 @@ namespace WordSend
             int evenNullCount = 0;  // Bigger on Little Endian UTF-16
             int e2Count = 0;
             bool odd = true;
-            Encoding result = Encoding.GetEncoding(1252);
+            Encoding result = Encoding.UTF8;    // Assume innocent until proven guilty.
             try
             {
                 FileStream fs;
@@ -561,7 +617,9 @@ namespace WordSend
                                 }
                             odd = !odd;
                         }
-                        if (e2Count > oddNullCount + evenNullCount + 1)
+                        if (e2Count < 0)
+                            result = Encoding.GetEncoding(1252);
+                        else if (e2Count > oddNullCount + evenNullCount + 1)
                             result = Encoding.UTF8;
                         else if (oddNullCount > (evenNullCount * 2))
                             result = Encoding.BigEndianUnicode;
@@ -658,6 +716,64 @@ namespace WordSend
             }
             return sb.ToString();
         }
+
+        /// <summary>
+        /// Property that returns the full path to the running executable program.
+        /// </summary>
+        public static string ExePath
+        {
+            get
+            {
+                return Path.GetDirectoryName(System.IO.Path.GetFullPath(Environment.GetCommandLineArgs()[0]));
+            }
+        }
+
+        /// <summary>
+        /// Recursively copies the contents of the source directory to the destination directory.
+        /// The immediate parent of the destination directory must exist.
+        /// </summary>
+        /// <param name="Src">Path to source directory</param>
+        /// <param name="Dst">Path to destination directory</param>
+        public static void CopyDirectory(string Src, string Dst)
+        {
+            String[] Files;
+
+            if (Dst[Dst.Length - 1] != Path.DirectorySeparatorChar)
+                Dst += Path.DirectorySeparatorChar;
+            if (!Directory.Exists(Dst))
+                Directory.CreateDirectory(Dst);
+            Files = Directory.GetFileSystemEntries(Src);
+            foreach (string Element in Files)
+            {
+                // Sub directories
+                if (Directory.Exists(Element))
+                    CopyDirectory(Element, Dst + Path.GetFileName(Element));
+                else // Files in directory
+                    File.Copy(Element, Dst + Path.GetFileName(Element), true);
+            }
+        }
+
+        /// Create the directory if it does not exist already. Return true if a problem occurs.
+        /// </summary>
+        /// <param name="destinationPath"></param>
+        /// <returns></returns>
+        public static bool EnsureDirectory(string destinationPath)
+        {
+            if (!File.Exists(destinationPath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(destinationPath);
+                }
+                catch (Exception ex)
+                {
+                    Logit.WriteError(String.Format("Unable to create directory {0}. Details: {1}", destinationPath, ex.Message));
+                    return true;
+                }
+            }
+            return false;
+        }
+
 
         public static void revisePua(string fName)
         {
@@ -2998,7 +3114,7 @@ namespace WordSend
 		{
             if (SFConverter.jobIni == null)
             {
-                string dataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SIL");
+                string dataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "haiola");
                 if (!Directory.Exists(dataDir))
                     Directory.CreateDirectory(dataDir);
                 dataDir = Path.Combine(dataDir, "WordSend");
@@ -6264,7 +6380,7 @@ namespace WordSend
         protected string nextChapterText;
         protected ArrayList chapterFileList = new ArrayList();
         protected int chapterFileIndex = 0;
-        protected ArrayList bookList = new ArrayList();
+        public static ArrayList bookList = new ArrayList();
         protected int bookListIndex = 0;
         protected StringBuilder footnotesToWrite;
         protected StreamWriter htm;
@@ -6321,19 +6437,56 @@ namespace WordSend
         protected void WriteNavButtons()
         {
             int i;
-            if ((homeLinkHTML != null) && (homeLinkHTML.Trim().Length > 0))
-            {
-                htm.WriteLine("<div class=\"navButtons\">{0}</div>", homeLinkHTML);
-            }
             string s = string.Empty;
+            string firstChapterFile = string.Empty;
+            string chFile;
             StringBuilder sb = new StringBuilder(s);
             StringBuilder bsb = new StringBuilder(s);
             BibleBookRecord br;
 
+            // Write the "Home" link if one is desired.
+            if ((homeLinkHTML != null) && (homeLinkHTML.Trim().Length > 0))
+            {
+                htm.WriteLine("<div class=\"navButtons\">{0}</div>", homeLinkHTML);
+            }
+
+            // We use 2 digits for chapter numbers in file names except for in the Psalms, where we use 3.
+            string formatString = "00";
+            int chapNumSize = 2;
+            if (currentBookAbbrev.CompareTo("PSA") == 0)
+            {
+                formatString = "000";
+                chapNumSize = 3;
+            }
+
+            // Figure out what the file name of the contents page or first chapter is, allowing for
+            // possible (likely) missing contents pages or chapter 1.
+            if (hasContentsPage)
+            {
+                i = 0;
+                firstChapterFile = String.Format("{0}{1}.htm", currentBookAbbrev, i.ToString(formatString));
+            }
+            else
+            {
+                i = 0;
+                while ((i < chapterFileList.Count) && (firstChapterFile == String.Empty))
+                {
+                    chFile = (string)chapterFileList[i];
+                    if (chFile.StartsWith(currentBookAbbrev))
+                    {
+                        // The first match for this book might be chapter 1 or, if that is missing, a later chapter.
+                        firstChapterFile = chFile + ".htm";
+                    }
+                    i++;
+                }
+
+            }
+
+
             if (bookListIndex >= 0)
             {
-                htm.WriteLine("<div class=\"navButtons\"><a href=\"..\">{0}</a> <a href=\"index.htm\">{1}</a> {2}</div>",
-                    langName, bookRecord.vernacularHeader, currentChapterPublished);
+                htm.WriteLine("<div class=\"navButtons\"><a href=\"index.htm\">{0}</a> <a href=\"{1}\">{2}</a> {3}</div>",
+                    langName, firstChapterFile, bookRecord.vernacularHeader, currentChapterPublished);
                 bsb.Append("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" align=\"center\"><tbody><tr><td>");
                 bsb.Append("<form name=\"bkch1\"><div class=\"navChapters\">");
                 bsb.Append("<select name=\"bksch1\" onChange=\"location=document.bkch1.bksch1.options[document.bkch1.bksch1.selectedIndex].value;\">");
@@ -6373,13 +6526,6 @@ namespace WordSend
                 }
                 bsb.Append("<select name=\"ch1sel\" onChange=\"location=document.ch1.ch1sel.options[document.ch1.ch1sel.selectedIndex].value;\">");
 
-                string formatString = "00";
-                int chapNumSize = 2;
-                if (currentBookAbbrev.CompareTo("PSA") == 0)
-                {
-                    formatString = "000";
-                    chapNumSize = 3;
-                }
                 i = 0;
                 string linkText = LocalizeNumerals("0");
                 if (hasContentsPage)
@@ -6398,7 +6544,6 @@ namespace WordSend
                     }
                 }
                 int nextChapIndex = -1;
-                string chFile;
                 for (i = 0; i < chapterFileList.Count; i++)
                 {
                     chFile = (string)chapterFileList[i];
@@ -6635,7 +6780,6 @@ namespace WordSend
             s = s.Replace("<", "&lt;");
             s = s.Replace(">", "&gt;");
             s = s.Replace("&", "&amp;");
-            // s = s.Replace("\x200b", "&#x200B;");
             return s;
         }
 
@@ -7100,6 +7244,7 @@ namespace WordSend
         }
 
         public string indexDateStamp = String.Empty;
+        public static string conversionProgress = String.Empty;
 
         /// <summary>
         /// Converts the USFX file usfxName to a set of HTML files, one file per chapter, in the
@@ -7113,13 +7258,13 @@ namespace WordSend
         /// <param name="languageId">New Ethnologue 3-letter code for this language</param>
         /// <param name="chapterLabelName">Vernacular name for "Chapter"</param>
         /// <param name="psalmLabelName">Vernacular name for "Psalm"</param>
-        /// <param name="copyrightLink">HTML for copyright link, like &lt;href a="copyright.htm"&gt;>©&lt;/a&gt;</param>
+        /// <param name="copyrightLink">HTML for copyright link, like &lt;href a="copyright.htm"&gt;©&lt;/a&gt;</param>
         /// <param name="homeLink">HTML for link to home page</param>
         /// <param name="footerHtml">HTML for footer "fine print" text</param>
         /// <returns>true iff the conversion succeeded</returns>
-        public bool ConvertUsfxToHtml(string usfxName, string htmlDir, string languageName, string languageId,
+        public bool ConvertUsfxToHtml(string usfxName, string htmlDir, string languageName, string languageId, string translationId,
             string chapterLabelName, string psalmLabelName, string copyrightLink, string homeLink, string footerHtml,
-            string indexHtml, string licenseHtml, bool useKhmerDigits = false, bool skipHelps = false)
+            string indexHtml, string licenseHtml, bool useKhmerDigits = false, bool skipHelps = false, string goText = "Go!")
         {
             bool result = false;
             bool inUsfx = false;
@@ -7133,6 +7278,7 @@ namespace WordSend
             chapterLabel = chapterLabelName;
             psalmLabel = psalmLabelName;
             chapterNumber = verseNumber = 0;
+            bookList.Clear();
             convertDigitsToKhmer = useKhmerDigits;
             currentBookAbbrev = currentBookTitle = currentChapterPublished = wordForChapter = String.Empty;
             currentChapter = currentFileName = currentVerse = languageCode = String.Empty;
@@ -7359,6 +7505,8 @@ namespace WordSend
                                 // Write book table of contents
                                 if (!hasContentsPage)
                                     bookRecord.toc.Length = 0;
+                                bookRecord.vernacularName = vernacularLongTitle;
+                                
                                 bookList.Add(bookRecord);
                                 break;
                             case "d":
@@ -7379,6 +7527,8 @@ namespace WordSend
                                 break;
                         }
                     }
+                    conversionProgress = "navigation " + currentBookAbbrev + " " + currentChapter + ":" + currentVerse;
+                    System.Windows.Forms.Application.DoEvents();
                 }
                 usfx.Close();
 
@@ -7446,9 +7596,9 @@ namespace WordSend
                     chapFormat = "000";
                 else
                     chapFormat = "00";
-                htm.WriteLine("<div class=\"toc\"><a href=\"{0}.htm\">Go!</a></div>",
-                    chapterFileList[0]);
-                htm.WriteLine(indexHtml, langId);
+                htm.WriteLine("<div class=\"toc\"><a href=\"{0}.htm\">{1}</a></div>",
+                    chapterFileList[0], goText);
+                htm.WriteLine(indexHtml, langId, translationId);
                 htm.WriteLine("<p>&nbsp;<br/><br/></p>");
                 if (indexDateStamp != String.Empty)
                 {
@@ -7467,8 +7617,8 @@ namespace WordSend
                     chapFormat = "000";
                 else
                     chapFormat = "00";
-                htm.WriteLine("<div class=\"toc\"><a href=\"{0}.htm\">Go!</a></div>",
-                    chapterFileList[0]);
+                htm.WriteLine("<div class=\"toc\"><a href=\"{0}.htm\">{1}</a></div>",
+                    chapterFileList[0], goText);
                 htm.WriteLine(licenseHtml);
                 htm.WriteLine("<p>&nbsp;<br/><br/></p>");
                 if (indexDateStamp != String.Empty)
@@ -7485,6 +7635,9 @@ namespace WordSend
                 bookListIndex = 0;
                 while (usfx.Read())
                 {
+                    conversionProgress = "Generating HTML " + currentBookAbbrev + " " + currentChapter + ":" + currentVerse;
+                    System.Windows.Forms.Application.DoEvents();
+
                     switch (usfx.NodeType)
                     {
                         case XmlNodeType.Element:
@@ -7526,6 +7679,7 @@ namespace WordSend
                                         currentChapter = "";
                                         if (hasContentsPage)
                                         {
+                                            currentChapterPublished = "0";
                                             OpenHtmlFile();
                                             htm.WriteLine("<div class=\"toc\"><a href=\"../index.htm\">^</a></div>\r\n{0}",
                                                 bookRecord.toc.ToString());
@@ -7883,6 +8037,7 @@ namespace WordSend
                                 }
                             }
                             break;
+
                     }
 
                     result = true;
@@ -7900,6 +8055,7 @@ namespace WordSend
                 if (usfx != null)
                     usfx.Close();
             }
+            conversionProgress = String.Empty;
             return result;
         }
     }

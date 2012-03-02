@@ -48,6 +48,7 @@ namespace sepp
 
         public static WordSend.BibleBookInfo bkInfo = null;
 
+
         /// <summary>
         /// Reads the \id line to get the standard abbreviation of this file to figure out what
         /// a good name for its standardized file name might be.

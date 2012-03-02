@@ -15,6 +15,7 @@ namespace sepp
 	public partial class ProjectManager : Form
 	{
 		string m_optionsPath; // e.g.,@"C:\BibleConv\Work\Kupang\Sepp Options.xml";
+        string m_xiniPath;  // e.g., @"C:\BibleConv\Work\Kupang\haiolacfg.xini";
 		private Options m_options;
 		string m_workDir; //e.g., @"C:\BibleConv\Work\Kupang"
 		string m_siteDir; // e.g., c:\BibleConv\Site\Kupang
@@ -40,6 +41,7 @@ namespace sepp
 		{
 		XmlDocument optionsDoc = new XmlDocument();
 			m_optionsPath = Path.Combine(m_workDir, "Sepp Options.xml");
+            m_xiniPath = Path.Combine(m_workDir, "options.xini");
 			if (!File.Exists(m_optionsPath))
 			{
                 if (!GenerateOptions(m_optionsPath))
@@ -381,6 +383,7 @@ namespace sepp
             toHtm.ConvertUsfxToHtml(Path.Combine(UsfxPath, "usfx.xml"), HtmPath,
                 m_options.m_languageName,
                 m_options.m_languageId,
+                m_project,
                 m_options.m_chapterLabel,
                 m_options.m_psalmLabel,
                 m_options.m_copyrightLink,

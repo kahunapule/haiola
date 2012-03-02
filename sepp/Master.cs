@@ -51,8 +51,8 @@ namespace sepp
 
 		private void Master_Load(object sender, EventArgs e)
 		{
-            xini = new XMLini(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SIL"),
-                "Prophero.xini"));
+            xini = new XMLini(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "haiola"),
+                "haiola.xini"));
             dataRootDir = xini.ReadString("dataRootDir", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "BibleConv"));
             m_workDirectory = Path.Combine(dataRootDir, "Work");
             m_siteDirectory = Path.Combine(dataRootDir, "Site");

@@ -40,8 +40,8 @@ div.ebs2 {  font-size: 13pt; font-weight: bold; display: block; margin-bottom: 6
 div.ebs3 {  font-size: 11pt; font-weight: bold; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; text-indent: 2em}
 span.fm, span.notemark {  font-size: 11pt; vertical-align: super; margin-left: 2pt; line-height: 0}
 div.fp {  font-size: 11pt; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; margin-left: 12em}
-span.fq {  font-weight: bold; color: rgb(0,0,128) }
-span.fqa {  font-weight: bold; color: rgb(0,0,128) }
+span.fq {  font-style: italic; color: rgb(0,0,128) }
+span.fqa {  font-style: italic; color: rgb(0,0,128) }
 span.fr {  color: rgb(0,0,16) }
 span.ft {  font-weight: normal; color: rgb(0,0,128) }
 span.fv {  color: maroon }
@@ -150,7 +150,7 @@ div.navButtons a { padding: 3px; background-color: #036; border-bottom: 1px soli
 div.navButtons a:visited { color: #ffff66; text-decoration: none; }
 div.navButtons a:link { color: #ffffff; text-decoration: none; }
 div.navButtons a:hover { background-color: #0520ff; color: #fff; }
-div.navChapters {  font-size: 11pt; display: block; margin-bottom: 10pt; text-align: center; line-height: 28pt }
+div.navChapters {  font-size: 10pt; display: block; margin-bottom: 10pt; text-align: center; line-height: 28pt }
 div.navChapters a { padding: 3px; background-color: #036; border-bottom: 1px solid #eee; }
 div.navChapters a:visited { color: #ffff66; text-decoration: none; }
 div.navChapters a:link { color: #ffffff; text-decoration: none; }
