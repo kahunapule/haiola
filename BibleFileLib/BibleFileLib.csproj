@@ -97,9 +97,6 @@
     <Compile Include="BibleFileLib.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Version.cs">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

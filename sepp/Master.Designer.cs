@@ -50,7 +50,7 @@ namespace sepp
             this.m_projectsList.FormattingEnabled = true;
             this.m_projectsList.Location = new System.Drawing.Point(12, 12);
             this.m_projectsList.Name = "m_projectsList";
-            this.m_projectsList.Size = new System.Drawing.Size(285, 409);
+            this.m_projectsList.Size = new System.Drawing.Size(285, 379);
             this.m_projectsList.TabIndex = 5;
             // 
             // ProjectButton
@@ -66,11 +66,11 @@ namespace sepp
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(312, 408);
+            this.label1.Location = new System.Drawing.Point(314, 292);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(190, 13);
             this.label1.TabIndex = 10;
-            this.label1.Text = "Version 0.99327 of 18 November 2011";
+            this.label1.Text = "Version 0.99328 of 29 November 2011";
             // 
             // btnSetRootDirectory
             // 
@@ -115,7 +115,7 @@ namespace sepp
             // workDirLabel
             // 
             this.workDirLabel.AutoSize = true;
-            this.workDirLabel.Location = new System.Drawing.Point(312, 116);
+            this.workDirLabel.Location = new System.Drawing.Point(311, 112);
             this.workDirLabel.Name = "workDirLabel";
             this.workDirLabel.Size = new System.Drawing.Size(92, 13);
             this.workDirLabel.TabIndex = 12;
@@ -124,7 +124,7 @@ namespace sepp
             // statsLabel
             // 
             this.statsLabel.AutoSize = true;
-            this.statsLabel.Location = new System.Drawing.Point(312, 395);
+            this.statsLabel.Location = new System.Drawing.Point(314, 279);
             this.statsLabel.Name = "statsLabel";
             this.statsLabel.Size = new System.Drawing.Size(35, 13);
             this.statsLabel.TabIndex = 13;
@@ -163,7 +163,7 @@ namespace sepp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(624, 442);
+            this.ClientSize = new System.Drawing.Size(624, 402);
             this.Controls.Add(this.batchLabel);
             this.Controls.Add(this.unmarkAllButton);
             this.Controls.Add(this.checkAllButton);
@@ -176,6 +176,7 @@ namespace sepp
             this.Controls.Add(this.label1);
             this.Controls.Add(this.ProjectButton);
             this.Controls.Add(this.m_projectsList);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Master";
             this.Text = "Prophero Scripture Electronic Publishing Program";
