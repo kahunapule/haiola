@@ -873,7 +873,7 @@
             // 
             this.goTextTextBox.Location = new System.Drawing.Point(170, 50);
             this.goTextTextBox.Name = "goTextTextBox";
-            this.goTextTextBox.Size = new System.Drawing.Size(307, 20);
+            this.goTextTextBox.Size = new System.Drawing.Size(435, 20);
             this.goTextTextBox.TabIndex = 46;
             this.goTextTextBox.Text = "Go!";
             // 
@@ -889,15 +889,14 @@
             // 
             // licenseTextBox
             // 
-            this.licenseTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.licenseTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
             this.licenseTextBox.Location = new System.Drawing.Point(0, 205);
             this.licenseTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.licenseTextBox.Multiline = true;
             this.licenseTextBox.Name = "licenseTextBox";
             this.licenseTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.licenseTextBox.Size = new System.Drawing.Size(708, 255);
+            this.licenseTextBox.Size = new System.Drawing.Size(605, 255);
             this.licenseTextBox.TabIndex = 49;
             // 
             // label4
@@ -921,47 +920,39 @@
             // 
             // indexPageTextBox
             // 
-            this.indexPageTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
             this.indexPageTextBox.Location = new System.Drawing.Point(0, 123);
             this.indexPageTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.indexPageTextBox.Multiline = true;
             this.indexPageTextBox.Name = "indexPageTextBox";
             this.indexPageTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.indexPageTextBox.Size = new System.Drawing.Size(711, 66);
+            this.indexPageTextBox.Size = new System.Drawing.Size(605, 66);
             this.indexPageTextBox.TabIndex = 48;
             // 
             // footerHtmlTextBox
             // 
             this.footerHtmlTextBox.AcceptsReturn = true;
-            this.footerHtmlTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
             this.footerHtmlTextBox.Location = new System.Drawing.Point(3, 73);
             this.footerHtmlTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.footerHtmlTextBox.Multiline = true;
             this.footerHtmlTextBox.Name = "footerHtmlTextBox";
             this.footerHtmlTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.footerHtmlTextBox.Size = new System.Drawing.Size(708, 38);
+            this.footerHtmlTextBox.Size = new System.Drawing.Size(602, 38);
             this.footerHtmlTextBox.TabIndex = 47;
             // 
             // homeLinkTextBox
             // 
-            this.homeLinkTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
             this.homeLinkTextBox.Location = new System.Drawing.Point(160, 3);
             this.homeLinkTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.homeLinkTextBox.Name = "homeLinkTextBox";
-            this.homeLinkTextBox.Size = new System.Drawing.Size(552, 20);
+            this.homeLinkTextBox.Size = new System.Drawing.Size(445, 20);
             this.homeLinkTextBox.TabIndex = 44;
             // 
             // copyrightLinkTextBox
             // 
-            this.copyrightLinkTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
             this.copyrightLinkTextBox.Location = new System.Drawing.Point(169, 27);
             this.copyrightLinkTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.copyrightLinkTextBox.Name = "copyrightLinkTextBox";
-            this.copyrightLinkTextBox.Size = new System.Drawing.Size(542, 20);
+            this.copyrightLinkTextBox.Size = new System.Drawing.Size(436, 20);
             this.copyrightLinkTextBox.TabIndex = 45;
             this.copyrightLinkTextBox.Text = "<a href=\"copyright.htm\">©</a>:";
             // 
@@ -1099,6 +1090,7 @@
             this.helpButton.TabIndex = 2;
             this.helpButton.Text = "&Help";
             this.helpButton.UseVisualStyleBackColor = false;
+            this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
             // 
             // runHighlightedButton
             // 

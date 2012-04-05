@@ -16,7 +16,7 @@ namespace sepp
         public static Master MasterInstance;
         private XMLini xini;
         public string dataRootDir; // Default is BibleConv in the user's documents folder
-        string m_workDirectory;
+        string m_inputDirectory;
         public string m_siteDirectory; // curently Site, always under dataRootDir
         public bool autorun = false;
 
@@ -31,21 +31,14 @@ namespace sepp
 		{
 			FolderBrowserDialog dlg = new FolderBrowserDialog();
 			dlg.Description =
-				@"Select a root dialog (default is BibleConv in your My Documents directory) to contain your working directories and the root of your prototype site.";
+				@"Select a root dialog (default is BibleConv in your Documents directory) to contain your input and output directories.";
 			dlg.ShowNewFolderButton = true;
 			if (dlg.ShowDialog() != System.Windows.Forms.DialogResult.OK)
 				return false;
             dataRootDir = dlg.SelectedPath;
-            m_workDirectory = Path.Combine(dataRootDir, "Work");
-            m_siteDirectory = Path.Combine(dataRootDir, "Site");
             xini.WriteString("dataRootDir", dataRootDir);
             xini.Write();
-            string templateDir = Path.Combine(Utils.ExePath, "BibleConv");
-            if (!Directory.Exists(templateDir))
-                templateDir = Path.Combine(Utils.ExePath, Path.Combine("..", Path.Combine("..", Path.Combine("..", "BibleConv"))));
-            if (!Directory.Exists(templateDir))
-                templateDir = Path.Combine(Utils.ExePath, "BibleConv");
-            Utils.CopyDirectory(templateDir, dataRootDir);
+            LoadWorkingDirectory();
             return true;
 		}
 
@@ -54,8 +47,6 @@ namespace sepp
             xini = new XMLini(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "haiola"),
                 "haiola.xini"));
             dataRootDir = xini.ReadString("dataRootDir", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "BibleConv"));
-            m_workDirectory = Path.Combine(dataRootDir, "Work");
-            m_siteDirectory = Path.Combine(dataRootDir, "Site");
             if (xini.ReadBool("Warning", true))
 			{
 				WarningSplash dlg = new WarningSplash();
@@ -66,7 +57,7 @@ namespace sepp
                     xini.Write();
 				}
 			}
-			if (!Directory.Exists(m_workDirectory))
+			if (!Directory.Exists(m_inputDirectory))
 				if (!GetRootDirectory())
 					Application.Exit();
 			LoadWorkingDirectory();
@@ -84,9 +75,10 @@ namespace sepp
             int projReady = 0;
             m_projectsList.BeginUpdate();
 			m_projectsList.Items.Clear();
-            Utils.EnsureDirectory(m_workDirectory);
-            workDirLabel.Text = m_workDirectory;
-			foreach (string path in Directory.GetDirectories(m_workDirectory))
+            m_inputDirectory = Path.Combine(dataRootDir, "input");
+            Utils.EnsureDirectory(m_inputDirectory);
+            workDirLabel.Text = m_inputDirectory;
+			foreach (string path in Directory.GetDirectories(m_inputDirectory))
 			{
 				m_projectsList.Items.Add(Path.GetFileName(path));
                 projCount++;
@@ -109,7 +101,7 @@ namespace sepp
 			}
 			else
 			{
-				MessageBox.Show(this, "No projects found in " + m_workDirectory
+				MessageBox.Show(this, "No projects found in " + m_inputDirectory
 									  +
 									  ". You should create a folder there for your project and place your input files in the appropriate subdirectory.",
 								"No Projects", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -120,7 +112,7 @@ namespace sepp
 		private void ProjectButton_Click(object sender, EventArgs e)
 		{
 			string project = m_projectsList.SelectedItem as string;
-			string projectWorkPath = Path.Combine(m_workDirectory, project);
+			string projectWorkPath = Path.Combine(m_inputDirectory, project);
 			string projectSitePath = Path.Combine(m_siteDirectory, project);
 			ProjectManager manager = new ProjectManager(projectWorkPath, projectSitePath, project);
 			manager.ShowDialog();
@@ -172,7 +164,7 @@ namespace sepp
         {
             OpenFileDialog dlg = new OpenFileDialog();
 			dlg.CheckFileExists = true;
-			dlg.InitialDirectory = m_workDirectory;
+			dlg.InitialDirectory = m_inputDirectory;
 			//dlg.Multiselect = true;
 			dlg.Filter = "SFM files(*.sfm)|*.sfm|All files|*.*";
             if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -223,7 +215,7 @@ namespace sepp
                 string project = (string)o;
                 batchLabel.Text = project;
                 Application.DoEvents();
-                string projectWorkPath = Path.Combine(m_workDirectory, project);
+                string projectWorkPath = Path.Combine(m_inputDirectory, project);
                 string projectSitePath = Path.Combine(m_siteDirectory, project);
                 ProjectManager manager = new ProjectManager(projectWorkPath, projectSitePath, project);
                 manager.automaticRun();
@@ -244,7 +236,7 @@ namespace sepp
                 Application.DoEvents();
                 object o_project = m_projectsList.SelectedItem;
                 string project = (string)o_project;
-                string projectWorkPath = Path.Combine(m_workDirectory, project);
+                string projectWorkPath = Path.Combine(m_inputDirectory, project);
                 string projectSitePath = Path.Combine(m_siteDirectory, project);
                 ProjectManager manager = new ProjectManager(projectWorkPath, projectSitePath);
                 manager.Show();

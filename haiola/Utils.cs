@@ -18,6 +18,7 @@ namespace sepp
 		/// </summary>
 		/// <param name="path"></param>
 		/// <returns></returns>
+        /*
 		public static List<string> ChapFiles(string pattern)
 		{
 			string dirname = Path.GetDirectoryName(pattern);
@@ -30,12 +31,12 @@ namespace sepp
 				files[i] = Path.Combine(dirname, files[i]);
 			return files;
 		}
-
+       
 		private static int CompareFilesBySuffix(string x, string y)
 		{
 			return GetSeq(x).CompareTo(GetSeq(y));
 		}
-
+ 
 		private static int GetSeq(string x)
 		{
 			int indexOfHyphen = x.LastIndexOf("-");
@@ -45,18 +46,21 @@ namespace sepp
 			Int32.TryParse(key, out result);
 			return result;
 		}
+        */
 
 		/// <summary>
 		/// When working in chapter-per-file mode, call this to obtain the file without the added piece.
 		/// </summary>
 		/// <param name="filename"></param>
 		/// <returns></returns>
+        /*
 		public static string MainFileName(string filename)
 		{
 			int indexOfHyphen = filename.LastIndexOf("-");
 			int indexOfDot = filename.LastIndexOf(".");
 			return filename.Remove(indexOfHyphen, indexOfDot - indexOfHyphen);
 		}
+        */
 
         public static void DeleteDirectory(string destinationPath)
         {
@@ -150,6 +154,7 @@ namespace sepp
 				dict[key] = true;
 		}
 
+        /*
         public static string ExePath
         {
             get
@@ -157,13 +162,14 @@ namespace sepp
                 return Path.GetDirectoryName(System.IO.Path.GetFullPath(Environment.GetCommandLineArgs()[0]));
             }
         }
-
+        */
         /// <summary>
         /// Get a full path for the required file. In debug builds it is often found in ..\..\X; in an installed release build it is in the same directory
         /// as the program. Throw an exception if not found at either place.
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
+        /* replaced by SFConverter.FindAuxFile
         public static string GetUtilityFile(string fileName)
         {
             if (File.Exists(fileName))
@@ -186,7 +192,8 @@ namespace sepp
                 return result;
             throw new Exception("Could not find required file " + fileName);
         }
-
+        */
+        /* Good routine, currently unused
         public static void CopyDirectory(string Src, string Dst)
         {
             String[] Files;
@@ -205,7 +212,7 @@ namespace sepp
                     File.Copy(Element, Dst + Path.GetFileName(Element), true);
             }
         }
-
+        */
 
 	}
 }

@@ -8070,7 +8070,7 @@ namespace WordSend
 		static public string AppDir(string fName)
 		{
 			if (appHomeDir == null)
-			{	// Suggestions are welcome for a Mono-friendly replacement for Application.ExecutablePath.
+			{
 				appHomeDir = Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
 			}
 			return (Path.Combine(appHomeDir,fName));
@@ -8081,10 +8081,13 @@ namespace WordSend
             string result = AppDir(fName);
             if (File.Exists(result))
                 return result;
-            result = Path.Combine(appHomeDir, @"..");
-            result = Path.Combine(result, @"..");
-            result = Path.Combine(result, fName);
-            return result;
+            result = Path.Combine(Path.Combine(Path.Combine(appHomeDir, ".."), "Resources"), fName);
+            if (File.Exists(result))
+                return result;
+            result = Path.Combine(Path.Combine(Path.Combine(appHomeDir, @".."), @".."), fName);
+            if (File.Exists(result))
+                return result;
+            return fName;
         }
 
         static public void ProcessFilespec(string fileSpec)

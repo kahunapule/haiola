@@ -118,9 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="label1.Text" xml:space="preserve">
-    <value>Prophero makes it relatively easy to publish Scripture electronically, however, this does not mean that it is OK to publish material that is not  approved for publication by the Entity Director or his appointee and has all the consultant checks etc. It is acceptable to publish draft materials for a group of reviewers, in accordance to the limitations of the Entity, before distributing widely or publicly on the web. You should consult a publishing expert or refer to the corporate standards documented in SIL Publications Guidelines.(See Insite for more information on these policies.)</value>
-  </data>
-  <data name="label7.Text" xml:space="preserve">
-    <value>- An electronic publication is still a publication! The Corporate Archive should be given a copy. The current recommendation is to send a copy of any CD published, a link to any web site published, and in addition, a copy of the clean USFM or USFX files generated as part of the publication process.</value>
+    <value>Haiola makes it relatively easy to publish Scripture electronically. It is your responsibility to make sure that you have copyright permission to do so, and that you have followed all of the applicable rules concerning quality checks and release of Scriptures for publication. Please note that this program is an alpha test version, and is not consumer-level software. You may use it only at your own risk, and only after carefully reading the instructions and agreeing to the conditions therein. Pressing the "Help" button should bring up haiola.htm for viewing. The latest version of this program and its documentation is available at http://haiola.org. Please see the documentation for information about contacting the authors with suggestions for improvement and bug reports. This program is dedicated to the Glory of God and the fulfillment of Jesus Christ's Great Commission.</value>
   </data>
 </root>
