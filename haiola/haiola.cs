@@ -18,16 +18,16 @@ namespace haiola
     {
         public static haiolaForm MasterInstance;
         private XMLini xini;    // Main program XML initialization file
-        public string dataRootDir; // Default is BibleConv in the user's documents folder
-        string m_workDirectory; // Work, always under dataRootDir
-        public string m_siteDirectory; // curently Site, always under dataRootDir
-        string m_workDir; //e.g., @"C:\BibleConv\Work\Kupang"
-        string m_siteDir; // e.g., c:\BibleConv\Site\Kupang
+        public string dataRootDir; // Default is BibleConv in the user's Documents folder
+        string m_inputDirectory; // Always under dataRootDir, defaults to Documents/BibleConv/input
+        public string m_outputDirectory; // curently Site, always under dataRootDir
+        string m_inputProjectDirectory; //e.g., full path to BibleConv\input\Kupang
+        string m_outputProjectDirectory; // e.g., full path to BibleConv\output\Kupang
         string m_project; // e.g., Kupang
         string currentConversion;   // e.g., "Preprocessing" or "Portable HTML"
         public bool autorun = false;
         static bool fAllRunning = false;
-        public string m_xiniPath;  // e.g., @"C:\BibleConv\Work\Kupang\options.xini";
+        public string m_xiniPath;  // e.g., BibleConv\input\Kupang\options.xini
         public XMLini projectXini;
         public Options m_options;
         BibleBookInfo bkInfo;
@@ -39,7 +39,7 @@ namespace haiola
         {
             InitializeComponent();
             MasterInstance = this;
-            batchLabel.Text = String.Format("Haiola version {0}. ©2003-{1} SIL, EBT, && YWAM. Released under Gnu LGPL 3 or later.", Version.date, Version.year);
+            batchLabel.Text = String.Format("Haiola version {0}.{1} ©2003-{2} SIL, EBT, && YWAM. Released under Gnu LGPL 3 or later.", Version.date, Version.time, Version.year);
 
             if (Directory.GetCurrentDirectory().EndsWith(@"Debug"))
             {
@@ -72,21 +72,13 @@ namespace haiola
             FolderBrowserDialog dlg = new FolderBrowserDialog();
             dlg.SelectedPath = dataRootDir;
             dlg.Description =
-                @"Select a folder to contain your working directories.";
+                @"Please select a folder to contain your working directories.";
             dlg.ShowNewFolderButton = true;
             if (dlg.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                 return false;
             dataRootDir = dlg.SelectedPath;
-            m_workDirectory = Path.Combine(dataRootDir, "Work");
-            m_siteDirectory = Path.Combine(dataRootDir, "Site");
             xini.WriteString("dataRootDir", dataRootDir);
             xini.Write();
-            string templateDir = Path.Combine(fileHelper.ExePath, "BibleConv");
-            if (!Directory.Exists(templateDir))
-                templateDir = Path.Combine(fileHelper.ExePath, Path.Combine("..", Path.Combine("..", Path.Combine("..", "BibleConv"))));
-            if (!Directory.Exists(templateDir))
-                templateDir = Path.Combine(fileHelper.ExePath, "BibleConv");
-            fileHelper.CopyDirectory(templateDir, dataRootDir);
             return true;
         }
 
@@ -107,9 +99,8 @@ namespace haiola
             xini = new XMLini(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "haiola"),
     "haiola.xini"));
             dataRootDir = xini.ReadString("dataRootDir", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "BibleConv"));
-            m_workDirectory = Path.Combine(dataRootDir, "Work");
-            m_siteDirectory = Path.Combine(dataRootDir, "Site");
-            if (!Directory.Exists(m_workDirectory))
+            m_inputDirectory = Path.Combine(dataRootDir, "input");
+            if (!Directory.Exists(m_inputDirectory))
                 if (!GetRootDirectory())
                     Application.Exit();
             LoadWorkingDirectory();
@@ -119,7 +110,23 @@ namespace haiola
                 WorkOnAllButton_Click(sender, e);
                 Close();
             }
+        }
 
+        private void EnsureTemplateFile(string fileName)
+        {
+            try
+            {
+                string sourcePath = WordSend.SFConverter.FindAuxFile(fileName);
+                string destPath = Path.Combine(m_inputDirectory, fileName);
+                if ((!File.Exists(destPath)) && (File.Exists(sourcePath)))
+                {
+                    File.Copy(sourcePath, destPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error ensuring " + fileName + " is in " + m_inputDirectory);
+            }
         }
 
         private void LoadWorkingDirectory()
@@ -128,10 +135,17 @@ namespace haiola
             int projReady = 0;
             m_projectsList.BeginUpdate();
             m_projectsList.Items.Clear();
+            m_inputDirectory = Path.Combine(dataRootDir, "input");
+            m_outputDirectory = Path.Combine(dataRootDir, "output");
             fileHelper.EnsureDirectory(dataRootDir);
-            fileHelper.EnsureDirectory(m_workDirectory);
+            fileHelper.EnsureDirectory(m_inputDirectory);
+            fileHelper.EnsureDirectory(m_outputDirectory);
             workDirLabel.Text = dataRootDir;
-            foreach (string path in Directory.GetDirectories(m_workDirectory))
+
+            EnsureTemplateFile("prophero.css");
+            EnsureTemplateFile("fixquotes.re");
+
+            foreach (string path in Directory.GetDirectories(m_inputDirectory))
             {
                 m_projectsList.Items.Add(Path.GetFileName(path));
                 projCount++;
@@ -154,9 +168,9 @@ namespace haiola
             }
             else
             {
-                MessageBox.Show(this, "No projects found in " + m_workDirectory
+                MessageBox.Show(this, "No projects found in " + m_inputDirectory
                                       +
-                                      ". You should create a folder there for your project and place your input files in the appropriate subdirectory.",
+                                      ". You should create a folder there for your project and place your input files in the appropriate subdirectory. Press the 'Help' button.",
                                 "No Projects", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 WorkOnAllButton.Enabled = false;
             }
@@ -218,33 +232,48 @@ namespace haiola
 			int nOutLen = inputBytes.Length;
 			foreach (string tp in tablePaths)
 			{
-                string tablePath = Utils.GetUtilityFile(Path.Combine(m_workDir, tp));
-				if (tablePath.EndsWith(".re"))
-				{
-					// Apply a regular expression substitution
-					string temp = Encoding.UTF8.GetString(inputBytes, 0, cbyteInput - 1); // leave out final null
-					StreamReader tableReader = new StreamReader(tablePath, Encoding.UTF8);
-                    fileDate = File.GetLastWriteTimeUtc(tablePath);
-                    if (fileDate > sourceDate)
-                        sourceDate = fileDate;
-					while (!tableReader.EndOfStream)
-					{
-						string source = tableReader.ReadLine();
-						if (source.Trim().Length == 0)
-							continue;
+                string tablePath = Path.Combine(m_inputProjectDirectory, tp);
+                if (!File.Exists(tablePath))
+                {
+                    tablePath = Path.Combine(m_inputDirectory, tp);
+                }
+                if (!File.Exists(tablePath))
+                {
+                    tablePath = SFConverter.FindAuxFile(tp);
+                }
+                if (File.Exists(tablePath))
+                {
+                    if (tablePath.EndsWith(".re"))
+                    {
+                        // Apply a regular expression substitution
+                        string temp = Encoding.UTF8.GetString(inputBytes, 0, cbyteInput - 1); // leave out final null
+                        StreamReader tableReader = new StreamReader(tablePath, Encoding.UTF8);
+                        fileDate = File.GetLastWriteTimeUtc(tablePath);
+                        if (fileDate > sourceDate)
+                            sourceDate = fileDate;
+                        while (!tableReader.EndOfStream)
+                        {
+                            string source = tableReader.ReadLine();
+                            if (source.Trim().Length == 0)
+                                continue;
 
-						char delim = source[0];
-						string[] parts = source.Split(new char[] {delim});
-						string pattern = parts[1]; // parts[0] is the empty string before the first delimiter
-						string replacement = parts[2];
-						temp = System.Text.RegularExpressions.Regex.Replace(temp, pattern, replacement);
-					}
-					tableReader.Close();
-					temp = temp + "\0";
-					outBuffer = Encoding.UTF8.GetBytes(temp);
-					inputBytes = outBuffer;
-					cbyteInput = nOutLen = inputBytes.Length;
-				}
+                            char delim = source[0];
+                            string[] parts = source.Split(new char[] { delim });
+                            string pattern = parts[1]; // parts[0] is the empty string before the first delimiter
+                            string replacement = parts[2];
+                            temp = System.Text.RegularExpressions.Regex.Replace(temp, pattern, replacement);
+                        }
+                        tableReader.Close();
+                        temp = temp + "\0";
+                        outBuffer = Encoding.UTF8.GetBytes(temp);
+                        inputBytes = outBuffer;
+                        cbyteInput = nOutLen = inputBytes.Length;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Can't find preprocessing file " + tp, "Error in preprocessing file list");
+                }
 			}
 
             // Convert the output back to a file
@@ -264,8 +293,8 @@ namespace haiola
 
         public void PreprocessUsfmFiles()
         {
-            string SourceDir = Path.Combine(m_workDir, "Source");
-            string UsfmDir = Path.Combine(m_workDir, "USFM");
+            string SourceDir = Path.Combine(m_inputProjectDirectory, "Source");
+            string UsfmDir = Path.Combine(m_outputProjectDirectory, "usfm");
             if (!Directory.Exists(SourceDir))
             {
                 MessageBox.Show(this, SourceDir + " not found!", "ERROR");
@@ -311,8 +340,8 @@ namespace haiola
 
         private void ConvertUsfmToUsfx()
         {
-            string UsfmDir = Path.Combine(m_workDir, "USFM");
-            string UsfxPath = Path.Combine(m_workDir, "usfx");
+            string UsfmDir = Path.Combine(m_outputProjectDirectory, "usfm");
+            string UsfxPath = Path.Combine(m_outputProjectDirectory, "usfx");
             if (!Directory.Exists(UsfmDir))
             {
                 MessageBox.Show(this, UsfmDir + " not found!", "ERROR");
@@ -327,7 +356,7 @@ namespace haiola
             if ((m_options.languageId.Length < 3) || (m_options.translationId.Length < 3))
                 return;
             Utils.EnsureDirectory(UsfxPath);
-            string logFile = Path.Combine(UsfxPath, "ConversionReports.txt");
+            string logFile = Path.Combine(m_outputProjectDirectory, "ConversionReports.txt");
             Logit.OpenFile(logFile);
             SFConverter.scripture = new Scriptures();
             Logit.loggedError = false;
@@ -357,30 +386,32 @@ namespace haiola
             currentConversion = "writing portable HTML";
             if ((m_options.languageId.Length < 3) || (m_options.translationId.Length < 3))
                 return;
-            string UsfxPath = Path.Combine(m_workDir, "usfx");
+            string UsfxPath = Path.Combine(m_outputProjectDirectory, "usfx");
+            string htmlPath = Path.Combine(m_outputProjectDirectory, "html");
             if (!Directory.Exists(UsfxPath))
             {
                 MessageBox.Show(this, UsfxPath + " not found!", "ERROR");
                 return;
             }
-            Utils.EnsureDirectory(m_siteDirectory);
-            Utils.EnsureDirectory(m_siteDir);
-            string propherocss = Path.Combine(m_siteDir, "prophero.css");
+            Utils.EnsureDirectory(m_outputDirectory);
+            Utils.EnsureDirectory(m_outputProjectDirectory);
+            Utils.EnsureDirectory(htmlPath);
+            string propherocss = Path.Combine(htmlPath, "prophero.css");
             if (File.Exists(propherocss))
                 File.Delete(propherocss);
-            // Copy prophero.css from project directory, or if not there, FilesToCopyToOutput/css/prophero.css.
-            string specialCss = Path.Combine(m_workDir, "prophero.css");
+            // Copy prophero.css from project directory, or if not there, BibleConv/input/prophero.css.
+            string specialCss = Path.Combine(m_inputProjectDirectory, "prophero.css");
             if (File.Exists(specialCss))
                 File.Copy(specialCss, propherocss);
             else
-                File.Copy(Path.Combine(Path.Combine(Path.Combine(dataRootDir, "FilesToCopyToOutput"), "css"), "prophero.css"), propherocss);
+                File.Copy(Path.Combine(m_inputDirectory, "prophero.css"), propherocss);
             
             usfxToHtmlConverter toHtm = new usfxToHtmlConverter();
-            Logit.OpenFile(Path.Combine(UsfxPath, "HTMLConversionReport.txt"));
+            Logit.OpenFile(Path.Combine(m_outputProjectDirectory, "HTMLConversionReport.txt"));
 
             toHtm.indexDateStamp = "HTML generated " + DateTime.UtcNow.ToString("d MMM yyyy") +
                 " from source files dated " + sourceDate.ToString("d MMM yyyy");
-            toHtm.ConvertUsfxToHtml(Path.Combine(UsfxPath, "usfx.xml"), m_siteDir,
+            toHtm.ConvertUsfxToHtml(Path.Combine(UsfxPath, "usfx.xml"), htmlPath,
                 m_options.vernacularTitle,
                 m_options.languageId,
                 m_options.translationId,
@@ -541,6 +572,27 @@ In addition, you have permission to convert the text to different file formats, 
             }
         }
 
+        public void showHelp(string helpFile)
+        {
+            try
+            {
+                string helpFilePath = SFConverter.FindAuxFile(helpFile);
+                string safari = @"/Applications/Safari.app/Contents/MacOS/Safari";
+                if (File.Exists(safari))
+                {
+                    System.Diagnostics.Process.Start(safari, helpFilePath);
+                }
+                else
+                {
+                    System.Diagnostics.Process.Start(helpFilePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error displaying " + helpFile);
+            }
+            
+        }
 
 
         public void DoPostprocess()
@@ -588,9 +640,10 @@ In addition, you have permission to convert the text to different file formats, 
             foreach (object o in m_projectsList.CheckedItems)
             {
                 m_project = (string)o;
-                m_workDir = Path.Combine(m_workDirectory, m_project);
-                m_siteDir = Path.Combine(m_siteDirectory, m_project);
-                m_xiniPath = Path.Combine(m_workDir, "options.xini");
+                m_inputProjectDirectory = Path.Combine(m_inputDirectory, m_project);
+                m_outputProjectDirectory = Path.Combine(m_outputDirectory, m_project);
+                fileHelper.EnsureDirectory(m_outputProjectDirectory);
+                m_xiniPath = Path.Combine(m_inputProjectDirectory, "options.xini");
                 displayOptions();
 
                 Application.DoEvents();
@@ -710,9 +763,9 @@ In addition, you have permission to convert the text to different file formats, 
         private void m_projectsList_SelectedIndexChanged(object sender, EventArgs e)
         {
             m_project = m_projectsList.SelectedItem.ToString();
-            m_workDir = Path.Combine(m_workDirectory, m_project);
-            m_siteDir = Path.Combine(m_siteDirectory, m_project);
-            m_xiniPath = Path.Combine(m_workDir, "options.xini");
+            m_inputProjectDirectory = Path.Combine(m_inputDirectory, m_project);
+            m_outputProjectDirectory = Path.Combine(m_outputDirectory, m_project);
+            m_xiniPath = Path.Combine(m_inputProjectDirectory, "options.xini");
             displayOptions();
         }
 
@@ -768,7 +821,7 @@ In addition, you have permission to convert the text to different file formats, 
         {
             OpenFileDialog dlg = new OpenFileDialog();
             dlg.CheckFileExists = true;
-            dlg.InitialDirectory = m_workDir;
+            dlg.InitialDirectory = m_inputProjectDirectory;
             //dlg.Multiselect = true;
             dlg.Filter = "Regular expression files (*.re)|*.re|All files|*.*";
             if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -786,14 +839,14 @@ In addition, you have permission to convert the text to different file formats, 
                         return;
                     }
                 }
-                if ((newFileDir.ToLowerInvariant() != m_workDir.ToLowerInvariant()) &&
-                    (newFileDir.ToLowerInvariant() != m_workDirectory.ToLowerInvariant()) &&
+                if ((newFileDir.ToLowerInvariant() != m_inputProjectDirectory.ToLowerInvariant()) &&
+                    (newFileDir.ToLowerInvariant() != m_inputDirectory.ToLowerInvariant()) &&
                     (newFileDir.ToLowerInvariant() != dataRootDir.ToLowerInvariant()))
                 {
                     if (MessageBox.Show(this, "Preprocessing files must be in the work directory. Copy there?", "Note", MessageBoxButtons.YesNo) ==
                         DialogResult.Yes)
                     {
-                        File.Copy(newFilePath, Path.Combine(m_workDir, newFileName));
+                        File.Copy(newFilePath, Path.Combine(m_inputProjectDirectory, newFileName));
                     }
                     else
                     {
@@ -929,9 +982,10 @@ In addition, you have permission to convert the text to different file formats, 
             WorkOnAllButton.Text = "Stop";
             SaveOptions();
             m_project = (string)m_projectsList.SelectedItem;
-            m_workDir = Path.Combine(m_workDirectory, m_project);
-            m_siteDir = Path.Combine(m_siteDirectory, m_project);
-            m_xiniPath = Path.Combine(m_workDir, "options.xini");
+            m_inputProjectDirectory = Path.Combine(m_inputDirectory, m_project);
+            m_outputProjectDirectory = Path.Combine(m_outputDirectory, m_project);
+            fileHelper.EnsureDirectory(m_outputProjectDirectory);
+            m_xiniPath = Path.Combine(m_inputProjectDirectory, "options.xini");
             displayOptions();
 
             Application.DoEvents();
@@ -975,14 +1029,14 @@ In addition, you have permission to convert the text to different file formats, 
             WorkOnAllButton.Enabled = false;
             timer1.Enabled = true;
             SaveOptions();
-            StreamWriter sw = new StreamWriter(Path.Combine(m_workDirectory, "translations.csv"));
+            StreamWriter sw = new StreamWriter(Path.Combine(m_outputDirectory, "translations.csv"));
             sw.WriteLine("\"languageCode\",\"translationId\",\"languageName\",\"languageNameInEnglish\",\"dialect\",\"homeDomain\",\"title\",\"description\",\"Free\",\"Copyright\",\"UpdateDate\",\"publicationURL\"");
             foreach (object o in m_projectsList.Items)
             {
                 m_project = (string)o;
-                m_workDir = Path.Combine(m_workDirectory, m_project);
-                m_siteDir = Path.Combine(m_siteDirectory, m_project);
-                m_xiniPath = Path.Combine(m_workDir, "options.xini");
+                m_inputProjectDirectory = Path.Combine(m_inputDirectory, m_project);
+                m_outputProjectDirectory = Path.Combine(m_outputDirectory, m_project);
+                m_xiniPath = Path.Combine(m_inputProjectDirectory, "options.xini");
                 displayOptions();
                 numProjects++;
                 if ((!m_options.privateProject) && (m_options.languageId.Length > 1))
@@ -1017,6 +1071,11 @@ In addition, you have permission to convert the text to different file formats, 
             reloadButton.Enabled = true;
             runHighlightedButton.Enabled = true;
             WorkOnAllButton.Enabled = true;
+        }
+
+        private void helpButton_Click(object sender, EventArgs e)
+        {
+            showHelp("haiola.htm");
         }
 
         
