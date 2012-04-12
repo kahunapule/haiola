@@ -672,6 +672,16 @@
 		<milestone>false</milestone>
 		<comment>Starts preface</comment>
 	</sfm>
+	<sfm kind="meta">
+		<tag>periph</tag>
+		<paragraphStyle>Invisible Paragraph</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<usfx>periph</usfx>
+		<milestone>false</milestone>
+		<comment>currently ignored</comment>
+	</sfm>
+	
 	<sfm kind="character">
 		<tag>pro</tag>
 		<endTag>pro*</endTag>

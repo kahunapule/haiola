@@ -4600,6 +4600,7 @@ namespace WordSend
 								}
 								break;
 							case "rem":
+                            case "periph":
                                 if (embedUsfx)
                                 {
                                     StartUSFXElement(sf.tag);
@@ -4912,6 +4913,7 @@ namespace WordSend
 								EndUSFXElement();
 								break;
 							case "rem":
+                            case "periph":
                                 StartUSFXElement(sf.tag, null, null, sf.text);
                                 EndUSFXElement();
                                 break;
@@ -7659,6 +7661,7 @@ namespace WordSend
                                     case "sectionBoundary":
                                     case "generated":
                                     case "rem":
+                                    case "periph":
                                     case "fig": // Illustrations not yet supported
                                     case "ndx":
                                     case "w":
@@ -7927,6 +7930,7 @@ namespace WordSend
                                     case "generated":
                                     case "sectionBoundary":
                                     case "rem":
+                                    case "periph":
                                     case "fig": // Illustrations not yet supported
                                     case "ndx":
                                     case "w":
