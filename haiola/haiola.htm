@@ -1,11 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html><head>
-
-
-
   
-  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8"><title>Haiola documentation</title>
-  
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8">
+  <title>Haiola documentation</title>
 
   
   
@@ -24,8 +21,9 @@
 		H2.ctl { font-family: "Lohit Hindi"; font-size: 14pt; font-style: italic }
 		A:link { so-language: zxx }
 	-->
-	</style></head><body>
-<h1>Haiola Documentation</h1>
+	</style>
+</head><body>
+<h1><a href="http://haiola.org">Haiola</a> Documentation</h1>
 
 <h2>What is Haiola?</h2>
 
@@ -73,6 +71,10 @@ messages and check your outputs to make sure they look reasonable.<br>
 
 <p>Haiola is a free and open source collection of
 programs. It inherits major portions of Prophero and WordSend.</p>
+
+<h2>What is new in Haiola?</h2>
+
+<p><a href="http://haiola.org/download">See the change log for the list of recent changes.</a></p>
 
 <h2>What is required to run Haiola?</h2>
 
@@ -195,7 +197,9 @@ you installed Haiola in ~/haiola/, the command to start it would be
 
 4. Run Haiola. On the first run, you will be asked to specify where you
 want to put your data files. Normally, this is in "~/BibleConv".<br>
+
 <br>
+
 Note: the manual installation process also works with Microsoft
 Windows, installing to a USB memory stick or any other directory, as
 long as Mono or Microsoft .NET 3.5 SP 1 are avialable. It even works on
@@ -226,19 +230,17 @@ style, and leave it to you to adjust when necessary to fit your
 operating system.</p>
 
 <p>BibleConv<br>
-&nbsp;&nbsp; input<br>&nbsp;&nbsp; &nbsp;&nbsp; project folders, normally named by
+&nbsp;&nbsp; input<br>
+&nbsp;&nbsp; &nbsp;&nbsp; project folders, normally named by
 translation identifier<br>
 &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; Source<br>
-
-&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; Unicode USFM files for this project<br>
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; Unicode USFM files
+for this project<br>
 &nbsp;&nbsp; output<br>
-
 &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; html<br>
 &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; usfm<br>
 &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; usfx<br>
 </p>
-
-
 
 <p>Of the folders above, the ones you create are the project folders
 and Source folders. You then fill the Source folder with USFM files for
@@ -260,14 +262,18 @@ expression files are UTF-8 text files whose file name must end in
 ".re". On each line, the first character is taken as a delimiter that
 separates the "find" portion from the "replace" portion of the line and
 also ends the "replace" portion of the line. For example:</p>
+
 <p>/speeling/spelling/</p>
+
 <p>See fixquotes.re for another example. See <a href="http://en.wikipedia.org/wiki/Regular_expression">http://en.wikipedia.org/wiki/Regular_expression</a>
 for more about regular expressions. It is wise to test your regular
 expressions to make sure they do what you think they should do before
 trusting the transformation.</p>
+
 <p>For HTML output, prophero.css is copied from the project directory,
 if it is there, otherwise it is copied from the input directory to the
 output/html directory.</p>
+
 <p>On the processes tab, you may specify additional programs or scripts
 to run after Haiola does its transformations. Use of these
 transformations are optional. I use them to create digital signatures
@@ -276,6 +282,7 @@ files to a local image of a file server in the appropriate places for
 each project. It is up to you if you want to automate that stuff or
 just use a graphical file manager to do all of that.<br>
 </p>
+
 <h2>Who is writing Haiola?</h2>
 
 <p>Haiola uses pieces written by Dave van Grootheest, John Duerkson,
@@ -290,16 +297,20 @@ one time, and that name lives on in the source code, too.)<br>
 
 <p>Haiola is derived from the Hawaiian phrase “ha’i
 ola”, which means “preach salvation”. It is really Prophero
-with a new user interface and several updates. We (mostly) left the name
+with a new user interface and several updates. We (mostly) left the
+name
 “Prophero” behind because of confusion with a similar product. We
 have prior claim to the name, but it wasn’t worth the hassle and
 confusion of fighting for it.</p>
 
 <h2>Support</h2>
+
 I don't promise support with this program, but I do want it to work for
 you. I also want to make this program better. If you have read this
 document and still need help, you may send email via a secure web form
-at <a href="https://cryptography.org/cgi-bin/contact.cgi">https://cryptography.org/cgi-bin/contact.cgi</a> with <span style="font-weight: bold;">enough information that I don't have to guess what the problem is</span>.
+at <a href="https://cryptography.org/cgi-bin/contact.cgi">https://cryptography.org/cgi-bin/contact.cgi</a>
+with <span style="font-weight: bold;">enough information that I don't
+have to guess what the problem is</span>.
 Since this document is published on the open Internet, I don't want to
 include a plain reference to any of my current email addresses, but if
 you concatinate "Michael", the first initial of my last name, the usual
@@ -308,8 +319,12 @@ link, below, that should work. Or, just use the contact URL above.
 Remember the part about reading this document first. Also, make sure
 you have the most recent version of this program if you have a problem,
 just to make sure I haven't already fixed whatever is bugging you.<br>
+
 <br>
-If you want to get announcements of what is new with Haiola, please sign up for the announcement email list at <a href="http://groups.google.com/group/haiola?hl=en">http://groups.google.com/group/haiola?hl=en</a>.<br>
+
+If you want to get announcements of what is new with Haiola, please
+sign up for the announcement email list at <a href="http://groups.google.com/group/haiola?hl=en">http://groups.google.com/group/haiola?hl=en</a>.<br>
+
 <h2>Copyright and Permission to Copy</h2>
 
 <p>Copyright © 2012 <a href="http://www.sil.org">SIL</a>, <a href="http://www.evangelbible.org">EBT</a>, <a href="http://uofnkona.edu">YWAM</a>, and <a href="http://mljohnson.org">Michael Paul Johnson</a>.</p>
@@ -331,7 +346,9 @@ with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www
 
 <h2>Source Code</h2>
 
-<p>Source code for Haiola is available in redundant <a href="http://mercurial.selenic.com/">Mercurial</a> repositories at <a href="http://projects.palaso.org/projects/show/prophero">Palaso</a> and <a href="https://code.google.com/p/haiola/">Google Code</a>.</p>
+<p>Source code for Haiola is available in redundant <a href="http://mercurial.selenic.com/">Mercurial</a> repositories at <a href="http://projects.palaso.org/projects/show/prophero">Palaso</a>
+and <a href="https://code.google.com/p/haiola/">Google Code</a>.</p>
+
 <p><br>
 </p>
 
