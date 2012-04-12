@@ -12,6 +12,8 @@ sepp/bin/*
 sepp/obj/*
 BibleFileLib/bin/*
 BibleFileLib/obj/*
-
+dist/*
+.DS_Store
+*~
 syntax: regexp
 .*\#.*\#$
