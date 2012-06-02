@@ -1,0 +1,20 @@
+syntax: glob
+.directory
+*.user
+*.suo
+*.bak
+*~
+*.o
+bin/*
+obj/*
+.svn/*
+sepp/bin/*
+sepp/obj/*
+BibleFileLib/bin/*
+BibleFileLib/obj/*
+dist/*
+.DS_Store
+_ReSharper.sepp/*
+*~
+syntax: regexp
+.*\#.*\#$

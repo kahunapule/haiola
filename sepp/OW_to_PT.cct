@@ -1,0 +1,162 @@
+begin > utf8
+
+c Changetable to convert OW formatted file to USFM v.2, John Duerksen 200803 (possibly with some modifications by John Thomson)
+
+store(sp) " " nl
+endstore
+
+store(preid)
+
+use(c,main)
+
+define(fig1) >
+  store(desc,cat,size,loc,copy,cap,ref) endstore
+
+group(main)
+nl nl > nl back
+nl > " "
+nl "\" > dup back
+
+"\_"  > use(junk)
+"\b" any(sp) > "\b" nl
+"\c" any(sp) > "\c "
+"\h" any(sp) > "\h "
+"\m" any(sp) > "\m" nl
+"\m2" any(sp) > "\m2" nl
+"\mt" any(sp) > "\mt "
+"\p" any(sp) > "\p" nl
+"\pi" any(sp) > "\pi" nl
+"\q" any(sp) > "\q" nl
+"\q2" any(sp) > "\q2" nl
+"\q3" any(sp) > "\q3" nl
+"\qc" any(sp) > "\qc" nl
+"\qm" any(sp) > "\qm" nl
+"\r" any(sp) > "\r "
+"\rcrd" any(sp) > "\rem RCRD: "    c use(junk)
+"\s" any(sp) > next
+"\s1" any(sp) > store(s1) use(c,s2)
+"\s2" any(sp) > "\s2 "
+"\v" any(sp) > "\v "
+"\e" any(sp) > use(junk)
+"\z" any(sp) > use(junk)
+
+
+
+"\bt" > "\note BT:" use(c,notes)
+
+"\vt" any(sp) > ""
+
+"\st" any(sp) > "\mt2 "
+
+"\cf" any(sp) > "\x + \xo " use(c,x)
+
+"\ft" any(sp) > "\f + \fr " use(c,f)
+
+"\cat" any(sp) > dup back(5) do(fig1) use(c,fig)    c use(catdelete)     c   "\fig " store(cat) use(cat)
+"\cap" any(sp) > dup back(5) do(fig1) use(c,fig)     c use(junk)
+"\ref" any(sp) > dup back(5) do(fig1) use(c,fig)     c use(junk)
+"\des" any(sp) > dup back(5) do(fig1) use(c,fig)     c use(junk)
+ 
+"\id" any(sp) > endstore dup use(c,id)
+
+c  HCE unique
+"\hist" fol(sp) > "\rem HIST: "    c HCE
+c Notes
+"\al" any(sp) > "\note Alternate: " use(c,notes)    c alternate
+"\ov" any(sp) > "\note OV: " use(c,notes)    c Old version
+"\t" any(sp) > "\note T: " use(c,notes)
+"\nt" fol(sp) > "\note NT: " use(c,notes)
+"\ntgk" fol(sp) > "\note NTGK: " use(c,notes)
+"\ntck" fol(sp) > "\note NTCK: " use(c,notes)
+"\chk2" fol(sp) > "\note CHK2: " use(c,notes)
+c "\g" any(sp) > use(junk)
+"\dt" fol(sp) > "\note DT: " use(c,notes)
+"\ud" fol(sp) > "\note UD: " use(c,notes)
+"\dtb" fol(sp) > "\note DTB: "  use(c,notes)
+c "\ud" any(sp) > use(junk)
+"\chk" fol(sp) > "\note CHK: " use(c,notes)
+c "\rf" any(sp) > use(junk)
+c "\z" any(sp) > use(junk)
+"\qh" any(sp) > "\li" nl
+
+"\" > "***\"
+
+
+group(s2)
+"[\s2]" > endstore "\s2 " out(s1) use(c,main)
+"\" > endstore "\s1 " out(s1) "\" back use(c,main)
+endfile > endstore "\s1 " out(s1) endfile
+
+group(notes)
+"[\s2]" > "[s2]"
+"[\q3]" > "[q3]"
+"\va" any(sp) > "variant "
+"\ant" any(sp) > "antonym "
+"\mr" any(sp) > "morphology"
+"\mr)" > "morphology)"
+"\lf" any(sp) > "lexical function "
+"\ov)" > "older version)"
+"\ov]" > "older version]"
+
+nl "\" > next
+"\" > "\note*" nl "\" back use(c,main)
+
+group(fig)
+c nl "\" > endstore "\fig "                "\" back use(c,main)
+nl > " "
+"\cat" any(sp) > store(cat) use(c,cat)
+"\ref" any(sp) > store(size) use(c,fig)
+"\cap" any(sp) > store(cap) use(c,fig)
+"\des" any(sp) > store(desc) use(c,fig)
+
+c nl require to avoid \ in path
+
+endfile > next
+"\" > endstore nl "\fig " out(desc) "|" out(cat) "|" out(size) "|" out(loc) "|" out(copy) "|" out(cap) "|" out(ref)
+    " \fig*" nl dup back use(c,main) do(fig1) 
+
+group(cat)
+"\" > "/"
+endfile > next
+nl "\" > dup back use(c,fig)
+
+group(catdelete)
+"\ref" > use(junk)
+"\cap" > use(junk)
+endfile > nl endfile
+
+"" > omit
+
+
+group(f)
+":" any(sp) > " \ft "
+"\" > "\f*" nl "\" back use(c,main)
+
+group(x)
+":" any(sp) > " \xt "
+"\" > "\x*" nl "\" back use(c,main)
+
+group(id)
+nl "\" > endstore
+    " Hawaii Creole English (HCE, from 07/01 OurWord)"    c added for HCE conversion
+     nl out(preid) dup back use(c,main)
+
+group(junk)
+"\" > dup back use(c,main)
+endfile > nl endfile
+
+"" > omit
+
+group(c)
+"<" > u2018 c d145
+">" > u2019 c d146
+"<<" > u201C  c d147
+">>" > u201D  c d148
+"<<<" > u201C u2018
+">>>" > u2019 u201D
+
+"|i" > "\it " set(italic)                         c **** replace \it with \em for Empahsis
+"|b" > "\bd " set(bold)
+"|r" >  if(italic) "\it* " clear(italic) endif    c **** if \em used above, then use \em* here
+        if(bold) "\bd* " clear(bold) endif
+  
