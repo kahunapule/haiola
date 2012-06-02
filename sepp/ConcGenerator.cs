@@ -943,7 +943,7 @@ namespace sepp
 				for (firstNonLetter = 0; firstNonLetter < phrase.Length && IsLetter(phrase[firstNonLetter]); firstNonLetter++)
 					;
 				if (firstNonLetter == 0 || firstNonLetter == phrase.Length)
-					return; // nothing word-like, or only one word; nothing useful we can add
+					continue; // nothing word-like, or only one word; nothing useful we can add. Try the next phrase.
 				string firstWord = phrase.Substring(0, firstNonLetter);
 				WordformInfo info;
 				m_occurrences.TryGetValue(firstWord, out info);
