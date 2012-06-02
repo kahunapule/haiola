@@ -540,6 +540,51 @@ In addition, you have permission to convert the text to different file formats, 
             xml.WriteEndDocument();
             xml.Close();
             xml.Close();
+
+			// Todo JohnT: move this to a new method, and the condition to the method that calls this.
+			if (generateConcordanceCheckBox.Checked)
+			{
+				usfxToHtmlConverter toXhtm = new usfxToXhtmlConverter();
+				Logit.OpenFile(Path.Combine(m_outputProjectDirectory, "XHTMLConversionReport.txt"));
+
+				toXhtm.indexDateStamp = "XHTML generated " + DateTime.UtcNow.ToString("d MMM yyyy") +
+				                       " from source files dated " + sourceDate.ToString("d MMM yyyy");
+				string xhtmlPath = Path.Combine(m_outputProjectDirectory, "xhtml");
+				Utils.EnsureDirectory(xhtmlPath);
+				toXhtm.ConvertUsfxToHtml(Path.Combine(UsfxPath, "usfx.xml"), xhtmlPath,
+				                        m_options.vernacularTitle,
+				                        m_options.languageId,
+				                        m_options.translationId,
+				                        m_options.chapterLabel,
+				                        m_options.psalmLabel,
+				                        m_options.copyrightLink,
+				                        m_options.homeLink,
+				                        m_options.footerHtml,
+				                        m_options.indexHtml,
+				                        m_options.licenseHtml,
+				                        m_options.useKhmerDigits,
+				                        m_options.ignoreExtras,
+				                        m_options.goText);
+				Logit.CloseFile();
+
+				// Todo JohnT: replace this with proper concordance generation. This is just to confirm we got (sufficiently) valid xhtml.
+				//XmlReaderSettings settings = new XmlReaderSettings();
+				//settings.ConformanceLevel = ConformanceLevel.Fragment;
+				//settings.IgnoreComments = true;
+				//settings.ProhibitDtd = false;
+				//settings.ValidationType = ValidationType.None;
+				//settings.ConformanceLevel = ConformanceLevel.Fragment;
+				//foreach (var inputFile in Directory.GetFiles(xhtmlPath))
+				//{
+				//    TextReader input = new StreamReader(inputFile, Encoding.UTF8);
+				//    input.ReadLine(); // Skip the HTML DOCTYPE, which the XmlReader can't cope with.
+				//    var content = input.ReadToEnd().Replace("&nbsp;", "&#160;");
+				//    XmlReader reader = XmlReader.Create(new MemoryStream(Encoding.UTF8.GetBytes(content)), settings);
+				//    while (reader.Read())
+				//    {
+				//    }
+				//}
+			}
         }
 
         /// <summary>

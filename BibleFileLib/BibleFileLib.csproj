@@ -98,6 +98,7 @@
     <Compile Include="BibleFileLib.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="usfxToXhtmlConverter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

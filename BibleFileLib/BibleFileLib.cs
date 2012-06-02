@@ -6497,7 +6497,7 @@ namespace WordSend
                     br = (BibleBookRecord)bookList[i];
                     if (i == bookListIndex)
                     {
-                        bsb.Append("<option selected>" + br.vernacularHeader + "</option>\r\n");
+                        bsb.Append(OptionSelectedOpeningElement + br.vernacularHeader + "</option>\r\n");
                     }
                     else
                     {
@@ -6535,7 +6535,7 @@ namespace WordSend
                     if (0 == chapterNumber)
                     {
                         sb.Append(" &nbsp;"+linkText+"&nbsp; ");
-                        bsb.Append("<option selected>"+linkText+"</option>");
+                        bsb.Append(OptionSelectedOpeningElement+linkText+"</option>");
                     }
                     else
                     {
@@ -6559,7 +6559,7 @@ namespace WordSend
                         if (cn == chapterNumber)
                         {
                             sb.Append(String.Format(" &nbsp;{0}&nbsp; ", linkText));
-                            bsb.Append(String.Format("<option selected>{0}</option>\r\n", linkText));
+                            bsb.Append(String.Format(OptionSelectedOpeningElement + "{0}</option>\r\n", linkText));
                             nextChapIndex = i + 1;
                         }
                         else
@@ -6584,7 +6584,7 @@ namespace WordSend
             {
                 bsb.Append("<form name=\"bkch1\"><div class=\"navChapters\">");
                 bsb.Append("<select name=\"bksch1\" onChange=\"location=document.bkch1.bksch1.options[document.bkch1.bksch1.selectedIndex].value;\">");
-                bsb.Append("<option selected>---</option>\r\n");
+                bsb.Append(OptionSelectedOpeningElement + "---</option>\r\n");
                 for (i = 0; i < bookList.Count; i++)
                 {
                     br = (BibleBookRecord)bookList[i];
@@ -6608,7 +6608,15 @@ namespace WordSend
             navButtonCode = navButtonCode.Replace("ch1", "ch2");
         }
 
-        protected void RepeatNavButtons()
+		/// <summary>
+		/// In html, option selected can start out with just this, but xhtml requires the attribute to have a value.
+		/// </summary>
+    	protected virtual string OptionSelectedOpeningElement
+    	{
+    		get { return "<option selected>"; }
+    	}
+
+    	protected void RepeatNavButtons()
         {
             htm.WriteLine(navButtonCode);
         }
@@ -6638,19 +6646,42 @@ namespace WordSend
                 currentFileName = Path.Combine(htmDir, currentBookAbbrev + chap + ".htm");
             }
             htm = new StreamWriter(currentFileName, false, Encoding.UTF8);
-            htm.WriteLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns:msxsl=\"urn:schemas-microsoft-com:xslt\" xmlns:user=\"urn:nowhere\">");
+			// It is important that the DOCTYPE declaration should be a single line, and that the <html> element starts the second line.
+			// This is because the concordance parser uses a ReadLine to skip the DOCTYPE declaration in order to read the rest of the file as XML.
+        	htm.WriteLine(
+        		"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+			htm.WriteLine("<html xmlns:msxsl=\"urn:schemas-microsoft-com:xslt\" xmlns:user=\"urn:nowhere\">");
             htm.WriteLine("<head>");
-            htm.WriteLine("<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
+			WriteCompleteElement("<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"");
             htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width\" />");
-            htm.WriteLine("<link rel=\"stylesheet\" href=\"prophero.css\" type=\"text/css\">");
+			WriteCompleteElement("<link rel=\"stylesheet\" href=\"prophero.css\" type=\"text/css\"");
             htm.WriteLine("<title>{0} {1} {2}</title></head>",
                 langName, currentBookHeader, currentChapterPublished);
-            htm.WriteLine("<meta name=\"keywords\" content=\"{0}, {1}, Holy Bible, Scripture, Bible, Scriptures, New Testament, Old Testament, Gospel\">",
-                langName, langId);
+			WriteCompleteElement(string.Format("<meta name=\"keywords\" content=\"{0}, {1}, Holy Bible, Scripture, Bible, Scriptures, New Testament, Old Testament, Gospel\"",
+                langName, langId));
             htm.WriteLine("<body class=\"mainDoc\">");
             
             WriteNavButtons();
         }
+
+		/// <summary>
+		/// Write out a line text that makes up a complete element except for the closing angle bracket. In HTML, we just add the closing bracket.
+		/// In XHTML, we need a closing slash before that bracket.
+		/// </summary>
+		/// <param name="htm"></param>
+		/// <param name="content"></param>
+		void WriteCompleteElement(string content)
+		{
+			htm.WriteLine(content + CloseOfContentlessElement);
+		}
+
+		/// <summary>
+		/// The way to close an element that is not going to have any content. In HTML, we can just put a closing bracket. In XHTML, we need a slash before it.
+		/// </summary>
+    	protected virtual string CloseOfContentlessElement
+    	{
+    		get { return ">"; }
+    	}
 
         protected void WriteHtmlFootnotes()
         {
@@ -6658,14 +6689,19 @@ namespace WordSend
                 footnotesToWrite = new StringBuilder(String.Empty);
             if (footnotesToWrite.Length > 0)
             {
-                htm.WriteLine("<hr>");
+                WriteHorizontalRule();
                 htm.WriteLine(footnotesToWrite);
                 footnotesToWrite = new StringBuilder(String.Empty);
             }
-            htm.WriteLine("<hr>");
-        }
+			WriteHorizontalRule();
+		}
 
-        protected void CloseHtmlFile()
+    	private void WriteHorizontalRule()
+    	{
+			WriteCompleteElement("<hr");
+    	}
+
+    	protected void CloseHtmlFile()
         {
             if (htm != null)
             {
@@ -7874,8 +7910,8 @@ namespace WordSend
                                                 break;
                                             case "hr":
                                                 EndHtmlTable();
-                                                WriteHtml("<hr>");
-                                                break;
+												WriteHorizontalRule();
+                                          break;
                                         }
                                         break;
 
