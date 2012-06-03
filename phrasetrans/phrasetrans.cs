@@ -327,7 +327,8 @@ substfile.txt is the text file with substitutions to make. Longer matches
   substitution, with fields separated by whatever character is first on the
   line. There are 3 fields: find text, replace text, and optional comment.
   Matches will always be on word boundaries. HTML tokens delimited by < and >
-  or & and ; count as a word.
+  or & and ; count as a word. The log files phrasetranslist.txt and
+  phrasetranslog.txt are written to the same folder as the output file.
 ");
             }
         }
