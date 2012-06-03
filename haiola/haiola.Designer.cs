@@ -40,6 +40,8 @@
             this.btnSetRootDirectory = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.idTabPage = new System.Windows.Forms.TabPage();
+            this.lwcDescriptionTextBox = new System.Windows.Forms.TextBox();
+            this.label20 = new System.Windows.Forms.Label();
             this.privateCheckBox = new System.Windows.Forms.CheckBox();
             this.homeDomainTextBox = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
@@ -109,6 +111,11 @@
             this.label27 = new System.Windows.Forms.Label();
             this.label26 = new System.Windows.Forms.Label();
             this.advancedTabPage = new System.Windows.Forms.TabPage();
+            this.deleteLinkButton = new System.Windows.Forms.Button();
+            this.addLinkButton = new System.Windows.Forms.Button();
+            this.altLinkListBox = new System.Windows.Forms.ListBox();
+            this.altLinkTextBox = new System.Windows.Forms.TextBox();
+            this.label21 = new System.Windows.Forms.Label();
             this.versificationComboBox = new System.Windows.Forms.ComboBox();
             this.numeralsGroupBox = new System.Windows.Forms.GroupBox();
             this.khmerNumeralsRadioButton = new System.Windows.Forms.RadioButton();
@@ -236,6 +243,8 @@
             // 
             // idTabPage
             // 
+            this.idTabPage.Controls.Add(this.lwcDescriptionTextBox);
+            this.idTabPage.Controls.Add(this.label20);
             this.idTabPage.Controls.Add(this.privateCheckBox);
             this.idTabPage.Controls.Add(this.homeDomainTextBox);
             this.idTabPage.Controls.Add(this.label19);
@@ -268,10 +277,28 @@
             this.idTabPage.Text = "Identification";
             this.idTabPage.UseVisualStyleBackColor = true;
             // 
+            // lwcDescriptionTextBox
+            // 
+            this.lwcDescriptionTextBox.Location = new System.Drawing.Point(149, 290);
+            this.lwcDescriptionTextBox.Multiline = true;
+            this.lwcDescriptionTextBox.Name = "lwcDescriptionTextBox";
+            this.lwcDescriptionTextBox.Size = new System.Drawing.Size(326, 59);
+            this.lwcDescriptionTextBox.TabIndex = 33;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(55, 287);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(88, 13);
+            this.label20.TabIndex = 32;
+            this.label20.Text = "LWC description:";
+            this.label20.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // privateCheckBox
             // 
             this.privateCheckBox.AutoSize = true;
-            this.privateCheckBox.Location = new System.Drawing.Point(416, 313);
+            this.privateCheckBox.Location = new System.Drawing.Point(415, 393);
             this.privateCheckBox.Name = "privateCheckBox";
             this.privateCheckBox.Size = new System.Drawing.Size(59, 17);
             this.privateCheckBox.TabIndex = 31;
@@ -280,7 +307,7 @@
             // 
             // homeDomainTextBox
             // 
-            this.homeDomainTextBox.Location = new System.Drawing.Point(149, 281);
+            this.homeDomainTextBox.Location = new System.Drawing.Point(148, 361);
             this.homeDomainTextBox.Name = "homeDomainTextBox";
             this.homeDomainTextBox.Size = new System.Drawing.Size(328, 20);
             this.homeDomainTextBox.TabIndex = 16;
@@ -288,7 +315,7 @@
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(68, 288);
+            this.label19.Location = new System.Drawing.Point(67, 368);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(75, 13);
             this.label19.TabIndex = 29;
@@ -299,7 +326,7 @@
             // 
             this.updateDateTimePicker.CustomFormat = "yyyy-MM-dd";
             this.updateDateTimePicker.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.updateDateTimePicker.Location = new System.Drawing.Point(149, 310);
+            this.updateDateTimePicker.Location = new System.Drawing.Point(148, 390);
             this.updateDateTimePicker.Name = "updateDateTimePicker";
             this.updateDateTimePicker.Size = new System.Drawing.Size(107, 20);
             this.updateDateTimePicker.TabIndex = 17;
@@ -307,7 +334,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(41, 316);
+            this.label11.Location = new System.Drawing.Point(40, 396);
             this.label11.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(103, 13);
@@ -769,8 +796,6 @@
             // postprocessListBox
             // 
             this.postprocessListBox.FormattingEnabled = true;
-            this.postprocessListBox.Items.AddRange(new object[] {
-            "postprocess.bat"});
             this.postprocessListBox.Location = new System.Drawing.Point(7, 324);
             this.postprocessListBox.Name = "postprocessListBox";
             this.postprocessListBox.Size = new System.Drawing.Size(521, 134);
@@ -976,6 +1001,11 @@
             // 
             // advancedTabPage
             // 
+            this.advancedTabPage.Controls.Add(this.deleteLinkButton);
+            this.advancedTabPage.Controls.Add(this.addLinkButton);
+            this.advancedTabPage.Controls.Add(this.altLinkListBox);
+            this.advancedTabPage.Controls.Add(this.altLinkTextBox);
+            this.advancedTabPage.Controls.Add(this.label21);
             this.advancedTabPage.Controls.Add(this.versificationComboBox);
             this.advancedTabPage.Controls.Add(this.numeralsGroupBox);
             this.advancedTabPage.Controls.Add(this.label17);
@@ -986,6 +1016,50 @@
             this.advancedTabPage.TabIndex = 6;
             this.advancedTabPage.Text = "Advanced";
             this.advancedTabPage.UseVisualStyleBackColor = true;
+            // 
+            // deleteLinkButton
+            // 
+            this.deleteLinkButton.Location = new System.Drawing.Point(20, 173);
+            this.deleteLinkButton.Name = "deleteLinkButton";
+            this.deleteLinkButton.Size = new System.Drawing.Size(68, 23);
+            this.deleteLinkButton.TabIndex = 54;
+            this.deleteLinkButton.Text = "&Delete link";
+            this.deleteLinkButton.UseVisualStyleBackColor = true;
+            this.deleteLinkButton.Click += new System.EventHandler(this.deleteLinkButton_Click);
+            // 
+            // addLinkButton
+            // 
+            this.addLinkButton.Location = new System.Drawing.Point(18, 129);
+            this.addLinkButton.Name = "addLinkButton";
+            this.addLinkButton.Size = new System.Drawing.Size(70, 26);
+            this.addLinkButton.TabIndex = 53;
+            this.addLinkButton.Text = "&Add link";
+            this.addLinkButton.UseVisualStyleBackColor = true;
+            this.addLinkButton.Click += new System.EventHandler(this.addLinkButton_Click);
+            // 
+            // altLinkListBox
+            // 
+            this.altLinkListBox.FormattingEnabled = true;
+            this.altLinkListBox.Location = new System.Drawing.Point(101, 129);
+            this.altLinkListBox.Name = "altLinkListBox";
+            this.altLinkListBox.Size = new System.Drawing.Size(494, 95);
+            this.altLinkListBox.TabIndex = 52;
+            // 
+            // altLinkTextBox
+            // 
+            this.altLinkTextBox.Location = new System.Drawing.Point(102, 97);
+            this.altLinkTextBox.Name = "altLinkTextBox";
+            this.altLinkTextBox.Size = new System.Drawing.Size(494, 20);
+            this.altLinkTextBox.TabIndex = 51;
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(17, 100);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(76, 13);
+            this.label21.TabIndex = 50;
+            this.label21.Text = "Alternate links:";
             // 
             // versificationComboBox
             // 
@@ -1248,6 +1322,13 @@
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.CheckBox privateCheckBox;
         private System.Windows.Forms.Button statsButton;
+        private System.Windows.Forms.TextBox lwcDescriptionTextBox;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Button deleteLinkButton;
+        private System.Windows.Forms.Button addLinkButton;
+        private System.Windows.Forms.ListBox altLinkListBox;
+        private System.Windows.Forms.TextBox altLinkTextBox;
+        private System.Windows.Forms.Label label21;
     }
 }
 

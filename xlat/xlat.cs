@@ -32,7 +32,7 @@ localsubst.txt contains one line per substitution, with fields separated by
 whatever character is first on the line. Local substitutions have 7 fields:
 book abbreviation, chapter number, verse number, N if in footnote,
 find text, replace text, and optional comment.
-If the Apocrypha is to be included, -a must be the 5th command line parameter.
+If the Apocrypha is to be included, -a must be the 4th command line parameter.
 ");
             }
         }
