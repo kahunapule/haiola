@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2003-2011, SIL International and Youth With A Mission
-// <copyright from='2003' to='2011' company='SIL International and Youth With A Mission'>
+#region // Copyright (c) 2003-2011, SIL International, EBT, and Youth With A Mission
+// <copyright from='2003' to='2011' company='SIL International, EBT, and Youth With A Mission'>
 //		Copyright © 2004, SIL International. All Rights Reserved.   
 //    
 //		Distributable under the terms of either the Common Public License or the
@@ -649,6 +649,21 @@ namespace WordSend
             return (ch == ' ') || (ch == '\r') || (ch == '\n') || (ch == '\t');
         }
 
+        /// <summary>
+        /// Escapes \ ' " CR and LF as \\ \' \" \r and \n, respectively.
+        /// </summary>
+        /// <param name="s">String to be escaped.</param>
+        /// <returns>String with escape substitutions made.</returns>
+        public static string sqlString(string s)
+        {
+            s = s.Replace("\\", "\\\\");
+            s = s.Replace("'", "\\'");
+            s = s.Replace("\"", "\\\"");
+            s = s.Replace("\n", "\\n");
+            s = s.Replace("\r", "\\r");
+            return s;
+        }
+        
         /// <summary>
         /// Replaces only the first instance of oldstring in string s with newstring.
         /// (String.Replace replaces ALL instances of the replacement string. This
@@ -1482,7 +1497,7 @@ namespace WordSend
 		{
 			if (fileIsOpen)
 				OutputFile.Close();
-			OutputFile = new StreamWriter(fileName, false, System.Text.Encoding.UTF8);
+			OutputFile = new StreamWriter(fileName, false); // Write in UTF-8 encoding without BOM.
 			lineLength = 0;
 			VirtualSpace = false;
 			fileIsOpen = true;
@@ -5633,8 +5648,6 @@ namespace WordSend
 			}
 		}
 
-
-        
         public void USFXtoUSFM(string inFileName, string outDir, string outFileName)
 		{
 			int i;
@@ -5661,12 +5674,18 @@ namespace WordSend
 			try
 			{
 				XmlFileReader usfxFile = new XmlFileReader(inFileName);
-				if (!Directory.Exists(outDir))
-				{
-					Directory.CreateDirectory(outDir);
-				}
-				usfmFile = new SFWriter(Path.Combine(outDir, bookId+outFileName));
-				usfxFile.Read();
+                if (!((usfxFile.MoveToContent() == XmlNodeType.Element) && (usfxFile.Name == "usfx")))
+                {
+                    // Not a USFX file. Skip it.
+                    Logit.WriteError(inFileName + " is not a USFX file.");
+                    usfxFile.Close();
+                    return;
+                }
+                if (!Directory.Exists(outDir))
+                {
+                    Directory.CreateDirectory(outDir);
+                }
+				usfmFile = new SFWriter();
 				while (!usfxFile.EOF)
 				{
 					usfxFile.Read();
@@ -5736,7 +5755,7 @@ namespace WordSend
 								if (id != "")
 								{
 									bookId = id;
-									usfmFile = new SFWriter(Path.Combine(outDir, bkInfo.FilePrefix(bookId)+outFileName));
+									usfmFile.Open(Path.Combine(outDir, bkInfo.FilePrefix(bookId)+outFileName));
 								}
 								break;
 							case "id":
@@ -5744,7 +5763,7 @@ namespace WordSend
 								if (((id != "") && (id != bookId)) || !usfmFile.Opened())
 								{
 									bookId = id;
-									usfmFile = new SFWriter(Path.Combine(outDir, bkInfo.FilePrefix(bookId)+outFileName));
+									usfmFile.Open(Path.Combine(outDir, bkInfo.FilePrefix(bookId)+outFileName));
 								}
 								usfmFile.WriteSFM("id", "", id, true);
 								break;
@@ -5864,7 +5883,12 @@ namespace WordSend
 								}
 								usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag());
 								break;
-							default:
+                            case "languageCode":
+                                usfxFile.Read();
+                                if (usfxFile.NodeType == XmlNodeType.Text)
+                                    languageCode = usfxFile.Value;
+                                break;
+                            default:
 								usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag());
 								break;
 						}
@@ -5949,7 +5973,7 @@ namespace WordSend
 						usfmFile.WriteString(" ");
 					}
 				}
-				usfmFile.Close();
+                usfmFile.Close();
 				usfxFile.Close();
 			}
 			catch (System.Exception ex)
@@ -6731,7 +6755,8 @@ namespace WordSend
             chopChapter = false;
         }
 
-
+        public int maxPreverseLength = 0;
+        public int maxVerseLength = 0;
 
         protected void StartVerse()
         {
@@ -6744,6 +6769,8 @@ namespace WordSend
             if (preVerse.Length > 0)
             {
                 htm.WriteLine(preVerse.ToString());
+                if (preVerse.Length > maxPreverseLength)
+                    maxPreverseLength = preVerse.Length;
                 preVerse = new StringBuilder(String.Empty);
                 inPreverse = false;
             }
@@ -7130,8 +7157,9 @@ namespace WordSend
                     doLocalSubst = true;
                 }
                 usfx = new XmlTextReader(inFile);
-                usfx.WhitespaceHandling = WhitespaceHandling.Significant;
+                usfx.WhitespaceHandling = WhitespaceHandling.All;
                 usfxOut = new XmlTextWriter(outFile, Encoding.UTF8);
+                
                 
                 while (usfx.Read())
                 {
@@ -7154,11 +7182,11 @@ namespace WordSend
                                     currentBookAbbrev = id;
                                     bookRecord = (BibleBookRecord)bookInfo.books[currentBookAbbrev];
                                 }
+                                currentBookHeader = vernacularLongTitle = String.Empty;
                                 currentChapter = currentVerse = "0";
                                 chapterNumber = 0;
                                 verseNumber = 0;
-                                // Console.WriteLine("{0} {1}:{2} {3} ", currentBookAbbrev, currentChapter, currentVerse, localSubstLine);
-                                if ((bookRecord == null) || (bookRecord.testament == "a"))
+                                if ((bookRecord == null) || (bookRecord.testament == "a") || (bookRecord.testament == "x"))
                                 {
                                     includeThis = includeApocrypha;
                                     // if (includeThis)
@@ -7217,7 +7245,7 @@ namespace WordSend
                     }
                     if (includeThis)
                     {
-                        if (usfx.NodeType == XmlNodeType.EndElement)
+                        if ((usfx.NodeType == XmlNodeType.EndElement) && (usfx.NodeType != XmlNodeType.Element))
                         {
                             usfxOut.WriteEndElement();
                             if (usfx.Name == "f")
@@ -7259,6 +7287,11 @@ namespace WordSend
                             if (phrase != null)
                                 usfxOut.WriteString(phrase);
                         }
+                        else if ((usfx.NodeType == XmlNodeType.Whitespace) || (usfx.NodeType == XmlNodeType.SignificantWhitespace))
+                        {
+                            usfxOut.WriteWhitespace(usfx.Value);
+
+                        }
                         else if (usfx.NodeType == XmlNodeType.XmlDeclaration)
                         {
                             usfxOut.WriteStartDocument();
@@ -7283,6 +7316,492 @@ namespace WordSend
 
         public string indexDateStamp = String.Empty;
         public static string conversionProgress = String.Empty;
+
+        /// <summary>
+        /// Writes a text file containing SQL code to populate a Scripture database with the verses in this
+        /// USFX Bible translation.
+        /// </summary>
+        /// <param name="usfxName">Name of the USFX source file to read</param>
+        /// <param name="sqlFileName">Name of the SQL file to write.</param>
+        /// <param name="translationId">Unique ID of this translation</param>
+        /// <param name="skipHelps">True iff you want to skip conversion of introductions and notes</param>
+        /// <param name="useKhmerDigits">True iff you want to convert chapter and verse numbers to Khmer digits</param>
+        /// <returns>true iff the conversion was successful</returns>
+        public bool Usfx2Sql(string usfxName, string sqlFileName, string translationId, bool skipHelps = false, bool useKhmerDigits = false)
+        {
+            bool result = false;
+            bool inUsfx = false;
+            bool containsDC = false;
+            string currentParagraph = string.Empty;
+            string activeStyles = string.Empty;
+            ignoreIntros = ignoreNotes = skipHelps;
+            StringBuilder sqlBookList = new StringBuilder();
+            StringBuilder sqlChapterList = new StringBuilder();
+            StringBuilder pending = new StringBuilder();
+            StringBuilder searchText = new StringBuilder();
+            convertDigitsToKhmer = useKhmerDigits;
+            
+            try
+            {
+                StreamWriter sw = new StreamWriter(sqlFileName, false);
+                usfxFileName = usfxName;
+                if (usfx != null)
+                    usfx.Close();
+
+                sw.WriteLine("USE prophero;");
+                sw.WriteLine(@"CREATE TABLE IF NOT EXISTS 'bibleverses'
+('verseid' VARCHAR(64) NOT NULL PRIMARY KEY, // i. e. eng-web.PSA.119.105 or nop.GEN.1.1
+'redirect' VARCHAR(64), // for redirecting a query for a verse number that is part of a verse range to the first verse of the range
+'publishedChapter' VARCHAR(32),
+'publishedVerse' VARCHAR(32),
+'activePara' VARCHAR(8), // Active paragraph tag at beginning of a verse record
+'text' VARCHAR(2048), // marked-up text after the verse marker
+'searchtext' VARCHAR(2048) FULLTEXT INDEX);"); // plain text for searching, stripped of markup and notes
+
+                usfx = new XmlTextReader(usfxName);
+                usfx.WhitespaceHandling = WhitespaceHandling.Significant;
+                while (usfx.Read())
+                {
+                    conversionProgress = "Generating sql " + currentBookAbbrev + " " + currentChapter + ":" + currentVerse;
+                    System.Windows.Forms.Application.DoEvents();
+
+                    switch (usfx.NodeType)
+                    {
+                        case XmlNodeType.Element:
+                            if (inUsfx)
+                            {
+                                level = GetNamedAttribute("level");
+                                style = GetNamedAttribute("style");
+                                sfm = GetNamedAttribute("sfm");
+                                caller = GetNamedAttribute("caller");
+                                id = GetNamedAttribute("id");
+
+                                switch (usfx.Name)
+                                {
+                                    case "languageCode":
+                                        usfx.Read();
+                                        if (usfx.NodeType == XmlNodeType.Text)
+                                            languageCode = usfx.Value;
+                                        break;
+                                    case "sectionBoundary":
+                                    case "generated":
+                                    case "rem":
+                                    case "periph":
+                                    case "fig": // Illustrations not yet supported
+                                    case "ndx":
+                                    case "w":
+                                    case "wh":
+                                    case "wg":
+                                        if (!usfx.IsEmptyElement)
+                                            ignore = true;
+                                        break;
+                                    case "book":
+                                        currentBookAbbrev = id;
+                                        chapterNumber = 0;
+                                        verseNumber = 0;
+                                        currentBookHeader = vernacularLongTitle = String.Empty;
+                                        if (bookInfo.isApocrypha(id))
+                                            containsDC = true;
+                                        bookRecord = (BibleBookRecord)bookList[bookListIndex];
+                                        currentChapter = "";
+                                        break;
+                                    case "id":
+                                        if (id.Length > 2)
+                                            currentBookAbbrev = id;
+                                        if (bookRecord.tla != currentBookAbbrev)
+                                        {
+                                            Logit.WriteLine("Mismatch between id of book element and id element " + id);
+                                            bookRecord = (BibleBookRecord)bookList[bookListIndex];
+                                        }
+                                        if (!usfx.IsEmptyElement)
+                                            ignore = true;
+                                        inHeader = true;
+                                        newChapterFound = false;
+                                        break;
+                                    case "ide":
+                                        // We could read attribute charset, here, if we would do anything with it.
+                                        // Ideally, this would be read on first pass, and used as the encoding to read
+                                        // the file on the second pass. However, we currently don't support anything
+                                        // but utf-8, so it is kind of redundant, except for round-trip conversion back
+                                        // to USFM.
+                                        if (!usfx.IsEmptyElement)
+                                            ignore = true;
+                                        break;
+                                    case "h":
+                                        usfx.Read();
+                                        if (usfx.NodeType == XmlNodeType.Text)
+                                            currentBookHeader = fileHelper.sqlString(usfx.Value.Trim());
+                                        break;
+                                    case "cl":
+                                        usfx.Read();
+                                        if (usfx.NodeType == XmlNodeType.Text)
+                                        {
+                                            if (chapterNumber == 0)
+                                                wordForChapter = usfx.Value.Trim();
+                                            else
+                                                currentChapterPublished = LocalizeNumerals(usfx.Value.Trim());
+                                        }
+                                        break;
+                                    case "p":
+                                        // EndHtmlTable();
+                                        if (sfm.CompareTo("mt") == 0)
+                                        {
+                                            usfx.Read();
+                                            if (usfx.NodeType == XmlNodeType.Text)
+                                            {
+                                                if (vernacularLongTitle.Length > 0)
+                                                    vernacularLongTitle = vernacularLongTitle + " " + fileHelper.sqlString(usfx.Value.Trim());
+                                                else
+                                                    vernacularLongTitle = fileHelper.sqlString(usfx.Value.Trim());
+                                            }
+                                        }
+
+                       /****************
+                                        else if (sfm.CompareTo("ms") == 0)
+                                        {
+                                            usfx.Read();
+                                            if (usfx.NodeType == XmlNodeType.Text)
+                                            {
+                                                bookRecord.toc.Append(String.Format("<div class=\"toc1\"><a href=\"{0}{1}.htm#V{2}\">{3}</a></div>\r\n",
+                                                    currentBookAbbrev, Math.Max(1, chapterNumber).ToString(chapFormat),
+                                                    verseNumber.ToString(), usfx.Value.Trim()));
+                                            }
+                                            hasContentsPage = true;
+                                        }
+
+                                        bool beforeVerse = true;
+                                        if ((bookRecord.testament.CompareTo("x") == 0) ||
+                                            (sfm.Length == 0) || (sfm == "p") || (sfm == "fp") ||
+                                            (sfm == "nb") || (sfm == "cls") || (sfm == "li") ||
+                                            (sfm == "lit") || (sfm == "m") || (sfm == "mi") ||
+                                            (sfm == "pc") || (sfm == "pde") || (sfm == "pdi") ||
+                                            (sfm == "ph") || (sfm == "phi") || (sfm == "pi") ||
+                                            (sfm == "pm") || (sfm == "pmc") || (sfm == "pmo") ||
+                                            (sfm == "pmr") || (sfm == "pr") || (sfm == "ps") ||
+                                            (sfm == "psi") || (sfm == "qc") || (sfm == "qm") ||
+                                            (sfm == "qr") || (sfm == "pr") || (sfm == "ps"))
+                                            beforeVerse = false;
+                                        if (ignoreIntros && ((sfm == "ip") || (sfm == "imt") || (sfm == "io") || (sfm == "is") || (sfm == "iot")))
+                                            ignore = true;
+                                        ProcessParagraphStart(beforeVerse);
+                        */
+                                        break;
+                                    case "q":
+                                    case "qs":  // qs is really a text style with paragraph attributes, but HTML/CSS can't handle that.
+                                    case "b":
+                                        // EndHtmlTable();
+                                        //ProcessParagraphStart(false);
+                                        break;
+                                    case "mt":
+                                    case "d":
+                                    case "s":
+                                        //EndHtmlTable();
+                                        //ProcessParagraphStart(true);
+                                        break;
+                                    case "c":
+                                        //EndHtmlTable();
+                                        //ProcessChapter();
+                                        break;
+                                    case "cp":
+                                        if (!usfx.IsEmptyElement)
+                                        {
+                                            usfx.Read();
+                                            if (usfx.NodeType == XmlNodeType.Text)
+                                                currentChapterPublished = LocalizeNumerals(usfx.Value.Trim());
+                                        }
+                                        break;
+                                    case "ca":
+                                        if (!usfx.IsEmptyElement)
+                                        {
+                                            usfx.Read();
+                                            if (usfx.NodeType == XmlNodeType.Text)
+                                                currentChapterAlternate = usfx.Value.Trim();
+                                        }
+                                        break;
+                                    case "toc":
+                                        if (!usfx.IsEmptyElement)
+                                        {
+                                            usfx.Read();
+                                            if (usfx.NodeType == XmlNodeType.Text)
+                                            {
+                                                switch (level)
+                                                {
+                                                    case "1":
+                                                        bookRecord.vernacularName = usfx.Value.Trim();
+                                                        break;
+                                                    case "2":
+                                                        bookRecord.shortName = usfx.Value.Trim();
+                                                        break;
+                                                    case "3":
+                                                        bookRecord.vernacularAbbreviation = usfx.Value.Trim();
+                                                        break;
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    case "v":
+                                        EndHtmlTable();
+                                        if (chapterNumber == 0)
+                                            VirtualChapter();
+                                        ProcessVerse();
+                                        break;
+                                    case "va":
+                                        EndHtmlTable();
+                                        if (!usfx.IsEmptyElement)
+                                        {
+                                            usfx.Read();
+                                            if (usfx.NodeType == XmlNodeType.Text)
+                                                currentVerseAlternate = LocalizeNumerals(usfx.Value.Trim());
+                                        }
+                                        break;
+                                    case "vp":
+                                        EndHtmlTable();
+                                        if (!usfx.IsEmptyElement)
+                                        {
+                                            usfx.Read();
+                                            if (usfx.NodeType == XmlNodeType.Text)
+                                                currentVersePublished = LocalizeNumerals(usfx.Value.Trim());
+                                        }
+                                        break;
+                                    case "qt":
+                                    case "nd":
+                                    case "tl":
+                                    case "qac":
+                                    case "fm":
+                                    case "sls":
+                                    case "bk":
+                                    case "pn":
+                                    case "k":
+                                    case "ord":
+                                    case "add":
+                                    case "sig":
+                                    case "bd":
+                                    case "it":
+                                    case "bdit":
+                                    case "sc":
+                                    case "no":
+                                    case "ior":
+                                    case "wj":
+                                    case "cs":
+                                        if (sfm.Length == 0)
+                                            sfm = usfx.Name;
+                                        StartHtmlTextStyle(sfm);
+                                        break;
+                                    case "milestone":
+                                        switch (sfm)
+                                        {
+                                            case "th":
+                                                EndHtmlTableCol();
+                                                StartHtmlTable();
+                                                WriteHtml("<td><b>");
+                                                inTableCol = true;
+                                                inTableBold = true;
+                                                break;
+                                            case "tr":
+                                                EndHtmlTableRow();
+                                                StartHtmlTable();
+                                                WriteHtml("<tr>");
+                                                inTableRow = true;
+                                                break;
+                                            case "thr":
+                                                EndHtmlTableCol();
+                                                WriteHtml("<td align=\"right\"><b>");
+                                                inTableBold = true;
+                                                inTableCol = true;
+                                                break;
+                                            case "tc":
+                                                EndHtmlTableCol();
+                                                WriteHtml("<td>");
+                                                inTableCol = true;
+                                                break;
+                                            case "tcr":
+                                                EndHtmlTableCol();
+                                                WriteHtml("<td align=\"right\">");
+                                                inTableCol = true;
+                                                break;
+                                            case "hr":
+                                                EndHtmlTable();
+                                                WriteHtml("<hr>");
+                                                break;
+                                        }
+                                        break;
+
+                                    case "f":
+                                    case "x":
+                                        if (ignoreNotes)
+                                            ignore = true;
+                                        StartHtmlNote(usfx.Name, caller);
+                                        break;
+                                    case "fk":
+                                    case "fq":
+                                    case "fqa":
+                                    case "fv":
+                                    case "ft":
+                                    case "xo":
+                                    case "xk":
+                                    case "xt":
+                                        StartHtmlNoteStyle(usfx.Name);
+                                        break;
+                                    case "xdc":
+                                    case "fdc":
+                                    case "dc":
+                                        if (!containsDC)
+                                            ignore = true;
+                                        break;
+                                    case "optionalLineBreak":
+                                        WriteHtmlOptionalLineBreak();
+                                        break;
+
+                                }
+                            }
+                            else
+                            {
+                                if (usfx.Name == "usfx")
+                                    inUsfx = true;
+                            }
+                            break; // End of element
+                        case XmlNodeType.Whitespace:
+                        case XmlNodeType.SignificantWhitespace:
+                        case XmlNodeType.Text:
+                            WriteHtmlText(usfx.Value);
+                            break;
+                        case XmlNodeType.EndElement:
+                            if (inUsfx)
+                            {
+                                switch (usfx.Name)
+                                {
+                                    case "usfx":
+                                        inUsfx = false;
+                                        break;
+                                    case "ide":
+                                    case "generated":
+                                    case "sectionBoundary":
+                                    case "rem":
+                                    case "periph":
+                                    case "fig": // Illustrations not yet supported
+                                    case "ndx":
+                                    case "w":
+                                    case "wh":
+                                    case "wg":
+                                    case "id":
+                                        ignore = false;
+                                        break;
+                                    case "book":
+                                        if (bookRecord.testament.CompareTo("x") == 0)
+                                        {
+                                            if (chapterNumber == 0)
+                                            {
+                                                chapterNumber++;
+                                                if (htm == null)
+                                                    OpenHtmlFile();
+                                                if (preVerse.Length > 0)
+                                                {
+                                                    htm.WriteLine(preVerse.ToString());
+                                                    //preVerse = new StringBuilder(String.Empty);
+                                                    inPreverse = false;
+                                                }
+                                            }
+                                        }
+                                        CloseHtmlFile();
+                                        bookListIndex++;
+                                        break;
+                                    case "p":
+                                    case "q":
+                                    case "qs":  // qs is really a text style with paragraph attributes, but HTML/CSS can't handle that.
+                                    case "b":
+                                    case "mt":
+                                        EndHtmlParagraph();
+                                        if (chopChapter)
+                                            CloseHtmlFile();
+                                        if (ignoreIntros)
+                                            ignore = false;
+                                        break;
+                                    case "ms":
+                                    case "d":
+                                    case "s":
+                                        if (bookRecord.testament.CompareTo("x") == 0)
+                                        {
+                                            if (chapterNumber == 0)
+                                            {
+                                                chapterNumber++;
+                                            }
+                                            if (htm == null)
+                                                OpenHtmlFile();
+                                            if (preVerse.Length > 0)
+                                            {
+                                                htm.WriteLine(preVerse.ToString());
+                                                //preVerse = new StringBuilder(String.Empty);
+                                                inPreverse = false;
+                                            }
+                                            verseNumber++;
+                                            htm.Write("<a name=\"C{0}V{1}\"></a>",
+                                                chapterNumber.ToString(), verseNumber.ToString());
+                                        }
+                                        EndHtmlParagraph();
+                                        if (chopChapter)
+                                            CloseHtmlFile();
+                                        break;
+                                    case "qt":
+                                    case "nd":
+                                    case "tl":
+                                    case "qac":
+                                    case "fm":
+                                    case "sls":
+                                    case "bk":
+                                    case "pn":
+                                    case "k":
+                                    case "ord":
+                                    case "add":
+                                    case "sig":
+                                    case "bd":
+                                    case "it":
+                                    case "bdit":
+                                    case "sc":
+                                    case "no":
+                                    case "ior":
+                                    case "wj":
+                                    case "cs":
+                                        EndHtmlTextStyle();
+                                        break;
+                                    case "f":
+                                    case "x":
+                                        EndHtmlNote();
+                                        if (ignoreNotes)
+                                            ignore = false;
+                                        break;
+                                    case "fk":
+                                    case "fq":
+                                    case "fqa":
+                                    case "fv":
+                                    case "ft":
+                                    case "xo":
+                                    case "xk":
+                                    case "xt":
+                                        EndHtmlNoteStyle();
+                                        break;
+                                    case "xdc":
+                                    case "fdc":
+                                    case "dc":
+                                        ignore = false;
+                                        break;
+
+                                }
+                            }
+                            break;
+
+                    }   // End of massive case statement
+                }   // End of USFX reading while loop
+                usfx.Close();
+                sw.Close();
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError(ex.Message);
+            }
+
+            return result;
+        }
 
         /// <summary>
         /// Converts the USFX file usfxName to a set of HTML files, one file per chapter, in the
