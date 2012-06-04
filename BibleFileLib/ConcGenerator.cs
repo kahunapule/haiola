@@ -5,10 +5,9 @@ using System.Text;
 using System.Xml;
 using System.IO;
 using System.Windows.Forms;
-using System.Collections;
 using System.Globalization;
 
-namespace sepp
+namespace BibleFileLib
 {
 	/// <summary>
 	/// This class builds a concordance of a set of XHTML files.
@@ -36,6 +35,14 @@ namespace sepp
 		}
 		string m_inputDirName;
 		string m_outputDirName;
+		
+		// Tuple for storing name and class of open elements.
+		class NameClassPair
+		{
+			public string Name;
+			public string Class;
+		}
+		List<NameClassPair> m_openElementStack = new List<NameClassPair>();
 
 		// The information we accumulate during parsing is basically a list of wordforms, each with a list of occurrences,
 		// each storing file, chapter, and verse.
@@ -106,6 +113,7 @@ namespace sepp
 		/// <summary>
 		///  A way of specifing a Comparer indirectly using a string which may be one of
 		///  - a culture identifier which may be passed to the constructor of CultureInfo
+		/// Two other options are currently disabled as they bring in a dependency on Palaso library:
 		///  - CustomSimple:id, where id is a string that may be passed to Palaso.WritingSystems.Collation.SimpleRulesCollator
 		///  - CustomICU:id, where id is a string that may be passed to Palaso.WritingSystems.Collation.IcuRulesCollator
 		/// </summary>
@@ -132,17 +140,31 @@ namespace sepp
 							MessageBoxIcon.Warning);
 					}				
 				}
-				Debug.Assert(parts.Length == 2); // Enhance: report somehow
-				var compareId = parts[0];
-				if (compareId == "CustomSimple")
-				{
-					Comparer = new Palaso.WritingSystems.Collation.SimpleRulesCollator(parts[1]);
-				}
-				else if (compareId == "CustomICU")
-				{
-					Comparer = new Palaso.WritingSystems.Collation.IcuRulesCollator(parts[1]);
-				}
+				//Debug.Assert(parts.Length == 2); // Enhance: report somehow
+				//var compareId = parts[0];
+				//if (compareId == "CustomSimple")
+				//{
+				//    Comparer = new Palaso.WritingSystems.Collation.SimpleRulesCollator(parts[1]);
+				//}
+				//else if (compareId == "CustomICU")
+				//{
+				//    Comparer = new Palaso.WritingSystems.Collation.IcuRulesCollator(parts[1]);
+				//}
 				// Enhance: report somehow.
+			}
+		}
+
+		public static string Stage { get; internal set; }
+
+		private static string m_progress;
+
+		public static string Progress
+		{
+			get { return m_progress; }
+			internal set
+			{
+				m_progress = value;
+				Application.DoEvents(); // allows timer to fire and update progress report in main window.
 			}
 		}
 
@@ -152,20 +174,17 @@ namespace sepp
 		/// <param name="files"></param>
 		public void Run(List<string> files)
 		{
-			Progress status = new Progress(files.Count);
-			Utils.EnsureDirectory(m_outputDirName);
-			status.Text = "Parsing";
-			status.Show();
+			//Progress status = new Progress(files.Count);
+			//Utils.EnsureDirectory(m_outputDirName);
+			Stage = "Parsing";
 			int count = 0;
 			foreach (string inputFile in files)
 			{
-				status.File = inputFile;
+				Progress = inputFile;
 				string inputFilePath = Path.Combine(m_inputDirName, inputFile);
 					Parse(inputFilePath); 
 				count++;
-				status.Value = count;
 			}
-			status.Close();
 
 			// Use the individual word occurrences to find phrase occurrences (and add them before sorting etc.)
 			AddPhraseOccurrences();
@@ -179,10 +198,11 @@ namespace sepp
 					continue;
 				sortedOccurrences.Add(info);
 			}
+			Stage = "Sorting";
+			Progress = "";
 			sortedOccurrences.Sort(new WordformInfoComparer(Comparer));
-			status = new Progress(sortedOccurrences.Count);
-			status.Text = "Generating";
-			status.Show();
+			//status = new Progress(sortedOccurrences.Count);
+			Stage = "Generating";
 			count = 0;
 			// Must do this before making index files, it sets FileNumber property in each item.
 			foreach (WordformInfo item in sortedOccurrences)
@@ -190,8 +210,7 @@ namespace sepp
 				MakeOccurrenceFile(item);
 				if (count % 10 == 0)
 				{
-					status.File = item.Form;
-					status.Value = count;
+					Progress = item.Form;
 				}
 				count++;
 			}
@@ -212,7 +231,6 @@ namespace sepp
 					break;
 			}
 
-			status.Close();
 		}
 
 		private void MakeIndexFiles(List<WordformInfo> sortedOccurrences)
@@ -237,7 +255,7 @@ namespace sepp
 					WordformInfo firstItemInGroup = sortedOccurrences[iStartGroup];
 					WordformInfo lastItemInGroup = sortedOccurrences[iStartGroup + cThisGroup - 1];
 					writerMain.Write("<a href=\"{0}\" target=\"inner\">{1} - {2}</a><br/>\n",
-						new object[] { groupFileName, Utils.MakeSafeXml(firstItemInGroup.Form), Utils.MakeSafeXml(lastItemInGroup.Form) });
+						new object[] { groupFileName, MakeSafeXml(firstItemInGroup.Form), MakeSafeXml(lastItemInGroup.Form) });
 					WriteInnerIndexFile(groupFileName, sortedOccurrences, groupIndex, iStartGroup, cThisGroup);
 				}
 				iStartGroup += cThisGroup;
@@ -247,6 +265,23 @@ namespace sepp
 			writerMain.Close();
 		}
 
+		/// <summary>
+		/// Fix the string to be safe in a text region of XML. (From Utils.cs; can we fix duplication?)
+		/// </summary>
+		/// <param name="sInput"></param>
+		/// <returns></returns>
+		public static string MakeSafeXml(string sInput)
+		{
+			string sOutput = sInput;
+
+			if (sOutput != null && sOutput.Length != 0)
+			{
+				sOutput = sOutput.Replace("&", "&amp;");
+				sOutput = sOutput.Replace("<", "&lt;");
+				sOutput = sOutput.Replace(">", "&gt;");
+			}
+			return sOutput;
+		}
 		const string indexHeader = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n"
 				+ "<head>\n\t<link rel=\"stylesheet\" type=\"text/css\" href=\"mktree.css\">\n\t"
 				+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">\n\t"
@@ -293,7 +328,7 @@ namespace sepp
 					WordformInfo firstItemInGroup = sortedOccurrences[iStartGroup];
 					WordformInfo lastItemInGroup = sortedOccurrences[iStartGroup + cThisGroup - 1];
 					writerMain.Write("<li>{0} - {1}<ul>\n",
-						new object[] { Utils.MakeSafeXml(firstItemInGroup.Form), Utils.MakeSafeXml(lastItemInGroup.Form) });
+						new object[] { MakeSafeXml(firstItemInGroup.Form), MakeSafeXml(lastItemInGroup.Form) });
 					WriteInnerIndexItems(writerMain, sortedOccurrences, iStartGroup, cThisGroup);
 					writerMain.Write("</ul></li>\n");
 				}
@@ -336,7 +371,7 @@ namespace sepp
 				{
 					iLimGroup++;
 				}
-				writerMain.Write("<li><span class=\"indexKeyLetter\">{0}</span><ul>\n", Utils.MakeSafeXml(keyLetter));
+				writerMain.Write("<li><span class=\"indexKeyLetter\">{0}</span><ul>\n", MakeSafeXml(keyLetter));
 				WriteInnerIndexItems(writerMain, sortedOccurrences, iStartGroup, iLimGroup - iStartGroup);
 				writerMain.Write("</ul></li>\n");
 				iStartGroup = iLimGroup;
@@ -349,7 +384,7 @@ namespace sepp
 				+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">\n"
 				+ "</head>\n"
 				+ "<body class=\"ConcIndex\">\n"
-				+ "<p><a target=\"body\" href=\"root.htm\">";
+				+ "<p><a target=\"_top\" href=\"../../index.htm\">";
 		const string indexMfHeader2 = "</a></p>\n"
 				+ "<ul class=\"mktree\">\n";
 		/// <summary>
@@ -403,7 +438,7 @@ namespace sepp
 				if (expandLetter == keyLetter)
 				{
 					writerMain.Write("<li class=\"liOpen\"><span id=\"open\" class=\"indexKeyLetter\"><span class=\"bullet\" onclick=\"location='{1}#open'\">&nbsp;</span><a href=\"{1}\">{0}</a></span><ul>\n",
-						Utils.MakeSafeXml(keyLetter), Path.GetFileName(pathRoot));
+						MakeSafeXml(keyLetter), Path.GetFileName(pathRoot));
 					WriteInnerIndexItems(writerMain, sortedOccurrences, iStartGroup, iLimGroup - iStartGroup);
 					writerMain.Write("</ul></li>\n");
 				}
@@ -412,7 +447,7 @@ namespace sepp
 					// write an element that looks like a closed node, but is actually a hotlink to another index file.
 					// (And do NOT write the subitems!)
 					writerMain.Write("<li class=\"liClosed\"><span class=\"indexKeyLetter\"><span class=\"bullet\"onclick=\"location='{1}'\">&nbsp;</span><a href=\"{1}#open\">{0}</a></span></li>\n",
-						Utils.MakeSafeXml(keyLetter), Path.GetFileName(keyLetterPath));
+						MakeSafeXml(keyLetter), Path.GetFileName(keyLetterPath));
 				}
 				if (expandLetter == null)
 				{
@@ -471,7 +506,7 @@ namespace sepp
 			{
 				WordformInfo item = sortedOccurrences[i];
 				writer.Write("<li><a href=\"wl{0}.htm\" target=\"conc\">{1} ({2})</a></li>\n",
-					new object[] { item.FileNumber, Utils.MakeSafeXml(item.Form), item.Occurrences.Count });
+					new object[] { item.FileNumber, MakeSafeXml(item.Form), item.Occurrences.Count });
 			}
 		}
 
@@ -488,7 +523,7 @@ namespace sepp
 			{
 				WordformInfo item = sortedOccurrences[i];
 				writer.Write("<a href=\"wl{0}.htm\" target=\"conc\">{1}</a><br/>\n",
-					new object[] { item.FileNumber, Utils.MakeSafeXml(item.Form) });
+					new object[] { item.FileNumber, MakeSafeXml(item.Form) });
 			}
 			writer.Write(trailer);
 			writer.Close();
@@ -513,9 +548,9 @@ namespace sepp
 			settings.ConformanceLevel = ConformanceLevel.Fragment;
 			TextReader input = new StreamReader(inputFile, Encoding.UTF8);
 			input.ReadLine(); // Skip the HTML DOCTYPE, which the XmlReader can't cope with.
-			input.ReadLine();
-			XmlReader reader = XmlReader.Create(input, settings);
-			while(reader.Read())
+			var content = input.ReadToEnd().Replace("&nbsp;", "&#160;"); // Enhance: should be a more efficient way to make it cope with this
+			XmlReader reader = XmlReader.Create(new MemoryStream(Encoding.UTF8.GetBytes(content)), settings);
+			while (reader.Read())
 			{
 				switch (reader.NodeType)
 				{
@@ -548,7 +583,7 @@ namespace sepp
 		{
 			List<WordOccurrence> items = info.Occurrences;
 			string flags = info.MixedCase ? "i" : "";
-			string infoForm = Utils.MakeSafeXml(info.Form);
+			string infoForm = MakeSafeXml(info.Form);
 			string fixQuoteInfoForm = infoForm.Replace("'", "&#39"); // apostrophe in word can close onclick quote.
 			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n"
 				+ "<head><script src=\"ConcFuncs.js\" type=\"text/javascript\"></script>\n"
@@ -570,7 +605,7 @@ namespace sepp
 					writer.Write(" ");
 					writer.Write(item.Chapter);
 					writer.Write(".");
-					writer.Write(Utils.MakeSafeXml(item.Verse));
+					writer.Write(MakeSafeXml(item.Verse));
 					writer.Write(": ");
 				}
 				else if (item.Verse == "")
@@ -583,9 +618,9 @@ namespace sepp
 					writer.Write("<span class=\"special\">");
 				}
 				WritePrecedingContext(writer, item.Context.Substring(0, item.Offset));
-				string form = Utils.MakeSafeXml(item.Form);
+				string form = MakeSafeXml(item.Form);
 				string fixQuoteForm = form.Replace("'", "&#39"); // apostrophe in word can close onclick quote.
-				writer.Write("<a href=\"{0}#{1}\" target=\"main\">{4}</a>",
+				writer.Write("<a href=\"../{0}#{1}\">{4}</a>",
 					new object[] { item.FileName, item.Anchor, fixQuoteForm, flags, form});
 				//writer.Write(item.Context.Substring(item.Offset + key.Length, item.Context.Length - item.Offset - key.Length));
 				WriteFollowingContext(writer, item.Context.Substring(item.Offset + info.Form.Length, item.Context.Length - item.Offset - info.Form.Length));
@@ -601,6 +636,7 @@ namespace sepp
 
 		private string GetAbbreviation(string fileName)
 		{
+#if old_file_name_scheme // 01GEN-1.htm
 			string abbr;
 			if (m_abbreviations.TryGetValue(fileName, out abbr))
 				return abbr;
@@ -616,13 +652,17 @@ namespace sepp
 				}
 			}
 			return "???"; // last resort.
+#else
+			// In Haiola, the book identifier is the first three letters of the file name.
+			return fileName.Substring(0, Math.Min(3, fileName.Length));
+#endif
 		}
 
 		private void WritePrecedingContext(TextWriter writer, string context)
 		{
 			if (context.Length < MaxContextLength)
 			{
-				writer.Write(Utils.MakeSafeXml(context));
+				writer.Write(MakeSafeXml(context));
 				return;
 			}
 			int iWhiteSpace = -1;
@@ -638,12 +678,12 @@ namespace sepp
 			{
 				while (iWhiteSpace < context.Length && Char.IsWhiteSpace(context[iWhiteSpace]))
 					iWhiteSpace++;
-				writer.Write(Utils.MakeSafeXml(context.Substring(iWhiteSpace, context.Length - iWhiteSpace)));
+				writer.Write(MakeSafeXml(context.Substring(iWhiteSpace, context.Length - iWhiteSpace)));
 			}
 			else
 			{
 				writer.Write("...");
-				writer.Write(Utils.MakeSafeXml(context.Substring(context.Length - MaxContextLength + 3, MaxContextLength - 3)));
+				writer.Write(MakeSafeXml(context.Substring(context.Length - MaxContextLength + 3, MaxContextLength - 3)));
 			}
 		}
 
@@ -651,7 +691,7 @@ namespace sepp
 		{
 			if (context.Length < MaxContextLength)
 			{
-				writer.Write(Utils.MakeSafeXml(context));
+				writer.Write(MakeSafeXml(context));
 				return;
 			}
 			int iWhiteSpace = -1;
@@ -667,11 +707,11 @@ namespace sepp
 			{
 				while (iWhiteSpace > 0 && Char.IsWhiteSpace(context[iWhiteSpace - 1]))
 					iWhiteSpace--;
-				writer.Write(Utils.MakeSafeXml(context.Substring(0, iWhiteSpace)));
+				writer.Write(MakeSafeXml(context.Substring(0, iWhiteSpace)));
 			}
 			else
 			{
-				writer.Write(Utils.MakeSafeXml(context.Substring(0, MaxContextLength - 3)));
+				writer.Write(MakeSafeXml(context.Substring(0, MaxContextLength - 3)));
 				writer.Write("...");
 			}
 		}
@@ -683,8 +723,29 @@ namespace sepp
 			return Char.IsLetter(c);
 		}
 
+		// The class of the most recent still-open element which has a class.
+		private string CurrentClass
+		{
+			get
+			{
+				for (int i = m_openElementStack.Count - 1; i >= 0; i--)
+				{
+					if (m_openElementStack[i].Class != null)
+						return m_openElementStack[i].Class;
+				}
+				return null;
+			}
+		}
+
 		private void ProcessText(string text)
 		{
+			if (CurrentClass == "chapterlabel") // Enhance JohnT: Make this configurable.
+			{
+				int temp;
+				if (Int32.TryParse(text.Trim(), out temp))
+					m_chapter = temp;
+				// else report problem somehow?
+			}
 			if (m_chapter < 0 || m_pendingExclusions.Count > 0)
 				return; // not currently Scripture text we want to concord (or include in context).
 			EnsureWhiteSpaceEndsContext();
@@ -963,6 +1024,9 @@ namespace sepp
 		// This version is for the OSIStoHTML converter, which inserts literal anchors <a name="C2V5"/>
 		private void ProcessElement(XmlReader reader)
 		{
+			string className = reader.GetAttribute("class");
+			m_openElementStack.Add(new NameClassPair() {Name = reader.Name, Class = className});
+
 			// Get into 'name' the thing if any that can be an href target.
 			string name = reader.GetAttribute("id");
 
@@ -985,10 +1049,17 @@ namespace sepp
 						m_verse = parts[1]; // don't try to parse this, may be complex, eg. 11-12
 					}
 				}
+				else if (name != null && name.StartsWith("V"))
+				{
+					m_verse = name.Substring(1); // just strip off the "V"; don't try to parse this, may be complex, eg. 11-12a
+				}
 			}
-			string className = reader.GetAttribute("class");
 			if (className != null)
 			{
+				if (className == "main") // Enhance JohnT: make the element that signifies this configurable.
+				{
+					m_chapter = 0; // start processing, but no actual number known.
+				}
 				if (ExcludeClasses.Contains(className))
 				{
 					// Prevents processing wordforms until we find the corresponding end marker.
@@ -1019,6 +1090,7 @@ namespace sepp
 				if (m_pendingNonCanonical.Count == 0)
 					ProcessEndOfSentence();
 			}
+			m_openElementStack.RemoveAt(m_openElementStack.Count - 1); // pop stack
 		}
 	}
 

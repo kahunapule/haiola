@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
+using BibleFileLib;
 using Microsoft.Win32;
 using WordSend;
 using sepp;
@@ -111,13 +112,17 @@ namespace haiola
                 Close();
             }
         }
-
         private void EnsureTemplateFile(string fileName)
+        {
+        	EnsureTemplateFile(fileName, m_inputDirectory);
+        }
+ 
+        private void EnsureTemplateFile(string fileName, string destDirecgtory)
         {
             try
             {
                 string sourcePath = WordSend.SFConverter.FindAuxFile(fileName);
-                string destPath = Path.Combine(m_inputDirectory, fileName);
+				string destPath = Path.Combine(destDirecgtory, fileName);
                 if ((!File.Exists(destPath)) && (File.Exists(sourcePath)))
                 {
                     File.Copy(sourcePath, destPath);
@@ -544,6 +549,7 @@ In addition, you have permission to convert the text to different file formats, 
 			// Todo JohnT: move this to a new method, and the condition to the method that calls this.
 			if (generateConcordanceCheckBox.Checked)
 			{
+				currentConversion = "generate XHTML for concordance";
 				usfxToHtmlConverter toXhtm = new usfxToXhtmlConverter();
 				Logit.OpenFile(Path.Combine(m_outputProjectDirectory, "XHTMLConversionReport.txt"));
 
@@ -567,23 +573,45 @@ In addition, you have permission to convert the text to different file formats, 
 				                        m_options.goText);
 				Logit.CloseFile();
 
-				// Todo JohnT: replace this with proper concordance generation. This is just to confirm we got (sufficiently) valid xhtml.
-				//XmlReaderSettings settings = new XmlReaderSettings();
-				//settings.ConformanceLevel = ConformanceLevel.Fragment;
-				//settings.IgnoreComments = true;
-				//settings.ProhibitDtd = false;
-				//settings.ValidationType = ValidationType.None;
-				//settings.ConformanceLevel = ConformanceLevel.Fragment;
-				//foreach (var inputFile in Directory.GetFiles(xhtmlPath))
-				//{
-				//    TextReader input = new StreamReader(inputFile, Encoding.UTF8);
-				//    input.ReadLine(); // Skip the HTML DOCTYPE, which the XmlReader can't cope with.
-				//    var content = input.ReadToEnd().Replace("&nbsp;", "&#160;");
-				//    XmlReader reader = XmlReader.Create(new MemoryStream(Encoding.UTF8.GetBytes(content)), settings);
-				//    while (reader.Read())
-				//    {
-				//    }
-				//}
+				currentConversion = "Concordance";
+				string concordanceDirectory = Path.Combine(htmlPath, "conc");
+				Utils.DeleteDirectory(concordanceDirectory); // Blow away any previous results
+				Utils.EnsureDirectory(concordanceDirectory);
+				string excludedClasses =
+					"toc toc1 toc2 navButtons pageFooter chapterlabel r verse"; // from old prophero: "verse chapter notemark crmark crossRefNote parallel parallelSub noteBackRef popup crpopup overlap";
+				string headingClasses = "mt mt2 s"; // old prophero: "sectionheading maintitle2 footnote sectionsubheading";
+				var concGenerator = new ConcGenerator(xhtmlPath, concordanceDirectory)
+				                    	{
+											// Currently configurable options
+											MergeCase = m_options.MergeCase,
+											MaxContextLength = m_options.MaxContextLength,
+											MinContextLength =  m_options.MinContextLength,
+											WordformingChars = m_options.WordformingChars,
+											MaxFrequency = m_options.MaxFrequency,
+											Phrases = m_options.Phrases,
+											ExcludeWords = new HashSet<string>(m_options.ExcludeWords.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)),
+
+											// Options we may want to make configurable for localization.
+											BookChapText = "Books and Chapters", // todo make configurable for localization if still used
+											// Todo: configure comparison function
+											ConcordanceLinkText = "Concordance",  // todo make configurable for localization if still used
+											IndexType = ConcGenerator.IndexTypes.alphaTreeMf,
+											NotesRef = "note",
+											HeadingRef = "head",
+
+											// Options we need to configure correctly based on the HTML we generate
+											ExcludeClasses = new HashSet<string>(excludedClasses.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)),
+											NotesClass = "footnotes", // todo: fix if Haiola generates HTML with footnotes that should be concorded
+											NonCanonicalClasses = new HashSet<string>(headingClasses.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+				                    	};
+				concGenerator.Run(new List<string>(Directory.GetFiles(xhtmlPath)));
+
+				var concFrameGenerator = new ConcFrameGenerator()
+				                         	{ConcDirectory = concordanceDirectory, LangName = m_options.vernacularTitle};
+				concFrameGenerator.Run();
+				EnsureTemplateFile("mktree.css", concordanceDirectory);
+				EnsureTemplateFile("plus.gif", concordanceDirectory);
+				EnsureTemplateFile("minus.gif", concordanceDirectory);
 			}
         }
 
@@ -803,7 +831,38 @@ In addition, you have permission to convert the text to different file formats, 
             khmerNumeralsRadioButton.Checked = m_options.useKhmerDigits;
             privateCheckBox.Checked = m_options.privateProject;
             homeDomainTextBox.Text = m_options.homeDomain;
+
+        	LoadConcTab();
         }
+
+		private void LoadConcTab()
+		{
+			generateConcordanceCheckBox.Checked = m_options.GenerateConcordance;
+			chkMergeCase.Checked = m_options.MergeCase;
+			tbxWordformingChars.Text = m_options.WordformingChars;
+			tbxExcludeWords.Text = m_options.ExcludeWords;
+			tbxMaxFreq.Text = m_options.MaxFreqSrc;
+			tbxPhrases.Text = m_options.PhrasesSrc;
+			tbxMinContext.Text = m_options.MinContextLength.ToString();
+			tbxMaxContext.Text = m_options.MaxContextLength.ToString();
+
+		}
+
+		private void SaveConcTab()
+		{
+			m_options.GenerateConcordance = generateConcordanceCheckBox.Checked;
+			m_options.MergeCase = chkMergeCase.Checked;
+			m_options.WordformingChars = tbxWordformingChars.Text;
+			m_options.ExcludeWords = tbxExcludeWords.Text;
+			m_options.MaxFreqSrc = tbxMaxFreq.Text; // Enhance: validate
+			m_options.PhrasesSrc = tbxPhrases.Text;
+			int temp;
+			if (int.TryParse(tbxMinContext.Text, out temp))
+				m_options.MinContextLength = temp;
+			if (int.TryParse(tbxMaxContext.Text, out temp))
+				m_options.MaxContextLength = temp;
+		}
+
 
         private void m_projectsList_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -859,6 +918,9 @@ In addition, you have permission to convert the text to different file formats, 
             m_options.useKhmerDigits = khmerNumeralsRadioButton.Checked;
             m_options.privateProject = privateCheckBox.Checked;
             m_options.homeDomain = homeDomainTextBox.Text.Trim();
+
+			SaveConcTab();
+
             m_options.Write();
         }
 
@@ -953,10 +1015,20 @@ In addition, you have permission to convert the text to different file formats, 
         private void timer1_Tick(object sender, EventArgs e)
         {
             batchLabel.Text = DateTime.UtcNow.ToString("HH:mm:ss") + " " + m_project + " " +
-                currentConversion + " " + WordSend.usfxToHtmlConverter.conversionProgress;
+                ConversionProgress;
         }
 
-        private void addProgramButton_Click(object sender, EventArgs e)
+    	private string ConversionProgress
+    	{
+    		get
+    		{
+				if (currentConversion == "Concordance")
+					return ConcGenerator.Stage + " " + ConcGenerator.Progress;
+    			return currentConversion + " " + WordSend.usfxToHtmlConverter.conversionProgress;
+    		}
+    	}
+
+    	private void addProgramButton_Click(object sender, EventArgs e)
         {
             if (postprocessTextBox.Text.Length > 0)
             {
