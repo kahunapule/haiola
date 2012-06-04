@@ -121,13 +121,27 @@
             this.khmerNumeralsRadioButton = new System.Windows.Forms.RadioButton();
             this.arabicNumeralsRadioButton = new System.Windows.Forms.RadioButton();
             this.label17 = new System.Windows.Forms.Label();
-            this.layoutTabPage = new System.Windows.Forms.TabPage();
-            this.statsLabel = new System.Windows.Forms.Label();
+			this.concordanceTabPage = new System.Windows.Forms.TabPage();
+			this.generateConcordanceCheckBox = new System.Windows.Forms.CheckBox();
+			this.statsLabel = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.helpButton = new System.Windows.Forms.Button();
             this.runHighlightedButton = new System.Windows.Forms.Button();
             this.statsButton = new System.Windows.Forms.Button();
-            this.tabControl1.SuspendLayout();
+			this.label31 = new System.Windows.Forms.Label();
+			this.tbxPhrases = new System.Windows.Forms.TextBox();
+			this.label30 = new System.Windows.Forms.Label();
+			this.tbxExcludeWords = new System.Windows.Forms.TextBox();
+			this.label22 = new System.Windows.Forms.Label();
+			this.tbxMaxFreq = new System.Windows.Forms.TextBox();
+			this.label23 = new System.Windows.Forms.Label();
+			this.tbxMinContext = new System.Windows.Forms.TextBox();
+			this.label28 = new System.Windows.Forms.Label();
+			this.tbxMaxContext = new System.Windows.Forms.TextBox();
+			this.label29 = new System.Windows.Forms.Label();
+			this.tbxWordformingChars = new System.Windows.Forms.TextBox();
+			this.chkMergeCase = new System.Windows.Forms.CheckBox();
+			this.tabControl1.SuspendLayout();
             this.idTabPage.SuspendLayout();
             this.copyrightTabPage.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -135,7 +149,8 @@
             this.htmlTabPage.SuspendLayout();
             this.advancedTabPage.SuspendLayout();
             this.numeralsGroupBox.SuspendLayout();
-            this.SuspendLayout();
+			this.concordanceTabPage.SuspendLayout();
+			this.SuspendLayout();
             // 
             // m_projectsList
             // 
@@ -231,7 +246,7 @@
             this.tabControl1.Controls.Add(this.processTabPage);
             this.tabControl1.Controls.Add(this.htmlTabPage);
             this.tabControl1.Controls.Add(this.advancedTabPage);
-            this.tabControl1.Controls.Add(this.layoutTabPage);
+			this.tabControl1.Controls.Add(this.concordanceTabPage);
             this.tabControl1.Location = new System.Drawing.Point(0, 75);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(2);
             this.tabControl1.Name = "tabControl1";
@@ -1131,14 +1146,38 @@
             this.label17.TabIndex = 34;
             this.label17.Text = "Versification:";
             // 
-            // layoutTabPage
-            // 
-            this.layoutTabPage.Location = new System.Drawing.Point(4, 22);
-            this.layoutTabPage.Name = "layoutTabPage";
-            this.layoutTabPage.Size = new System.Drawing.Size(618, 462);
-            this.layoutTabPage.TabIndex = 7;
-            this.layoutTabPage.Text = "Layout";
-            this.layoutTabPage.UseVisualStyleBackColor = true;
+			// concordanceTabPage
+			// 
+			this.concordanceTabPage.Controls.Add(this.label31);
+			this.concordanceTabPage.Controls.Add(this.tbxPhrases);
+			this.concordanceTabPage.Controls.Add(this.label30);
+			this.concordanceTabPage.Controls.Add(this.tbxExcludeWords);
+			this.concordanceTabPage.Controls.Add(this.label22);
+			this.concordanceTabPage.Controls.Add(this.tbxMaxFreq);
+			this.concordanceTabPage.Controls.Add(this.label23);
+			this.concordanceTabPage.Controls.Add(this.tbxMinContext);
+			this.concordanceTabPage.Controls.Add(this.label28);
+			this.concordanceTabPage.Controls.Add(this.tbxMaxContext);
+			this.concordanceTabPage.Controls.Add(this.label29);
+			this.concordanceTabPage.Controls.Add(this.tbxWordformingChars);
+			this.concordanceTabPage.Controls.Add(this.chkMergeCase);
+			this.concordanceTabPage.Controls.Add(this.generateConcordanceCheckBox);
+			this.concordanceTabPage.Location = new System.Drawing.Point(4, 22);
+			this.concordanceTabPage.Name = "concordanceTabPage";
+			this.concordanceTabPage.Size = new System.Drawing.Size(618, 462);
+			this.concordanceTabPage.TabIndex = 7;
+			this.concordanceTabPage.Text = "Concordance";
+			this.concordanceTabPage.UseVisualStyleBackColor = true;
+			// 
+			// generateConcordanceCheckBox
+			// 
+			this.generateConcordanceCheckBox.AutoSize = true;
+			this.generateConcordanceCheckBox.Location = new System.Drawing.Point(12, 17);
+			this.generateConcordanceCheckBox.Name = "generateConcordanceCheckBox";
+			this.generateConcordanceCheckBox.Size = new System.Drawing.Size(137, 17);
+			this.generateConcordanceCheckBox.TabIndex = 0;
+			this.generateConcordanceCheckBox.Text = "Generate Concordance";
+			this.generateConcordanceCheckBox.UseVisualStyleBackColor = true;
             // 
             // statsLabel
             // 
@@ -1186,7 +1225,133 @@
             this.statsButton.UseVisualStyleBackColor = true;
             this.statsButton.Click += new System.EventHandler(this.statsButton_Click);
             // 
-            // haiolaForm
+			// label31
+			// 
+			this.label31.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.label31.AutoSize = true;
+			this.label31.Location = new System.Drawing.Point(351, 213);
+			this.label31.Name = "label21";
+			this.label31.Size = new System.Drawing.Size(242, 13);
+			this.label31.TabIndex = 25;
+			this.label31.Text = "Make extra entries for these phrases (one per line)";
+			// 
+			// tbxPhrases
+			// 
+			this.tbxPhrases.Location = new System.Drawing.Point(354, 233);
+			this.tbxPhrases.Multiline = true;
+			this.tbxPhrases.Name = "tbxPhrases";
+			this.tbxPhrases.Size = new System.Drawing.Size(244, 175);
+			this.tbxPhrases.TabIndex = 24;
+			// 
+			// label20
+			// 
+			this.label30.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.label30.AutoSize = true;
+			this.label30.Location = new System.Drawing.Point(17, 213);
+			this.label30.Name = "label20";
+			this.label30.Size = new System.Drawing.Size(256, 13);
+			this.label30.TabIndex = 23;
+			this.label30.Text = "Also omit words in the following list (space separated)";
+			// 
+			// tbxExcludeWords
+			// 
+			this.tbxExcludeWords.Location = new System.Drawing.Point(13, 233);
+			this.tbxExcludeWords.Multiline = true;
+			this.tbxExcludeWords.Name = "tbxExcludeWords";
+			this.tbxExcludeWords.Size = new System.Drawing.Size(323, 175);
+			this.tbxExcludeWords.TabIndex = 22;
+			this.tbxExcludeWords.Text = "- --";
+			// 
+			// label22
+			// 
+			this.label22.AutoSize = true;
+			this.label22.Location = new System.Drawing.Point(14, 189);
+			this.label22.Name = "label22";
+			this.label22.Size = new System.Drawing.Size(473, 13);
+			this.label22.TabIndex = 21;
+			this.label22.Text = "Maximum frequency (words occurring more often than this will be excluded; use \'un" +
+				"limited\' if no limit)";
+			// 
+			// tbxMaxFreq
+			// 
+			this.tbxMaxFreq.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.tbxMaxFreq.Location = new System.Drawing.Point(497, 186);
+			this.tbxMaxFreq.Name = "tbxMaxFreq";
+			this.tbxMaxFreq.Size = new System.Drawing.Size(96, 20);
+			this.tbxMaxFreq.TabIndex = 20;
+			this.tbxMaxFreq.Text = "unlimited";
+			// 
+			// label23
+			// 
+			this.label23.AutoSize = true;
+			this.label23.Location = new System.Drawing.Point(14, 157);
+			this.label23.Name = "label23";
+			this.label23.Size = new System.Drawing.Size(345, 13);
+			this.label23.TabIndex = 19;
+			this.label23.Text = "Word-split context length (split words if needed to get this much context)";
+			// 
+			// tbxMinContext
+			// 
+			this.tbxMinContext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.tbxMinContext.Location = new System.Drawing.Point(497, 157);
+			this.tbxMinContext.Name = "tbxMinContext";
+			this.tbxMinContext.Size = new System.Drawing.Size(96, 20);
+			this.tbxMinContext.TabIndex = 18;
+			this.tbxMinContext.Text = "40";
+			// 
+			// label28
+			// 
+			this.label28.AutoSize = true;
+			this.label28.Location = new System.Drawing.Point(14, 122);
+			this.label28.Name = "label28";
+			this.label28.Size = new System.Drawing.Size(388, 13);
+			this.label28.TabIndex = 17;
+			this.label28.Text = "Maximum context length (number of characters shown before and after key word)";
+			// 
+			// tbxMaxContext
+			// 
+			this.tbxMaxContext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.tbxMaxContext.Location = new System.Drawing.Point(497, 119);
+			this.tbxMaxContext.Name = "tbxMaxContext";
+			this.tbxMaxContext.Size = new System.Drawing.Size(96, 20);
+			this.tbxMaxContext.TabIndex = 16;
+			this.tbxMaxContext.Text = "60";
+			// 
+			// label29
+			// 
+			this.label29.AutoSize = true;
+			this.label29.Location = new System.Drawing.Point(12, 65);
+			this.label29.Name = "label29";
+			this.label29.Size = new System.Drawing.Size(403, 13);
+			this.label29.TabIndex = 15;
+			this.label29.Text = "Characters that should be treated as parts of words (in addition to standard Unic" +
+				"ode)";
+			// 
+			// tbxWordformingChars
+			// 
+			this.tbxWordformingChars.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.tbxWordformingChars.Location = new System.Drawing.Point(12, 87);
+			this.tbxWordformingChars.Name = "tbxWordformingChars";
+			this.tbxWordformingChars.Size = new System.Drawing.Size(586, 20);
+			this.tbxWordformingChars.TabIndex = 14;
+			this.tbxWordformingChars.Text = "\'-";
+			// 
+			// chkMergeCase
+			// 
+			this.chkMergeCase.AutoSize = true;
+			this.chkMergeCase.Checked = true;
+			this.chkMergeCase.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.chkMergeCase.Location = new System.Drawing.Point(12, 40);
+			this.chkMergeCase.Name = "chkMergeCase";
+			this.chkMergeCase.Size = new System.Drawing.Size(300, 17);
+			this.chkMergeCase.TabIndex = 13;
+			this.chkMergeCase.Text = "Merge wordforms that differ only by case into single entries";
+			this.chkMergeCase.UseVisualStyleBackColor = true;
+			// 
+			// haiolaForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -1225,7 +1390,9 @@
             this.advancedTabPage.PerformLayout();
             this.numeralsGroupBox.ResumeLayout(false);
             this.numeralsGroupBox.PerformLayout();
-            this.ResumeLayout(false);
+			this.concordanceTabPage.ResumeLayout(false);
+			this.concordanceTabPage.PerformLayout();
+			this.ResumeLayout(false);
             this.PerformLayout();
 
         }
@@ -1305,7 +1472,7 @@
         private System.Windows.Forms.Button moveDownButton;
         private System.Windows.Forms.Button moveUpButton;
         private System.Windows.Forms.CheckBox stripExtrasCheckBox;
-        private System.Windows.Forms.TabPage layoutTabPage;
+		private System.Windows.Forms.TabPage concordanceTabPage;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button helpButton;
         private System.Windows.Forms.Label label18;
@@ -1329,6 +1496,20 @@
         private System.Windows.Forms.ListBox altLinkListBox;
         private System.Windows.Forms.TextBox altLinkTextBox;
         private System.Windows.Forms.Label label21;
-    }
+		private System.Windows.Forms.CheckBox generateConcordanceCheckBox;
+		private System.Windows.Forms.Label label31;
+		private System.Windows.Forms.TextBox tbxPhrases;
+		private System.Windows.Forms.Label label30;
+		private System.Windows.Forms.TextBox tbxExcludeWords;
+		private System.Windows.Forms.Label label22;
+		private System.Windows.Forms.TextBox tbxMaxFreq;
+		private System.Windows.Forms.Label label23;
+		private System.Windows.Forms.TextBox tbxMinContext;
+		private System.Windows.Forms.Label label28;
+		private System.Windows.Forms.TextBox tbxMaxContext;
+		private System.Windows.Forms.Label label29;
+		private System.Windows.Forms.TextBox tbxWordformingChars;
+		private System.Windows.Forms.CheckBox chkMergeCase;
+	}
 }
 
