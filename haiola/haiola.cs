@@ -678,6 +678,8 @@ In addition, you have permission to convert the text to different file formats, 
                 command = command.Replace("%t", m_options.translationId);
                 command = command.Replace("%e", m_options.languageId);
                 command = command.Replace("%h", m_options.homeDomain);
+                command = command.Replace("%p", m_options.privateProject ? "private" : "public");
+                command = command.Replace("%r", (!m_options.privateProject) && (m_options.publicDomain || m_options.creativeCommons) ? "redistributable" : "restricted");
                 currentConversion = "Running " + command;
                 batchLabel.Text = currentConversion;
                 Application.DoEvents();
@@ -690,6 +692,127 @@ In addition, you have permission to convert the text to different file formats, 
 
         }
 
+        private void ImportUsfx(string SourceDir)
+        {
+            string logFile;
+            try
+            {
+                string UsfmDir = Path.Combine(m_outputProjectDirectory, "usfm");
+                if (!Directory.Exists(SourceDir))
+                {
+                    MessageBox.Show(this, SourceDir + " not found!", "ERROR");
+                    return;
+                }
+                // Start with an EMPTY USFM directory to avoid problems with old files 
+                Utils.DeleteDirectory(UsfmDir);
+                fileHelper.EnsureDirectory(UsfmDir);
+                string[] inputFileNames = Directory.GetFiles(SourceDir);
+                if (inputFileNames.Length == 0)
+                {
+                    MessageBox.Show(this, "No files found in " + SourceDir, "ERROR");
+                    return;
+                }
+
+                foreach (string inputFile in inputFileNames)
+                {
+                    string filename = Path.GetFileName(inputFile);
+                    string fileType = Path.GetExtension(filename).ToUpper();
+                    if ((fileType == ".USFX") || (fileType == ".XML"))
+                    {
+                        currentConversion = "processing " + filename;
+                        Application.DoEvents();
+                        if (!fAllRunning)
+                            break;
+                        XmlTextReader xr = new XmlTextReader(inputFile);
+                        if (xr.MoveToContent() == XmlNodeType.Element)
+                        {
+                            if (xr.Name == "usfx")
+                            {
+
+                                logFile = Path.Combine(m_outputProjectDirectory, "usfx2usfm_log.txt");
+                                Logit.OpenFile(logFile);
+                                SFConverter.scripture = new Scriptures();
+                                Logit.loggedError = false;
+                                currentConversion = "converting from USFX to USFM";
+                                Application.DoEvents();
+                                SFConverter.scripture.USFXtoUSFM(inputFile, UsfmDir, m_options.translationId + ".usfm");
+                                Logit.CloseFile();
+                                if (Logit.loggedError)
+                                {
+                                    StreamReader log = new StreamReader(logFile);
+                                    string errors = log.ReadToEnd();
+                                    log.Close();
+                                    MessageBox.Show(errors, "Errors in " + logFile);
+                                }
+                                currentConversion = "converted USFM to USFX.";
+                            }
+                            else if (xr.Name == "vernacularParms")
+                            {
+                                // TODO: Insert code here to read metadata in this file into options file.
+                            }
+                            else if (xr.Name == "vernacularParmsMiscellaneous")
+                            {
+                                // TODO: Insert code here to read this file into options file.
+                            }
+                        }
+                        xr.Close();
+                        Application.DoEvents();
+
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error importing USFX");
+            }
+        }
+
+        private void ProcessOneProject(string projDirName)
+        {
+            m_project = projDirName;
+            m_inputProjectDirectory = Path.Combine(m_inputDirectory, m_project);
+            m_outputProjectDirectory = Path.Combine(m_outputDirectory, m_project);
+            fileHelper.EnsureDirectory(m_outputProjectDirectory);
+            m_xiniPath = Path.Combine(m_inputProjectDirectory, "options.xini");
+            displayOptions();
+
+            Application.DoEvents();
+            if (!fAllRunning)
+                return;
+            string source = Path.Combine(m_inputProjectDirectory, "Source");
+            if (Directory.Exists(source))
+            {
+                PreprocessUsfmFiles();
+            }
+            else
+            {
+                source = Path.Combine(m_inputProjectDirectory, "usfx");
+                if (Directory.Exists(source))
+                {
+                    ImportUsfx(source);
+                }
+                else
+                {
+                    source = Path.Combine(m_inputProjectDirectory, "usx");
+                    if (Directory.Exists(source))
+                    {
+                        //TODO: Create ImportUsx(source);
+                    }
+                }
+            }
+            Application.DoEvents();
+            if (fAllRunning)
+                ConvertUsfmToUsfx();
+            Application.DoEvents();
+            if (fAllRunning)
+                ConvertUsfxToPortableHtml();
+            Application.DoEvents();
+            if (fAllRunning)
+                DoPostprocess();
+            Application.DoEvents();
+        }
+
         private void WorkOnAllButton_Click(object sender, EventArgs e)
         {
             btnSetRootDirectory.Enabled = false;
@@ -698,6 +821,7 @@ In addition, you have permission to convert the text to different file formats, 
             checkAllButton.Enabled = false;
             unmarkAllButton.Enabled = false;
             runHighlightedButton.Enabled = false;
+            startTime = DateTime.UtcNow;
             timer1.Enabled = true;
             if (fAllRunning)
             {
@@ -712,6 +836,8 @@ In addition, you have permission to convert the text to different file formats, 
             SaveOptions();
             foreach (object o in m_projectsList.CheckedItems)
             {
+                ProcessOneProject((string)o);
+                /*
                 m_project = (string)o;
                 m_inputProjectDirectory = Path.Combine(m_inputDirectory, m_project);
                 m_outputProjectDirectory = Path.Combine(m_outputDirectory, m_project);
@@ -735,6 +861,7 @@ In addition, you have permission to convert the text to different file formats, 
                 if (!fAllRunning)
                     break;
                 DoPostprocess();
+                 */
                 Application.DoEvents();
                 if (!fAllRunning)
                     break;
@@ -742,7 +869,7 @@ In addition, you have permission to convert the text to different file formats, 
             fAllRunning = false;
             currentConversion = String.Empty;
             timer1.Enabled = false;
-            batchLabel.Text = "Stopped.";
+            batchLabel.Text = (DateTime.UtcNow - startTime).ToString() + " " + "Done.";
             m_projectsList_SelectedIndexChanged(null, null);
             WorkOnAllButton.Enabled = true;
             WorkOnAllButton.Text = "Run marked";
@@ -796,6 +923,7 @@ In addition, you have permission to convert the text to different file formats, 
             contributorTextBox.Text = m_options.contributor;
             titleTextBox.Text = m_options.vernacularTitle;
             descriptionTextBox.Text = m_options.EnglishDescription;
+            lwcDescriptionTextBox.Text = m_options.lwcDescription;
             updateDateTimePicker.MaxDate = DateTime.Now.AddDays(2);
             updateDateTimePicker.Value = m_options.contentUpdateDate;
             pdRadioButton.Checked = m_options.publicDomain;
@@ -809,16 +937,26 @@ In addition, you have permission to convert the text to different file formats, 
             printPublisherTextBox.Text = m_options.printPublisher;
             electronicPublisherTextBox.Text = m_options.electronicPublisher;
             stripExtrasCheckBox.Checked = m_options.ignoreExtras;
+            
             listInputProcesses.SuspendLayout();
             listInputProcesses.Items.Clear();
             foreach (string filename in m_options.preprocessingTables)
                 listInputProcesses.Items.Add(filename);
             listInputProcesses.ResumeLayout();
+
+            altLinkTextBox.Text = String.Empty;
+            altLinkListBox.SuspendLayout();
+            altLinkListBox.Items.Clear();
+            foreach (string a in m_options.altLinks)
+                altLinkListBox.Items.Add(a);
+            altLinkListBox.ResumeLayout();
+            
             postprocessListBox.SuspendLayout();
             postprocessListBox.Items.Clear();
             foreach (string filename in m_options.postprocesses)
                 postprocessListBox.Items.Add(filename);
             postprocessListBox.ResumeLayout();
+
             // Insert more checkbox settings here.
             homeLinkTextBox.Text = m_options.homeLink;
             copyrightLinkTextBox.Text = m_options.copyrightLink;
@@ -886,6 +1024,7 @@ In addition, you have permission to convert the text to different file formats, 
             m_options.contributor = contributorTextBox.Text;
             m_options.vernacularTitle = titleTextBox.Text;
             m_options.EnglishDescription = descriptionTextBox.Text;
+            m_options.lwcDescription = lwcDescriptionTextBox.Text;
             m_options.contentUpdateDate = updateDateTimePicker.Value;
             m_options.publicDomain = pdRadioButton.Checked;
             m_options.creativeCommons = ccRadioButton.Checked;
@@ -898,14 +1037,22 @@ In addition, you have permission to convert the text to different file formats, 
             m_options.printPublisher = printPublisherTextBox.Text;
             m_options.electronicPublisher = electronicPublisherTextBox.Text;
             m_options.ignoreExtras = stripExtrasCheckBox.Checked;
+
             List<string> tableNames = new List<string>();
             foreach (string filename in listInputProcesses.Items)
                 tableNames.Add(filename);
             m_options.preprocessingTables = tableNames;
+            
             List<string> postprocessNames = new List<string>();
             foreach (string filename in postprocessListBox.Items)
                 postprocessNames.Add(filename);
             m_options.postprocesses = postprocessNames;
+            
+            List<string> alternateLinks = new List<string>();
+            foreach (string alternateLink in altLinkListBox.Items)
+                alternateLinks.Add(alternateLink);
+            m_options.altLinks = alternateLinks;
+            
             // Insert more checkbox settings here.
             m_options.homeLink = homeLinkTextBox.Text;
             m_options.goText = goTextTextBox.Text;
@@ -1012,9 +1159,11 @@ In addition, you have permission to convert the text to different file formats, 
             SaveOptions();
         }
 
+        private DateTime startTime = new DateTime(1, 1, 1);
+
         private void timer1_Tick(object sender, EventArgs e)
         {
-            batchLabel.Text = DateTime.UtcNow.ToString("HH:mm:ss") + " " + m_project + " " +
+            batchLabel.Text = (DateTime.UtcNow - startTime).ToString() + " " + m_project + " " +
                 ConversionProgress;
         }
 
@@ -1086,6 +1235,7 @@ In addition, you have permission to convert the text to different file formats, 
             checkAllButton.Enabled = false;
             unmarkAllButton.Enabled = false;
             runHighlightedButton.Enabled = false;
+            startTime = DateTime.UtcNow;
             timer1.Enabled = true;
             if (fAllRunning)
             {
@@ -1098,29 +1248,12 @@ In addition, you have permission to convert the text to different file formats, 
             fAllRunning = true;
             WorkOnAllButton.Text = "Stop";
             SaveOptions();
-            m_project = (string)m_projectsList.SelectedItem;
-            m_inputProjectDirectory = Path.Combine(m_inputDirectory, m_project);
-            m_outputProjectDirectory = Path.Combine(m_outputDirectory, m_project);
-            fileHelper.EnsureDirectory(m_outputProjectDirectory);
-            m_xiniPath = Path.Combine(m_inputProjectDirectory, "options.xini");
-            displayOptions();
+            ProcessOneProject((string)m_projectsList.SelectedItem);
 
-            Application.DoEvents();
-            if (fAllRunning)
-                PreprocessUsfmFiles();
-            Application.DoEvents();
-            if (fAllRunning)
-                ConvertUsfmToUsfx();
-            Application.DoEvents();
-            if (fAllRunning)
-                ConvertUsfxToPortableHtml();
-            Application.DoEvents();
-            if (fAllRunning)
-                DoPostprocess();
             fAllRunning = false;
             currentConversion = String.Empty;
             timer1.Enabled = false;
-            batchLabel.Text = "Stopped.";
+            batchLabel.Text = (DateTime.UtcNow - startTime).ToString() + " " + "Done.";
             m_projectsList_SelectedIndexChanged(null, null);
             WorkOnAllButton.Enabled = true;
             WorkOnAllButton.Text = "Run marked";
@@ -1130,13 +1263,13 @@ In addition, you have permission to convert the text to different file formats, 
             btnSetRootDirectory.Enabled = true;
             reloadButton.Enabled = true;
             runHighlightedButton.Enabled = true;
-
         }
 
         private void statsButton_Click(object sender, EventArgs e)
         {
             int numProjects = 0;
             int numTranslations = 0;
+            int urlid = 0;
             btnSetRootDirectory.Enabled = false;
             reloadButton.Enabled = false;
             m_projectsList.Enabled = false;
@@ -1144,15 +1277,33 @@ In addition, you have permission to convert the text to different file formats, 
             unmarkAllButton.Enabled = false;
             runHighlightedButton.Enabled = false;
             WorkOnAllButton.Enabled = false;
+            startTime = DateTime.UtcNow;
             timer1.Enabled = true;
             SaveOptions();
             StreamWriter sw = new StreamWriter(Path.Combine(m_outputDirectory, "translations.csv"));
+            StreamWriter sqlFile = new StreamWriter(Path.Combine(m_outputDirectory, "Bible_list.sql"));
+            StreamWriter altUrlFile = new StreamWriter(Path.Combine(m_outputDirectory, "urllist.sql"));
+            sqlFile.WriteLine("USE Prophero;");
+            sqlFile.WriteLine("DROP TABLE IF EXISTS 'bible_list';");
+            sqlFile.WriteLine(@"CREATE TABLE 'bible_list' ('translationid' VARCHAR(64) NOT NULL,
+'languagecode' VARCHAR(4) NOT NULL, 'languagename' VARCHAR(128), 'languagenameinenglish' VARCHAR(128),
+'dialect' VARCHAR(128), 'homedomain' VARCHAR(128), 'title' VARCHAR(256), 'description' VARCHAR(1024),
+'free' BOOL, 'copyright' VARCHAR(1024), 'updatedate' DATE, 'publicationurl' VARCHAR(1024), PRIMARY KEY('translationid')) DEFAULT CHARSET=utf8;");
+            sqlFile.WriteLine("LOCK TABLES 'bible_list' WRITE;");
+
+            altUrlFile.WriteLine("USE Prophero;");
+            altUrlFile.WriteLine(@"DROP TABLE IF EXISTS 'urllist';");
+            altUrlFile.WriteLine(@"CREATE TABLE 'urllist' ('urlid' INT UNSIGNED NOT NULL,
+'languagecode' VARCHAR(4) NOT NULL, 'translationid' VARCHAR(64) NOT NULL, 'url' VARCHAR(1024) NOT NULL);");
+            sqlFile.WriteLine("LOCK TABLES 'urllist' WRITE;");
+
             sw.WriteLine("\"languageCode\",\"translationId\",\"languageName\",\"languageNameInEnglish\",\"dialect\",\"homeDomain\",\"title\",\"description\",\"Free\",\"Copyright\",\"UpdateDate\",\"publicationURL\"");
             foreach (object o in m_projectsList.Items)
             {
                 m_project = (string)o;
                 m_inputProjectDirectory = Path.Combine(m_inputDirectory, m_project);
                 m_outputProjectDirectory = Path.Combine(m_outputDirectory, m_project);
+
                 m_xiniPath = Path.Combine(m_inputProjectDirectory, "options.xini");
                 displayOptions();
                 numProjects++;
@@ -1162,22 +1313,49 @@ In addition, you have permission to convert the text to different file formats, 
                     sw.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\",\"{10}\",\"http://{5}/{1}/\"",
                         m_options.languageId,
                         m_options.translationId,
-                        m_options.languageName,
-                        m_options.languageNameInEnglish,
-                        m_options.dialect,
-                        m_options.homeDomain.Trim(),
-                        m_options.vernacularTitle.Trim(),
-                        m_options.EnglishDescription.Trim(),
+                        fileHelper.sqlString(m_options.languageName),
+                        fileHelper.sqlString(m_options.languageNameInEnglish),
+                        fileHelper.sqlString(m_options.dialect),
+                        fileHelper.sqlString(m_options.homeDomain.Trim()),
+                        fileHelper.sqlString(m_options.vernacularTitle.Trim()),
+                        fileHelper.sqlString(m_options.EnglishDescription.Trim()),
                         (m_options.publicDomain || m_options.creativeCommons).ToString(),
-                        m_options.publicDomain ? "public domain" : "Copyright © " + m_options.copyrightYears + " " + m_options.copyrightOwner,
+                        fileHelper.sqlString(m_options.publicDomain ? "public domain" : "Copyright © " + m_options.copyrightYears + " " + m_options.copyrightOwner),
                         m_options.contentUpdateDate.ToString("yyyy-MM-dd"));
+                    sqlFile.WriteLine("INSERT INTO 'bible_list' VALUES \"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\",\"{10}\",\"http://{5}/{0}/\";",
+                        m_options.translationId,
+                        m_options.languageId,
+                        fileHelper.sqlString(m_options.languageName),
+                        fileHelper.sqlString(m_options.languageNameInEnglish),
+                        fileHelper.sqlString(m_options.dialect),
+                        fileHelper.sqlString(m_options.homeDomain.Trim()),
+                        fileHelper.sqlString(m_options.vernacularTitle.Trim()),
+                        fileHelper.sqlString(m_options.EnglishDescription.Trim()),
+                        (m_options.publicDomain || m_options.creativeCommons).ToString(),
+                        fileHelper.sqlString(m_options.publicDomain ? "public domain" : "Copyright © " + m_options.copyrightYears + " " + m_options.copyrightOwner),
+                        m_options.contentUpdateDate.ToString("yyyy-MM-dd"));
+                    if (m_options.homeDomain.Length > 0)
+                    {
+                        altUrlFile.WriteLine("INSERT INTO 'urllist' VALUES '{0}', '{1}', '{2}', '<a href=\\\"http://{3}/{2}/\\\">{4}</a>';",
+                            urlid.ToString(), m_options.languageId, m_options.translationId, fileHelper.sqlString(m_options.homeDomain.Trim()), fileHelper.sqlString(m_options.vernacularTitle.Trim()));
+                        urlid++;
+                    }
+                    foreach (string altUrl in m_options.altLinks)
+                    {
+                        altUrlFile.WriteLine("INSERT INTO 'urllist' VALUES '{0}', '{1}', '{2}', '{3}';", urlid.ToString(), m_options.languageId, m_options.translationId, fileHelper.sqlString(altUrl));
+                        urlid++;
+                    }
                 }
             }
             sw.Close();
+            sqlFile.WriteLine("UNLOCK TABLES;");
+            altUrlFile.WriteLine("UNLOCK TABLES;");
+            sqlFile.Close();
+            altUrlFile.Close();
             fAllRunning = false;
-            currentConversion = numProjects.ToString() + " projects; " + numTranslations.ToString() + " public.";
+            currentConversion = numProjects.ToString() + " projects; " + numTranslations.ToString() + " public. " + urlid.ToString() + " URLs.";
             timer1.Enabled = false;
-            statsLabel.Text = batchLabel.Text = currentConversion;
+            statsLabel.Text = currentConversion;
             m_projectsList_SelectedIndexChanged(null, null);
             WorkOnAllButton.Enabled = true;
             WorkOnAllButton.Text = "Run marked";
@@ -1188,11 +1366,24 @@ In addition, you have permission to convert the text to different file formats, 
             reloadButton.Enabled = true;
             runHighlightedButton.Enabled = true;
             WorkOnAllButton.Enabled = true;
+            batchLabel.Text = (DateTime.UtcNow - startTime).ToString() + " " + currentConversion;
         }
 
         private void helpButton_Click(object sender, EventArgs e)
         {
             showHelp("haiola.htm");
+        }
+
+        private void addLinkButton_Click(object sender, EventArgs e)
+        {
+            if (altLinkTextBox.Text.Length > 3)
+                altLinkListBox.Items.Add(altLinkTextBox.Text);
+        }
+
+        private void deleteLinkButton_Click(object sender, EventArgs e)
+        {
+            if ((altLinkListBox.Items.Count > 0) && (altLinkListBox.SelectedIndex >= 0))
+                altLinkListBox.Items.RemoveAt(altLinkListBox.SelectedIndex);
         }
 
         

@@ -15,6 +15,7 @@ namespace haiola
         private XMLini ini;
         private List<string> m_tableNames;
         private List<string> m_postprocesses;
+        private List<string> m_altLinks;
         private bool changed = false;
 
         public void Reload(string iniName)
@@ -23,6 +24,7 @@ namespace haiola
                 Write();
             m_tableNames = null;
             m_postprocesses = null;
+            m_altLinks = null;
             LegacyOptions oldOpts = null;
             int i, fileCount;
 
@@ -184,6 +186,19 @@ namespace haiola
                 ini.WriteString("EnglishDescription", value);
             }
         }
+
+        public string lwcDescription
+        {
+            get
+            {
+                return ini.ReadString("lwcDescription", String.Empty);
+            }
+            set
+            {
+                ini.WriteString("lwcDescription", value);
+            }
+        }
+
 
 
         public DateTime contentUpdateDate
@@ -744,9 +759,10 @@ namespace haiola
                 {
                     m_postprocesses = new List<string>();
                     count = ini.ReadInt("numPostprocesses", 1);
-                    for (i = 0; i < count; i++)
+                    m_postprocesses.Add(ini.ReadString("postprocess0", "pubscripture %d %t %h %p %r"));
+                    for (i = 1; i < count; i++)
                     {
-                        m_postprocesses.Add(ini.ReadString("postprocess" + i.ToString(), "postprocess.bat"));
+                        m_postprocesses.Add(ini.ReadString("postprocess" + i.ToString(), ""));
                     }
                 }
                 return m_postprocesses;
@@ -760,6 +776,35 @@ namespace haiola
                 for (i = 0; i < theCount; i++)
                 {
                     ini.WriteString("postprocess" + i.ToString(), value[i]);
+                }
+            }
+        }
+
+        public List<string> altLinks
+        {
+            get
+            {
+                int i, count;
+                if (m_altLinks == null)
+                {
+                    m_altLinks = new List<string>();
+                    count = ini.ReadInt("numAltLinks", 0);
+                    for (i = 0; i < count; i++)
+                    {
+                        m_altLinks.Add(ini.ReadString("altLink" + i.ToString(), String.Empty));
+                    }
+                }
+                return m_altLinks;
+            }
+            set
+            {
+                m_altLinks = value;
+                int i, theCount;
+                theCount = value.Count;
+                ini.WriteInt("numAltLinks", theCount);
+                for (i = 0; i < theCount; i++)
+                {
+                    ini.WriteString("altLink" + i.ToString(), value[i]);
                 }
             }
         }

@@ -1011,4 +1011,11 @@
 		<levelExpected>false</levelExpected>
 		<comment>Custom, non-standard, non-recommended paragraph tag. Use this only if you really need it... and remember to define this style in your seed file if you do.</comment>
 	</sfm>
+	<sfm kind="character">
+		<tag>zplural</tag>
+		<endTag>zplural*</endTag>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Indicates that the enclosed word is plural (used for "you" from "ye")</comment>
+	</sfm>
 </SFMInfo>
