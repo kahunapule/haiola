@@ -68,6 +68,7 @@ namespace haiola
         /// <param name="iniName"></param>
         public Options(string iniName)
         {
+			Phrases = new List<string>();
             Reload(iniName);
         }
 
@@ -770,8 +771,135 @@ namespace haiola
         public bool Write()
         {
             return ini.Write();
-        }
-    }
+		}
+
+		#region ConcOptions
+
+		/// <summary>
+		/// Whether to generate a concordance at all; other conc options are irrelevant if not.
+		/// </summary>
+		public bool GenerateConcordance
+		{
+			get { return ini.ReadBool("generateConcordance", false); }
+			set { ini.WriteBool("generateConcordance", value); }
+		}
+
+    	/// <summary>
+    	/// if wordforms differing only by case occur merge them
+    	/// </summary>
+    	public bool MergeCase
+    	{
+			get { return ini.ReadBool("mergeCase", false); }
+			set { ini.WriteBool("mergeCase", value); }
+    	}
+
+    	/// <summary>
+		/// overrides, list of characters that should be considered word-forming in defiance of Unicode.
+		/// </summary>
+		public string WordformingChars
+		{
+			get
+			{
+				return ini.ReadString("wordformingChars", String.Empty);
+			}
+			set
+			{
+				ini.WriteString("wordformingChars", value);
+			}
+		}
+
+    	/// <summary>
+    	/// the maximum frequency of occurrence that a word may have and still be include in the concordance.
+    	/// </summary>
+    	public int MaxFrequency
+    	{
+    		get { return ini.ReadInt("maxFrequency", int.MaxValue); }
+    		set { ini.WriteInt("maxFrequency", value); }
+    	}
+
+    	/// <summary>
+		/// The text property saved in files and displayed in a text box that controls the maximum
+		/// frequency of occurrence that a word may have and still be include in the concordance.
+		/// </summary>
+		internal string MaxFreqSrc
+		{
+			get { return MaxFrequency == Int32.MaxValue ? "unlimited" : MaxFrequency.ToString(); }
+			set
+			{
+				if (value.ToLowerInvariant() == "unlimited") // todo?? Localize
+					MaxFrequency = Int32.MaxValue;
+				int temp;
+				if (int.TryParse(value, out temp))
+					MaxFrequency = temp;
+				else
+					MaxFrequency = Int32.MaxValue; // ignore any value we can't make sense of.
+				if (MaxFrequency <= 0)
+					MaxFrequency = Int32.MaxValue;
+			}
+		}
+
+		/// <summary>
+		/// Minimum characters to display in context area; if a word break cannot be found between this and MaxContextLength,
+		/// break a word.
+		/// </summary>
+		public int MinContextLength
+    	{
+			get { return ini.ReadInt("minContextLength", 35); }
+			set { ini.WriteInt("minContextLength", value); }
+    	}
+
+		/// <summary>
+		/// Max characters to include in context. Fewer may be used to avoid breaking words or because of sentence boundaries.
+		/// </summary>
+		public int MaxContextLength
+    	{
+			get { return ini.ReadInt("maxContextLength", 35); }
+			set { ini.WriteInt("maxContextLength", value); }
+    	}
+
+		/// <summary>
+		/// String stored in files and the options dialog that lists phrases that should have distinct concordance entries.
+		/// </summary>
+		internal string PhrasesSrc
+		{
+			get
+			{
+				StringBuilder bldr = new StringBuilder();
+				foreach (string phrase in Phrases)
+					bldr.AppendLine(phrase);
+				return bldr.ToString();
+			}
+
+			set
+			{
+				Phrases.Clear();
+				foreach (string phrase in value.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
+					Phrases.Add(phrase);
+			}
+		}
+		/// <summary>
+		/// List of phrases which should become their own concordance entries.
+		/// Todo JohnT: persist in ini
+		/// </summary>
+		public List<string> Phrases { get; internal set; }
+
+		/// <summary>
+		/// List of words not to concord.
+		/// </summary>
+		public string ExcludeWords
+		{
+			get
+			{
+				return ini.ReadString("excludeWords", String.Empty);
+			}
+			set
+			{
+				ini.WriteString("excludeWords", value);
+			}
+		}
+
+		#endregion
+	}
 
 	public class LegacyOptions
 	{
