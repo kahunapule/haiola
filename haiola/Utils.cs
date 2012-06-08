@@ -83,7 +83,7 @@ namespace sepp
 		/// <returns></returns>
 		internal static bool EnsureDirectory(string destinationPath)
 		{
-			if (!File.Exists(destinationPath))
+			if (!Directory.Exists(destinationPath))
 			{
 				try
 				{
