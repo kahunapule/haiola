@@ -581,7 +581,7 @@ In addition, you have permission to convert the text to different file formats, 
 				string excludedClasses =
 					"toc toc1 toc2 navButtons pageFooter chapterlabel r verse"; // from old prophero: "verse chapter notemark crmark crossRefNote parallel parallelSub noteBackRef popup crpopup overlap";
 				string headingClasses = "mt mt2 s"; // old prophero: "sectionheading maintitle2 footnote sectionsubheading";
-				var concGenerator = new ConcGenerator(xhtmlPath, concordanceDirectory)  // FixMe: nestConc: concordanceDirectory../
+				var concGenerator = new ConcGenerator(xhtmlPath, concordanceDirectory)
 				                    	{
 											// Currently configurable options
 											MergeCase = m_options.MergeCase,
