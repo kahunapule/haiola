@@ -6427,6 +6427,11 @@ namespace WordSend
         BibleBookInfo bookInfo = new BibleBookInfo();
         BibleBookRecord bookRecord;
 
+		public usfxToHtmlConverter()
+		{
+			ConcordanceLinkText = "Concordance";
+		}
+
 		/// <summary>
 		/// True if we plan to generate a concordance to go with this file.
 		/// </summary>
@@ -6652,11 +6657,16 @@ namespace WordSend
 
         protected void OpenHtmlFile()
         {
-            OpenHtmlFile("");
+            OpenHtmlFile("", true);
             htm.WriteLine("<div class=\"main\">");
         }
 
-        protected void OpenHtmlFile(string fileName)
+		protected void OpenHtmlFile(string fileName)
+		{
+			OpenHtmlFile(fileName, false);
+		}
+
+        protected void OpenHtmlFile(string fileName, bool mainScriptureFile)
         {
             CloseHtmlFile();
             footNoteCall.reset();
@@ -6684,7 +6694,7 @@ namespace WordSend
 			WriteCompleteElement("<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"");
             htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width\" />");
 			WriteCompleteElement("<link rel=\"stylesheet\" href=\"prophero.css\" type=\"text/css\"");
-			if (GeneratingConcordance)
+			if (mainScriptureFile && GeneratingConcordance)
 			{
 				htm.WriteLine("<script src=\"TextFuncs.js\" type=\"text/javascript\"></script>");
 			}
@@ -7812,6 +7822,11 @@ namespace WordSend
             return result;
         }
 
+		/// <summary>
+		///  (Localizable) string to display as the text of the link the Concordance.
+		/// </summary>
+		public string ConcordanceLinkText { get; set; }
+
         /// <summary>
         /// Converts the USFX file usfxName to a set of HTML files, one file per chapter, in the
         /// directory htmlDir, with reference to CSS files in cssDir. The output file names will
@@ -8165,6 +8180,10 @@ namespace WordSend
                 htm.WriteLine("<div class=\"toc\"><a href=\"{0}.htm\">{1}</a></div>",
                     chapterFileList[0], goText);
                 htm.WriteLine(indexHtml, langId, translationId);
+				if (GeneratingConcordance)
+				{
+					htm.WriteLine("<div class=\"toc1\"><a href=\"conc/treeMaster.htm\">" + ConcordanceLinkText + "</a></div>");
+				}
                 htm.WriteLine("<p>&nbsp;<br/><br/></p>");
                 if (indexDateStamp != String.Empty)
                 {
@@ -8248,7 +8267,7 @@ namespace WordSend
                                         {
                                             currentChapterPublished = "0";
                                             OpenHtmlFile();
-                                            htm.WriteLine("<div class=\"toc\"><a href=\"../index.htm\">^</a></div>\r\n{0}",
+                                            htm.WriteLine("<div class=\"toc\"><a href=\"index.htm\">^</a></div>\r\n{0}",
                                                 bookRecord.toc.ToString());
                                             CloseHtmlFile();
                                         }

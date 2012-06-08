@@ -6,7 +6,9 @@ var oldBackground;
 function onLoad()
 {
     hilitedElt = "";
-	selectWord(getUrlVar("w"), getUrlVar("f"));
+    var temp = getUrlVar("w");
+    if (temp && temp != "")
+	    selectWord(temp, getUrlVar("f"));
 }
 
 // Given a query string "?to=email&why=because&first=John&Last=smith"

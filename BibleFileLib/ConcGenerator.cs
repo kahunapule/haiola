@@ -384,7 +384,7 @@ namespace BibleFileLib
 				+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">\n"
 				+ "</head>\n"
 				+ "<body class=\"ConcIndex\">\n"
-				+ "<p><a target=\"_top\" href=\"../../index.htm\">";
+				+ "<p><a target=\"_top\" href=\"../index.htm\">";
 		const string indexMfHeader2 = "</a></p>\n"
 				+ "<ul class=\"mktree\">\n";
 		/// <summary>
