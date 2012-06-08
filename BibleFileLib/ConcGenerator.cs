@@ -619,6 +619,12 @@ namespace BibleFileLib
 				WritePrecedingContext(writer, item.Context.Substring(0, item.Offset));
 				string form = MakeSafeXml(item.Form);
 				string fixQuoteForm = form.Replace("'", "&#39"); // apostrophe in word can close onclick quote.
+				// We write the word and flags that are needed for highlighting the selected word as parameters of the href.
+				// This has no effect on which file is displayed, but the JavaScript invoked by the onLoad method of the scripture page
+				// can extract this from the HTML (see onLoad method of TextFuncs.js) and use it to highlight the selected word.
+				// We use this rather than the old strategy of encoding the selected word in a variable of the occurrences pane
+				// because (a) we are no longer showing both panes at once; and (b) they are now in different directories, which
+				// leads to security errors, at least when using the files offline.
 				writer.Write("<a href=\"../{0}?w={5}&f={3}#{1}\">{4}</a>", // FixMe: nestConc: ../
 					new object[] { item.FileName, item.Anchor, fixQuoteForm, flags, form, infoForm});
 				//writer.Write(item.Context.Substring(item.Offset + key.Length, item.Context.Length - item.Offset - key.Length));
