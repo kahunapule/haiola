@@ -6427,6 +6427,11 @@ namespace WordSend
         BibleBookInfo bookInfo = new BibleBookInfo();
         BibleBookRecord bookRecord;
 
+		/// <summary>
+		/// True if we plan to generate a concordance to go with this file.
+		/// </summary>
+		public bool GeneratingConcordance { get; set; }
+
         public string LocalizeNumerals(string s)
         {
             if (convertDigitsToKhmer)
@@ -6679,11 +6684,15 @@ namespace WordSend
 			WriteCompleteElement("<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"");
             htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width\" />");
 			WriteCompleteElement("<link rel=\"stylesheet\" href=\"prophero.css\" type=\"text/css\"");
+			if (GeneratingConcordance)
+			{
+				htm.WriteLine("<script src=\"TextFuncs.js\" type=\"text/javascript\"></script>");
+			}
             htm.WriteLine("<title>{0} {1} {2}</title></head>",
                 langName, currentBookHeader, currentChapterPublished);
 			WriteCompleteElement(string.Format("<meta name=\"keywords\" content=\"{0}, {1}, Holy Bible, Scripture, Bible, Scriptures, New Testament, Old Testament, Gospel\"",
                 langName, langId));
-            htm.WriteLine("<body class=\"mainDoc\">");
+            htm.WriteLine("<body class=\"mainDoc\"{0}>", GeneratingConcordance ? " onload=\"onLoad()\"" : "");
             
             WriteNavButtons();
         }

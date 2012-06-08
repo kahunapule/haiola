@@ -588,8 +588,7 @@ namespace BibleFileLib
 			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n"
 				+ "<head><script src=\"ConcFuncs.js\" type=\"text/javascript\"></script>\n"
 				+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"display.css\">\n"
-				+ string.Format("<script type=\"text/javascript\">var curWord = \"{0}\"; var curFlags = \"{1}\"</script>", infoForm, flags)
-				+ string.Format("</head>\n<body onload='sel(curWord,\"{1}\")'>\n", fixQuoteInfoForm, flags);
+			+ "</head>\n<body>\n";
 			string trailer = "</body>\n</html>\n";
 			string path = Path.Combine(m_outputDirName, "wl" + m_wordListFileCount.ToString() + ".htm");
 			info.FileNumber = m_wordListFileCount;
@@ -620,8 +619,8 @@ namespace BibleFileLib
 				WritePrecedingContext(writer, item.Context.Substring(0, item.Offset));
 				string form = MakeSafeXml(item.Form);
 				string fixQuoteForm = form.Replace("'", "&#39"); // apostrophe in word can close onclick quote.
-				writer.Write("<a href=\"../{0}#{1}\">{4}</a>",
-					new object[] { item.FileName, item.Anchor, fixQuoteForm, flags, form});
+				writer.Write("<a href=\"../{0}?w={5}&f={3}#{1}\">{4}</a>", // FixMe: nestConc: ../
+					new object[] { item.FileName, item.Anchor, fixQuoteForm, flags, form, infoForm});
 				//writer.Write(item.Context.Substring(item.Offset + key.Length, item.Context.Length - item.Offset - key.Length));
 				WriteFollowingContext(writer, item.Context.Substring(item.Offset + info.Form.Length, item.Context.Length - item.Offset - info.Form.Length));
 				if (!item.Canonical)
