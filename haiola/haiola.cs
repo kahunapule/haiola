@@ -416,6 +416,7 @@ namespace haiola
 
             toHtm.indexDateStamp = "HTML generated " + DateTime.UtcNow.ToString("d MMM yyyy") +
                 " from source files dated " + sourceDate.ToString("d MMM yyyy");
+        	toHtm.GeneratingConcordance = m_options.GenerateConcordance;
             toHtm.ConvertUsfxToHtml(Path.Combine(UsfxPath, "usfx.xml"), htmlPath,
                 m_options.vernacularTitle,
                 m_options.languageId,
@@ -580,7 +581,7 @@ In addition, you have permission to convert the text to different file formats, 
 				string excludedClasses =
 					"toc toc1 toc2 navButtons pageFooter chapterlabel r verse"; // from old prophero: "verse chapter notemark crmark crossRefNote parallel parallelSub noteBackRef popup crpopup overlap";
 				string headingClasses = "mt mt2 s"; // old prophero: "sectionheading maintitle2 footnote sectionsubheading";
-				var concGenerator = new ConcGenerator(xhtmlPath, concordanceDirectory)
+				var concGenerator = new ConcGenerator(xhtmlPath, concordanceDirectory)  // FixMe: nestConc: concordanceDirectory../
 				                    	{
 											// Currently configurable options
 											MergeCase = m_options.MergeCase,
@@ -612,6 +613,8 @@ In addition, you have permission to convert the text to different file formats, 
 				EnsureTemplateFile("mktree.css", concordanceDirectory);
 				EnsureTemplateFile("plus.gif", concordanceDirectory);
 				EnsureTemplateFile("minus.gif", concordanceDirectory);
+				EnsureTemplateFile("display.css", concordanceDirectory);
+				EnsureTemplateFile("TextFuncs.js", htmlPath);
 			}
         }
 
