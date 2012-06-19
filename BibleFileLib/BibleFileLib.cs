@@ -21,9 +21,11 @@
 // --------------------------------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Collections;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Diagnostics;
 
@@ -6427,6 +6429,13 @@ namespace WordSend
         BibleBookInfo bookInfo = new BibleBookInfo();
         BibleBookRecord bookRecord;
 
+		/// <summary>
+		/// Null except when we have seen an open element with name p and style "Parallel Passage Reference" but have not yet seen the corresponding end element.
+		/// Set to empty when we see the open element, any intermediate text is added to it.
+		/// The end element then generates the complete cross-ref.
+		/// </summary>
+		string parallelPassage;
+
 		public usfxToHtmlConverter()
 		{
 			ConcordanceLinkText = "Concordance";
@@ -8321,6 +8330,8 @@ namespace WordSend
                                         if (ignoreIntros && ((sfm == "ip") || (sfm == "imt") || (sfm == "io") || (sfm == "is") || (sfm == "iot")))
                                             ignore = true;
                                         ProcessParagraphStart(beforeVerse);
+										if (style == "Parallel Passage Reference")
+											parallelPassage = ""; // start accumulating cross-ref data
                                         break;
                                     case "q":
                                     case "qs":  // qs is really a text style with paragraph attributes, but HTML/CSS can't handle that.
@@ -8499,7 +8510,10 @@ namespace WordSend
                         case XmlNodeType.Whitespace:
                         case XmlNodeType.SignificantWhitespace:
                         case XmlNodeType.Text:
-                            WriteHtmlText(usfx.Value);
+							if (parallelPassage != null)
+								parallelPassage = parallelPassage + usfx.Value;
+							else
+								WriteHtmlText(usfx.Value);
                             break;
                         case XmlNodeType.EndElement:
                             if (inUsfx)
@@ -8542,10 +8556,18 @@ namespace WordSend
                                         bookListIndex++;
                                         break;
                                     case "p":
+										if (parallelPassage != null)
+										{
+											string crossRef = parallelPassage;
+											parallelPassage = null; // stop accumulating cross ref info!
+											WriteHtmlText(ConvertCrossRefsToHotLinks(crossRef));
+										}
+										goto case "mt";
                                     case "q":
                                     case "qs":  // qs is really a text style with paragraph attributes, but HTML/CSS can't handle that.
                                     case "b":
                                     case "mt":
+										// also done for case "p" after possibly converting cross refs.
                                         EndHtmlParagraph();
                                         if (chopChapter)
                                             CloseHtmlFile();
@@ -8645,6 +8667,184 @@ namespace WordSend
             conversionProgress = String.Empty;
             return result;
         }
+
+		/// <summary>
+		/// Maps from book names that occur in cross-refs to the file name prefix used for that book
+		/// e.g. 1 Corinthians -> 1Co, which will cause 1 Corinthians 3:5 to map to 1Co03#V5.
+		/// Client must supply this to get cross-reference conversion.
+		/// </summary>
+    	public Dictionary<string, string> CrossRefToFilePrefixMap;
+
+		/// <summary>
+		/// Convert references to hot links. A simple input is something like "Lukas 12:3". Output would then be
+		/// <a href="LUK12.htm#V3>Lucas 12:3</a>.
+		/// The name to file previx conversion is performed by finding "Lukas" in CrossRefToFilePrefixMap, with the value "LUK".
+		/// But it's more complicated than that; we get cases like
+		/// (Mateos 26:26-29; Markus 14:22-25; Lukas 22:14-20) -- extra punctuation and multiple refs
+		/// (Carita Ulang so'al Jalan Idop 4:35,39; 6:4) - name not found!
+		/// (1 Korintus 5:1-13) - range!
+		/// (Utusan dong pung Carita 22:6-16, 26:12-18) - list of refs in same book
+		/// " Efesus 5:22, Kolose 3:18" - commas separate complete refs!
+		/// "Hahuu (Jénesis , Kejadian ) 15:13-14; Ézodu (Keluaran ) 3:12" - book name is complex and has comma!
+		/// The algorithm is:
+		/// 0. Wherever a recognized book name occurs, change it to something definitely not containing problem
+		/// punctuation: #%#%bookN#
+		/// 1. Split the string at semi-colons or commas; handle each one independently,
+		/// except if we get a book or chapter, remember for subsequent ones.
+		/// 2. Each item from the above is split at commas. Consider all to come from same book and chapter, if later ones don't specify those.
+		/// 3. In first of each comma group, search for a match for known book name. If found, or if we are carrying a book name forward, we can make a hot link.
+		/// 4. Convert occurrences of #%#%bookN back.
+		/// </summary>
+		/// <param name="chunk1"></param>
+		/// <returns></returns>
+		private string ConvertCrossRefsToHotLinks(string chunk1)
+		{
+			if (CrossRefToFilePrefixMap == null || CrossRefToFilePrefixMap.Count == 0)
+				return chunk1;
+			string chunk = chunk1;
+			int ibook = 0;
+			Dictionary<string, string> subsBookToFile = new Dictionary<string, string>(CrossRefToFilePrefixMap.Count);
+			foreach (string bookName in CrossRefToFilePrefixMap.Keys)
+			{
+				string subskey = "#%#%book" + ibook + "#"; // final hatch to prevent book1 matching book10 on convert back
+				subsBookToFile[subskey] = CrossRefToFilePrefixMap[bookName];
+				chunk = chunk.Replace(bookName, subskey);
+				ibook++;
+			}
+			string[] mainRefs = chunk.Split(';');
+			StringBuilder output = new StringBuilder(chunk.Length * 5 + 50);
+			// Ref may be simple verse number, chapter:verse, verse-verse, chapter:verse-verse
+			Regex reRef = new Regex("[0-9]+(:[0-9]+)?(-[0-9]+)?");
+			Regex reNum = new Regex("[0-9]+");
+			Regex reAlpha = new Regex(@"\w");
+			string fileName = ""; // empty until we get a book name match.
+			// This is both a default for books that don't have chapters, and also,
+			// if we find a chapter in ANY reference, we keep it for subsequent ones.
+			// This handles cases like Matt 26:3,4 (which gets split into two items by the comma).
+			string chap = "1";
+			foreach (string item in mainRefs)
+			{
+				// Put back the semi-colons we split on.
+				if (output.Length > 0)
+					output.Append(";");
+				string[] refs = item.Split(',');
+				bool fFirst = true;
+				foreach (string target in refs)
+				{
+					if (!fFirst)
+					{
+						output.Append(","); // put these back too.
+					}
+					string match = "";
+					int bookNameMatchOffset = -1;
+					foreach (string bookName in subsBookToFile.Keys)
+					{
+						if (bookName.Length > match.Length)
+						{
+							int matchOffsetT = target.IndexOf(bookName);
+							if (matchOffsetT >= 0)
+							{
+								bookNameMatchOffset = matchOffsetT;
+								match = bookName;
+								fileName = subsBookToFile[match];
+							}
+						}
+					}
+					if (fileName == "")
+					{
+						// haven't found a book name, here or in previous item; don't convert this item
+						output.Append(target);
+						fFirst = false;
+						continue;
+					}
+
+					// Look for something like a reference. Also, check that we don't have
+					// alphabetic text that did NOT match one of our books if we didn't match
+					// a book; otherwise, something like Titus 4:2; Isaiah 12:3 makes both links
+					// to Titus. Note that we take the last match for the reference, otherwise, 1 Timothy 2:4
+					// finds the '1' as the reference. Grr.
+					int startNumSearch = 0;
+					if (bookNameMatchOffset >= 0)
+						startNumSearch = bookNameMatchOffset + match.Length; // start searching after the book name if any
+					MatchCollection matches = reRef.Matches(target, startNumSearch);
+					Match m = null;
+					if (matches.Count != 0)
+						m = matches[matches.Count - 1];
+					if (m == null || (bookNameMatchOffset < 0 && reAlpha.Match(target, 0, m.Index) != Match.Empty))
+					{
+						// Nothing looks like a reference, just output what we have.
+						// Also, stop carrying book and chapter forward.
+						fileName = "";
+						chap = "1";
+						output.Append(target);
+						fFirst = false;
+						continue;
+					}
+					// Construct the anchor.
+					string[] parts = m.Value.Split(':');
+					string anchor;
+					string verse = parts[0];
+					// Do NOT reset chap unless two parts; see above.
+					if (parts.Length == 2)
+					{
+						chap = parts[0];
+						verse = parts[1];
+					}
+					verse = reNum.Match(verse).Value; // Take the first number in the verse part.
+					if (verse.Length < 2)
+						verse = "0" + verse;
+					// We use 2 digits for chapter numbers in file names except for in the Psalms, where we use 3.
+					if (fileName.Substring(0, 3).ToLowerInvariant() == "psa" && verse.Length < 3)
+						verse = "0" + verse;
+					anchor = string.Format("{0}#{1}V{2}", fileName, chap, verse);
+
+					// The anchor starts at the beginning of the numeric reference, unless we
+					// matched a book name, in which case, start at the beginning of if.
+					int start = m.Index;
+					if (bookNameMatchOffset >= 0)
+					{
+						start = bookNameMatchOffset;
+					}
+					InsertHotLink(output, target, m, start, anchor);
+					fFirst = false;
+				}
+			}
+			string result = output.ToString();
+			ibook = 0;
+			foreach (string bookName in CrossRefToFilePrefixMap.Keys)
+			{
+				result = result.Replace("#%#%book" + ibook + "#", bookName);
+				ibook++;
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// Insert into the string builder a string formed by replacing (in input) from start to the end of what m matched
+		/// with a hot link.
+		/// The anchor to which it links is supplied; the body of the link is what was replaced.
+		/// </summary>
+		/// <param name="output"></param>
+		/// <param name="input"></param>
+		/// <param name="input"></param>
+		/// <param name="m"></param>
+		/// <param name="anchor"></param>
+		private void InsertHotLink(StringBuilder output, string input, Match m, int start, string anchor)
+		{
+			// Put anything in the input before the reference
+			output.Append(input.Substring(0, start));
+			// The next bit will be part of the anchor, so start it.
+			output.Append("<a href=\"");
+			output.Append(anchor);
+			output.Append("\">");
+			// The bit that should be the text of the anchor: input from start to end of reference.
+			output.Append(input.Substring(start, m.Index + m.Length - start));
+			// terminate the anchor
+			output.Append("</a>");
+			// And add anything else, possibly final punctuation
+			output.Append(input.Substring(m.Index + m.Length));
+		}
     }
 
 	public class SFConverter
