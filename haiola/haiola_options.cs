@@ -10,812 +10,498 @@ using WordSend;
 
 namespace haiola
 {
-    public class Options
-    {
-        private XMLini ini;
-        private List<string> m_tableNames;
-        private List<string> m_postprocesses;
-        private List<string> m_altLinks;
-        private bool changed = false;
+	public class Options
+	{
+		private XMLini ini;
+		private List<string> m_tableNames;
+		private List<string> m_postprocesses;
+		private List<string> m_altLinks;
+		private bool changed = false;
 
-        public void Reload(string iniName)
-        {
-            if (changed)
-                Write();
-            m_tableNames = null;
-            m_postprocesses = null;
-            m_altLinks = null;
-            LegacyOptions oldOpts = null;
-            int i, fileCount;
+		public void Reload(string iniName)
+		{
+			if (changed)
+				Write();
+			m_tableNames = null;
+			m_postprocesses = null;
+			m_altLinks = null;
+			LegacyOptions oldOpts = null;
+			int i, fileCount;
 
-            if (!File.Exists(iniName))
-            {   // Check for legacy options file.
-                string seppOptions = Path.Combine(Path.GetDirectoryName(iniName), "Sepp Options.xml");
-                if (File.Exists(seppOptions))
-                {
-                    oldOpts = new LegacyOptions();
-                    oldOpts.LoadOptions(seppOptions);
-                }
-            }
-            ini = new XMLini(iniName);
-            if (oldOpts != null)
-            {
-                // Read old options that are in current use into new options format.
-                ini.WriteString("languageName", oldOpts.m_languageName);
-                ini.WriteString("languageId", oldOpts.m_languageId);
-                ini.WriteString("chapterLabel", oldOpts.m_chapterLabel);
-                ini.WriteString("psalmLabel", oldOpts.m_psalmLabel);
-                ini.WriteString("copyrightLink", oldOpts.m_copyrightLink);
-                ini.WriteString("homeLink", oldOpts.m_homeLink);
-                ini.WriteString("footerHtml", oldOpts.m_footerHtml);
-                ini.WriteString("indexHtml", oldOpts.m_indexHtml);
-                ini.WriteString("licenseHtml", oldOpts.m_licenseHtml);
-                ini.WriteBool("useKhmerDigits", oldOpts.m_useKhmerDigits);
-                ini.WriteBool("ignoreExtras", oldOpts.m_ignoreExtras);
-                fileCount = oldOpts.PreprocessingTables.Count;
-                ini.WriteInt("numProcessingFiles", fileCount);
-                for (i = 0; i < fileCount; i++)
-                {
-                    ini.WriteString("processingFile" + i.ToString(), oldOpts.PreprocessingTables[i]);
-                }
-                ini.Write();
-            }
-        }
+			if (!File.Exists(iniName))
+			{
+				// Check for legacy options file.
+				string seppOptions = Path.Combine(Path.GetDirectoryName(iniName), "Sepp Options.xml");
+				if (File.Exists(seppOptions))
+				{
+					oldOpts = new LegacyOptions();
+					oldOpts.LoadOptions(seppOptions);
+				}
+			}
+			ini = new XMLini(iniName);
+			if (oldOpts != null)
+			{
+				// Read old options that are in current use into new options format.
+				ini.WriteString("languageName", oldOpts.m_languageName);
+				ini.WriteString("languageId", oldOpts.m_languageId);
+				ini.WriteString("chapterLabel", oldOpts.m_chapterLabel);
+				ini.WriteString("psalmLabel", oldOpts.m_psalmLabel);
+				ini.WriteString("copyrightLink", oldOpts.m_copyrightLink);
+				ini.WriteString("homeLink", oldOpts.m_homeLink);
+				ini.WriteString("footerHtml", oldOpts.m_footerHtml);
+				ini.WriteString("indexHtml", oldOpts.m_indexHtml);
+				ini.WriteString("licenseHtml", oldOpts.m_licenseHtml);
+				ini.WriteBool("useKhmerDigits", oldOpts.m_useKhmerDigits);
+				ini.WriteBool("ignoreExtras", oldOpts.m_ignoreExtras);
+				fileCount = oldOpts.PreprocessingTables.Count;
+				ini.WriteInt("numProcessingFiles", fileCount);
+				for (i = 0; i < fileCount; i++)
+				{
+					ini.WriteString("processingFile" + i.ToString(), oldOpts.PreprocessingTables[i]);
+				}
+				ini.Write();
+			}
+		}
 
-        /// <summary>
-        /// Initializes options from the specified options file.
-        /// If that file doesn't exist, initialzes data from the Sepp Options.xml file in the same folder,
-        /// if it exists.
-        /// </summary>
-        /// <param name="iniName"></param>
-        public Options(string iniName)
-        {
+		/// <summary>
+		/// Initializes options from the specified options file.
+		/// If that file doesn't exist, initialzes data from the Sepp Options.xml file in the same folder,
+		/// if it exists.
+		/// </summary>
+		/// <param name="iniName"></param>
+		public Options(string iniName)
+		{
 			Phrases = new List<string>();
-            Reload(iniName);
-        }
-
-        public string languageName
-        {
-            get
-            {
-                return ini.ReadString("languageName", String.Empty);
-            }
-            set
-            {
-                ini.WriteString("languageName", value);
-            }
-        }
-
-        public string languageNameInEnglish
-        {
-            get
-            {
-                return ini.ReadString("languageNameInEnglish", String.Empty);
-            }
-            set
-            {
-                ini.WriteString("languageNameInEnglish", value);
-            }
-        }
-
-        public string languageId
-        {
-            get
-            {
-                return ini.ReadString("languageId", String.Empty);
-            }
-            set
-            {
-                ini.WriteString("languageId", value);
-            }
-        }
-
-        public string translationId
-        {
-            get
-            {
-                string dialect = ini.ReadString("dialect", String.Empty);
-                if (dialect.Length > 0)
-                    dialect = "-" + dialect;
-                return ini.ReadString("translationId", ini.ReadString("languageId", String.Empty) + dialect);
-            }
-            set
-            {
-                ini.WriteString("translationId", value);
-            }
-        }
-
-
-        public string dialect
-        {
-            get
-            {
-                return ini.ReadString("dialect", String.Empty);
-            }
-            set
-            {
-                ini.WriteString("dialect", value);
-            }
-        }
-
-
-        public string contentCreator
-        {
-            get
-            {
-                return ini.ReadString("contentCreator", "Wycliffe Bible Translators");
-            }
-            set
-            {
-                ini.WriteString("contentCreator", value);
-            }
-        }
-
-        public string contributor
-        {
-            get
-            {
-                return ini.ReadString("contributor", String.Empty);
-            }
-            set
-            {
-                ini.WriteString("contributor", value);
-            }
-        }
-
-        public string vernacularTitle
-        {
-            get
-            {
-                return ini.ReadString("vernacularTitle", String.Empty);
-            }
-            set
-            {
-                ini.WriteString("vernacularTitle", value);
-            }
-        }
-
-        public string EnglishDescription
-        {
-            get
-            {
-                return ini.ReadString("EnglishDescription", String.Empty);
-            }
-            set
-            {
-                ini.WriteString("EnglishDescription", value);
-            }
-        }
-
-        public string lwcDescription
-        {
-            get
-            {
-                return ini.ReadString("lwcDescription", String.Empty);
-            }
-            set
-            {
-                ini.WriteString("lwcDescription", value);
-            }
-        }
-
-
-
-        public DateTime contentUpdateDate
-        {
-            get
-            {
-                return ini.ReadDateTime("contentUpdateDate", DateTime.Today);
-            }
-            set
-            {
-                ini.WriteDateTime("contentUpdateDate", value);
-            }
-        }
-
-        public bool ignoreExtras
-        {
-            get
-            {
-                return ini.ReadBool("ignoreExtras", false);
-            }
-            set
-            {
-                ini.WriteBool("ignoreExtras", value);
-            }
-        }
-
-
-        public bool publicDomain
-        {
-            get
-            {
-                return ini.ReadBool("publicDomain", false);
-            }
-            set
-            {
-                ini.WriteBool("publicDomain", value);
-            }
-        }
-
-
-        public bool creativeCommons
-        {
-            get
-            {
-                return ini.ReadBool("creativeCommons", true);
-            }
-            set
-            {
-                ini.WriteBool("creativeCommons", value);
-            }
-        }
-
-        public bool otherLicense
-        {
-            get
-            {
-                return ini.ReadBool("otherLicense", false);
-            }
-            set
-            {
-                ini.WriteBool("otherLicense", value);
-            }
-        }
-
-        public bool allRightsReserved
-        {
-            get
-            {
-                return ini.ReadBool("allRightsReserved", false);
-            }
-            set
-            {
-                ini.WriteBool("allRightsReserved", value);
-            }
-        }
-
-
-        public bool silentCopyright
-        {
-            get
-            {
-                return ini.ReadBool("silentCopyright", false);
-            }
-            set
-            {
-                ini.WriteBool("silentCopyright", value);
-            }
-        }
-
-        public bool preprocess
-        {
-            get
-            {
-                return ini.ReadBool("preprocess", true);
-            }
-            set
-            {
-                ini.WriteBool("preprocess", value);
-            }
-        }
-
-        public bool doUsfmToUsfx
-        {
-            get
-            {
-                return ini.ReadBool("doUsfmToUsfx", true);
-            }
-            set
-            {
-                ini.WriteBool("doUsfmToUsfx", value);
-            }
-        }
-
-        public bool doPortableHtml
-        {
-            get
-            {
-                return ini.ReadBool("doPortableHtml", true);
-            }
-            set
-            {
-                ini.WriteBool("doPortableHtml", value);
-            }
-        }
-
-        public bool doDailyMail
-        {
-            get
-            {
-                return ini.ReadBool("doDailyMail", true);
-            }
-            set
-            {
-                ini.WriteBool("doDailyMail", value);
-            }
-        }
-
-        public bool doSearchDb
-        {
-            get
-            {
-                return ini.ReadBool("doSearchDb", true);
-            }
-            set
-            {
-                ini.WriteBool("doSearchDb", value);
-            }
-        }
-
-        public bool doXetex
-        {
-            get
-            {
-                return ini.ReadBool("doXetex", true);
-            }
-            set
-            {
-                ini.WriteBool("doXetex", value);
-            }
-        }
-
-        public bool doOdf
-        {
-            get
-            {
-                return ini.ReadBool("doOdf", true);
-            }
-            set
-            {
-                ini.WriteBool("doOdf", value);
-            }
-        }
-
-        public string copyrightOwner
-        {
-            get
-            {
-                return ini.ReadString("copyrightOwner", String.Empty);
-            }
-            set
-            {
-                ini.WriteString("copyrightOwner", value);
-            }
-        }
-
-        public string copyrightYears
-        {
-            get
-            {
-                return ini.ReadString("copyrightYears", String.Empty);
-            }
-            set
-            {
-                ini.WriteString("copyrightYears", value);
-            }
-        }
-
-        public string rightsStatement
-        {
-            get
-            {
-                return ini.ReadString("rightsStatement", String.Empty);
-            }
-            set
-            {
-                ini.WriteString("rightsStatement", value);
-            }
-        }
-
-        public string printPublisher
-        {
-            get
-            {
-                return ini.ReadString("printPublisher", String.Empty);
-            }
-            set
-            {
-                ini.WriteString("printPublisher", value);
-            }
-        }
-
-        public string electronicPublisher
-        {
-            get
-            {
-                return ini.ReadString("electronicPublisher", "PNG Bible Translation Association");
-            }
-            set
-            {
-                ini.WriteString("electronicPublisher", value);
-            }
-        }
-
-        public string homeLink
-        {
-            get
-            {
-                return ini.ReadString("homeLink", String.Empty);
-            }
-            set
-            {
-                ini.WriteString("homeLink", value);
-            }
-        }
-
-        public string copyrightLink
-        {
-            get
-            {
-                return ini.ReadString("copyrightLink", "<a href=\"copyright.htm\">©</a>");
-            }
-            set
-            {
-                ini.WriteString("copyrightLink", value);
-            }
-        }
-
-        public string goText
-        {
-            get
-            {
-                return ini.ReadString("goText", "Go!");
-            }
-            set
-            {
-                ini.WriteString("goText", value);
-            }
-        }
-
-        public string footerHtml
-        {
-            get
-            {
-                return ini.ReadString("footerHtml", String.Empty);
-            }
-            set
-            {
-                ini.WriteString("footerHtml", value);
-            }
-        }
-
-        public string indexHtml
-        {
-            get
-            {
-                return ini.ReadString("indexHtml", String.Empty);
-            }
-            set
-            {
-                ini.WriteString("indexHtml", value);
-            }
-        }
-
-        public string licenseHtml
-        {
-            get
-            {
-                return ini.ReadString("licenseHtml", String.Empty);
-            }
-            set
-            {
-                ini.WriteString("licenseHtml", value);
-            }
-        }
-
-        public string versificationScheme
-        {
-            get
-            {
-                return ini.ReadString("versificationScheme", "Automatic");
-            }
-            set
-            {
-                ini.WriteString("versificationScheme", value);
-            }
-        }
-
-        public string psalmLabel
-        {
-            get
-            {
-                return ini.ReadString("psalmLabel", String.Empty);
-            }
-            set
-            {
-                ini.WriteString("psalmLabel", value);
-            }
-        }
-
-        public string chapterLabel
-        {
-            get
-            {
-                return ini.ReadString("chapterLabel", String.Empty);
-            }
-            set
-            {
-                ini.WriteString("chapterLabel", value);
-            }
-        }
-
-        
-        public string chapterAndVerseSeparator
-        {
-            get
-            {
-                return ini.ReadString("chapterAndVerseSeparator", ":");
-            }
-            set
-            {
-                ini.WriteString("chapterAndVerseSeparator", value);
-            }
-        }
-
-        public string rangeSeparator
-        {
-            get
-            {
-                return ini.ReadString("rangeSeparator", "-");
-            }
-            set
-            {
-                ini.WriteString("rangeSeparator", value);
-            }
-        }
-
-        public string multiRefSameChapterSeparator
-        {
-            get
-            {
-                return ini.ReadString("multiRefSameChapterSeparator", ",");
-            }
-            set
-            {
-                ini.WriteString("multiRefSameChapterSeparator", value);
-            }
-        }
-
-        public string multiRefDifferentChapterSeparator
-        {
-            get
-            {
-                return ini.ReadString("multiRefDifferentChapterSeparator", ";");
-            }
-            set
-            {
-                ini.WriteString("multiRefDifferentChapterSeparator", value);
-            }
-        }
-
-        public string verseNumberLocation
-        {
-            get
-            {
-                return ini.ReadString("verseNumberLocation", "Begin");
-            }
-            set
-            {
-                ini.WriteString("verseNumberLocation", value);
-            }
-        }
-
-        public string footnoteMarkerStyle
-        {
-            get
-            {
-                return ini.ReadString("footnoteMarkerStyle", "Circulate");
-            }
-            set
-            {
-                ini.WriteString("footnoteMarkerStyle", value);
-            }
-        }
-
-        public string footnoteMarkerResetAt
-        {
-            get
-            {
-                return ini.ReadString("footnoteMarkerResetAt", "Book");
-            }
-            set
-            {
-                ini.WriteString("footnoteMarkerResetAt", value);
-            }
-        }
-
-        public string footnoteMarkers
-        {
-            get
-            {
-                return ini.ReadString("footnoteMarkers", "* † ‡ §");
-            }
-            set
-            {
-                ini.WriteString("footnoteMarkers", value);
-            }
-        }
-
-        public string textDir
-        {
-            get
-            {
-                return ini.ReadString("textDir", "ltr");
-            }
-            set
-            {
-                ini.WriteString("textDir", value);
-            }
-        }
-
-        public string osis2SwordOptions
-        {
-            get
-            {
-                return ini.ReadString("osis2SwordOptions", String.Empty);
-            }
-            set
-            {
-                ini.WriteString("osis2SwordOptions", value);
-            }
-        }
-
-        public bool privateProject
-        {
-            get
-            {
-                return ini.ReadBool("privateProject", false);
-            }
-            set
-            {
-                ini.WriteBool("privateProject", value);
-            }
-        }
-
-        public string otmlRenderChapterNumber
-        {
-            get
-            {
-                return ini.ReadString("otmlRenderChapterNumber", "No");
-            }
-            set
-            {
-                ini.WriteString("otmlRenderChapterNumber", value);
-            }
-        }
-
-        public string homeDomain
-        {
-            get
-            {
-                return ini.ReadString("homeDomain", String.Empty);
-            }
-            set
-            {
-                ini.WriteString("homeDomain", value);
-            }
-        }
-
-        public bool useKhmerDigits
-        {
-            get
-            {
-                return ini.ReadBool("useKhmerDigits", false);
-            }
-            set
-            {
-                ini.WriteBool("useKhmerDigits", value);
-            }
-        }
-
-        public bool useArabicDigits
-        {
-            get
-            {
-                return ini.ReadBool("useArabicDigits", !ini.ReadBool("useKhmerDigits", false));
-            }
-            set
-            {
-                ini.WriteBool("useArabicDigits", value);
-            }
-        }
-
-        public List<string> preprocessingTables
-        {
-            get
-            {
-                int i, count;
-                if (m_tableNames == null)
-                {
-                    m_tableNames = new List<string>();
-                    count = ini.ReadInt("numProcessingFiles", 1);
-                    for (i = 0; i < count; i++)
-                    {
-                        m_tableNames.Add(ini.ReadString("processingFile" + i.ToString(), "fixquotes.re"));
-                    }
-                }
-                return m_tableNames;
-            }
-            set
-            {
-                m_tableNames = value;
-                int i, count;
-                count = value.Count;
-                ini.WriteInt("numProcessingFiles", count);
-                for (i = 0; i < count; i++)
-                {
-                    ini.WriteString("processingFile" + i.ToString(), value[i]);
-                }
-            }
-        }
-
-        public List<string> postprocesses
-        {
-            get
-            {
-                int i, count;
-                if (m_postprocesses == null)
-                {
-                    m_postprocesses = new List<string>();
-                    count = ini.ReadInt("numPostprocesses", 1);
-                    m_postprocesses.Add(ini.ReadString("postprocess0", "pubscripture %d %t %h %p %r"));
-                    for (i = 1; i < count; i++)
-                    {
-                        m_postprocesses.Add(ini.ReadString("postprocess" + i.ToString(), ""));
-                    }
-                }
-                return m_postprocesses;
-            }
-            set
-            {
-                m_postprocesses = value;
-                int i, theCount;
-                theCount = value.Count;
-                ini.WriteInt("numPostprocesses", theCount);
-                for (i = 0; i < theCount; i++)
-                {
-                    ini.WriteString("postprocess" + i.ToString(), value[i]);
-                }
-            }
-        }
-
-        public List<string> altLinks
-        {
-            get
-            {
-                int i, count;
-                if (m_altLinks == null)
-                {
-                    m_altLinks = new List<string>();
-                    count = ini.ReadInt("numAltLinks", 0);
-                    for (i = 0; i < count; i++)
-                    {
-                        m_altLinks.Add(ini.ReadString("altLink" + i.ToString(), String.Empty));
-                    }
-                }
-                return m_altLinks;
-            }
-            set
-            {
-                m_altLinks = value;
-                int i, theCount;
-                theCount = value.Count;
-                ini.WriteInt("numAltLinks", theCount);
-                for (i = 0; i < theCount; i++)
-                {
-                    ini.WriteString("altLink" + i.ToString(), value[i]);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Writes options to disk.
-        /// </summary>
-        /// <returns>true iff the write was successful</returns>
-        public bool Write()
-        {
-            return ini.Write();
+			Reload(iniName);
+		}
+
+		public string languageName
+		{
+			get { return ini.ReadString("languageName", String.Empty); }
+			set { ini.WriteString("languageName", value); }
+		}
+
+		public string languageNameInEnglish
+		{
+			get { return ini.ReadString("languageNameInEnglish", String.Empty); }
+			set { ini.WriteString("languageNameInEnglish", value); }
+		}
+
+		public string languageId
+		{
+			get { return ini.ReadString("languageId", String.Empty); }
+			set { ini.WriteString("languageId", value); }
+		}
+
+		public string translationId
+		{
+			get
+			{
+				string dialect = ini.ReadString("dialect", String.Empty);
+				if (dialect.Length > 0)
+					dialect = "-" + dialect;
+				return ini.ReadString("translationId", ini.ReadString("languageId", String.Empty) + dialect);
+			}
+			set { ini.WriteString("translationId", value); }
+		}
+
+
+		public string dialect
+		{
+			get { return ini.ReadString("dialect", String.Empty); }
+			set { ini.WriteString("dialect", value); }
+		}
+
+
+		public string contentCreator
+		{
+			get { return ini.ReadString("contentCreator", "Wycliffe Bible Translators"); }
+			set { ini.WriteString("contentCreator", value); }
+		}
+
+		public string contributor
+		{
+			get { return ini.ReadString("contributor", String.Empty); }
+			set { ini.WriteString("contributor", value); }
+		}
+
+		public string vernacularTitle
+		{
+			get { return ini.ReadString("vernacularTitle", String.Empty); }
+			set { ini.WriteString("vernacularTitle", value); }
+		}
+
+		public string EnglishDescription
+		{
+			get { return ini.ReadString("EnglishDescription", String.Empty); }
+			set { ini.WriteString("EnglishDescription", value); }
+		}
+
+		public string lwcDescription
+		{
+			get { return ini.ReadString("lwcDescription", String.Empty); }
+			set { ini.WriteString("lwcDescription", value); }
+		}
+
+
+
+		public DateTime contentUpdateDate
+		{
+			get { return ini.ReadDateTime("contentUpdateDate", DateTime.Today); }
+			set { ini.WriteDateTime("contentUpdateDate", value); }
+		}
+
+		public bool ignoreExtras
+		{
+			get { return ini.ReadBool("ignoreExtras", false); }
+			set { ini.WriteBool("ignoreExtras", value); }
+		}
+
+
+		public bool publicDomain
+		{
+			get { return ini.ReadBool("publicDomain", false); }
+			set { ini.WriteBool("publicDomain", value); }
+		}
+
+
+		public bool creativeCommons
+		{
+			get { return ini.ReadBool("creativeCommons", true); }
+			set { ini.WriteBool("creativeCommons", value); }
+		}
+
+		public bool otherLicense
+		{
+			get { return ini.ReadBool("otherLicense", false); }
+			set { ini.WriteBool("otherLicense", value); }
+		}
+
+		public bool allRightsReserved
+		{
+			get { return ini.ReadBool("allRightsReserved", false); }
+			set { ini.WriteBool("allRightsReserved", value); }
+		}
+
+
+		public bool silentCopyright
+		{
+			get { return ini.ReadBool("silentCopyright", false); }
+			set { ini.WriteBool("silentCopyright", value); }
+		}
+
+		public bool preprocess
+		{
+			get { return ini.ReadBool("preprocess", true); }
+			set { ini.WriteBool("preprocess", value); }
+		}
+
+		public bool doUsfmToUsfx
+		{
+			get { return ini.ReadBool("doUsfmToUsfx", true); }
+			set { ini.WriteBool("doUsfmToUsfx", value); }
+		}
+
+		public bool doPortableHtml
+		{
+			get { return ini.ReadBool("doPortableHtml", true); }
+			set { ini.WriteBool("doPortableHtml", value); }
+		}
+
+		public bool doDailyMail
+		{
+			get { return ini.ReadBool("doDailyMail", true); }
+			set { ini.WriteBool("doDailyMail", value); }
+		}
+
+		public bool doSearchDb
+		{
+			get { return ini.ReadBool("doSearchDb", true); }
+			set { ini.WriteBool("doSearchDb", value); }
+		}
+
+		public bool doXetex
+		{
+			get { return ini.ReadBool("doXetex", true); }
+			set { ini.WriteBool("doXetex", value); }
+		}
+
+		public bool doOdf
+		{
+			get { return ini.ReadBool("doOdf", true); }
+			set { ini.WriteBool("doOdf", value); }
+		}
+
+		public string copyrightOwner
+		{
+			get { return ini.ReadString("copyrightOwner", String.Empty); }
+			set { ini.WriteString("copyrightOwner", value); }
+		}
+
+		public string copyrightYears
+		{
+			get { return ini.ReadString("copyrightYears", String.Empty); }
+			set { ini.WriteString("copyrightYears", value); }
+		}
+
+		public string rightsStatement
+		{
+			get { return ini.ReadString("rightsStatement", String.Empty); }
+			set { ini.WriteString("rightsStatement", value); }
+		}
+
+		public string printPublisher
+		{
+			get { return ini.ReadString("printPublisher", String.Empty); }
+			set { ini.WriteString("printPublisher", value); }
+		}
+
+		public string electronicPublisher
+		{
+			get { return ini.ReadString("electronicPublisher", "PNG Bible Translation Association"); }
+			set { ini.WriteString("electronicPublisher", value); }
+		}
+
+		public string homeLink
+		{
+			get { return ini.ReadString("homeLink", String.Empty); }
+			set { ini.WriteString("homeLink", value); }
+		}
+
+		public string copyrightLink
+		{
+			get { return ini.ReadString("copyrightLink", "<a href=\"copyright.htm\">©</a>"); }
+			set { ini.WriteString("copyrightLink", value); }
+		}
+
+		public string goText
+		{
+			get { return ini.ReadString("goText", "Go!"); }
+			set { ini.WriteString("goText", value); }
+		}
+
+		public string footerHtml
+		{
+			get { return ini.ReadString("footerHtml", String.Empty); }
+			set { ini.WriteString("footerHtml", value); }
+		}
+
+		public string indexHtml
+		{
+			get { return ini.ReadString("indexHtml", String.Empty); }
+			set { ini.WriteString("indexHtml", value); }
+		}
+
+		public string licenseHtml
+		{
+			get { return ini.ReadString("licenseHtml", String.Empty); }
+			set { ini.WriteString("licenseHtml", value); }
+		}
+
+		public string versificationScheme
+		{
+			get { return ini.ReadString("versificationScheme", "Automatic"); }
+			set { ini.WriteString("versificationScheme", value); }
+		}
+
+		public string psalmLabel
+		{
+			get { return ini.ReadString("psalmLabel", String.Empty); }
+			set { ini.WriteString("psalmLabel", value); }
+		}
+
+		public string chapterLabel
+		{
+			get { return ini.ReadString("chapterLabel", String.Empty); }
+			set { ini.WriteString("chapterLabel", value); }
+		}
+
+
+		public string chapterAndVerseSeparator
+		{
+			get { return ini.ReadString("chapterAndVerseSeparator", ":"); }
+			set { ini.WriteString("chapterAndVerseSeparator", value); }
+		}
+
+		public string rangeSeparator
+		{
+			get { return ini.ReadString("rangeSeparator", "-"); }
+			set { ini.WriteString("rangeSeparator", value); }
+		}
+
+		public string multiRefSameChapterSeparator
+		{
+			get { return ini.ReadString("multiRefSameChapterSeparator", ","); }
+			set { ini.WriteString("multiRefSameChapterSeparator", value); }
+		}
+
+		public string multiRefDifferentChapterSeparator
+		{
+			get { return ini.ReadString("multiRefDifferentChapterSeparator", ";"); }
+			set { ini.WriteString("multiRefDifferentChapterSeparator", value); }
+		}
+
+		public string verseNumberLocation
+		{
+			get { return ini.ReadString("verseNumberLocation", "Begin"); }
+			set { ini.WriteString("verseNumberLocation", value); }
+		}
+
+		public string footnoteMarkerStyle
+		{
+			get { return ini.ReadString("footnoteMarkerStyle", "Circulate"); }
+			set { ini.WriteString("footnoteMarkerStyle", value); }
+		}
+
+		public string footnoteMarkerResetAt
+		{
+			get { return ini.ReadString("footnoteMarkerResetAt", "Book"); }
+			set { ini.WriteString("footnoteMarkerResetAt", value); }
+		}
+
+		public string footnoteMarkers
+		{
+			get { return ini.ReadString("footnoteMarkers", "* † ‡ §"); }
+			set { ini.WriteString("footnoteMarkers", value); }
+		}
+
+		public string textDir
+		{
+			get { return ini.ReadString("textDir", "ltr"); }
+			set { ini.WriteString("textDir", value); }
+		}
+
+		public string osis2SwordOptions
+		{
+			get { return ini.ReadString("osis2SwordOptions", String.Empty); }
+			set { ini.WriteString("osis2SwordOptions", value); }
+		}
+
+		public bool privateProject
+		{
+			get { return ini.ReadBool("privateProject", false); }
+			set { ini.WriteBool("privateProject", value); }
+		}
+
+		public string otmlRenderChapterNumber
+		{
+			get { return ini.ReadString("otmlRenderChapterNumber", "No"); }
+			set { ini.WriteString("otmlRenderChapterNumber", value); }
+		}
+
+		public string homeDomain
+		{
+			get { return ini.ReadString("homeDomain", String.Empty); }
+			set { ini.WriteString("homeDomain", value); }
+		}
+
+		public bool useKhmerDigits
+		{
+			get { return ini.ReadBool("useKhmerDigits", false); }
+			set { ini.WriteBool("useKhmerDigits", value); }
+		}
+
+		public bool useArabicDigits
+		{
+			get { return ini.ReadBool("useArabicDigits", !ini.ReadBool("useKhmerDigits", false)); }
+			set { ini.WriteBool("useArabicDigits", value); }
+		}
+
+		public List<string> preprocessingTables
+		{
+			get
+			{
+				int i, count;
+				if (m_tableNames == null)
+				{
+					m_tableNames = new List<string>();
+					count = ini.ReadInt("numProcessingFiles", 1);
+					for (i = 0; i < count; i++)
+					{
+						m_tableNames.Add(ini.ReadString("processingFile" + i.ToString(), "fixquotes.re"));
+					}
+				}
+				return m_tableNames;
+			}
+			set
+			{
+				m_tableNames = value;
+				int i, count;
+				count = value.Count;
+				ini.WriteInt("numProcessingFiles", count);
+				for (i = 0; i < count; i++)
+				{
+					ini.WriteString("processingFile" + i.ToString(), value[i]);
+				}
+			}
+		}
+
+		public List<string> postprocesses
+		{
+			get
+			{
+				int i, count;
+				if (m_postprocesses == null)
+				{
+					m_postprocesses = new List<string>();
+					count = ini.ReadInt("numPostprocesses", 1);
+					m_postprocesses.Add(ini.ReadString("postprocess0", "pubscripture %d %t %h %p %r"));
+					for (i = 1; i < count; i++)
+					{
+						m_postprocesses.Add(ini.ReadString("postprocess" + i.ToString(), ""));
+					}
+				}
+				return m_postprocesses;
+			}
+			set
+			{
+				m_postprocesses = value;
+				int i, theCount;
+				theCount = value.Count;
+				ini.WriteInt("numPostprocesses", theCount);
+				for (i = 0; i < theCount; i++)
+				{
+					ini.WriteString("postprocess" + i.ToString(), value[i]);
+				}
+			}
+		}
+
+		public List<string> altLinks
+		{
+			get
+			{
+				int i, count;
+				if (m_altLinks == null)
+				{
+					m_altLinks = new List<string>();
+					count = ini.ReadInt("numAltLinks", 0);
+					for (i = 0; i < count; i++)
+					{
+						m_altLinks.Add(ini.ReadString("altLink" + i.ToString(), String.Empty));
+					}
+				}
+				return m_altLinks;
+			}
+			set
+			{
+				m_altLinks = value;
+				int i, theCount;
+				theCount = value.Count;
+				ini.WriteInt("numAltLinks", theCount);
+				for (i = 0; i < theCount; i++)
+				{
+					ini.WriteString("altLink" + i.ToString(), value[i]);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Writes options to disk.
+		/// </summary>
+		/// <returns>true iff the write was successful</returns>
+		public bool Write()
+		{
+			return ini.Write();
 		}
 
 		#region ConcOptions
@@ -829,40 +515,34 @@ namespace haiola
 			set { ini.WriteBool("generateConcordance", value); }
 		}
 
-    	/// <summary>
-    	/// if wordforms differing only by case occur merge them
-    	/// </summary>
-    	public bool MergeCase
-    	{
+		/// <summary>
+		/// if wordforms differing only by case occur merge them
+		/// </summary>
+		public bool MergeCase
+		{
 			get { return ini.ReadBool("mergeCase", false); }
 			set { ini.WriteBool("mergeCase", value); }
-    	}
+		}
 
-    	/// <summary>
+		/// <summary>
 		/// overrides, list of characters that should be considered word-forming in defiance of Unicode.
 		/// </summary>
 		public string WordformingChars
 		{
-			get
-			{
-				return ini.ReadString("wordformingChars", String.Empty);
-			}
-			set
-			{
-				ini.WriteString("wordformingChars", value);
-			}
+			get { return ini.ReadString("wordformingChars", String.Empty); }
+			set { ini.WriteString("wordformingChars", value); }
 		}
 
-    	/// <summary>
-    	/// the maximum frequency of occurrence that a word may have and still be include in the concordance.
-    	/// </summary>
-    	public int MaxFrequency
-    	{
-    		get { return ini.ReadInt("maxFrequency", int.MaxValue); }
-    		set { ini.WriteInt("maxFrequency", value); }
-    	}
+		/// <summary>
+		/// the maximum frequency of occurrence that a word may have and still be include in the concordance.
+		/// </summary>
+		public int MaxFrequency
+		{
+			get { return ini.ReadInt("maxFrequency", int.MaxValue); }
+			set { ini.WriteInt("maxFrequency", value); }
+		}
 
-    	/// <summary>
+		/// <summary>
 		/// The text property saved in files and displayed in a text box that controls the maximum
 		/// frequency of occurrence that a word may have and still be include in the concordance.
 		/// </summary>
@@ -888,19 +568,19 @@ namespace haiola
 		/// break a word.
 		/// </summary>
 		public int MinContextLength
-    	{
+		{
 			get { return ini.ReadInt("minContextLength", 35); }
 			set { ini.WriteInt("minContextLength", value); }
-    	}
+		}
 
 		/// <summary>
 		/// Max characters to include in context. Fewer may be used to avoid breaking words or because of sentence boundaries.
 		/// </summary>
 		public int MaxContextLength
-    	{
+		{
 			get { return ini.ReadInt("maxContextLength", 35); }
 			set { ini.WriteInt("maxContextLength", value); }
-    	}
+		}
 
 		/// <summary>
 		/// String stored in files and the options dialog that lists phrases that should have distinct concordance entries.
@@ -918,10 +598,11 @@ namespace haiola
 			set
 			{
 				Phrases.Clear();
-				foreach (string phrase in value.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
+				foreach (string phrase in value.Split(new string[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries))
 					Phrases.Add(phrase);
 			}
 		}
+
 		/// <summary>
 		/// List of phrases which should become their own concordance entries.
 		/// Todo JohnT: persist in ini
@@ -933,17 +614,124 @@ namespace haiola
 		/// </summary>
 		public string ExcludeWords
 		{
-			get
-			{
-				return ini.ReadString("excludeWords", String.Empty);
-			}
-			set
-			{
-				ini.WriteString("excludeWords", value);
-			}
+			get { return ini.ReadString("excludeWords", String.Empty); }
+			set { ini.WriteString("excludeWords", value); }
 		}
 
 		#endregion
+
+		private Dictionary<string, string> _crossRefToFilePrefixMap;
+
+		/// <summary>
+		/// Maps from names used in cross references to the file prefix used for books in that file.
+		/// This map is stored in the ini file as a single string, pairs cross ref name>file prefix separated by &.
+		/// This works because the names are html-escaped and cannot contain & or > literally.
+		/// </summary>
+		public Dictionary<string, string> CrossRefToFilePrefixMap
+		{
+			get
+			{
+				if (_crossRefToFilePrefixMap == null)
+				{
+					_crossRefToFilePrefixMap = new Dictionary<string, string>();
+					foreach (var pair in ini.ReadString("crossRefs", string.Empty).Split('&'))
+					{
+						var items = pair.Split('>');
+						if (items.Length != 2)
+							continue;
+						_crossRefToFilePrefixMap[items[0]] = items[1];
+					}
+				}
+				return _crossRefToFilePrefixMap;
+			}
+			set
+			{
+				_crossRefToFilePrefixMap = value;
+				var sb = new StringBuilder();
+				foreach (var kvp in _crossRefToFilePrefixMap)
+				{
+					sb.Append(kvp.Key);
+					sb.Append('>');
+					sb.Append(kvp.Value);
+					sb.Append('&');
+				}
+				ini.WriteString("crossRefs", sb.ToString());
+			}
+		}
+
+		private Dictionary<string, string> _refAbbeviationsMap;
+
+		/// <summary>
+		/// Maps from standard book ID to the vernacular abbreviation used for that book in the concordance.
+		/// This map is stored in the ini file as a single string, pairs id>abbr separated by &.
+		/// This works because the names are html-escaped and cannot contain & or > literally.
+		/// </summary>
+		public Dictionary<string, string> ReferenceAbbeviationsMap
+		{
+			get
+			{
+				if (_refAbbeviationsMap == null)
+				{
+					_refAbbeviationsMap = new Dictionary<string, string>();
+					foreach (var pair in ini.ReadString("refAbbrs", string.Empty).Split('&'))
+					{
+						var items = pair.Split('>');
+						if (items.Length != 2)
+							continue;
+						_refAbbeviationsMap[items[0]] = items[1];
+					}
+				}
+				return _refAbbeviationsMap;
+			}
+			set
+			{
+				_refAbbeviationsMap = value;
+				var sb = new StringBuilder();
+				foreach (var kvp in _refAbbeviationsMap)
+				{
+					sb.Append(kvp.Key);
+					sb.Append('>');
+					sb.Append(kvp.Value);
+					sb.Append('&');
+				}
+				ini.WriteString("refAbbrs", sb.ToString());
+			}
+		}
+
+		private List<string> _books;
+
+		/// <summary>
+		/// The (ids of) the books in the project, in the order they appear in the USFX file.
+		/// I think something causes this to be canonical.
+		/// Stored as a string in the ini, items separated by &. This works because the standard IDs do not contain this symbol
+		/// </summary>
+		public List<string> Books
+		{
+			get
+			{
+				if (_books == null)
+				{
+					_books = new List<string>();
+					foreach (var item in ini.ReadString("books", string.Empty).Split('&'))
+					{
+						if (item.Length > 0)
+							_books.Add(item);
+					}
+				}
+				return _books;
+			}
+			set
+			{
+				_books = value;
+				var sb = new StringBuilder();
+				foreach (var item in _books)
+				{
+					sb.Append(item);
+					sb.Append('&');
+				}
+				ini.WriteString("books", sb.ToString());
+			}
+		}
 	}
 
 	public class LegacyOptions

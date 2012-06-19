@@ -125,6 +125,9 @@
 converting &lt;&lt; and &gt;&gt; to « and » or “ and ”, or correcting some other markup to proper
 USFM. Specify the name(s) of regular expression (.re) files.</value>
   </data>
+  <data name="label32.Text" xml:space="preserve">
+    <value>This tab provides information about the books in your project. Each line gives a standard abbreviation which identifies the book, the abbreviation which should be used for this book in the concordance (if any), and the name for this book which is used in cross-references. Click the Update button to update the list to your current books and fill in defaults for blank items.</value>
+  </data>
   <metadata name="timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
