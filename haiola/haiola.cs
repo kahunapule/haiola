@@ -380,7 +380,7 @@ namespace haiola
                 StreamReader log = new StreamReader(logFile);
                 string errors = log.ReadToEnd();
                 log.Close();
-                MessageBox.Show(errors, "Errors in " + logFile);
+                MessageBox.Show(this, errors, "Errors in " + logFile);
             }
             currentConversion = "converted USFM to USFX.";
             Application.DoEvents();
@@ -1478,40 +1478,52 @@ In addition, you have permission to convert the text to different file formats, 
 		/// <param name="e"></param>
 		private void updateButton_Click(object sender, EventArgs e)
 		{
-			fAllRunning = true;
-			GetUsfx(SelectedProject);
-			var analyzer = new UsfxToBookAndAbbr();
-			analyzer.Parse(GetUsfxFilePath());
-			Dictionary<string, string> oldNames = new Dictionary<string, string>();
-			Dictionary<string, string> oldAbbreviations = new Dictionary<string, string>();
-			foreach (ListViewItem item in listBooks.Items)
-			{
-				var key = item.Text;
-				var oldName = item.SubItems[1].Text;
-				var oldAbbr = item.SubItems[2].Text;
-				oldNames[key] = oldName;
-				oldAbbreviations[key] = oldAbbr;
-			}
-			listBooks.BeginUpdate();
-			listBooks.Items.Clear();
-			foreach (var key in analyzer.BookIds)
-			{
-
-				string vernacularName;
-				oldNames.TryGetValue(key, out vernacularName);
-				if (string.IsNullOrEmpty(vernacularName))
-					vernacularName = analyzer.VernacularNames[key];
-				string vernacularAbbreviation;
-				oldAbbreviations.TryGetValue(key, out vernacularAbbreviation);
-				if (string.IsNullOrEmpty(vernacularAbbreviation))
-					vernacularAbbreviation = analyzer.ReferenceAbbreviations[key];
-
-				listBooks.Items.Add(MakeBookListItem(key, vernacularAbbreviation, vernacularName));
-			}
-			listBooks.EndUpdate();
+			UpdateBooksList(false);
 		}
 
-		ListViewItem MakeBookListItem(string abbr, string vernAbbr, string xrefName)
+		private void restoreDefaultsButton_Click(object sender, EventArgs e)
+		{
+			UpdateBooksList(true);
+		}
+
+    	private void UpdateBooksList(bool restoreDefaults)
+    	{
+    		fAllRunning = true;
+    		GetUsfx(SelectedProject);
+    		var analyzer = new UsfxToBookAndAbbr();
+    		analyzer.Parse(GetUsfxFilePath());
+    		Dictionary<string, string> oldNames = new Dictionary<string, string>();
+    		Dictionary<string, string> oldAbbreviations = new Dictionary<string, string>();
+			if (!restoreDefaults)
+			{
+				foreach (ListViewItem item in listBooks.Items)
+				{
+					var key = item.Text;
+					var oldName = item.SubItems[1].Text;
+					var oldAbbr = item.SubItems[2].Text;
+					oldNames[key] = oldName;
+					oldAbbreviations[key] = oldAbbr;
+				}
+			}
+    		listBooks.BeginUpdate();
+    		listBooks.Items.Clear();
+    		foreach (var key in analyzer.BookIds)
+    		{
+    			string vernacularName;
+    			oldNames.TryGetValue(key, out vernacularName);
+    			if (string.IsNullOrEmpty(vernacularName))
+    				vernacularName = analyzer.VernacularNames[key];
+    			string vernacularAbbreviation;
+    			oldAbbreviations.TryGetValue(key, out vernacularAbbreviation);
+    			if (string.IsNullOrEmpty(vernacularAbbreviation))
+    				vernacularAbbreviation = analyzer.ReferenceAbbreviations[key];
+
+    			listBooks.Items.Add(MakeBookListItem(key, vernacularAbbreviation, vernacularName));
+    		}
+    		listBooks.EndUpdate();
+    	}
+
+    	ListViewItem MakeBookListItem(string abbr, string vernAbbr, string xrefName)
 		{
 			ListViewItem item = new ListViewItem(abbr);
 			SetLastSubItemName(item, "StdAbbr");

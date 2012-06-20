@@ -25,6 +25,9 @@ namespace haiola
 			m_tableNames = null;
 			m_postprocesses = null;
 			m_altLinks = null;
+			_books = null;
+			_referenceAbbeviationsMap = null;
+			_crossRefToFilePrefixMap = null;
 			LegacyOptions oldOpts = null;
 			int i, fileCount;
 
@@ -659,7 +662,7 @@ namespace haiola
 			}
 		}
 
-		private Dictionary<string, string> _refAbbeviationsMap;
+		private Dictionary<string, string> _referenceAbbeviationsMap;
 
 		/// <summary>
 		/// Maps from standard book ID to the vernacular abbreviation used for that book in the concordance.
@@ -670,24 +673,24 @@ namespace haiola
 		{
 			get
 			{
-				if (_refAbbeviationsMap == null)
+				if (_referenceAbbeviationsMap == null)
 				{
-					_refAbbeviationsMap = new Dictionary<string, string>();
+					_referenceAbbeviationsMap = new Dictionary<string, string>();
 					foreach (var pair in ini.ReadString("refAbbrs", string.Empty).Split('&'))
 					{
 						var items = pair.Split('>');
 						if (items.Length != 2)
 							continue;
-						_refAbbeviationsMap[items[0]] = items[1];
+						_referenceAbbeviationsMap[items[0]] = items[1];
 					}
 				}
-				return _refAbbeviationsMap;
+				return _referenceAbbeviationsMap;
 			}
 			set
 			{
-				_refAbbeviationsMap = value;
+				_referenceAbbeviationsMap = value;
 				var sb = new StringBuilder();
-				foreach (var kvp in _refAbbeviationsMap)
+				foreach (var kvp in _referenceAbbeviationsMap)
 				{
 					sb.Append(kvp.Key);
 					sb.Append('>');
