@@ -427,6 +427,7 @@ namespace haiola
             toHtm.indexDateStamp = "HTML generated " + DateTime.UtcNow.ToString("d MMM yyyy") +
                 " from source files dated " + sourceDate.ToString("d MMM yyyy");
         	toHtm.GeneratingConcordance = m_options.GenerateConcordance;
+    		toHtm.CrossRefToFilePrefixMap = m_options.CrossRefToFilePrefixMap;
             toHtm.ConvertUsfxToHtml(Path.Combine(UsfxPath, "usfx.xml"), htmlPath,
                 m_options.vernacularTitle,
                 m_options.languageId,
@@ -568,6 +569,9 @@ In addition, you have permission to convert the text to different file formats, 
 				                       " from source files dated " + sourceDate.ToString("d MMM yyyy");
 				string xhtmlPath = Path.Combine(m_outputProjectDirectory, "xhtml");
 				Utils.EnsureDirectory(xhtmlPath);
+				// No point in doing this...doesn't change the concordance generated, just makes generation slower.
+				// Reinstate it if the XHTML is used for anything besides generating the concordance.
+				//toXhtm.CrossRefToFilePrefixMap = m_options.CrossRefToFilePrefixMap;
 				toXhtm.ConvertUsfxToHtml(Path.Combine(UsfxPath, "usfx.xml"), xhtmlPath,
 				                        m_options.vernacularTitle,
 				                        m_options.languageId,
@@ -609,6 +613,7 @@ In addition, you have permission to convert the text to different file formats, 
 											IndexType = ConcGenerator.IndexTypes.alphaTreeMf,
 											NotesRef = "note",
 											HeadingRef = "head",
+											
 
 											// Options we need to configure correctly based on the HTML we generate
 											ExcludeClasses = new HashSet<string>(excludedClasses.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)),

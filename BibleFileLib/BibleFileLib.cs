@@ -6876,6 +6876,27 @@ namespace WordSend
             return s;
         }
 
+		protected void WritUnescapedeHtmlText(string text)
+		{
+			if (!ignore)
+			{
+				if (inFootnote)
+				{
+					footnotesToWrite.Append(text);
+					// Also written to main document section for pop-up.
+				}
+				else
+				{
+					if (eatSpace)
+					{
+						text = text.TrimStart();
+						eatSpace = false;
+					}
+				}
+				WriteHtml(text);
+			}
+		}
+
         protected void WriteHtmlText(string text)
         {
             if (!ignore)
@@ -8560,7 +8581,9 @@ namespace WordSend
 										{
 											string crossRef = parallelPassage;
 											parallelPassage = null; // stop accumulating cross ref info!
-											WriteHtmlText(ConvertCrossRefsToHotLinks(crossRef));
+											// Escape it BEFORE we add the cross-ref markup, which may well include
+											// special characters.
+											WritUnescapedeHtmlText(ConvertCrossRefsToHotLinks(EscapeHtml(crossRef)));
 										}
 										goto case "mt";
                                     case "q":
@@ -8791,12 +8814,12 @@ namespace WordSend
 						verse = parts[1];
 					}
 					verse = reNum.Match(verse).Value; // Take the first number in the verse part.
-					if (verse.Length < 2)
-						verse = "0" + verse;
+					if (chap.Length < 2)
+						chap = "0" + chap;
 					// We use 2 digits for chapter numbers in file names except for in the Psalms, where we use 3.
-					if (fileName.Substring(0, 3).ToLowerInvariant() == "psa" && verse.Length < 3)
-						verse = "0" + verse;
-					anchor = string.Format("{0}#{1}V{2}", fileName, chap, verse);
+					if (fileName.Substring(0, 3).ToLowerInvariant() == "psa" && chap.Length < 3)
+						chap = "0" + chap;
+					anchor = string.Format("{0}{1}.htm#V{2}", fileName, chap, verse);
 
 					// The anchor starts at the beginning of the numeric reference, unless we
 					// matched a book name, in which case, start at the beginning of if.
