@@ -380,7 +380,13 @@ namespace haiola
                 StreamReader log = new StreamReader(logFile);
                 string errors = log.ReadToEnd();
                 log.Close();
-                MessageBox.Show(this, errors, "Errors in " + logFile);
+            	string message = errors;
+				if (errors.Length > 5000)
+				{
+					// Super-long messages freeze things up
+					message = message.Substring(0, 5000) + "\n...and more (see log file)";
+				}
+                MessageBox.Show(this, message, "Errors in " + logFile);
             }
             currentConversion = "converted USFM to USFX.";
             Application.DoEvents();
