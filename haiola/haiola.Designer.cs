@@ -148,6 +148,7 @@
 			this.helpButton = new System.Windows.Forms.Button();
 			this.runHighlightedButton = new System.Windows.Forms.Button();
 			this.statsButton = new System.Windows.Forms.Button();
+			this.restoreDefaultsButton = new System.Windows.Forms.Button();
 			this.tabControl1.SuspendLayout();
 			this.idTabPage.SuspendLayout();
 			this.copyrightTabPage.SuspendLayout();
@@ -1316,6 +1317,7 @@
 			// 
 			// booksPage
 			// 
+			this.booksPage.Controls.Add(this.restoreDefaultsButton);
 			this.booksPage.Controls.Add(this.updateButton);
 			this.booksPage.Controls.Add(this.label32);
 			this.booksPage.Controls.Add(this.listBooks);
@@ -1421,6 +1423,16 @@
 			this.statsButton.Text = "&Stats";
 			this.statsButton.UseVisualStyleBackColor = true;
 			this.statsButton.Click += new System.EventHandler(this.statsButton_Click);
+			// 
+			// restoreDefaultsButton
+			// 
+			this.restoreDefaultsButton.Location = new System.Drawing.Point(107, 421);
+			this.restoreDefaultsButton.Name = "restoreDefaultsButton";
+			this.restoreDefaultsButton.Size = new System.Drawing.Size(128, 23);
+			this.restoreDefaultsButton.TabIndex = 6;
+			this.restoreDefaultsButton.Text = "Restore Defaults";
+			this.restoreDefaultsButton.UseVisualStyleBackColor = true;
+			this.restoreDefaultsButton.Click += new System.EventHandler(this.restoreDefaultsButton_Click);
 			// 
 			// haiolaForm
 			// 
@@ -1589,6 +1601,7 @@
 		private System.Windows.Forms.ColumnHeader colFilesVernAbbr;
 		private System.Windows.Forms.ColumnHeader colFilesXrefs;
 		private System.Windows.Forms.Button updateButton;
+		private System.Windows.Forms.Button restoreDefaultsButton;
 	}
 }
 
