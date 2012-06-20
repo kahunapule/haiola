@@ -6703,7 +6703,7 @@ namespace WordSend
 			WriteCompleteElement("<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"");
             htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width\" />");
 			WriteCompleteElement("<link rel=\"stylesheet\" href=\"prophero.css\" type=\"text/css\"");
-			if (mainScriptureFile && GeneratingConcordance)
+			if (mainScriptureFile)
 			{
 				htm.WriteLine("<script src=\"TextFuncs.js\" type=\"text/javascript\"></script>");
 			}
@@ -6964,7 +6964,7 @@ namespace WordSend
             }
             if (string.Compare(marker, "-") == 0)
                 marker = "";
-            WriteHtml(String.Format("<a href=\"#{0}\"><span class=\"notemark\">{1}</span><span class=\"popup\">",
+            WriteHtml(String.Format("<a href=\"#{0}\" onclick=\"hilite('{0}')\"><span class=\"notemark\">{1}</span><span class=\"popup\">",
                 noteId, marker));
             // Numeric chapter and verse numbers are used in internal references instead of the text versions, which may
             // include dashes in verse bridges.
