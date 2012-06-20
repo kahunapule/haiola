@@ -1505,8 +1505,8 @@ In addition, you have permission to convert the text to different file formats, 
 				foreach (ListViewItem item in listBooks.Items)
 				{
 					var key = item.Text;
-					var oldName = item.SubItems[1].Text;
-					var oldAbbr = item.SubItems[2].Text;
+					var oldAbbr = item.SubItems[1].Text;
+					var oldName = item.SubItems[2].Text;
 					oldNames[key] = oldName;
 					oldAbbreviations[key] = oldAbbr;
 				}
