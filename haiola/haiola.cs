@@ -605,6 +605,7 @@ In addition, you have permission to convert the text to different file formats, 
 											MaxFrequency = m_options.MaxFrequency,
 											Phrases = m_options.Phrases,
 											ExcludeWords = new HashSet<string>(m_options.ExcludeWords.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)),
+											ReferenceAbbeviationsMap = m_options.ReferenceAbbeviationsMap,
 
 											// Options we may want to make configurable for localization.
 											BookChapText = "Books and Chapters", // todo make configurable for localization if still used

@@ -68,6 +68,11 @@ namespace BibleFileLib
 		public HashSet<string> ExcludeWords { get; set; } // words to exclude from concordance
 		public int MaxContextLength { get; set; } // max chars of context to include before and after target word
 		public int MinContextLength { get; set; } // min chars of context to include before and after target word (if present in sentence)
+		/// <summary>
+		/// Key is canonical three-letter code for book, used at start of file name.
+		/// Value is alternative text to use to identify book in concordance references.
+		/// </summary>
+		public Dictionary<string, string> ReferenceAbbeviationsMap { get; set; } 
 
 		// Todo: following options need a way to configure them in the Haiola UI.
 		public string ConcordanceLinkText { get; set; } // string displayed as a hot link to bring up the concordance.
@@ -79,9 +84,6 @@ namespace BibleFileLib
 		public IndexTypes IndexType { get; set; } // which kind of index to generate; see definition of IndexTypes.
 		public string BookChapText { get; set; } // text for the 'Books and Chapters' hot link, from options file.
 		public IComparer<string> Comparer { get; set; } // used to sort words in the concordance. May be configured directly or using CompareId.
-
-		List<string> m_files = new List<string>(); // Files to process in desired order.
-		Dictionary<string, string> m_abbreviations = new Dictionary<string,string>(); // Key is file name, value is abbreviation to use in refs.
 
 
 		List<string> m_pendingExclusions = new List<string>(); // names of elemenents opened that must close before we restart.
@@ -641,26 +643,11 @@ namespace BibleFileLib
 
 		private string GetAbbreviation(string fileName)
 		{
-#if old_file_name_scheme // 01GEN-1.htm
-			string abbr;
-			if (m_abbreviations.TryGetValue(fileName, out abbr))
-				return abbr;
-			int lastHyphen = fileName.LastIndexOf("-");
-			int lastDot = fileName.LastIndexOf(".");
-			if (lastHyphen > 0 && lastDot > 0)
-			{
-				string originalFileName = fileName.Remove(lastHyphen, lastDot - lastHyphen);
-				if (m_abbreviations.TryGetValue(originalFileName, out abbr))
-				{
-					m_abbreviations[fileName] = abbr; // find faster next time
-					return abbr;
-				}
-			}
-			return "???"; // last resort.
-#else
-			// In Haiola, the book identifier is the first three letters of the file name.
-			return fileName.Substring(0, Math.Min(3, fileName.Length));
-#endif
+			string standardName =  fileName.Substring(0, Math.Min(3, fileName.Length));
+			string result;
+			if (ReferenceAbbeviationsMap == null || !ReferenceAbbeviationsMap.TryGetValue(standardName, out result))
+				return standardName;
+			return result;
 		}
 
 		private void WritePrecedingContext(TextWriter writer, string context)
