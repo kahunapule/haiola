@@ -735,6 +735,21 @@ namespace haiola
 				ini.WriteString("books", sb.ToString());
 			}
 		}
+
+		#region Frames Options
+
+		/// <summary>
+		/// True if we should generate the frame-based view, with the Scripture embedded in one pane of a frame
+		/// along with some navigation tools.
+		/// </summary>
+		public bool UseFrames
+		{
+			get { return ini.ReadBool("useFrames", false); }
+			set { ini.WriteBool("useFrames", value); }
+		}
+
+		// Todo JohnT: more options, mostly localization strings, related to frame-based view.
+		#endregion
 	}
 
 	public class LegacyOptions

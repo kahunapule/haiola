@@ -101,6 +101,8 @@
     <Compile Include="ConcFrameGenerator.cs" />
     <Compile Include="ConcGenerator.cs" />
     <Compile Include="UsfxToBookAndAbbr.cs" />
+    <Compile Include="UsfxToChapterIndex.cs" />
+    <Compile Include="UsfxToFramedHtmlConverter.cs" />
     <Compile Include="usfxToXhtmlConverter.cs" />
     <Compile Include="WordformInfo.cs" />
     <Compile Include="WordOccurrence.cs" />
