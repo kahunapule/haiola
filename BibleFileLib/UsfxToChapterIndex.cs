@@ -126,8 +126,8 @@ namespace BibleFileLib
 							//    <p class="IndexChapterList"><a target="top" href="frame_MRK01.htm">1</a> <a target="top" href="frame_MRK02.htm">2</a>...  </p>
 							//</div>
 							htm.WriteLine("<div class=\"BookChapIndex\">");
-							htm.WriteLine("<p class=\"IndexBookName\"><a target=\"top\" href=\"frame_"
-								+ usfxToHtmlConverter.EscapeHtml(bookId) + "TOC.htm\">"
+							htm.WriteLine("<p class=\"IndexBookName\"><a target=\"_top\" href=\""
+								+ UsfxToFramedHtmlConverter.TopFrameName(bookId, 0) + "\">" // bookid00{0} is the id generated for the TOC page.
 								+ usfxToHtmlConverter.EscapeHtml(vernacularName) + "</a></p>");
 							// Todo: figure out whether book has introduction and if so write out a link.
 							if (chapterNumber > 1)
