@@ -26,6 +26,7 @@ namespace BibleFileLib
 	{
 		private const string MainFramePrefix = "frame_"; // Top level frame files, pair navigation with interior frame
 		private const string InteriorFramePrefix = "root_"; // interior frame files, pair chapter index with main content file
+		private const string NavigationFileName = "Navigation.htm";
 
 		/// <summary>
 		/// Return the frame file to use for the specified book and chapter (including chapter 0 for the table of contents).
@@ -53,6 +54,11 @@ namespace BibleFileLib
 			return MainFramePrefix + mainFileName;
 		}
 
+		protected override string OnLoadArgument()
+		{
+			return string.Format(" onload=\"onLoadBook('{0}')\"", currentBookHeader);
+		}
+
 		/// <summary>
 		/// Overrride for now to generate a frame for the introduction. Later we may generate the introduction itself, or copy one if found...
 		/// </summary>
@@ -64,8 +70,35 @@ namespace BibleFileLib
 			string indexFilePath = Path.Combine(htmDir, IndexFileName);
 			string rootFileName = "root.htm";
 			string rootFilePath = Path.Combine(htmDir, rootFileName);
-			WriteFrameFile(indexFilePath, "rows=\"35, *\"", true, "navigation", "Navigation.htm", "body", rootFileName, null);
-			WriteFrameFile(rootFilePath, "cols=\"20%,80%\"", false, "index", UsfxToChapterIndex.ChapIndexFileName, "main", "Introduction.htm", null);
+			WriteFrameFile(indexFilePath, "rows=\"35, *\"", true, "navigation", NavigationFileName, "body", rootFileName, null);
+			WriteFrameFile(rootFilePath, "cols=\"20%,80%\"", false, "index", UsfxToChapterIndex.ChapIndexFileName, "main",
+			               "Introduction.htm", null);
+
+			// Also generate navigation file.
+			var navPath = Path.Combine(htmDir, NavigationFileName);
+			var htmNav = new StreamWriter(navPath, false, Encoding.UTF8);
+
+			htmNav.WriteLine(
+				"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+			htmNav.WriteLine("<html xmlns=\"http://www.w3.org/1999/xhtml\" >");
+			htmNav.WriteLine("<head>");
+			htmNav.WriteLine("    <title>Navigation Bar</title>");
+			htmNav.WriteLine("      <style type=\"text/css\">");
+			htmNav.WriteLine("         body {margin-top:2pt; margin-left:2pt; background:gray}");
+			htmNav.WriteLine("         input {font-weight:bold}");
+			htmNav.WriteLine("      </style>");
+			htmNav.WriteLine("      <script src=\"Navigation.js\" type=\"text/javascript\"></script>");
+			htmNav.WriteLine("</head>");
+			htmNav.WriteLine("<body>");
+			htmNav.WriteLine(
+				"      <input type=\"button\" value=\"Go to start of Book\" title=\"Go to start of book\"");
+			htmNav.WriteLine(
+				"         onclick=\"gotoStartOfBook()\"/>");
+			htmNav.WriteLine(
+				"		<span id=\"book\" class=\"NavBookName\" style=\"background: lightgreen; padding-left:3pt; padding-right:3pt\" > </span>");
+			htmNav.WriteLine("</body>");
+			htmNav.WriteLine("</html>");
+			htmNav.Close();
 		}
 
 		protected override void MakeFramesFor(string htmPath)
@@ -76,7 +109,7 @@ namespace BibleFileLib
 			var topFramePath = Path.Combine(directory, topFrameName);
 			var interiorFrameName = InteriorFramePrefix + htmName;
 			var interiorFramePath = Path.Combine(directory, interiorFrameName);
-			WriteFrameFile(topFramePath, "rows=\"35, *\" onload=\"onLoad()\"", true, "navigation", "Navigation.htm", "body", interiorFrameName, "frameFuncs.js");
+			WriteFrameFile(topFramePath, "rows=\"35, *\" onload=\"onLoad()\"", true, "navigation", NavigationFileName, "body", interiorFrameName, "frameFuncs.js");
 			WriteFrameFile(interiorFramePath, "cols=\"20%,80%\"", false, "index", UsfxToChapterIndex.ChapIndexFileName, "main", htmName, null);
 		}
 

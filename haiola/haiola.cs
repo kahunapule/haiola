@@ -573,6 +573,7 @@ In addition, you have permission to convert the text to different file formats, 
 				ciMaker.Generate(usfxFilePath, chapIndexPath);
 				EnsureTemplateFile("chapIndex.css", htmlPath);
 				EnsureTemplateFile("frameFuncs.js", htmlPath);
+				EnsureTemplateFile("Navigation.js", htmlPath);
 			}
 
 			// Todo JohnT: move this to a new method, and the condition to the method that calls this.

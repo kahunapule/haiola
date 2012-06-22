@@ -6710,16 +6710,26 @@ namespace WordSend
 			{
 				htm.WriteLine("<script src=\"TextFuncs.js\" type=\"text/javascript\"></script>");
 			}
-            htm.WriteLine("<title>{0} {1} {2}</title></head>",
+            htm.WriteLine("<title>{0} {1} {2}</title>",
                 langName, currentBookHeader, currentChapterPublished);
 			WriteCompleteElement(string.Format("<meta name=\"keywords\" content=\"{0}, {1}, Holy Bible, Scripture, Bible, Scriptures, New Testament, Old Testament, Gospel\"",
                 langName, langId));
-            htm.WriteLine("<body class=\"mainDoc\"{0}>", GeneratingConcordance ? " onload=\"onLoad()\"" : "");
+			htm.WriteLine("</head>");
+            htm.WriteLine("<body class=\"mainDoc\"{0}>", OnLoadArgument());
             
             WriteNavButtons();
         }
 
 		/// <summary>
+		/// Generate the string that should be inserted into the book element to specify any javascript that shoudl be called when the page is loaded.
+		/// </summary>
+		/// <returns></returns>
+    	protected virtual string OnLoadArgument()
+    	{
+    		return GeneratingConcordance ? " onload=\"onLoad()\"" : "";
+    	}
+
+    	/// <summary>
 		/// Hook to allow subclass to generate corresponding frame file(s) for each main file.
 		/// </summary>
 		/// <param name="htmPath"></param>
