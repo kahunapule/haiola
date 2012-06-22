@@ -427,14 +427,15 @@ namespace haiola
             else
                 File.Copy(Path.Combine(m_inputDirectory, "prophero.css"), propherocss);
             
-            usfxToHtmlConverter toHtm = new usfxToHtmlConverter();
+            usfxToHtmlConverter toHtm = m_options.UseFrames ? new UsfxToFramedHtmlConverter() : new usfxToHtmlConverter();
             Logit.OpenFile(Path.Combine(m_outputProjectDirectory, "HTMLConversionReport.txt"));
 
             toHtm.indexDateStamp = "HTML generated " + DateTime.UtcNow.ToString("d MMM yyyy") +
                 " from source files dated " + sourceDate.ToString("d MMM yyyy");
         	toHtm.GeneratingConcordance = m_options.GenerateConcordance;
     		toHtm.CrossRefToFilePrefixMap = m_options.CrossRefToFilePrefixMap;
-            toHtm.ConvertUsfxToHtml(Path.Combine(UsfxPath, "usfx.xml"), htmlPath,
+    		string usfxFilePath = Path.Combine(UsfxPath, "usfx.xml");
+    		toHtm.ConvertUsfxToHtml(usfxFilePath, htmlPath,
                 m_options.vernacularTitle,
                 m_options.languageId,
                 m_options.translationId,
@@ -564,6 +565,15 @@ In addition, you have permission to convert the text to different file formats, 
             xml.Close();
             xml.Close();
 
+			if (m_options.UseFrames)
+			{
+				// Generate the ChapterIndex file
+				var ciMaker = new UsfxToChapterIndex();
+				string chapIndexPath = Path.Combine(htmlPath, UsfxToChapterIndex.ChapIndexFileName);
+				ciMaker.Generate(usfxFilePath, chapIndexPath);
+				EnsureTemplateFile("chapIndex.css", htmlPath);
+			}
+
 			// Todo JohnT: move this to a new method, and the condition to the method that calls this.
 			if (generateConcordanceCheckBox.Checked)
 			{
@@ -578,7 +588,7 @@ In addition, you have permission to convert the text to different file formats, 
 				// No point in doing this...doesn't change the concordance generated, just makes generation slower.
 				// Reinstate it if the XHTML is used for anything besides generating the concordance.
 				//toXhtm.CrossRefToFilePrefixMap = m_options.CrossRefToFilePrefixMap;
-				toXhtm.ConvertUsfxToHtml(Path.Combine(UsfxPath, "usfx.xml"), xhtmlPath,
+				toXhtm.ConvertUsfxToHtml(usfxFilePath, xhtmlPath,
 				                        m_options.vernacularTitle,
 				                        m_options.languageId,
 				                        m_options.translationId,
@@ -1008,6 +1018,7 @@ In addition, you have permission to convert the text to different file formats, 
 
         	LoadConcTab();
 			LoadBooksTab();
+        	LoadFramesTab();
         }
 
 		private void LoadConcTab()
@@ -1087,6 +1098,16 @@ In addition, you have permission to convert the text to different file formats, 
 			m_options.CrossRefToFilePrefixMap = crossRefsToIds;
 		}
 
+		private void SaveFramesTab()
+		{
+			m_options.UseFrames = useFramesCheckBox.Checked;
+		}
+
+		private void LoadFramesTab()
+		{
+			useFramesCheckBox.Checked = m_options.UseFrames;
+		}
+
         private void m_projectsList_SelectedIndexChanged(object sender, EventArgs e)
         {
             m_project = m_projectsList.SelectedItem.ToString();
@@ -1153,6 +1174,7 @@ In addition, you have permission to convert the text to different file formats, 
 
 			SaveConcTab();
 			SaveBooksTab();
+        	SaveFramesTab();
 
             m_options.Write();
         }

@@ -149,6 +149,8 @@
 			this.runHighlightedButton = new System.Windows.Forms.Button();
 			this.statsButton = new System.Windows.Forms.Button();
 			this.restoreDefaultsButton = new System.Windows.Forms.Button();
+			this.framesPage = new System.Windows.Forms.TabPage();
+			this.useFramesCheckBox = new System.Windows.Forms.CheckBox();
 			this.tabControl1.SuspendLayout();
 			this.idTabPage.SuspendLayout();
 			this.copyrightTabPage.SuspendLayout();
@@ -159,6 +161,7 @@
 			this.numeralsGroupBox.SuspendLayout();
 			this.concordanceTabPage.SuspendLayout();
 			this.booksPage.SuspendLayout();
+			this.framesPage.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// m_projectsList
@@ -257,6 +260,7 @@
 			this.tabControl1.Controls.Add(this.advancedTabPage);
 			this.tabControl1.Controls.Add(this.concordanceTabPage);
 			this.tabControl1.Controls.Add(this.booksPage);
+			this.tabControl1.Controls.Add(this.framesPage);
 			this.tabControl1.Location = new System.Drawing.Point(0, 75);
 			this.tabControl1.Margin = new System.Windows.Forms.Padding(2);
 			this.tabControl1.Name = "tabControl1";
@@ -1434,6 +1438,26 @@
 			this.restoreDefaultsButton.UseVisualStyleBackColor = true;
 			this.restoreDefaultsButton.Click += new System.EventHandler(this.restoreDefaultsButton_Click);
 			// 
+			// framesPage
+			// 
+			this.framesPage.Controls.Add(this.useFramesCheckBox);
+			this.framesPage.Location = new System.Drawing.Point(4, 22);
+			this.framesPage.Name = "framesPage";
+			this.framesPage.Size = new System.Drawing.Size(618, 462);
+			this.framesPage.TabIndex = 9;
+			this.framesPage.Text = "Frames";
+			this.framesPage.UseVisualStyleBackColor = true;
+			// 
+			// useFramesCheckBox
+			// 
+			this.useFramesCheckBox.AutoSize = true;
+			this.useFramesCheckBox.Location = new System.Drawing.Point(12, 15);
+			this.useFramesCheckBox.Name = "useFramesCheckBox";
+			this.useFramesCheckBox.Size = new System.Drawing.Size(332, 17);
+			this.useFramesCheckBox.TabIndex = 0;
+			this.useFramesCheckBox.Text = "Use the three-pane (frame-based) layout for the main text window";
+			this.useFramesCheckBox.UseVisualStyleBackColor = true;
+			// 
 			// haiolaForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1476,6 +1500,8 @@
 			this.concordanceTabPage.ResumeLayout(false);
 			this.concordanceTabPage.PerformLayout();
 			this.booksPage.ResumeLayout(false);
+			this.framesPage.ResumeLayout(false);
+			this.framesPage.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -1602,6 +1628,8 @@
 		private System.Windows.Forms.ColumnHeader colFilesXrefs;
 		private System.Windows.Forms.Button updateButton;
 		private System.Windows.Forms.Button restoreDefaultsButton;
+		private System.Windows.Forms.TabPage framesPage;
+		private System.Windows.Forms.CheckBox useFramesCheckBox;
 	}
 }
 
