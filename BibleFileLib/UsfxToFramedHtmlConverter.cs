@@ -27,9 +27,30 @@ namespace BibleFileLib
 		private const string MainFramePrefix = "frame_"; // Top level frame files, pair navigation with interior frame
 		private const string InteriorFramePrefix = "root_"; // interior frame files, pair chapter index with main content file
 
+		/// <summary>
+		/// Return the frame file to use for the specified book and chapter (including chapter 0 for the table of contents).
+		/// This needs to be consistent with MainFileLinkTarget, but unfortunately we can't call that, because this method
+		/// needs to be static, while the other needs to be virtual.
+		/// </summary>
+		/// <param name="bookId"></param>
+		/// <param name="chap"></param>
+		/// <returns></returns>
 		public static string TopFrameName(string bookId, int chap)
 		{
 			return MainFramePrefix + HtmName(bookId, chap);
+		}
+
+		/// <summary>
+		/// Return the file name to use as a link target when linking to the specified main-pane file.
+		/// Overridden here to link to the frame we generate around that file.
+		/// This needs to be consistent with TopFrameName, but unfortunately we can't make that call this, because this method
+		/// needs to be virtual, while the other needs to be static.
+		/// </summary>
+		/// <param name="mainFileName"></param>
+		/// <returns></returns>
+		protected override string MainFileLinkTarget(string mainFileName)
+		{
+			return MainFramePrefix + mainFileName;
 		}
 
 		/// <summary>
@@ -43,8 +64,8 @@ namespace BibleFileLib
 			string indexFilePath = Path.Combine(htmDir, IndexFileName);
 			string rootFileName = "root.htm";
 			string rootFilePath = Path.Combine(htmDir, rootFileName);
-			WriteFrameFile(indexFilePath, "rows=\"35, *\"", true, "navigation", "Navigation.htm", "body", rootFileName);
-			WriteFrameFile(rootFilePath, "cols=\"20%,80%\"", false, "index", UsfxToChapterIndex.ChapIndexFileName, "main", "Introduction.htm");
+			WriteFrameFile(indexFilePath, "rows=\"35, *\"", true, "navigation", "Navigation.htm", "body", rootFileName, null);
+			WriteFrameFile(rootFilePath, "cols=\"20%,80%\"", false, "index", UsfxToChapterIndex.ChapIndexFileName, "main", "Introduction.htm", null);
 		}
 
 		protected override void MakeFramesFor(string htmPath)
@@ -55,8 +76,8 @@ namespace BibleFileLib
 			var topFramePath = Path.Combine(directory, topFrameName);
 			var interiorFrameName = InteriorFramePrefix + htmName;
 			var interiorFramePath = Path.Combine(directory, interiorFrameName);
-			WriteFrameFile(topFramePath, "rows=\"35, *\"", true, "navigation", "Navigation.htm", "body", interiorFrameName);
-			WriteFrameFile(interiorFramePath, "cols=\"20%,80%\"", false, "index", UsfxToChapterIndex.ChapIndexFileName, "main", htmName);
+			WriteFrameFile(topFramePath, "rows=\"35, *\" onload=\"onLoad()\"", true, "navigation", "Navigation.htm", "body", interiorFrameName, "frameFuncs.js");
+			WriteFrameFile(interiorFramePath, "cols=\"20%,80%\"", false, "index", UsfxToChapterIndex.ChapIndexFileName, "main", htmName, null);
 		}
 
 		/// <summary>
@@ -69,7 +90,7 @@ namespace BibleFileLib
 		/// <param name="firstFile">to put in the first frame</param>
 		/// <param name="secondFrameName"></param>
 		/// <param name="secondFile">to put in the second one.</param>
-		private void WriteFrameFile(string framePath, string frameSetParams, bool suppressFirstFrameScroll, string firstFrameName, string firstFile, string secondFrameName, string secondFile)
+		private void WriteFrameFile(string framePath, string frameSetParams, bool suppressFirstFrameScroll, string firstFrameName, string firstFile, string secondFrameName, string secondFile, string javaScriptFile)
 		{
 			var htmFrame = new StreamWriter(framePath, false, Encoding.UTF8);
 			htmFrame.WriteLine(
@@ -78,6 +99,8 @@ namespace BibleFileLib
 			htmFrame.WriteLine("<head>");
 			htmFrame.WriteLine("<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
 			htmFrame.WriteLine("<meta name=\"viewport\" content=\"width=device-width\" />");
+			if (!string.IsNullOrEmpty(javaScriptFile))
+				htmFrame.WriteLine("<script src=\"" + javaScriptFile + "\" type=\"text/javascript\"></script>");
 			htmFrame.WriteLine("<frameset " + frameSetParams + ">");
 			string suppressScroll = suppressFirstFrameScroll ? " scrolling=\"no\"" : "";
 			htmFrame.WriteLine(" <frame name=\"" + firstFrameName + "\" src=\"" + firstFile + "\"" + suppressScroll + ">");

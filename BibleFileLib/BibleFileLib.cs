@@ -7869,6 +7869,22 @@ namespace WordSend
 		/// </summary>
 		public string ConcordanceLinkText { get; set; }
 
+		/// <summary>
+		/// Return the file we should link to in order to show the specified main file.
+		/// In the default layout, this is just the file itself, which occupies the whole window.
+		/// </summary>
+		/// <param name="mainFileName"></param>
+		/// <returns></returns>
+		protected virtual string MainFileLinkTarget(string mainFileName)
+		{
+			return mainFileName;
+		}
+
+		protected string MainFileLinkTarget(string bookAbbrev, string chapter)
+		{
+			return MainFileLinkTarget(string.Format("{0}{1}.htm", bookAbbrev, chapter));
+		}
+
         /// <summary>
         /// Converts the USFX file usfxName to a set of HTML files, one file per chapter, in the
         /// directory htmlDir, with reference to CSS files in cssDir. The output file names will
@@ -7995,9 +8011,9 @@ namespace WordSend
                                     usfx.Read();
                                     if (usfx.NodeType == XmlNodeType.Text)
                                     {
-                                        bookRecord.toc.Append(String.Format("<div class=\"toc1\"><a href=\"{0}{1}.htm#V{2}\">{3}</a></div>\r\n",
-                                            currentBookAbbrev, Math.Max(1, chapterNumber).ToString(chapFormat),
-                                            verseNumber.ToString(), usfx.Value.Trim()));
+                                    	bookRecord.toc.Append(String.Format("<div class=\"toc1\"><a target=\"_top\" href=\"{0}#V{1}\">{2}</a></div>\r\n",
+											MainFileLinkTarget(currentBookAbbrev, Math.Max(1, chapterNumber).ToString(chapFormat)),
+											verseNumber.ToString(), usfx.Value.Trim()));
                                     }
                                     hasContentsPage = true;
                                 }
@@ -8013,9 +8029,8 @@ namespace WordSend
                                 if (usfx.NodeType == XmlNodeType.Text)
                                 {
                                     currentBookHeader = EscapeHtml(usfx.Value.Trim());
-                                    bookRecord.toc.Append(String.Format("<div class=\"toc1\"><a href=\"{0}{1}.htm\">{2}</a></div>\r\n",
-                                        currentBookAbbrev, chapFormat.Substring(1) + "1",
-                                        currentBookHeader));
+									bookRecord.toc.Append(String.Format("<div class=\"toc1\"><a target=\"_top\" href=\"{0}\">{1}</a></div>\r\n",
+                                        MainFileLinkTarget(currentBookAbbrev, chapFormat.Substring(1) + "1"), currentBookHeader));
                                     bookRecord.vernacularHeader = currentBookHeader;
                                 }
 
@@ -8025,8 +8040,8 @@ namespace WordSend
                                 usfx.Read();
                                 if (usfx.NodeType == XmlNodeType.Text)
                                 {
-                                    bookRecord.toc.Append(String.Format("<div class=\"toc2\"><a href=\"{0}{1}.htm#V{2}\">{3}</a></div>\r\n",
-                                        currentBookAbbrev, Math.Max(1, chapterNumber).ToString(chapFormat),
+									bookRecord.toc.Append(String.Format("<div class=\"toc2\"><a target=\"_top\" href=\"{0}#V{1}\">{2}</a></div>\r\n",
+										MainFileLinkTarget(currentBookAbbrev, Math.Max(1, chapterNumber).ToString(chapFormat)),
                                         verseNumber.ToString(), usfx.Value.Trim()));
                                 }
                                 hasContentsPage = true;
