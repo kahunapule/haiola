@@ -7907,7 +7907,12 @@ namespace WordSend
             currentChapter = currentFileName = currentVerse = languageCode = String.Empty;
             inPreverse = inFootnote = inFootnoteStyle = inTextStyle = inParagraph = chopChapter = false;
             bookRecord = (BibleBookRecord)bookInfo.books["FRT"];
-            bool containsDC = false;
+			// This flag is set true during the first pass through the USFX file (in preparation for generating navigation files)
+			// if any apocryphal books are encountered. If this does not happen (that is, there is no apocryphal material), in the 
+			// main pass we ignore elements dc, xdc, and fdc.
+			// I (JohnT) don't know WHY these elements should be ignored unless the translation includes apocrypha, but I confirmed
+			// with Michael that it is intentional.
+			bool containsDC = false;
             newChapterFound = false;
             ignore = false;
             StringBuilder toc = new StringBuilder();
@@ -7964,7 +7969,7 @@ namespace WordSend
                                 chapterNumber = 0;
                                 verseNumber = 0;
                                 if (bookInfo.isApocrypha(id))
-                                    containsDC = true;
+                                    containsDC = true; // if we have any apocrypha, this is set true for use in the next pass
                                 break;
                             case "id":
                                 if (id.Length > 2)
@@ -8231,7 +8236,7 @@ namespace WordSend
                                         chapterNumber = 0;
                                         verseNumber = 0;
                                         if (bookInfo.isApocrypha(id))
-                                            containsDC = true;
+                                            containsDC = true; // probably redundant, should be set in previous pass if ANY apocrypha
                                         bookRecord = (BibleBookRecord)bookList[bookListIndex];
                                         currentBookHeader = bookRecord.vernacularHeader;
                                         hasContentsPage = bookRecord.toc.Length > 0;
@@ -8456,6 +8461,7 @@ namespace WordSend
                                     case "xdc":
                                     case "fdc":
                                     case "dc":
+										// Suppress these three fields unless there is apocrypha somewhere in the translation (detected in first pass)
                                         if (!containsDC)
                                             ignore = true;
                                         break;
