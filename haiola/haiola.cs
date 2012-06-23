@@ -567,8 +567,17 @@ In addition, you have permission to convert the text to different file formats, 
 
 			if (m_options.UseFrames)
 			{
+				// Copy any Introduction files to the output. Do this before making the chapter index, since we tell it to look for them there.
+				foreach (var path in Directory.GetFiles(m_inputProjectDirectory, "*" + UsfxToChapterIndex.IntroductionSuffix))
+				{
+					string destFileName = Path.Combine(htmlPath, Path.GetFileName(path));
+					File.Copy(path, destFileName, true);
+					toHtm.MakeFramesFor(destFileName);
+				}
 				// Generate the ChapterIndex file
 				var ciMaker = new UsfxToChapterIndex();
+				ciMaker.IntroductionDirectory = htmlPath;
+				ciMaker.IntroductionLinkText = m_options.IntroductionLinkText;
 				if (m_options.GenerateConcordance)
 					ciMaker.ConcordanceLinkText = m_options.ConcordanceLinkText;
 				string chapIndexPath = Path.Combine(htmlPath, UsfxToChapterIndex.ChapIndexFileName);

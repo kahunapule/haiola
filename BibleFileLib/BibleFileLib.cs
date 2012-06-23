@@ -6733,7 +6733,7 @@ namespace WordSend
 		/// Hook to allow subclass to generate corresponding frame file(s) for each main file.
 		/// </summary>
 		/// <param name="htmPath"></param>
-		protected virtual void MakeFramesFor(string htmPath)
+		public virtual void MakeFramesFor(string htmPath)
 		{
 			// Default for non-frame version does nothing.		
 		}
