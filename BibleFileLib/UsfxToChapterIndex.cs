@@ -26,15 +26,28 @@ namespace BibleFileLib
 
 		StreamWriter htm;
 
-		public UsfxToChapterIndex()
-		{
-		}
+		/// <summary>
+		/// The text to use for the link to the concordance; leave null for no concordance (link).
+		/// </summary>
+		public string ConcordanceLinkText { get; set; }
 
 		public void Generate(string usfxPath, string chapterIndexPath)
 		{
 			usfx = new XmlTextReader(usfxPath);
 			usfx.WhitespaceHandling = WhitespaceHandling.Significant;
 			OpenHtmlFile(chapterIndexPath);
+			if (!string.IsNullOrEmpty(ConcordanceLinkText))
+			{
+				htm.WriteLine("<div class=\"BookChapIndex\">");
+				htm.WriteLine("<p class=\"IndexBookName\"><a target=\"_top\" href=\"conc\\treeMaster.htm\">" + ConcordanceLinkText + "</a></p>");
+				htm.WriteLine("</div>");
+			}
+
+			if (chapterNumber > 1)
+			{
+				htm.WriteLine("<p class=\"IndexChapterList\">" + chapterLinks + "</p>");
+			}
+			htm.WriteLine("</div>");
 			while (usfx.Read())
 			{
 				if (usfx.NodeType == XmlNodeType.Element)
