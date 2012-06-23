@@ -137,20 +137,30 @@
 			this.chkMergeCase = new System.Windows.Forms.CheckBox();
 			this.generateConcordanceCheckBox = new System.Windows.Forms.CheckBox();
 			this.booksPage = new System.Windows.Forms.TabPage();
+			this.restoreDefaultsButton = new System.Windows.Forms.Button();
 			this.updateButton = new System.Windows.Forms.Button();
 			this.label32 = new System.Windows.Forms.Label();
 			this.listBooks = new System.Windows.Forms.ListView();
 			this.colFilesStdAbbr = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.colFilesVernAbbr = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.colFilesXrefs = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.framesPage = new System.Windows.Forms.TabPage();
+			this.useFramesCheckBox = new System.Windows.Forms.CheckBox();
 			this.statsLabel = new System.Windows.Forms.Label();
 			this.timer1 = new System.Windows.Forms.Timer(this.components);
 			this.helpButton = new System.Windows.Forms.Button();
 			this.runHighlightedButton = new System.Windows.Forms.Button();
 			this.statsButton = new System.Windows.Forms.Button();
-			this.restoreDefaultsButton = new System.Windows.Forms.Button();
-			this.framesPage = new System.Windows.Forms.TabPage();
-			this.useFramesCheckBox = new System.Windows.Forms.CheckBox();
+			this.nextChapterLinkTextBox = new System.Windows.Forms.TextBox();
+			this.label33 = new System.Windows.Forms.Label();
+			this.previousChapterLinkTextBox = new System.Windows.Forms.TextBox();
+			this.label34 = new System.Windows.Forms.Label();
+			this.introductionLinkTextBox = new System.Windows.Forms.TextBox();
+			this.label35 = new System.Windows.Forms.Label();
+			this.booksAndChaptersLinkTextBox = new System.Windows.Forms.TextBox();
+			this.label36 = new System.Windows.Forms.Label();
+			this.concordanceLinkTextBox = new System.Windows.Forms.TextBox();
+			this.label37 = new System.Windows.Forms.Label();
 			this.tabControl1.SuspendLayout();
 			this.idTabPage.SuspendLayout();
 			this.copyrightTabPage.SuspendLayout();
@@ -1332,6 +1342,16 @@
 			this.booksPage.Text = "Books";
 			this.booksPage.UseVisualStyleBackColor = true;
 			// 
+			// restoreDefaultsButton
+			// 
+			this.restoreDefaultsButton.Location = new System.Drawing.Point(107, 421);
+			this.restoreDefaultsButton.Name = "restoreDefaultsButton";
+			this.restoreDefaultsButton.Size = new System.Drawing.Size(128, 23);
+			this.restoreDefaultsButton.TabIndex = 6;
+			this.restoreDefaultsButton.Text = "Restore Defaults";
+			this.restoreDefaultsButton.UseVisualStyleBackColor = true;
+			this.restoreDefaultsButton.Click += new System.EventHandler(this.restoreDefaultsButton_Click);
+			// 
 			// updateButton
 			// 
 			this.updateButton.Location = new System.Drawing.Point(8, 421);
@@ -1382,6 +1402,36 @@
 			this.colFilesXrefs.Text = "Book name used in cross refs";
 			this.colFilesXrefs.Width = 393;
 			// 
+			// framesPage
+			// 
+			this.framesPage.Controls.Add(this.nextChapterLinkTextBox);
+			this.framesPage.Controls.Add(this.label33);
+			this.framesPage.Controls.Add(this.previousChapterLinkTextBox);
+			this.framesPage.Controls.Add(this.label34);
+			this.framesPage.Controls.Add(this.introductionLinkTextBox);
+			this.framesPage.Controls.Add(this.label35);
+			this.framesPage.Controls.Add(this.booksAndChaptersLinkTextBox);
+			this.framesPage.Controls.Add(this.label36);
+			this.framesPage.Controls.Add(this.concordanceLinkTextBox);
+			this.framesPage.Controls.Add(this.label37);
+			this.framesPage.Controls.Add(this.useFramesCheckBox);
+			this.framesPage.Location = new System.Drawing.Point(4, 22);
+			this.framesPage.Name = "framesPage";
+			this.framesPage.Size = new System.Drawing.Size(618, 462);
+			this.framesPage.TabIndex = 9;
+			this.framesPage.Text = "Frames";
+			this.framesPage.UseVisualStyleBackColor = true;
+			// 
+			// useFramesCheckBox
+			// 
+			this.useFramesCheckBox.AutoSize = true;
+			this.useFramesCheckBox.Location = new System.Drawing.Point(12, 15);
+			this.useFramesCheckBox.Name = "useFramesCheckBox";
+			this.useFramesCheckBox.Size = new System.Drawing.Size(332, 17);
+			this.useFramesCheckBox.TabIndex = 0;
+			this.useFramesCheckBox.Text = "Use the three-pane (frame-based) layout for the main text window";
+			this.useFramesCheckBox.UseVisualStyleBackColor = true;
+			// 
 			// statsLabel
 			// 
 			this.statsLabel.AutoSize = true;
@@ -1428,35 +1478,90 @@
 			this.statsButton.UseVisualStyleBackColor = true;
 			this.statsButton.Click += new System.EventHandler(this.statsButton_Click);
 			// 
-			// restoreDefaultsButton
+			// nextChapterLinkTextBox
 			// 
-			this.restoreDefaultsButton.Location = new System.Drawing.Point(107, 421);
-			this.restoreDefaultsButton.Name = "restoreDefaultsButton";
-			this.restoreDefaultsButton.Size = new System.Drawing.Size(128, 23);
-			this.restoreDefaultsButton.TabIndex = 6;
-			this.restoreDefaultsButton.Text = "Restore Defaults";
-			this.restoreDefaultsButton.UseVisualStyleBackColor = true;
-			this.restoreDefaultsButton.Click += new System.EventHandler(this.restoreDefaultsButton_Click);
+			this.nextChapterLinkTextBox.Location = new System.Drawing.Point(351, 206);
+			this.nextChapterLinkTextBox.Name = "nextChapterLinkTextBox";
+			this.nextChapterLinkTextBox.Size = new System.Drawing.Size(156, 20);
+			this.nextChapterLinkTextBox.TabIndex = 37;
+			this.nextChapterLinkTextBox.Text = "Next Chapter";
 			// 
-			// framesPage
+			// label33
 			// 
-			this.framesPage.Controls.Add(this.useFramesCheckBox);
-			this.framesPage.Location = new System.Drawing.Point(4, 22);
-			this.framesPage.Name = "framesPage";
-			this.framesPage.Size = new System.Drawing.Size(618, 462);
-			this.framesPage.TabIndex = 9;
-			this.framesPage.Text = "Frames";
-			this.framesPage.UseVisualStyleBackColor = true;
+			this.label33.AutoSize = true;
+			this.label33.Location = new System.Drawing.Point(9, 209);
+			this.label33.Name = "label33";
+			this.label33.Size = new System.Drawing.Size(180, 13);
+			this.label33.TabIndex = 36;
+			this.label33.Text = "Text of button linking to next chapter";
 			// 
-			// useFramesCheckBox
+			// previousChapterLinkTextBox
 			// 
-			this.useFramesCheckBox.AutoSize = true;
-			this.useFramesCheckBox.Location = new System.Drawing.Point(12, 15);
-			this.useFramesCheckBox.Name = "useFramesCheckBox";
-			this.useFramesCheckBox.Size = new System.Drawing.Size(332, 17);
-			this.useFramesCheckBox.TabIndex = 0;
-			this.useFramesCheckBox.Text = "Use the three-pane (frame-based) layout for the main text window";
-			this.useFramesCheckBox.UseVisualStyleBackColor = true;
+			this.previousChapterLinkTextBox.Location = new System.Drawing.Point(351, 166);
+			this.previousChapterLinkTextBox.Name = "previousChapterLinkTextBox";
+			this.previousChapterLinkTextBox.Size = new System.Drawing.Size(156, 20);
+			this.previousChapterLinkTextBox.TabIndex = 35;
+			this.previousChapterLinkTextBox.Text = "Previous Chapter";
+			// 
+			// label34
+			// 
+			this.label34.AutoSize = true;
+			this.label34.Location = new System.Drawing.Point(9, 169);
+			this.label34.Name = "label34";
+			this.label34.Size = new System.Drawing.Size(200, 13);
+			this.label34.TabIndex = 34;
+			this.label34.Text = "Text of button linking to previous chapter";
+			// 
+			// introductionLinkTextBox
+			// 
+			this.introductionLinkTextBox.Location = new System.Drawing.Point(351, 128);
+			this.introductionLinkTextBox.Name = "introductionLinkTextBox";
+			this.introductionLinkTextBox.Size = new System.Drawing.Size(156, 20);
+			this.introductionLinkTextBox.TabIndex = 33;
+			this.introductionLinkTextBox.Text = "Introduction";
+			// 
+			// label35
+			// 
+			this.label35.AutoSize = true;
+			this.label35.Location = new System.Drawing.Point(9, 131);
+			this.label35.Name = "label35";
+			this.label35.Size = new System.Drawing.Size(297, 13);
+			this.label35.TabIndex = 32;
+			this.label35.Text = "Hotlink to the Introduction of any individual book that has one";
+			// 
+			// booksAndChaptersLinkTextBox
+			// 
+			this.booksAndChaptersLinkTextBox.Location = new System.Drawing.Point(351, 93);
+			this.booksAndChaptersLinkTextBox.Name = "booksAndChaptersLinkTextBox";
+			this.booksAndChaptersLinkTextBox.Size = new System.Drawing.Size(156, 20);
+			this.booksAndChaptersLinkTextBox.TabIndex = 31;
+			this.booksAndChaptersLinkTextBox.Text = "Books and Chapters";
+			// 
+			// label36
+			// 
+			this.label36.AutoSize = true;
+			this.label36.Location = new System.Drawing.Point(9, 93);
+			this.label36.Name = "label36";
+			this.label36.Size = new System.Drawing.Size(326, 13);
+			this.label36.TabIndex = 30;
+			this.label36.Text = "Hotlink in the concordace index back to the main Table of Contents";
+			// 
+			// concordanceLinkTextBox
+			// 
+			this.concordanceLinkTextBox.Location = new System.Drawing.Point(351, 55);
+			this.concordanceLinkTextBox.Name = "concordanceLinkTextBox";
+			this.concordanceLinkTextBox.Size = new System.Drawing.Size(156, 20);
+			this.concordanceLinkTextBox.TabIndex = 29;
+			this.concordanceLinkTextBox.Text = "Concordance";
+			// 
+			// label37
+			// 
+			this.label37.AutoSize = true;
+			this.label37.Location = new System.Drawing.Point(9, 55);
+			this.label37.Name = "label37";
+			this.label37.Size = new System.Drawing.Size(273, 13);
+			this.label37.TabIndex = 28;
+			this.label37.Text = "Hotlink in the main table of contents to the Concordance";
 			// 
 			// haiolaForm
 			// 
@@ -1630,6 +1735,16 @@
 		private System.Windows.Forms.Button restoreDefaultsButton;
 		private System.Windows.Forms.TabPage framesPage;
 		private System.Windows.Forms.CheckBox useFramesCheckBox;
+		private System.Windows.Forms.TextBox nextChapterLinkTextBox;
+		private System.Windows.Forms.Label label33;
+		private System.Windows.Forms.TextBox previousChapterLinkTextBox;
+		private System.Windows.Forms.Label label34;
+		private System.Windows.Forms.TextBox introductionLinkTextBox;
+		private System.Windows.Forms.Label label35;
+		private System.Windows.Forms.TextBox booksAndChaptersLinkTextBox;
+		private System.Windows.Forms.Label label36;
+		private System.Windows.Forms.TextBox concordanceLinkTextBox;
+		private System.Windows.Forms.Label label37;
 	}
 }
 

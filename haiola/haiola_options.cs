@@ -748,7 +748,51 @@ namespace haiola
 			set { ini.WriteBool("useFrames", value); }
 		}
 
-		// Todo JohnT: more options, mostly localization strings, related to frame-based view.
+		/// <summary>
+		/// (Localized) text to use in the link at the top of the ChapterIndex file that brings up the concordance (if generated).
+		/// </summary>
+		public string ConcordanceLinkText
+		{
+			get { return ini.ReadString("concLink", "Concordance"); }
+			set { ini.WriteString("concLink", value); }
+		}
+
+		/// <summary>
+		/// (Localized) text to use in the link at the top of the left concordance pane which switches us back to the main index.
+		/// </summary>
+		public string BooksAndChaptersLinkText
+		{
+			get { return ini.ReadString("bookChapLink", "Books and Chapters"); }
+			set { ini.WriteString("bookChapLink", value); }
+		}
+
+		/// <summary>
+		/// (Localized) text to use in the link to use in the ChapterIndex file to any introduction file for a book.
+		/// </summary>
+		public string IntroductionLinkText
+		{
+			get { return ini.ReadString("introLink", "Introduction"); }
+			set { ini.WriteString("introLink", value); }
+		}
+
+		/// <summary>
+		/// (Localized) text to use in the link at the top of each chapter to the previous chapter
+		/// </summary>
+		public string PreviousChapterLinkText
+		{
+			get { return ini.ReadString("prevChapLink", "Previous Chapter"); }
+			set { ini.WriteString("prevChapLink", value); }
+		}
+
+		/// <summary>
+		/// (Localized) text to use in the link at the top of each chapter to the next chapter
+		/// </summary>
+		public string NextChapterLinkText
+		{
+			get { return ini.ReadString("nextChapLink", "Next Chapter"); }
+			set { ini.WriteString("nextChapLink", value); }
+		}
+
 		#endregion
 	}
 

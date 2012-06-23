@@ -569,6 +569,8 @@ In addition, you have permission to convert the text to different file formats, 
 			{
 				// Generate the ChapterIndex file
 				var ciMaker = new UsfxToChapterIndex();
+				if (m_options.GenerateConcordance)
+					ciMaker.ConcordanceLinkText = m_options.ConcordanceLinkText;
 				string chapIndexPath = Path.Combine(htmlPath, UsfxToChapterIndex.ChapIndexFileName);
 				ciMaker.Generate(usfxFilePath, chapIndexPath);
 				EnsureTemplateFile("chapIndex.css", htmlPath);
@@ -624,11 +626,11 @@ In addition, you have permission to convert the text to different file formats, 
 											Phrases = m_options.Phrases,
 											ExcludeWords = new HashSet<string>(m_options.ExcludeWords.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)),
 											ReferenceAbbeviationsMap = m_options.ReferenceAbbeviationsMap,
+											BookChapText = m_options.BooksAndChaptersLinkText,
+											ConcordanceLinkText = m_options.ConcordanceLinkText,
 
 											// Options we may want to make configurable for localization.
-											BookChapText = "Books and Chapters", // todo make configurable for localization if still used
 											// Todo: configure comparison function
-											ConcordanceLinkText = "Concordance",  // todo make configurable for localization if still used
 											IndexType = ConcGenerator.IndexTypes.alphaTreeMf,
 											NotesRef = "note",
 											HeadingRef = "head",
@@ -1103,11 +1105,21 @@ In addition, you have permission to convert the text to different file formats, 
 		private void SaveFramesTab()
 		{
 			m_options.UseFrames = useFramesCheckBox.Checked;
+			m_options.ConcordanceLinkText = concordanceLinkTextBox.Text;
+			m_options.BooksAndChaptersLinkText = booksAndChaptersLinkTextBox.Text;
+			m_options.IntroductionLinkText = introductionLinkTextBox.Text;
+			m_options.PreviousChapterLinkText = previousChapterLinkTextBox.Text;
+			m_options.NextChapterLinkText = nextChapterLinkTextBox.Text;
 		}
 
 		private void LoadFramesTab()
 		{
 			useFramesCheckBox.Checked = m_options.UseFrames;
+			concordanceLinkTextBox.Text = m_options.ConcordanceLinkText;
+			booksAndChaptersLinkTextBox.Text = m_options.BooksAndChaptersLinkText;
+			introductionLinkTextBox.Text = m_options.IntroductionLinkText;
+			previousChapterLinkTextBox.Text = m_options.PreviousChapterLinkText;
+			nextChapterLinkTextBox.Text = m_options.NextChapterLinkText;
 		}
 
         private void m_projectsList_SelectedIndexChanged(object sender, EventArgs e)
@@ -1593,6 +1605,61 @@ In addition, you have permission to convert the text to different file formats, 
 			ListViewItem.ListViewSubItem si = (tb).Tag as ListViewItem.ListViewSubItem;
 			si.Text = tb.Text;
 			tb.Parent.Controls.Remove(tb);
+		}
+
+		private void clearReloadButton_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void btnAdjustFiles_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void textBox2_TextChanged(object sender, EventArgs e)
+		{
+
+		}
+
+		private void comboSort_SelectedIndexChanged(object sender, EventArgs e)
+		{
+
+		}
+
+		private void btnTestSort_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void btnAdjustBookNamesList_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void btnMoveBookNameDown_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void btnMoveBookNameUp_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void btnAdjustBmFiles_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void btnMoveDownBackMatter_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void btnMoveUpBackMatter_Click(object sender, EventArgs e)
+		{
+
 		}
     }
 }
