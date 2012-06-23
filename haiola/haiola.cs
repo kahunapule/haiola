@@ -427,7 +427,18 @@ namespace haiola
             else
                 File.Copy(Path.Combine(m_inputDirectory, "prophero.css"), propherocss);
             
-            usfxToHtmlConverter toHtm = m_options.UseFrames ? new UsfxToFramedHtmlConverter() : new usfxToHtmlConverter();
+            usfxToHtmlConverter toHtm;
+			if (m_options.UseFrames)
+			{
+				var framedConverter = new UsfxToFramedHtmlConverter();
+				framedConverter.HideNavigationButtonText = m_options.HideNavigationButtonText;
+				framedConverter.ShowNavigationButtonText = m_options.ShowNavigationButtonText;
+				toHtm = framedConverter;
+			}
+			else
+			{
+				toHtm = new usfxToHtmlConverter();
+			}
             Logit.OpenFile(Path.Combine(m_outputProjectDirectory, "HTMLConversionReport.txt"));
 
             toHtm.indexDateStamp = "HTML generated " + DateTime.UtcNow.ToString("d MMM yyyy") +
@@ -1119,6 +1130,8 @@ In addition, you have permission to convert the text to different file formats, 
 			m_options.IntroductionLinkText = introductionLinkTextBox.Text;
 			m_options.PreviousChapterLinkText = previousChapterLinkTextBox.Text;
 			m_options.NextChapterLinkText = nextChapterLinkTextBox.Text;
+			m_options.HideNavigationButtonText = hideNavigationPanesTextBox.Text;
+			m_options.ShowNavigationButtonText = showNavigationTextBox.Text;
 		}
 
 		private void LoadFramesTab()
@@ -1129,6 +1142,8 @@ In addition, you have permission to convert the text to different file formats, 
 			introductionLinkTextBox.Text = m_options.IntroductionLinkText;
 			previousChapterLinkTextBox.Text = m_options.PreviousChapterLinkText;
 			nextChapterLinkTextBox.Text = m_options.NextChapterLinkText;
+			hideNavigationPanesTextBox.Text = m_options.HideNavigationButtonText;
+			showNavigationTextBox.Text = m_options.ShowNavigationButtonText;
 		}
 
         private void m_projectsList_SelectedIndexChanged(object sender, EventArgs e)
@@ -1614,61 +1629,6 @@ In addition, you have permission to convert the text to different file formats, 
 			ListViewItem.ListViewSubItem si = (tb).Tag as ListViewItem.ListViewSubItem;
 			si.Text = tb.Text;
 			tb.Parent.Controls.Remove(tb);
-		}
-
-		private void clearReloadButton_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void btnAdjustFiles_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void textBox2_TextChanged(object sender, EventArgs e)
-		{
-
-		}
-
-		private void comboSort_SelectedIndexChanged(object sender, EventArgs e)
-		{
-
-		}
-
-		private void btnTestSort_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void btnAdjustBookNamesList_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void btnMoveBookNameDown_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void btnMoveBookNameUp_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void btnAdjustBmFiles_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void btnMoveDownBackMatter_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void btnMoveUpBackMatter_Click(object sender, EventArgs e)
-		{
-
 		}
     }
 }

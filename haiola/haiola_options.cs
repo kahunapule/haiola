@@ -793,6 +793,24 @@ namespace haiola
 			set { ini.WriteString("nextChapLink", value); }
 		}
 
+		/// <summary>
+		/// (Localized) text to use in the button at the top of each chapter to to hide navigation panes
+		/// </summary>
+		public string HideNavigationButtonText
+		{
+			get { return ini.ReadString("hideNav", "Hide Navigation Panes"); }
+			set { ini.WriteString("hideNav", value); }
+		}
+
+		/// <summary>
+		/// (Localized) text to use in the button at the top of each chapter to to show navigation panes.
+		/// This appears when JavaScript is disabled, or after hiding the navigation panes, or when a search engine has brought us direct to a child page.
+		/// </summary>
+		public string ShowNavigationButtonText
+		{
+			get { return ini.ReadString("showNav", "Show Navigation Panes"); }
+			set { ini.WriteString("showNav", value); }
+		}
 		#endregion
 	}
 
