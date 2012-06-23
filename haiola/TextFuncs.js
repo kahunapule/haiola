@@ -8,9 +8,22 @@ function onLoad()
     hilitedElt = "";
     var temp = getUrlVar("w");
     if (temp && temp != "")
-	    selectWord(temp, getUrlVar("f"));
+        selectWord(temp, getUrlVar("f"));
+    RemoveUnwantedNavButton();
 }
 
+function RemoveUnwantedNavButton() {
+    if (this != top)
+        RemoveNavButton("showNav");
+    else
+        RemoveNavButton("hideNav")
+}
+
+function RemoveNavButton(id) {
+    var button = document.getElementById(id);
+    if (button)
+        button.parentNode.removeChild(button);
+}
 // Given a query string "?to=email&why=because&first=John&Last=smith"
 // getUrlVar("to") will return "email"
 // getUrlVar("last") will return "smith"

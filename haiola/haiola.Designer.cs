@@ -161,6 +161,10 @@
 			this.label36 = new System.Windows.Forms.Label();
 			this.concordanceLinkTextBox = new System.Windows.Forms.TextBox();
 			this.label37 = new System.Windows.Forms.Label();
+			this.label38 = new System.Windows.Forms.Label();
+			this.hideNavigationPanesTextBox = new System.Windows.Forms.TextBox();
+			this.label39 = new System.Windows.Forms.Label();
+			this.showNavigationTextBox = new System.Windows.Forms.TextBox();
 			this.tabControl1.SuspendLayout();
 			this.idTabPage.SuspendLayout();
 			this.copyrightTabPage.SuspendLayout();
@@ -1404,6 +1408,10 @@
 			// 
 			// framesPage
 			// 
+			this.framesPage.Controls.Add(this.showNavigationTextBox);
+			this.framesPage.Controls.Add(this.label39);
+			this.framesPage.Controls.Add(this.hideNavigationPanesTextBox);
+			this.framesPage.Controls.Add(this.label38);
 			this.framesPage.Controls.Add(this.nextChapterLinkTextBox);
 			this.framesPage.Controls.Add(this.label33);
 			this.framesPage.Controls.Add(this.previousChapterLinkTextBox);
@@ -1562,6 +1570,40 @@
 			this.label37.Size = new System.Drawing.Size(273, 13);
 			this.label37.TabIndex = 28;
 			this.label37.Text = "Hotlink in the main table of contents to the Concordance";
+			// 
+			// label38
+			// 
+			this.label38.AutoSize = true;
+			this.label38.Location = new System.Drawing.Point(9, 244);
+			this.label38.Name = "label38";
+			this.label38.Size = new System.Drawing.Size(206, 13);
+			this.label38.TabIndex = 38;
+			this.label38.Text = "Text of button that hides navigation panes";
+			// 
+			// hideNavigationPanesTextBox
+			// 
+			this.hideNavigationPanesTextBox.Location = new System.Drawing.Point(351, 241);
+			this.hideNavigationPanesTextBox.Name = "hideNavigationPanesTextBox";
+			this.hideNavigationPanesTextBox.Size = new System.Drawing.Size(156, 20);
+			this.hideNavigationPanesTextBox.TabIndex = 39;
+			this.hideNavigationPanesTextBox.Text = "Hide Navigation Panes";
+			// 
+			// label39
+			// 
+			this.label39.AutoSize = true;
+			this.label39.Location = new System.Drawing.Point(9, 280);
+			this.label39.Name = "label39";
+			this.label39.Size = new System.Drawing.Size(275, 13);
+			this.label39.TabIndex = 40;
+			this.label39.Text = "Text of button that shows navigation panes when hidden";
+			// 
+			// showNavigationTextBox
+			// 
+			this.showNavigationTextBox.Location = new System.Drawing.Point(351, 277);
+			this.showNavigationTextBox.Name = "showNavigationTextBox";
+			this.showNavigationTextBox.Size = new System.Drawing.Size(156, 20);
+			this.showNavigationTextBox.TabIndex = 41;
+			this.showNavigationTextBox.Text = "Show Navigation Panes";
 			// 
 			// haiolaForm
 			// 
@@ -1745,6 +1787,10 @@
 		private System.Windows.Forms.Label label36;
 		private System.Windows.Forms.TextBox concordanceLinkTextBox;
 		private System.Windows.Forms.Label label37;
+		private System.Windows.Forms.TextBox showNavigationTextBox;
+		private System.Windows.Forms.Label label39;
+		private System.Windows.Forms.TextBox hideNavigationPanesTextBox;
+		private System.Windows.Forms.Label label38;
 	}
 }
 

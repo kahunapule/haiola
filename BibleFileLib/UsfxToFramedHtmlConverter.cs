@@ -28,6 +28,19 @@ namespace BibleFileLib
 		private const string InteriorFramePrefix = "root_"; // interior frame files, pair chapter index with main content file
 		private const string NavigationFileName = "Navigation.htm";
 
+		public string PreviousChapterLinkText { get; set; }
+		public string NextChapterLinkText { get; set; }
+		public string HideNavigationButtonText { get; set; }
+		public string ShowNavigationButtonText { get; set; }
+
+		public UsfxToFramedHtmlConverter()
+		{
+			PreviousChapterLinkText = "Previous Chapter";
+			NextChapterLinkText = "Next Chapter";
+			HideNavigationButtonText = "Hide Navigation Panes";
+			ShowNavigationButtonText = "Show Navigation Panes";
+		}
+
 		/// <summary>
 		/// Return the frame file to use for the specified book and chapter (including chapter 0 for the table of contents).
 		/// This needs to be consistent with MainFileLinkTarget, but unfortunately we can't call that, because this method
@@ -72,7 +85,7 @@ namespace BibleFileLib
 		}
 
 		/// <summary>
-		/// Overrride for now to generate a frame for the introduction. Later we may generate the introduction itself, or copy one if found...
+		/// Overrride for now to generate a master frame file. It expects to find an Introduction.htm for the main pane. Later we may generate the introduction itself, or copy one if found...
 		/// </summary>
 		/// <param name="translationId"></param>
 		/// <param name="indexHtml"></param>
@@ -123,6 +136,73 @@ namespace BibleFileLib
 			var interiorFramePath = Path.Combine(directory, interiorFrameName);
 			WriteFrameFile(topFramePath, "rows=\"35, *\" onload=\"onLoad()\"", true, "navigation", NavigationFileName, "body", interiorFrameName, "frameFuncs.js");
 			WriteFrameFile(interiorFramePath, "cols=\"20%,80%\"", false, "index", UsfxToChapterIndex.ChapIndexFileName, "main", htmName, null);
+		}
+
+		protected override void WriteNavButtons()
+		{
+			WriteNavButtons(true);
+		}
+		/// <summary>
+		/// These files are displayed (typically) in a frame that supplies most navigation. We therefore generate a much simplified set.
+		/// </summary>
+		protected void WriteNavButtons(bool atStart)
+		{
+			int chapNumSize;
+			FormatString(out chapNumSize);
+			string previousFileLink = null;
+			bool lastFileWasCurrent = false;
+			string nextFileLink = null;
+			string previousFile = null;
+			string thisFile = null;
+			for (int i = 0; i < chapterFileList.Count; i++)
+			{
+				string chFile = (string)chapterFileList[i];
+				int cn;
+				if (chFile.StartsWith(currentBookAbbrev))
+				{
+					if (int.TryParse(chFile.Substring(chFile.Length - chapNumSize), out cn) && cn == chapterNumber)
+					{
+						// This file is the one we are generating.
+						thisFile = chFile + ".htm";
+						previousFileLink = previousFile;
+						lastFileWasCurrent = true;
+					}
+					else if (lastFileWasCurrent)
+					{
+						nextFileLink = chFile;
+						break;
+					}
+					previousFile = chFile;
+				}
+			}
+			htm.WriteLine("<div class=\"navButtons\">");
+			if (!string.IsNullOrEmpty(previousFileLink))
+			{
+				previousFileLink += ".htm";
+				htm.WriteLine(
+					"<input type=\"button\" value=\"" + PreviousChapterLinkText + "\" title=\"" + PreviousChapterLinkText +
+					"\" onclick=\"top.location.href='" + TopFrameName(previousFileLink) + "'\"/>");
+			}
+			if (!string.IsNullOrEmpty(nextFileLink))
+			{
+				nextFileLink += ".htm";
+				htm.WriteLine(
+					"<input type=\"button\" value=\"" + NextChapterLinkText + "\" title=\"" + NextChapterLinkText +
+					"\" onclick=\"top.location.href='" + TopFrameName(nextFileLink) + "'\"/>");
+			}
+			if (atStart)
+			{
+				htm.WriteLine("<input id='showNav' type=\"button\" value='" + ShowNavigationButtonText + "' title='" +
+				              ShowNavigationButtonText + "' onclick=\"top.location.href='" + TopFrameName(thisFile) + "'\"/>");
+				htm.WriteLine("<input id='hideNav' type=\"button\" value='" + HideNavigationButtonText + "' title='" +
+							  HideNavigationButtonText + "' onclick=\"top.location.href='" + thisFile + "'\"/>");
+			}
+			htm.WriteLine("</div >");
+		}
+
+		protected override void RepeatNavButtons()
+		{
+			WriteNavButtons(false);
 		}
 
 		/// <summary>

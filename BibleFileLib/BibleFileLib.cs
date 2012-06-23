@@ -6391,7 +6391,7 @@ namespace WordSend
         protected string currentChapterPublished;
         protected string vernacularLongTitle;
         protected string languageCode;
-        int chapterNumber;
+        protected int chapterNumber; // of the file we are currently generating
         int verseNumber;
         protected string currentVerse;
         protected string currentVersePublished;
@@ -6481,12 +6481,10 @@ namespace WordSend
         private string navButtonCode;
         protected Boolean eatSpace = false;
 
-        protected void WriteNavButtons()
+        protected virtual void WriteNavButtons()
         {
             int i;
             string s = string.Empty;
-            string firstChapterFile = string.Empty;
-            string chFile;
             StringBuilder sb = new StringBuilder(s);
             StringBuilder bsb = new StringBuilder(s);
             BibleBookRecord br;
@@ -6497,40 +6495,11 @@ namespace WordSend
                 htm.WriteLine("<div class=\"navButtons\">{0}</div>", homeLinkHTML);
             }
 
-            // We use 2 digits for chapter numbers in file names except for in the Psalms, where we use 3.
-            string formatString = "00";
-            int chapNumSize = 2;
-            if (currentBookAbbrev.CompareTo("PSA") == 0)
-            {
-                formatString = "000";
-                chapNumSize = 3;
-            }
+        	int chapNumSize;
+        	var formatString = FormatString(out chapNumSize);
+        	string firstChapterFile = FirstChapterFile(formatString);
 
-            // Figure out what the file name of the contents page or first chapter is, allowing for
-            // possible (likely) missing contents pages or chapter 1.
-            if (hasContentsPage)
-            {
-                i = 0;
-                firstChapterFile = String.Format("{0}{1}.htm", currentBookAbbrev, i.ToString(formatString));
-            }
-            else
-            {
-                i = 0;
-                while ((i < chapterFileList.Count) && (firstChapterFile == String.Empty))
-                {
-                    chFile = (string)chapterFileList[i];
-                    if (chFile.StartsWith(currentBookAbbrev))
-                    {
-                        // The first match for this book might be chapter 1 or, if that is missing, a later chapter.
-                        firstChapterFile = chFile + ".htm";
-                    }
-                    i++;
-                }
-
-            }
-
-
-            if (bookListIndex >= 0)
+        	if (bookListIndex >= 0)
             {
                 htm.WriteLine("<div class=\"navButtons\"><a href=\"index.htm\">{0}</a> <a href=\"{1}\">{2}</a> {3}</div>",
                     langName, firstChapterFile, bookRecord.vernacularHeader, currentChapterPublished);
@@ -6593,7 +6562,7 @@ namespace WordSend
                 int nextChapIndex = -1;
                 for (i = 0; i < chapterFileList.Count; i++)
                 {
-                    chFile = (string)chapterFileList[i];
+                    string chFile = (string)chapterFileList[i];
                     int cn;
                     if (chFile.StartsWith(currentBookAbbrev) && (int.TryParse(chFile.Substring(chFile.Length - chapNumSize), out cn)))
                     {
@@ -6653,7 +6622,43 @@ namespace WordSend
             navButtonCode = navButtonCode.Replace("ch1", "ch2");
         }
 
-		/// <summary>
+		// We use 2 digits for chapter numbers in file names except for in the Psalms, where we use 3.
+    	protected string FormatString(out int chapNumSize)
+    	{
+    		string formatString = "00";
+    		chapNumSize = 2;
+    		if (currentBookAbbrev.CompareTo("PSA") == 0)
+    		{
+    			formatString = "000";
+    			chapNumSize = 3;
+    		}
+    		return formatString;
+    	}
+
+    	/// <summary>
+		/// Figure out what the file name of the contents page or first chapter of the current book is, allowing for
+		/// possible (likely) missing contents pages or chapter 1.
+		/// </summary>
+		/// <param name="formatString"></param>
+		/// <returns></returns>
+		protected string FirstChapterFile(string formatString)
+		{
+			if (hasContentsPage)
+				return String.Format("{0}{1}.htm", currentBookAbbrev, 0.ToString(formatString));
+			string firstChapterFile = "";
+			for (int i = 0; (i < chapterFileList.Count) && (firstChapterFile == String.Empty); i++)
+			{
+				string chFile = (string) chapterFileList[i];
+				if (chFile.StartsWith(currentBookAbbrev))
+				{
+					// The first match for this book might be chapter 1 or, if that is missing, a later chapter.
+					firstChapterFile = chFile + ".htm";
+				}
+			}
+			return firstChapterFile;
+		}
+
+    	/// <summary>
 		/// In html, option selected can start out with just this, but xhtml requires the attribute to have a value.
 		/// </summary>
     	protected virtual string OptionSelectedOpeningElement
@@ -6661,7 +6666,7 @@ namespace WordSend
     		get { return "<option selected>"; }
     	}
 
-    	protected void RepeatNavButtons()
+    	protected virtual void RepeatNavButtons()
         {
             htm.WriteLine(navButtonCode);
         }
