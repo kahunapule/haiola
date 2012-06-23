@@ -26,10 +26,31 @@ namespace BibleFileLib
 
 		StreamWriter htm;
 
+		public UsfxToChapterIndex()
+		{
+			IntroductionLinkText = "Introduction";
+		}
+
 		/// <summary>
 		/// The text to use for the link to the concordance; leave null for no concordance (link).
 		/// </summary>
 		public string ConcordanceLinkText { get; set; }
+
+		/// <summary>
+		/// The (localized) text to use for links to book introductions.
+		/// </summary>
+		public string IntroductionLinkText { get; set; }
+
+		/// <summary>
+		/// If this is set, it is a folder in which we look for files XXX_Introduction.htm. If one is found for a particular book, it is copied to the output folder,
+		/// and a link is made to it. 
+		/// </summary>
+		public string IntroductionDirectory { get; set; }
+
+		/// <summary>
+		/// The string we append to a book ID to get the introduction file name for that book, if any.
+		/// </summary>
+		public const string IntroductionSuffix = "_Introduction.htm";
 
 		public void Generate(string usfxPath, string chapterIndexPath)
 		{
@@ -142,7 +163,14 @@ namespace BibleFileLib
 							htm.WriteLine("<p class=\"IndexBookName\"><a target=\"_top\" href=\""
 								+ UsfxToFramedHtmlConverter.TopFrameName(bookId, 0) + "\">" // bookid00{0} is the id generated for the TOC page.
 								+ usfxToHtmlConverter.EscapeHtml(vernacularName) + "</a></p>");
-							// Todo: figure out whether book has introduction and if so write out a link.
+							// If we have an introduction file for this book generate a link to it.
+							string introductionFileName = bookId + IntroductionSuffix;
+							if (File.Exists(Path.Combine(IntroductionDirectory, introductionFileName)))
+							{
+								htm.WriteLine("<p class=\"IndexIntroduction\"><a target=\"_top\" href=\""
+								              + UsfxToFramedHtmlConverter.TopFrameName(introductionFileName) + "\">"
+								              + usfxToHtmlConverter.EscapeHtml(IntroductionLinkText) + "</a></p>");
+							}
 							if (chapterNumber > 1)
 							{
 								htm.WriteLine("<p class=\"IndexChapterList\">" + chapterLinks + "</p>");

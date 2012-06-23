@@ -38,7 +38,19 @@ namespace BibleFileLib
 		/// <returns></returns>
 		public static string TopFrameName(string bookId, int chap)
 		{
-			return MainFramePrefix + HtmName(bookId, chap);
+			return TopFrameName(HtmName(bookId, chap));
+		}
+
+		/// <summary>
+		/// Return the frame file to use for the specified main file.
+		/// This needs to be consistent with MainFileLinkTarget, but unfortunately we can't call that, because this method
+		/// needs to be static, while the other needs to be virtual.
+		/// </summary>
+		/// <param name="mainFileName"></param>
+		/// <returns></returns>
+		public static string TopFrameName(string mainFileName)
+		{
+			return MainFramePrefix + mainFileName;
 		}
 
 		/// <summary>
@@ -101,7 +113,7 @@ namespace BibleFileLib
 			htmNav.Close();
 		}
 
-		protected override void MakeFramesFor(string htmPath)
+		public override void MakeFramesFor(string htmPath)
 		{
 			string htmName = Path.GetFileName(htmPath);
 			string directory = Path.GetDirectoryName(htmPath);
