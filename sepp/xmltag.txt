@@ -1,0 +1,175 @@
+id***	10	description[@type='usfm' and @subType='x-id']
+ide	50	description[@type='usfm' and @subType='x-ide']
+h	50	title[@short='---']
+h1	50	title[@short='---']
+h2	50	"title[@type=""runningHead"" and placement=""insideHead"" and @short='---']"
+h3	50	"title[@type=""runningHead"" and placement=""outsideHead"" and @short='---']"
+rem	50	"description[@type=""usfm"" and subType=""x-rem""]"
+restore	50	"description[@type=""usfm"" and subType=""x-restore""]"
+imt	"50,60,61"	"div[@type=""introduction"" and @canonical=""false""]/title[@type=""main""]/title[@level=""1""]"
+imt1	"50,60,61"	"div[@type=""introduction"" and @canonical=""false""]/title[@type=""main""]/title[@level=""1""]"
+imt2	"50,60,61"	"div[@type=""introduction"" and @canonical=""false""]/title[@type=""main""]/title[@level=""2""]"
+imt3	"50,60,61"	"div[@type=""introduction"" and @canonical=""false""]/title[@type=""main""]/title[@level=""3""]"
+imt4	"50,60,61"	"div[@type=""introduction"" and @canonical=""false""]/title[@type=""main""]/title[@level=""4""]"
+imte	"50,60,61"	"div[@type=""introduction"" and @canonical=""false""]/title[@type=""main""]/title[@level=""1""]"
+is	"50,55,60"	"div[@type=""introduction"" and @canonical=""false""]/div[@type=""section""]/title"
+is1	"50,55,60"	"div[@type=""introduction"" and @canonical=""false""]/div[@type=""section""]/title"
+is2	"50,55,56,60"	"div[@type=""introduction"" and @canonical=""false""]/div[@type=""section""]/div[@type=""subSection""]/title"
+iot	"50,60,61"	"div[@type=""introduction"" and @canonical=""false""]//div[@type=""outline""]/title"
+io1	"50,60,61,62"	"div[@type=""introduction"" and @canonical=""false""]//div[@type=""outline""]/list/item"
+io2	"50,60,61,62, 63,64"	"div[@type=""introduction"" and @canonical=""false""]//div[@type=""outline""]/list/item/list/item"
+io3	"50,60,61,62, 63,64,65,66"	"div[@type=""introduction"" and @canonical=""false""]//div[@type=""outline""]/list/item/list/item/list/item"
+io4	"50,60,61,62, 63,64,65,66, 67,68"	"div[@type=""introduction"" and @canonical=""false""]//div[@type=""outline""]/list/item/list/item/list/item/list/item"
+ior	"50,60,61,62,90"	"div[@type=""introduction"" and @canonical=""false""]//div[@type=""outline""]/list/item/reference"
+ip	"50,60"	"div[@type=""introduction"" and @canonical=""false""]//p"
+im	"50,60"	"div[@type=""introduction"" and @canonical=""false""]//p[@type=""x-continued""]"
+ipi	"50,60,61,62"	"div[@type=""introduction"" and @canonical=""false""]//list/item/p"
+imi	"50,60,61"	"div[@type=""introduction"" and @canonical=""false""]//list/item"
+ipq	"50,60,70"	"div[@type=""introduction"" and @canonical=""false""]//q/p"
+imq	"50,60"	"div[@type=""introduction"" and @canonical=""false""]//q"
+ipr	"50,90"	"div[@type=""introduction"" and @canonical=""false""]//reference"
+ib***		See notes below on \m and \b
+iq	"50,60,61"	"div[@type=""introduction"" and @canonical=""false""]//lg/l[@level=""1""]"
+iq1	"50,60,61"	"div[@type=""introduction"" and @canonical=""false""]//lg/l[@level=""1""]"
+iq2	"50,60,61"	"div[@type=""introduction"" and @canonical=""false""]//lg/l[@level=""2""]"
+iq3	"50,60,61"	"div[@type=""introduction"" and @canonical=""false""]//lg/l[@level=""3""]"
+iex	55	"div[@type=""bridge""]"
+c***		chapter\@osisID and chapter\@n
+ca	50	"chapter[n=""---"" and @type=""x-alternate"""
+cp	50	"chapter[n=""---"" and @type=""x-publishable""]"
+cl	50	"title[@type=""chapter""]"
+cd	50	"title[@type=""x-description""]"
+v***		verse\@osisID and verse\@n
+va	90	"verse[n=""---"" and @type=""x-alternate""]"
+vp	90	"verse[n=""---"" and @type=""x-publishable""]"
+p	50	p
+m	50	"p[@type=""x-continued""]"
+pmo	"50,70"	"q[@type=""embedded""]/salute"
+pm	"50,70"	"q[@type=""embedded""]/p"
+pmc	"50,70"	"q[@type=""embedded""]/closer"
+pmr	"50,70"	"q[@type=""embedded""]/p[@type=""x-refrain""]"
+pi	"50,65,66"	list/item/p
+pi1	"50,65,66"	list/item/p
+pi2	"50,65,66,67, 68"	list/item/list/item/p
+pi3	"50,65,66,67, 68,69,70"	list/item/list/item/list/item/p
+ph	"50,65"	list/item
+ph1	"50,65"	list/item
+ph2	"50,65,66,67"	list/item/list/item
+ph3	"50,65,66,67,68,69"	list/item/list/item/list/item
+pc	50	inscription
+pr	50	"p[@type=""x-refrain""]"
+mi	"50,70"	"q[@type=""embedded""]/p[@type=""x-continued""]"
+nb	50	"p[@type=""x-continued"" and @subType=""x-nb""]"
+cls	50	closer
+q	"50,61"	"lg/l[@level=""1""]"
+q1	"50,61"	"lg/l[@level=""1""]"
+q2	"50,61"	"lg/l[@level=""2""]"
+q3	"50,61"	"lg/l[@level=""3""]"
+qc	"50,61"	"lg/l[@type=""doxology""]"
+qr	"50,61"	"lg/l[@type=""refrain""]"
+qs	"50,61"	"lg/l[@type=""selah""]"
+qa	"50,61"	"lg/l[@type=""acrostic""]"
+qac	90	"hi[@type=""x-acrostic""]"
+qm	"50,61,62"	"q[@type=""embedded""]/lg/l[@level=""1""]"
+qm1	"50,61,62"	"q[@type=""embedded""]/lg/l[@level=""1""]"
+qm2	"50,61,62"	"q[@type=""embedded""]/lg/l[@level=""2""]"
+qm3	"50,61,62"	"q[@type=""embedded""]/lg/l[@level=""3""]"
+b***		See notes below on \m and \b
+mt	"10,50,51"	"div[@type=""book""]/title[@type=""main""]/title[@level=""1""]"
+mt1	"10,50,51"	"div[@type=""book""]/title[@type=""main""]/title[@level=""1""]"
+mt2	"10,50,51"	"div[@type=""book""]/title[@type=""main""]/title[@level=""2""]"
+mt3	"10,50,51"	"div[@type=""book""]/title[@type=""main""]/title[@level=""3""]"
+mt4	"10,50,51"	"div[@type=""book""]/title[@type=""main""]/title[@level=""4""]"
+mte	"10,50,51"	"div[@type=""book""]/title[@type=""main""]/title[@level=""1""]"
+mte1	"10,50,51"	"div[@type=""book""]/title[@type=""main""]/title[@level=""1""]"
+mte2	"10,50,51"	"div[@type=""book""]/title[@type=""main""]/title[@level=""2""]"
+ms	"18,50"	"div[@type=""majorSection""]/title"
+ms1	"18,50"	"div[@type=""majorSection""]/title"
+ms2	"18,19,50"	"div[@type=""majorSection""]/div[@type=""majorSection""]/title"
+mr	"50,60"	"title[@type=""scope""]/reference"
+s	"20,60"	"div[@type=""section""]/title"
+s1	"20,60"	"div[@type=""section""]/title"
+s2	"21,60"	"div[@type=""subSection""]/title"
+s3	"21,22,60"	"div[@type=""subSection""]/div[@type=""subSection""]/title"
+s4	"21,22,23,60"	"div[@type=""subSection""]/div[@type=""subSection""]/div[@type=""subSection""]/title"
+r	"50,60"	title[@type='parallel']/reference
+sp	"30,50"	speech/speaker
+d	50	"title[@type=""psalm""]"
+tr	"50,60"	table/row
+th1	"60,70"	"row[@role=""label""]/cell"
+th2	"60,70"	"row[@role=""label""]/cell"
+th3	"60,70"	"row[@role=""label""]/cell"
+th4	"60,70"	"row[@role=""label""]/cell"
+tc1	"60,70"	row/cell
+tc2	"60,70"	row/cell
+tc3	"60,70"	row/cell
+tc4	"60,70"	row/cell
+thr1	"60,70"	"row[@role=""label""]/cell[@align='right']"
+thr2	"60,70"	"row[@role=""label""]/cell[@align='right']"
+thr3	"60,70"	"row[@role=""label""]/cell[@align='right']"
+thr4	"60,70"	"row[@role=""label""]/cell[@align='right']"
+tcr1	"60,70"	row/cell[@align='right']
+tcr2	"60,70"	row/cell[@align='right']
+tcr3	"60,70"	row/cell[@align='right']
+tcr4	"60,70"	row/cell[@align='right']
+li	"50,65"	list/item
+li1	"50,65"	list/item
+li2	"50,65,66,67"	list/item/list/item
+li3	"50,65,66,67, 68,69"	list/item/list/item/list/item
+li4	"50,65,66,67, 68,69,70,71"	list/item/list/item/list/item/list/item
+f	80	note
+fe	80	"note[@placement=""end""]"
+fr	90	"reference[@type=""source""]"
+fk	90	catchWord
+ft***		"text within the <note> element, may serve to indicate the end of text of another format marker"
+fq	90	q
+fqa	90	rdg
+fv	90	"seg[@type=""verseNumber""]"
+fdc	90	"seg[@editions=""dc""]"
+rq	90	"note[@type=""x-quoteSource""]"
+x	80	"note[@type=""crossReference""]"
+xo	80,90	"note[@type=""crossReference""]/reference[@type=""source""]"
+xt***		"text within the <note> element, may serve to indicate the end of text of another format marker"
+xk	80,90	"note[@type=""crossReference""]/catchWord"
+xq	80,90	"note[@type=""crossReference""]/q"
+xdc	80,90	"note[@type=""crossReference""]/seg[@editions=""dc""]"
+w	90	"index[@index=""word"" and @level1=""---""]"
+wh	90	"index[@index=""hebrew"",@level1=""---""]"
+wg	90	"index[@index=""greek"",@level1=""---""]"
+ndx	90	"index[@index=""subject"",@level1=""---""]"
+fig***		"figure (map attributes to the ""|"" separated values)"
+sls	90	"foreign[@type=""x-secondaryLanguage""]"
+add	90	"transChange[@type=""added""]"
+dc	90	"transChange[@type=""added"" and @editions=""dc""]"
+lit	"50,61"	lg[@type='doxology']/l[@type='refrain']
+nd	90	divineName
+qt	90	"seg[@type=""otPassage""]"
+bk	90	"reference[@type=""x-bookName""]"
+sig	90	signed
+tl	90	foreign
+ord	90	"hi[@type=""super""]"
+pn	90	name
+k	90	"seg[@type=""keyword""]"
+no	90	"hi[@type=""normal""]"
+it	90	"hi[@type=""italic""]"
+bd	90	"hi[@type=""bold""]"
+bdit	"90,91"	"hi[@type=""bold""]/hi[@type=""italic""]"
+em	90	"hi[@type=""emphasis""]"
+sc	90	"hi[@type=""small-caps""]"
+pb	90	"milestone[@type=""pb""]"
+pub	20	"div[@type=""publicationData""]"
+toc	20	"div[@type=""tableOfContents""]"
+pref	20	"div[@type=""preface""]"
+intro***	20	"div[@type=""introduction""]"
+conc	20	"div[@type=""concordance""]"
+glo	20	"div[@type=""glossary""]"
+idx	20	"div[@type=""index""]"
+maps	20	"div[@type=""map""]"
+cov	20	"div[@type=""coverPage""]"
+spine	20	"div[@subtype=""x-spine""]"
+pubinfo***	20	"Encode in using the Doublin Core elements in <work> in the header.  If for presentation purposes this may be encoded within div[@type=""publicationData""]"
+phi	"50,65"	list/item
+tr1***		treat same as tr
+tr2***		treat same as tr
+ps	50	p
+psi	"50,65,66"	list/item/p
