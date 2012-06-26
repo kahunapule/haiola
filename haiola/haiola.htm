@@ -1,0 +1,373 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+
+  
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8"><title>Haiola documentation</title>
+  
+
+  
+  
+  <style type="text/css">
+	<!--
+		@page { margin: 0.79in }
+		H1 { margin-bottom: 0.08in }
+		H1.western { font-family: "Arial", sans-serif; font-size: 16pt; so-language: en-AU }
+		H1.cjk { font-family: "AR PL UMing HK"; font-size: 16pt }
+		H1.ctl { font-family: "Lohit Hindi"; font-size: 16pt }
+		P { margin-bottom: 0.08in }
+		P.western { so-language: en-AU }
+		H2 { margin-bottom: 0.08in }
+		H2.western { font-family: "Arial", sans-serif; font-size: 14pt; so-language: en-AU; font-style: italic }
+		H2.cjk { font-family: "AR PL UMing HK"; font-size: 14pt; font-style: italic }
+		H2.ctl { font-family: "Lohit Hindi"; font-size: 14pt; font-style: italic }
+		A:link { so-language: zxx }
+	-->
+	</style></head><body>
+<h1><a href="http://haiola.org">Haiola</a> Documentation</h1>
+
+<h2>What is Haiola?</h2>
+
+<p>Haiola is free and open
+source software that assists people in publishing the Holy Bible or
+portions thereof in many formats. It converts Scriptures in a source
+format to many output formats. The initial source format supported is
+Unicode USFM. USFX is also supported. We plan future support for
+importing USX files, as well. Currently, Haiola supports one style of
+HTML output, plus USFX as an output. In the future, it will support
+conversions to multiple styles of HTML, PDF, and formats used by
+various Bible study programs and electronic book reader devices and
+software.</p>
+
+<h2>Notice</h2>
+
+<p>You are responsible to make sure that you abide by all applicable
+copyright laws and the rules of the applicable Bible translation
+agencies when publishing Scripture. More importantly, due care
+appropriate to handling God's Word
+is your responsibility.</p>
+
+<h2>What is the status of Haiola?</h2>
+
+<p><span style="font-weight: bold;">This program is under construction.</span>
+It does useful things for the authors, and we have reason to believe
+that it will do so for you, too, but please <span style="font-weight: bold;">use it at your own risk</span>, and only
+with data that you<span style="font-weight: bold;"> back up frequently</span>.
+This is a sort
+of a partial alpha release, but the parts that are done are useful
+and in operational use. We believe that it is better to build
+incrementally, and release frequently as new features are added or
+other improvements are made. This allows for early feedback as to
+what works, what doesn’t work so well, and what would be best to
+work on, next. However, this also means that you need to <span style="font-weight: bold;">use this
+program with due caution</span>. <span style="font-weight: bold;">Back
+up your important data frequently. </span>I
+never try to make mistakes, and I test this software on my system,
+but I never tried it on your system with your data. <span style="font-weight: bold;">This is not
+consumer-level software.</span> There aren’t many error traps. Strange
+data will cause very strange results and/or strange messages, so please
+watch for error
+messages and check your outputs to make sure they look reasonable.<br>
+</p>
+
+<p>Haiola is a free and open source collection of
+programs. It inherits major portions of Prophero and WordSend.</p>
+
+<h2>What is new in Haiola?</h2>
+
+<p><a href="http://haiola.org/download">See the change log for the list of recent changes.</a></p>
+
+<h2>What is required to run Haiola?</h2>
+
+<p>The following prerequisites must be met to run
+Haiola:</p>
+
+<ul>
+
+  <li>A relatively modern computer running a
+reasonably current version Linux, Mac OS X, and/or Windows. (I only
+test with the
+most recent version of Ubuntu Linux, Mac OS X Lion, and
+Windows 7. Your results may
+vary if you use a different operating system.)</li>
+  <li>
+    <p>Above-average computer literacy, including
+knowledge of file systems, files, and the ability to write a batch file
+or shell script. It is helpful if you know same simple programming.</p>
+  </li>
+  <li>
+    <p>Knowledge of text encoding, including Unicode</p>
+  </li>
+  <li>
+    <p>Detailed knowledge of the USFM standard</p>
+  </li>
+  <li>
+    <p>Familiarity with some of the electronic formats
+that Scriptures (and books in general) can be distributed in</p>
+  </li>
+  <li>
+    <p>Familiarity with a plain text editor, like
+Notepad, Gedit, Kate, UltraEdit, TextWrangler, etc.</p>
+  </li>
+  <li>
+    <p>Familiarity with regular expressions</p>
+  </li>
+  <li>
+    <p>Familiarity with the command line of your
+operating system<br>
+    </p>
+  </li>
+  <li>
+    <p>The latest version of Mono or Microsoft .NET run
+time version 3.5</p>
+  </li>
+  <li>Scripture input files that are encoding using <a href="http://unicode.org/">Unicode</a> UTF-8 character encoding and
+which conform exactly to the <a href="http://ubs-icap.org/usfm">USFM
+standard</a>. </li>
+  <li>
+    <p>Reading this document. </p>
+  </li>
+  <li>
+    <p>This program has no technical support or help desk
+department, so if you need help with basic knowledge about using a
+computer, including writing a simple batch file or shell script, you
+will need to get that from another source. We can help you after you
+get to that level.</p>
+  </li>
+</ul>
+
+<h2>How does Haiola work?</h2>
+
+<p>Haiola is a file format conversion
+program. It works with a mandatory directory structure and some
+auxiliary files. Rather than doing the traditional thing and
+specifying input file locations one by one, using this directory
+structure saves a lot of time for both the user and the programmer,
+at least when processing large numbers of language projects. For each
+Bible translation project, you enter some meta-data (information about
+the project), then run the conversions on that project or on all
+selected projects. Some of the details as to what to do with the
+outputs are left up to you, either to process manually or to supply a
+script or batch file to process them.<br>
+</p>
+
+<h2>How do I install Haiola on Microsoft Windows?</h2>
+
+1. Install prerequisites: <a href="http://scripts.sil.org/Andika_download">SIL Andika Font</a>, <a href="http://scripts.sil.org/cms/scripts/page.php?item_id=Gentium_download">SIL
+Gentium Plus Font</a>, and <a href="http://msdn.microsoft.com/en-us/netframework/cc378097">Microsoft
+.NET Framework 3.5 SP 1</a> and/or <a href="http://www.go-mono.com/mono-downloads/download.html">Mono for
+Windows</a>.<br>
+
+2. Download and run the Haiola Windows installation program from <a href="http://haiola.org">haiola.org</a>.<br>
+
+3. Run Haiola. On the first run, you will be asked to specify where you
+want to put your data files. Normally, this is in the BibleConv folder
+in your Documents folder.<br>
+
+<h2>How do I install Haiola on OS X?</h2>
+
+1. Install prerequisites: <a href="http://scripts.sil.org/Andika_download">SIL Andika Font</a>, <a href="http://scripts.sil.org/Gentium">SIL Gentium Plus Font</a>, and <a href="http://www.go-mono.com/mono-downloads/download.html">Mono for
+Mac OS X</a>.<br>
+
+2. <a href="http://haiola.org">Download</a> the Haiola Mac OS X disk
+image file, open it, and drag the application bundle to your
+Application directory.<br>
+
+3. Run Haiola. On the first run, you will be asked to specify where you
+want to put your data files. Normally, this is in the BibleConv folder
+in your Documents folder.<br>
+
+<h2>How do I install Haiola on Linux?</h2>
+
+1. Install prerequisites: <a href="http://scripts.sil.org/Andika_download">SIL Andika Font</a>, <a href="http://scripts.sil.org/Gentium">SIL Gentium Plus Font</a>, and <a href="http://www.go-mono.com/mono-downloads/download.html">Mono for
+Linux</a>. (These may be available in your distribution package
+management system. For Ubuntu, you can get the latest SIL fonts from
+"apt source deb http://packages.sil.org/ubuntu distro main", where
+"distro" is your current distribution (i. e. onieric).)<br>
+
+2. <a href="http://haiola.org/">Download</a>
+the Haiola distribution
+.zip file and unzip it to a suitable location in your file system. Note
+that there are several files in the haiola.zip file that haiola.exe
+must be able to find for things to work right. The best way to ensure
+that is to place them all together in the same directory.<br>
+
+3. Customize start-up scripts or icons to start Haiola with mono. If
+you installed Haiola in ~/haiola/, the command to start it would be
+"mono ~/haiola/haiola.exe".<br>
+
+4. Run Haiola. On the first run, you will be asked to specify where you
+want to put your data files. Normally, this is in "~/BibleConv".<br>
+
+<br>
+
+Note: the manual installation process also works with Microsoft
+Windows, installing to a USB memory stick or any other directory, as
+long as Mono or Microsoft .NET 3.5 SP 1 are avialable. It even works on
+Mac OS X, if you don't mind using the command line to launch it (a very
+un-Mac-like thing to do). A proper .deb installation package could be
+produced later if someone volunteers to do it and/or enough people
+request it.<br>
+
+<h2>What is the required directory structure?</h2>
+
+<p>The root of the directory structure can be
+anywhere in the file system that you have read and write permissions.
+It is normally a directory called “BibleConv” in your Documents
+directory, on an external device, or on a network drive. You choose
+which directory you want to contain your Haiola project data during
+your first run of Haiola, or at any later time using
+the “Set data directory” button. Under the
+BibleConv directory, Haiola will create Work, Site, and
+FilesToCopyToOutput directories.</p>
+
+<p>Note that Haiola is designed to work on multiple operating systems.
+Most Linux file systems are case sensitive.
+Windows is not. MacOS is normally not case sensitive, but supports case
+sensitive file systems, too. Linux and Mac OS use “/” to separate
+directories, and
+Windows uses “\”. In my examples, I'll use one or the other
+style, and leave it to you to adjust when necessary to fit your
+operating system.</p>
+
+<p>BibleConv<br>
+&nbsp;&nbsp; input<br>
+&nbsp;&nbsp; &nbsp;&nbsp; project folders, normally named by
+translation identifier<br>
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; Source<br>
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; Unicode USFM files
+for this project<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -or-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; usfx<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; USFX file for import<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -or-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; usx<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; USX files (i. e. an unziped Digital Bible Library bundle)<br>
+&nbsp;&nbsp; output<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; epub<br>
+
+
+
+
+
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; html<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sql<br>
+
+
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; usfm<br>
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; usfx<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; wordml<br>
+</p>
+<p>Of the folders above, the ones you create are the project folders
+and ONE of Source, usfx, or usx folder for input under each project
+folder. Haiola checks for Source (USFM files) first, then if that
+directory doesn't exist, it checks for usfx, then if that doesn't
+exist, it checks for usx. You then fill the Source, usfx, or usx folder
+with the appropriate input files for
+that Bible translation. For example, if you have a Bible translation
+(or portion of a translation) for a language with Ethnologue code "abc"
+(Ambala Ayta), you would create a folder like
+BibleConv/Work/abc/Source/ and then put the USFM files in there. The
+USFM files should use Unicode UTF-8 text encoding. </p>
+
+
+<h2>What auxiliary files does Haiola use?</h2>
+
+<p>Besides the files in the installation bundle, you provide any
+regular expression substitution files to operate on the input files to
+convert them to USFM. This is a systematic way to consistently change a
+marker that isn't consistent with the USFM standard, or possibly clean
+up some encoding issues. By default, fixquotes.re is called, which
+turns &lt;&lt; and &gt;&gt; into typographic quotes, etc. The regular
+expression files are UTF-8 text files whose file name must end in
+".re". On each line, the first character is taken as a delimiter that
+separates the "find" portion from the "replace" portion of the line and
+also ends the "replace" portion of the line. For example:</p>
+
+<p>/speeling/spelling/</p>
+
+<p>See fixquotes.re for another example. See <a href="http://en.wikipedia.org/wiki/Regular_expression">http://en.wikipedia.org/wiki/Regular_expression</a>
+for more about regular expressions. It is wise to test your regular
+expressions to make sure they do what you think they should do before
+trusting the transformation.</p>
+
+<p>For HTML output, prophero.css is copied from the project directory,
+if it is there, otherwise it is copied from the input directory to the
+output/html directory.</p>
+
+<p>On the processes tab, you may specify additional programs or scripts
+to run after Haiola does its transformations. Use of these
+transformations are optional. I use them to create digital signatures
+and zip files of the various output formats, then to copy the output
+files to a local image of a file server in the appropriate places for
+each project. It is up to you if you want to automate that stuff or
+just use a graphical file manager to do all of that.<br>
+</p>
+
+<h2>Who is writing Haiola?</h2>
+
+<p>Haiola uses pieces written by Dave van Grootheest, John Duerkson,
+John Thomson, Nathan Miles, Michael Paul Johnson, and possibly some
+other people. (Kahunapule) Michael Paul Johnson is currently the only
+active programmer working on this project. Haiola inherits open source
+code from Onyx, WordSend, and Prophero. (Prophero was called SEPP at
+one time, and that name lives on in the source code, too.)<br>
+</p>
+
+<h2>Where did the name “Haiola” come from?</h2>
+
+<p>Haiola is derived from the Hawaiian phrase “ha’i
+ola”, which means “preach salvation”. It is really Prophero
+with a new user interface and several updates. We (mostly) left the
+name
+“Prophero” behind because of confusion with a similar product. We
+have prior claim to the name, but it wasn’t worth the hassle and
+confusion of fighting for it.</p>
+
+<h2>Support</h2>
+
+I don't promise support with this program, but I do want it to work for
+you. I also want to make this program better. If you have read this
+document and still need help, you may send email via a secure web form
+at <a href="https://cryptography.org/cgi-bin/contact.cgi">https://cryptography.org/cgi-bin/contact.cgi</a>
+with <span style="font-weight: bold;">enough information that I don't
+have to guess what the problem is</span>.
+Since this document is published on the open Internet, I don't want to
+include a plain reference to any of my current email addresses, but if
+you concatinate "Michael", the first initial of my last name, the usual
+email separator between name and domain, and the domain of the "YWAM"
+link, below, that should work. Or, just use the contact URL above.
+Remember the part about reading this document first. Also, make sure
+you have the most recent version of this program if you have a problem,
+just to make sure I haven't already fixed whatever is bugging you.<br>
+
+<br>
+
+If you want to get announcements of what is new with Haiola, please
+sign up for the announcement email list at <a href="http://groups.google.com/group/haiola?hl=en">http://groups.google.com/group/haiola?hl=en</a>.<br>
+
+<h2>Copyright and Permission to Copy</h2>
+
+<p>Copyright © 2012 <a href="http://www.sil.org">SIL</a>, <a href="http://www.evangelbible.org">EBT</a>, <a href="http://uofnkona.edu">YWAM</a>, and <a href="http://mljohnson.org">Michael Paul Johnson</a>.</p>
+
+<p>This program is free software: you can redistribute it and/or modify
+it under the terms of the <a href="lgpl-3.0-standalone.html">GNU
+Lesser General Public License</a> as published by the Free Software
+Foundation, either version 3 of the License,
+or (at your option) any later version.</p>
+
+<p>This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the <a href="lgpl-3.0-standalone.html">GNU Lesser General Public License</a>
+and <a href="gpl-3.0-standalone.html">GNU General Public License</a>
+for more details.</p>
+
+<p>You should have received a copy of the <a href="gpl-3.0-standalone.html">GNU General Public License</a> along
+with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
+
+<h2>Source Code</h2>
+
+<p>Source code for Haiola is available in redundant <a href="http://mercurial.selenic.com/">Mercurial</a> repositories at <a href="http://projects.palaso.org/projects/show/prophero">Palaso</a>
+and <a href="https://code.google.com/p/haiola/">Google Code</a>.</p>
+
+<p><br>
+</p>
+
+</body></html>
