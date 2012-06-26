@@ -1,8 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html><head>
+
   
-  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8">
-  <title>Haiola documentation</title>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8"><title>Haiola documentation</title>
+  
 
   
   
@@ -21,8 +22,7 @@
 		H2.ctl { font-family: "Lohit Hindi"; font-size: 14pt; font-style: italic }
 		A:link { so-language: zxx }
 	-->
-	</style>
-</head><body>
+	</style></head><body>
 <h1><a href="http://haiola.org">Haiola</a> Documentation</h1>
 
 <h2>What is Haiola?</h2>
@@ -236,19 +236,37 @@ translation identifier<br>
 &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; Source<br>
 &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; Unicode USFM files
 for this project<br>
-&nbsp;&nbsp; output<br>
-&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; html<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -or-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; usfx<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; USFX file for import<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -or-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; usx<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; USX files (i. e. an unziped Digital Bible Library bundle)<br>
+&nbsp;&nbsp; output<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; epub<br>
+
+
+
+
+
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; html<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sql<br>
+
+
 &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; usfm<br>
 &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; usfx<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; wordml<br>
 </p>
-
 <p>Of the folders above, the ones you create are the project folders
-and Source folders. You then fill the Source folder with USFM files for
+and ONE of Source, usfx, or usx folder for input under each project
+folder. Haiola checks for Source (USFM files) first, then if that
+directory doesn't exist, it checks for usfx, then if that doesn't
+exist, it checks for usx. You then fill the Source, usfx, or usx folder
+with the appropriate input files for
 that Bible translation. For example, if you have a Bible translation
 (or portion of a translation) for a language with Ethnologue code "abc"
 (Ambala Ayta), you would create a folder like
 BibleConv/Work/abc/Source/ and then put the USFM files in there. The
 USFM files should use Unicode UTF-8 text encoding. </p>
+
 
 <h2>What auxiliary files does Haiola use?</h2>
 
