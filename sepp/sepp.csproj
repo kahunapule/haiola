@@ -75,6 +75,7 @@
   <ItemGroup>
     <Compile Include="BookNamePageGenerator.cs" />
     <Compile Include="ChapterSplitter.cs" />
+    <Compile Include="ConcGenerator.cs" />
     <Compile Include="ExternalProgramConverter.cs" />
     <Compile Include="HTML_To_BibleReadingGuide.cs" />
     <Compile Include="InputFileInfo.cs" />

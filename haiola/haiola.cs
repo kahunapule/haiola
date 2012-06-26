@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
+using BibleFileLib;
 using Microsoft.Win32;
 using WordSend;
 using sepp;
@@ -111,13 +112,17 @@ namespace haiola
                 Close();
             }
         }
-
         private void EnsureTemplateFile(string fileName)
+        {
+        	EnsureTemplateFile(fileName, m_inputDirectory);
+        }
+ 
+        private void EnsureTemplateFile(string fileName, string destDirecgtory)
         {
             try
             {
                 string sourcePath = WordSend.SFConverter.FindAuxFile(fileName);
-                string destPath = Path.Combine(m_inputDirectory, fileName);
+				string destPath = Path.Combine(destDirecgtory, fileName);
                 if ((!File.Exists(destPath)) && (File.Exists(sourcePath)))
                 {
                     File.Copy(sourcePath, destPath);
@@ -341,7 +346,7 @@ namespace haiola
         private void ConvertUsfmToUsfx()
         {
             string UsfmDir = Path.Combine(m_outputProjectDirectory, "usfm");
-            string UsfxPath = Path.Combine(m_outputProjectDirectory, "usfx");
+            string UsfxPath = GetUsfxDirectoryPath();
             if (!Directory.Exists(UsfmDir))
             {
                 MessageBox.Show(this, UsfmDir + " not found!", "ERROR");
@@ -368,20 +373,36 @@ namespace haiola
 
             // Write out the USFX file.
             SFConverter.scripture.languageCode = m_options.languageId;
-            SFConverter.scripture.WriteUSFX(Path.Combine(UsfxPath, "usfx.xml"));
+            SFConverter.scripture.WriteUSFX(GetUsfxFilePath());
             Logit.CloseFile();
             if (Logit.loggedError)
             {
                 StreamReader log = new StreamReader(logFile);
                 string errors = log.ReadToEnd();
                 log.Close();
-                MessageBox.Show(errors, "Errors in " + logFile);
+            	string message = errors;
+				if (errors.Length > 5000)
+				{
+					// Super-long messages freeze things up
+					message = message.Substring(0, 5000) + "\n...and more (see log file)";
+				}
+                MessageBox.Show(this, message, "Errors in " + logFile);
             }
             currentConversion = "converted USFM to USFX.";
             Application.DoEvents();
         }
 
-        private void ConvertUsfxToPortableHtml()
+    	private string GetUsfxFilePath()
+    	{
+    		return Path.Combine(GetUsfxDirectoryPath(), "usfx.xml");
+    	}
+
+    	private string GetUsfxDirectoryPath()
+    	{
+    		return Path.Combine(m_outputProjectDirectory, "usfx");
+    	}
+
+    	private void ConvertUsfxToPortableHtml()
         {
             currentConversion = "writing portable HTML";
             if ((m_options.languageId.Length < 3) || (m_options.translationId.Length < 3))
@@ -406,12 +427,26 @@ namespace haiola
             else
                 File.Copy(Path.Combine(m_inputDirectory, "prophero.css"), propherocss);
             
-            usfxToHtmlConverter toHtm = new usfxToHtmlConverter();
+            usfxToHtmlConverter toHtm;
+			if (m_options.UseFrames)
+			{
+				var framedConverter = new UsfxToFramedHtmlConverter();
+				framedConverter.HideNavigationButtonText = m_options.HideNavigationButtonText;
+				framedConverter.ShowNavigationButtonText = m_options.ShowNavigationButtonText;
+				toHtm = framedConverter;
+			}
+			else
+			{
+				toHtm = new usfxToHtmlConverter();
+			}
             Logit.OpenFile(Path.Combine(m_outputProjectDirectory, "HTMLConversionReport.txt"));
 
             toHtm.indexDateStamp = "HTML generated " + DateTime.UtcNow.ToString("d MMM yyyy") +
                 " from source files dated " + sourceDate.ToString("d MMM yyyy");
-            toHtm.ConvertUsfxToHtml(Path.Combine(UsfxPath, "usfx.xml"), htmlPath,
+        	toHtm.GeneratingConcordance = m_options.GenerateConcordance;
+    		toHtm.CrossRefToFilePrefixMap = m_options.CrossRefToFilePrefixMap;
+    		string usfxFilePath = Path.Combine(UsfxPath, "usfx.xml");
+    		toHtm.ConvertUsfxToHtml(usfxFilePath, htmlPath,
                 m_options.vernacularTitle,
                 m_options.languageId,
                 m_options.translationId,
@@ -540,6 +575,103 @@ In addition, you have permission to convert the text to different file formats, 
             xml.WriteEndDocument();
             xml.Close();
             xml.Close();
+
+			if (m_options.UseFrames)
+			{
+				// Copy any Introduction files to the output. Do this before making the chapter index, since we tell it to look for them there.
+				foreach (var path in Directory.GetFiles(m_inputProjectDirectory, "*" + UsfxToChapterIndex.IntroductionSuffix))
+				{
+					string destFileName = Path.Combine(htmlPath, Path.GetFileName(path));
+					File.Copy(path, destFileName, true);
+					toHtm.MakeFramesFor(destFileName);
+				}
+				// Generate the ChapterIndex file
+				var ciMaker = new UsfxToChapterIndex();
+				ciMaker.IntroductionDirectory = htmlPath;
+				ciMaker.IntroductionLinkText = m_options.IntroductionLinkText;
+				if (m_options.GenerateConcordance)
+					ciMaker.ConcordanceLinkText = m_options.ConcordanceLinkText;
+				string chapIndexPath = Path.Combine(htmlPath, UsfxToChapterIndex.ChapIndexFileName);
+				ciMaker.Generate(usfxFilePath, chapIndexPath);
+				EnsureTemplateFile("chapIndex.css", htmlPath);
+				EnsureTemplateFile("frameFuncs.js", htmlPath);
+				EnsureTemplateFile("Navigation.js", htmlPath);
+			}
+
+			// Todo JohnT: move this to a new method, and the condition to the method that calls this.
+			if (generateConcordanceCheckBox.Checked)
+			{
+				currentConversion = "generate XHTML for concordance";
+				usfxToHtmlConverter toXhtm = new usfxToXhtmlConverter();
+				Logit.OpenFile(Path.Combine(m_outputProjectDirectory, "XHTMLConversionReport.txt"));
+
+				toXhtm.indexDateStamp = "XHTML generated " + DateTime.UtcNow.ToString("d MMM yyyy") +
+				                       " from source files dated " + sourceDate.ToString("d MMM yyyy");
+				string xhtmlPath = Path.Combine(m_outputProjectDirectory, "xhtml");
+				Utils.EnsureDirectory(xhtmlPath);
+				// No point in doing this...doesn't change the concordance generated, just makes generation slower.
+				// Reinstate it if the XHTML is used for anything besides generating the concordance.
+				//toXhtm.CrossRefToFilePrefixMap = m_options.CrossRefToFilePrefixMap;
+				toXhtm.ConvertUsfxToHtml(usfxFilePath, xhtmlPath,
+				                        m_options.vernacularTitle,
+				                        m_options.languageId,
+				                        m_options.translationId,
+				                        m_options.chapterLabel,
+				                        m_options.psalmLabel,
+				                        m_options.copyrightLink,
+				                        m_options.homeLink,
+				                        m_options.footerHtml,
+				                        m_options.indexHtml,
+				                        m_options.licenseHtml,
+				                        m_options.useKhmerDigits,
+				                        m_options.ignoreExtras,
+				                        m_options.goText);
+				Logit.CloseFile();
+
+				currentConversion = "Concordance";
+				string concordanceDirectory = Path.Combine(htmlPath, "conc");
+				Utils.DeleteDirectory(concordanceDirectory); // Blow away any previous results
+				Utils.EnsureDirectory(concordanceDirectory);
+				string excludedClasses =
+					"toc toc1 toc2 navButtons pageFooter chapterlabel r verse"; // from old prophero: "verse chapter notemark crmark crossRefNote parallel parallelSub noteBackRef popup crpopup overlap";
+				string headingClasses = "mt mt2 s"; // old prophero: "sectionheading maintitle2 footnote sectionsubheading";
+				var concGenerator = new ConcGenerator(xhtmlPath, concordanceDirectory)
+				                    	{
+											// Currently configurable options
+											MergeCase = m_options.MergeCase,
+											MaxContextLength = m_options.MaxContextLength,
+											MinContextLength =  m_options.MinContextLength,
+											WordformingChars = m_options.WordformingChars,
+											MaxFrequency = m_options.MaxFrequency,
+											Phrases = m_options.Phrases,
+											ExcludeWords = new HashSet<string>(m_options.ExcludeWords.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)),
+											ReferenceAbbeviationsMap = m_options.ReferenceAbbeviationsMap,
+											BookChapText = m_options.BooksAndChaptersLinkText,
+											ConcordanceLinkText = m_options.ConcordanceLinkText,
+
+											// Options we may want to make configurable for localization.
+											// Todo: configure comparison function
+											IndexType = ConcGenerator.IndexTypes.alphaTreeMf,
+											NotesRef = "note",
+											HeadingRef = "head",
+											
+
+											// Options we need to configure correctly based on the HTML we generate
+											ExcludeClasses = new HashSet<string>(excludedClasses.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)),
+											NotesClass = "footnotes", // todo: fix if Haiola generates HTML with footnotes that should be concorded
+											NonCanonicalClasses = new HashSet<string>(headingClasses.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+				                    	};
+				concGenerator.Run(new List<string>(Directory.GetFiles(xhtmlPath)));
+
+				var concFrameGenerator = new ConcFrameGenerator()
+				                         	{ConcDirectory = concordanceDirectory, LangName = m_options.vernacularTitle};
+				concFrameGenerator.Run();
+				EnsureTemplateFile("mktree.css", concordanceDirectory);
+				EnsureTemplateFile("plus.gif", concordanceDirectory);
+				EnsureTemplateFile("minus.gif", concordanceDirectory);
+				EnsureTemplateFile("display.css", concordanceDirectory);
+				EnsureTemplateFile("TextFuncs.js", htmlPath);
+			}
         }
 
         /// <summary>
@@ -697,41 +829,15 @@ In addition, you have permission to convert the text to different file formats, 
 
         private void ProcessOneProject(string projDirName)
         {
-            m_project = projDirName;
-            m_inputProjectDirectory = Path.Combine(m_inputDirectory, m_project);
-            m_outputProjectDirectory = Path.Combine(m_outputDirectory, m_project);
-            fileHelper.EnsureDirectory(m_outputProjectDirectory);
-            m_xiniPath = Path.Combine(m_inputProjectDirectory, "options.xini");
+            SetCurrentProject(projDirName);
+        	m_xiniPath = Path.Combine(m_inputProjectDirectory, "options.xini");
             displayOptions();
 
             Application.DoEvents();
             if (!fAllRunning)
                 return;
-            string source = Path.Combine(m_inputProjectDirectory, "Source");
-            if (Directory.Exists(source))
-            {
-                PreprocessUsfmFiles();
-            }
-            else
-            {
-                source = Path.Combine(m_inputProjectDirectory, "usfx");
-                if (Directory.Exists(source))
-                {
-                    ImportUsfx(source);
-                }
-                else
-                {
-                    source = Path.Combine(m_inputProjectDirectory, "usx");
-                    if (Directory.Exists(source))
-                    {
-                        //TODO: Create ImportUsx(source);
-                    }
-                }
-            }
-            Application.DoEvents();
-            if (fAllRunning)
-                ConvertUsfmToUsfx();
-            Application.DoEvents();
+            GetUsfx(projDirName);
+        	Application.DoEvents();
             if (fAllRunning)
                 ConvertUsfxToPortableHtml();
             Application.DoEvents();
@@ -740,7 +846,44 @@ In addition, you have permission to convert the text to different file formats, 
             Application.DoEvents();
         }
 
-        private void WorkOnAllButton_Click(object sender, EventArgs e)
+    	private void SetCurrentProject(string projDirName)
+    	{
+    		m_project = projDirName;
+    		m_inputProjectDirectory = Path.Combine(m_inputDirectory, m_project);
+    		m_outputProjectDirectory = Path.Combine(m_outputDirectory, m_project);
+    		fileHelper.EnsureDirectory(m_outputProjectDirectory);
+    	}
+
+    	private void GetUsfx(string projDirName)
+    	{
+			SetCurrentProject(projDirName);
+			string source = Path.Combine(m_inputProjectDirectory, "Source");
+    		if (Directory.Exists(source))
+    		{
+    			PreprocessUsfmFiles();
+    		}
+    		else
+    		{
+    			source = Path.Combine(m_inputProjectDirectory, "usfx");
+    			if (Directory.Exists(source))
+    			{
+    				ImportUsfx(source);
+    			}
+    			else
+    			{
+    				source = Path.Combine(m_inputProjectDirectory, "usx");
+    				if (Directory.Exists(source))
+    				{
+    					//TODO: Create ImportUsx(source);
+    				}
+    			}
+    		}
+    		Application.DoEvents();
+    		if (fAllRunning)
+    			ConvertUsfmToUsfx();
+    	}
+
+    	private void WorkOnAllButton_Click(object sender, EventArgs e)
         {
             btnSetRootDirectory.Enabled = false;
             reloadButton.Enabled = false;
@@ -896,7 +1039,112 @@ In addition, you have permission to convert the text to different file formats, 
             khmerNumeralsRadioButton.Checked = m_options.useKhmerDigits;
             privateCheckBox.Checked = m_options.privateProject;
             homeDomainTextBox.Text = m_options.homeDomain;
+
+        	LoadConcTab();
+			LoadBooksTab();
+        	LoadFramesTab();
         }
+
+		private void LoadConcTab()
+		{
+			generateConcordanceCheckBox.Checked = m_options.GenerateConcordance;
+			chkMergeCase.Checked = m_options.MergeCase;
+			tbxWordformingChars.Text = m_options.WordformingChars;
+			tbxExcludeWords.Text = m_options.ExcludeWords;
+			tbxMaxFreq.Text = m_options.MaxFreqSrc;
+			tbxPhrases.Text = m_options.PhrasesSrc;
+			tbxMinContext.Text = m_options.MinContextLength.ToString();
+			tbxMaxContext.Text = m_options.MaxContextLength.ToString();
+
+		}
+
+		private void SaveConcTab()
+		{
+			m_options.GenerateConcordance = generateConcordanceCheckBox.Checked;
+			m_options.MergeCase = chkMergeCase.Checked;
+			m_options.WordformingChars = tbxWordformingChars.Text;
+			m_options.ExcludeWords = tbxExcludeWords.Text;
+			m_options.MaxFreqSrc = tbxMaxFreq.Text; // Enhance: validate
+			m_options.PhrasesSrc = tbxPhrases.Text;
+			int temp;
+			if (int.TryParse(tbxMinContext.Text, out temp))
+				m_options.MinContextLength = temp;
+			if (int.TryParse(tbxMaxContext.Text, out temp))
+				m_options.MaxContextLength = temp;
+		}
+
+		private void LoadBooksTab()
+		{
+			listBooks.BeginUpdate();
+			listBooks.Items.Clear();
+			Dictionary<string, string> idsToCrossRefs = new Dictionary<string, string>();
+			foreach (var kvp in m_options.CrossRefToFilePrefixMap)
+				idsToCrossRefs[kvp.Value] = kvp.Key;
+			foreach (var key in m_options.Books)
+			{
+				string vernAbbr;
+				if (!m_options.ReferenceAbbeviationsMap.TryGetValue(key, out vernAbbr))
+					vernAbbr = "";
+				string crossRefName;
+				if (!idsToCrossRefs.TryGetValue(key, out crossRefName))
+					crossRefName = "";
+				listBooks.Items.Add(MakeBookListItem(key, vernAbbr, crossRefName));
+			}
+			listBooks.EndUpdate();
+		}
+
+		private void SaveBooksTab()
+		{
+			List<string> books = new List<string>();
+			Dictionary<string, string> crossRefsToIds = new Dictionary<string, string>();
+			Dictionary<string, string> idsToVernAbbrs = new Dictionary<string, string>();
+			foreach (ListViewItem item in listBooks.Items)
+			{
+				var key = item.Text;
+				var vernAbbr = item.SubItems[1].Text;
+				var crossRefName = item.SubItems[2].Text;
+				books.Add(key);
+				idsToVernAbbrs[key] = vernAbbr;
+				if (string.IsNullOrEmpty(crossRefName))
+					continue;
+				if (crossRefsToIds.ContainsKey(crossRefName))
+				{
+					MessageBox.Show("Duplicate book name: " + crossRefName, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					continue;
+				}
+				// Enhance JohnT: the way I'm reversing the book name to ID thing here means that it will
+				// crash if the user supplies the same book name for two distinct books. It would be nicer to
+				// give an elegant message. Should probably do something special about empty strings also.
+				crossRefsToIds.Add(crossRefName, key);
+			}
+			m_options.Books = books;
+			m_options.ReferenceAbbeviationsMap = idsToVernAbbrs;
+			m_options.CrossRefToFilePrefixMap = crossRefsToIds;
+		}
+
+		private void SaveFramesTab()
+		{
+			m_options.UseFrames = useFramesCheckBox.Checked;
+			m_options.ConcordanceLinkText = concordanceLinkTextBox.Text;
+			m_options.BooksAndChaptersLinkText = booksAndChaptersLinkTextBox.Text;
+			m_options.IntroductionLinkText = introductionLinkTextBox.Text;
+			m_options.PreviousChapterLinkText = previousChapterLinkTextBox.Text;
+			m_options.NextChapterLinkText = nextChapterLinkTextBox.Text;
+			m_options.HideNavigationButtonText = hideNavigationPanesTextBox.Text;
+			m_options.ShowNavigationButtonText = showNavigationTextBox.Text;
+		}
+
+		private void LoadFramesTab()
+		{
+			useFramesCheckBox.Checked = m_options.UseFrames;
+			concordanceLinkTextBox.Text = m_options.ConcordanceLinkText;
+			booksAndChaptersLinkTextBox.Text = m_options.BooksAndChaptersLinkText;
+			introductionLinkTextBox.Text = m_options.IntroductionLinkText;
+			previousChapterLinkTextBox.Text = m_options.PreviousChapterLinkText;
+			nextChapterLinkTextBox.Text = m_options.NextChapterLinkText;
+			hideNavigationPanesTextBox.Text = m_options.HideNavigationButtonText;
+			showNavigationTextBox.Text = m_options.ShowNavigationButtonText;
+		}
 
         private void m_projectsList_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -961,6 +1209,11 @@ In addition, you have permission to convert the text to different file formats, 
             m_options.useKhmerDigits = khmerNumeralsRadioButton.Checked;
             m_options.privateProject = privateCheckBox.Checked;
             m_options.homeDomain = homeDomainTextBox.Text.Trim();
+
+			SaveConcTab();
+			SaveBooksTab();
+        	SaveFramesTab();
+
             m_options.Write();
         }
 
@@ -1057,10 +1310,20 @@ In addition, you have permission to convert the text to different file formats, 
         private void timer1_Tick(object sender, EventArgs e)
         {
             batchLabel.Text = (DateTime.UtcNow - startTime).ToString() + " " + m_project + " " +
-                currentConversion + " " + WordSend.usfxToHtmlConverter.conversionProgress;
+                ConversionProgress;
         }
 
-        private void addProgramButton_Click(object sender, EventArgs e)
+    	private string ConversionProgress
+    	{
+    		get
+    		{
+				if (currentConversion == "Concordance")
+					return ConcGenerator.Stage + " " + ConcGenerator.Progress;
+    			return currentConversion + " " + WordSend.usfxToHtmlConverter.conversionProgress;
+    		}
+    	}
+
+    	private void addProgramButton_Click(object sender, EventArgs e)
         {
             if (postprocessTextBox.Text.Length > 0)
             {
@@ -1131,7 +1394,7 @@ In addition, you have permission to convert the text to different file formats, 
             fAllRunning = true;
             WorkOnAllButton.Text = "Stop";
             SaveOptions();
-            ProcessOneProject((string)m_projectsList.SelectedItem);
+            ProcessOneProject(SelectedProject);
 
             fAllRunning = false;
             currentConversion = String.Empty;
@@ -1148,7 +1411,12 @@ In addition, you have permission to convert the text to different file formats, 
             runHighlightedButton.Enabled = true;
         }
 
-        private void statsButton_Click(object sender, EventArgs e)
+    	private string SelectedProject
+    	{
+    		get { return (string)m_projectsList.SelectedItem; }
+    	}
+
+    	private void statsButton_Click(object sender, EventArgs e)
         {
             int numProjects = 0;
             int numTranslations = 0;
@@ -1269,7 +1537,98 @@ In addition, you have permission to convert the text to different file formats, 
                 altLinkListBox.Items.RemoveAt(altLinkListBox.SelectedIndex);
         }
 
-        
-       
+		/// <summary>
+		/// Click on the Update button in the Books tab
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void updateButton_Click(object sender, EventArgs e)
+		{
+			UpdateBooksList(false);
+		}
+
+		private void restoreDefaultsButton_Click(object sender, EventArgs e)
+		{
+			UpdateBooksList(true);
+		}
+
+    	private void UpdateBooksList(bool restoreDefaults)
+    	{
+    		fAllRunning = true;
+    		GetUsfx(SelectedProject);
+    		var analyzer = new UsfxToBookAndAbbr();
+    		analyzer.Parse(GetUsfxFilePath());
+    		Dictionary<string, string> oldNames = new Dictionary<string, string>();
+    		Dictionary<string, string> oldAbbreviations = new Dictionary<string, string>();
+			if (!restoreDefaults)
+			{
+				foreach (ListViewItem item in listBooks.Items)
+				{
+					var key = item.Text;
+					var oldAbbr = item.SubItems[1].Text;
+					var oldName = item.SubItems[2].Text;
+					oldNames[key] = oldName;
+					oldAbbreviations[key] = oldAbbr;
+				}
+			}
+    		listBooks.BeginUpdate();
+    		listBooks.Items.Clear();
+    		foreach (var key in analyzer.BookIds)
+    		{
+    			string vernacularName;
+    			oldNames.TryGetValue(key, out vernacularName);
+    			if (string.IsNullOrEmpty(vernacularName))
+    				vernacularName = analyzer.VernacularNames[key];
+    			string vernacularAbbreviation;
+    			oldAbbreviations.TryGetValue(key, out vernacularAbbreviation);
+    			if (string.IsNullOrEmpty(vernacularAbbreviation))
+    				vernacularAbbreviation = analyzer.ReferenceAbbreviations[key];
+
+    			listBooks.Items.Add(MakeBookListItem(key, vernacularAbbreviation, vernacularName));
+    		}
+    		listBooks.EndUpdate();
+    	}
+
+    	ListViewItem MakeBookListItem(string abbr, string vernAbbr, string xrefName)
+		{
+			ListViewItem item = new ListViewItem(abbr);
+			SetLastSubItemName(item, "StdAbbr");
+			item.SubItems.Add(vernAbbr);
+			SetLastSubItemName(item, "Edit"); // identifies an item we can edit for ListBooks_MouseUp
+			item.SubItems.Add(xrefName);
+			SetLastSubItemName(item, "Edit");
+			return item;
+		}
+
+		internal void SetLastSubItemName(ListViewItem item, string val)
+		{
+			ListViewItem.ListViewSubItem lastItem = item.SubItems[item.SubItems.Count - 1];
+			lastItem.Name = val;
+		}
+
+		private void ListBooks_MouseUp(object sender, MouseEventArgs e)
+		{
+			ListViewHitTestInfo hti = listBooks.HitTest(e.Location);
+			ListViewItem.ListViewSubItem si = hti.SubItem;
+			if (si == null || si.Name != "Edit")
+				return;
+			// Make a text box to edit the subitem contents.
+			TextBox tb = new TextBox();
+			tb.Bounds = si.Bounds;
+			tb.Text = si.Text;
+			tb.LostFocus += new EventHandler(tb_LostFocus);
+			tb.Tag = si;
+			listBooks.Controls.Add(tb);
+			tb.SelectAll();
+			tb.Focus();
+
+		}
+		void tb_LostFocus(object sender, EventArgs e)
+		{
+			TextBox tb = sender as TextBox;
+			ListViewItem.ListViewSubItem si = (tb).Tag as ListViewItem.ListViewSubItem;
+			si.Text = tb.Text;
+			tb.Parent.Controls.Remove(tb);
+		}
     }
 }
