@@ -232,7 +232,6 @@ namespace BibleFileLib
 					MakeAlphaMfIndex(sortedOccurrences);
 					break;
 			}
-
 		}
 
 		private void MakeIndexFiles(List<WordformInfo> sortedOccurrences)
@@ -240,7 +239,8 @@ namespace BibleFileLib
 			double count = sortedOccurrences.Count;
 			int groupSize = Convert.ToInt32(Math.Sqrt(count));
 			int iStartGroup = 0;
-			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n<body>\n";
+			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n"
+                + "<html>\n<head>\n<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n</head>\n<body>\n";
 			string trailer = "</body>\n</html>\n";
 			string pathMain = Path.Combine(m_outputDirName, "concIndexBar.htm");
 			TextWriter writerMain = new StreamWriter(pathMain, false, Encoding.UTF8);
@@ -284,9 +284,10 @@ namespace BibleFileLib
 			}
 			return sOutput;
 		}
-		const string indexHeader = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n"
-				+ "<head>\n\t<link rel=\"stylesheet\" type=\"text/css\" href=\"mktree.css\">\n\t"
-				+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">\n\t"
+		const string indexHeader = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n"
+                + "<html>\n<head>\n<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n"    
+				+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"mktree.css\">\n"
+				+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">\n"
 				+ "<script type=\"text/javascript\" src=\"mktree.js\"></script>\n</head>\n"
 				+ "<body class=\"ConcIndex\">\n"
 				+ "<p><a target=\"_top\" href=\"../index.htm\">";
@@ -381,12 +382,14 @@ namespace BibleFileLib
 			writerMain.Write(indexTrailer);
 			writerMain.Close();
 		}
-		const string indexMfHeader = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n"
-				+ "<head>\n\t<link rel=\"stylesheet\" type=\"text/css\" href=\"mktree.css\">\n\t"
-				+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">\n"
-				+ "</head>\n"
-				+ "<body class=\"ConcIndex\">\n"
-				+ "<p><a target=\"_top\" href=\"../index.htm\">";
+		const string indexMfHeader = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n"
+            + "<html>\n"
+            + "<head>\n<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n"
+			+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"mktree.css\">\n"
+			+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">\n"
+			+ "</head>\n"
+			+ "<body class=\"ConcIndex\">\n"
+			+ "<p><a target=\"_top\" href=\"../index.htm\">";
 		const string indexMfHeader2 = "</a></p>\n"
 				+ "<ul class=\"mktree\">\n";
 		/// <summary>
@@ -515,7 +518,9 @@ namespace BibleFileLib
 		private void WriteInnerIndexFile(string groupFileName, List<WordformInfo> sortedOccurrences, int groupIndex,
 			int iStartGroup, int cThisGroup)
 		{
-			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n<body>\n";
+			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n"
+                + "<html>\n<head>\n<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>\n"
+                + "<body>\n";
 			string trailer = "</body>\n</html>\n";
 			string path = Path.Combine(m_outputDirName, "index" + groupIndex + ".htm");
 			TextWriter writer = new StreamWriter(path, false, Encoding.UTF8);
@@ -587,10 +592,12 @@ namespace BibleFileLib
 			string flags = info.MixedCase ? "i" : "";
 			string infoForm = MakeSafeXml(info.Form);
 			string fixQuoteInfoForm = infoForm.Replace("'", "&#39"); // apostrophe in word can close onclick quote.
-			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n<html>\n"
-				+ "<head><script src=\"ConcFuncs.js\" type=\"text/javascript\"></script>\n"
+			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n"
+                + "<html>\n"
+                + "<head>\n<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n"
+				+ "<script src=\"ConcFuncs.js\" type=\"text/javascript\"></script>\n"
 				+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"display.css\">\n"
-			+ "</head>\n<body>\n";
+			    + "</head>\n<body>\n";
 			string trailer = "</body>\n</html>\n";
 			string path = Path.Combine(m_outputDirName, "wl" + m_wordListFileCount.ToString() + ".htm");
 			info.FileNumber = m_wordListFileCount;

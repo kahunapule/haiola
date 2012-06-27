@@ -876,7 +876,7 @@ namespace haiola
 "<ul>\r\n"+
 "<li>You include the above copyright information and that you make it\r\n"+
 "clear that the work came from <a href=\"http://pngscriptures.org/\">http://pngscriptures.org/</a>.</li>\r\n"+
-"<li>You do not sell this work for a profit.<br />\r\n"+
+"<li>You do not sell this work for a profit.F< />\r\n"+
 "</li>\r\n"+
 "<li>You do not make any derivative works that change any of the\r\n"+
 "actual words or punctuation of the Scriptures.</li>\r\n"+

@@ -45,6 +45,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_3631E65BC4AD4899AFD9DAA3964CEDB1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_3A47990CF5EF4ACF896B4266DBCFD56E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -52,6 +58,12 @@
         "Entry"
         {
         "MsmKey" = "8:_40B096726D05469F89A78EAB0E6F09AC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4439E55F001249B6B22C8E750450880A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -99,6 +111,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_B60024ED93724F2BA044102D44615312"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_B67C23B159E8441FB964841BBA7DFE35"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -106,6 +124,18 @@
         "Entry"
         {
         "MsmKey" = "8:_C5BBECFEBD86427DA34A9B4D54C40207"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CA5B5DFC4E754341BC00677F9822F36B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D42DA157FE3C47AEB90E8C87192ED5CD"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -318,6 +348,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3631E65BC4AD4899AFD9DAA3964CEDB1"
+            {
+            "SourcePath" = "8:Z:\\Documents\\source\\prophero\\haiola\\TextFuncs.js"
+            "TargetName" = "8:TextFuncs.js"
+            "Tag" = "8:"
+            "Folder" = "8:_D6577D87220B40D5AB461D56EDAD5B1D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3A47990CF5EF4ACF896B4266DBCFD56E"
             {
             "SourcePath" = "8:Z:\\Documents\\source\\prophero\\haiola\\gpl-3.0-standalone.html"
@@ -342,6 +392,26 @@
             {
             "SourcePath" = "8:\\\\vmware-host\\Shared Folders\\Documents\\source\\prophero\\haiola\\prophero.css"
             "TargetName" = "8:prophero.css"
+            "Tag" = "8:"
+            "Folder" = "8:_D6577D87220B40D5AB461D56EDAD5B1D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4439E55F001249B6B22C8E750450880A"
+            {
+            "SourcePath" = "8:Z:\\Documents\\source\\prophero\\haiola\\frameFuncs.js"
+            "TargetName" = "8:frameFuncs.js"
             "Tag" = "8:"
             "Folder" = "8:_D6577D87220B40D5AB461D56EDAD5B1D"
             "Condition" = "8:"
@@ -498,6 +568,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B60024ED93724F2BA044102D44615312"
+            {
+            "SourcePath" = "8:Z:\\Documents\\source\\prophero\\haiola\\Navigation.htm"
+            "TargetName" = "8:Navigation.htm"
+            "Tag" = "8:"
+            "Folder" = "8:_D6577D87220B40D5AB461D56EDAD5B1D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B67C23B159E8441FB964841BBA7DFE35"
             {
             "SourcePath" = "8:Z:\\Documents\\source\\prophero\\haiola\\crossreference.xml"
@@ -538,11 +628,51 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CA5B5DFC4E754341BC00677F9822F36B"
+            {
+            "SourcePath" = "8:Z:\\Documents\\source\\prophero\\haiola\\display.css"
+            "TargetName" = "8:display.css"
+            "Tag" = "8:"
+            "Folder" = "8:_D6577D87220B40D5AB461D56EDAD5B1D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D42DA157FE3C47AEB90E8C87192ED5CD"
+            {
+            "SourcePath" = "8:Z:\\Documents\\source\\prophero\\haiola\\Navigation.js"
+            "TargetName" = "8:Navigation.js"
+            "Tag" = "8:"
+            "Folder" = "8:_D6577D87220B40D5AB461D56EDAD5B1D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E4EE1B0A5438B0AD5E1930DA3D194455"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:BibleFileLib, Version=0.0.4508.21397, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:BibleFileLib, Version=0.0.4560.16160, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_E4EE1B0A5438B0AD5E1930DA3D194455"
@@ -646,7 +776,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Haiola"
         "ProductCode" = "8:{72EF1D36-A2F1-435F-98B5-92D507D51978}"
-        "PackageCode" = "8:{E1239E9A-C416-4B54-932F-F981D05BF27E}"
+        "PackageCode" = "8:{5A4F392D-54FA-41C4-A3BE-7ED65BA870F5}"
         "UpgradeCode" = "8:{B37D5AD6-4216-4FEF-B32B-31D132FA7804}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
