@@ -36,6 +36,8 @@ namespace BibleFileLib
 		string m_inputDirName;
 		string m_outputDirName;
 		
+
+        /***********
 		// Tuple for storing name and class of open elements.
 		class NameClassPair
 		{
@@ -43,13 +45,13 @@ namespace BibleFileLib
 			public string Class;
 		}
 		List<NameClassPair> m_openElementStack = new List<NameClassPair>();
-
+        *************/
 		// The information we accumulate during parsing is basically a list of wordforms, each with a list of occurrences,
 		// each storing file, chapter, and verse.
 		Dictionary<string, WordformInfo> m_occurrences = new Dictionary<string, WordformInfo>();
 
 		// tracks current state
-		string m_inputFile;
+		// string m_inputFile;
 		int m_chapter;
 		string m_verse;
 		string m_anchor; // full text of last anchor seen
@@ -173,13 +175,16 @@ namespace BibleFileLib
 		/// <summary>
 		/// Run the concordance building process on the specified list of files (file names only, in the input directory)
 		/// </summary>
-		/// <param name="files"></param>
-		public void Run(List<string> files)
+		/// <param name="usfxName">Name of the USFX file to parse</param>
+		// public void Run(List<string> files)
+		public void Run(string usfxName)
 		{
 			//Progress status = new Progress(files.Count);
 			//Utils.EnsureDirectory(m_outputDirName);
 			Stage = "Parsing";
 			int count = 0;
+            Parse(usfxName);
+            /*
 			foreach (string inputFile in files)
 			{
 				Progress = inputFile;
@@ -187,6 +192,7 @@ namespace BibleFileLib
 					Parse(inputFilePath); 
 				count++;
 			}
+            */ 
 
 			// Use the individual word occurrences to find phrase occurrences (and add them before sorting etc.)
 			AddPhraseOccurrences();
@@ -536,44 +542,220 @@ namespace BibleFileLib
 			writer.Close();
 		}
 
+        /// <summary>
+        /// Replaces null strings with the empty string, but passes non-null strings through.
+        /// </summary>
+        /// <param name="s">any string</param>
+        /// <returns>s if not null, otherwise the empty string</returns>
+        public static string nonull(string s)
+        {
+            if (s == null)
+                return String.Empty;
+            else
+                return s;
+        }
+
+
 		private void Parse(string inputFile)
 		{
-			m_inputFile = inputFile;
-			m_htmlFile = Path.ChangeExtension(Path.GetFileName(inputFile), "htm");
-			m_chapter = -1;
-			m_verse = "";
-			m_anchor = "";
-			m_pendingNonCanonical.Clear();
-			m_pendingExclusions.Clear();
-			m_context.Remove(0, m_context.Length);
-			m_saveContext = "";
- 			XmlReaderSettings settings = new XmlReaderSettings();
-			settings.ConformanceLevel = ConformanceLevel.Fragment;
-			settings.IgnoreComments = true;
-			settings.ProhibitDtd = false;
-			settings.ValidationType = ValidationType.None;
-			settings.ConformanceLevel = ConformanceLevel.Fragment;
-			TextReader input = new StreamReader(inputFile, Encoding.UTF8);
-			input.ReadLine(); // Skip the HTML DOCTYPE, which the XmlReader can't cope with.
-			var content = input.ReadToEnd().Replace("&nbsp;", "&#160;"); // Enhance: should be a more efficient way to make it cope with this
-			XmlReader reader = XmlReader.Create(new MemoryStream(Encoding.UTF8.GetBytes(content)), settings);
-			while (reader.Read())
-			{
-				switch (reader.NodeType)
-				{
-					case XmlNodeType.Element:
-						ProcessElement(reader);
-						break;
-					case XmlNodeType.EndElement:
-						ProcessEndElement(reader);
-						break;
-					case XmlNodeType.Text:
-						ProcessText(reader.Value);
-						break;
-						// Review JohnT: do we need to process white space elements?
-				}
-			}
-			ProcessEndOfSentence(); // In case text does not end with sentence-final punctuation, don't want wordforms with no context.
+            XmlTextReader usfx;
+            string currentBookId = String.Empty;
+            string currentChapter = String.Empty;
+            m_verse = String.Empty;
+            string currentURL = String.Empty;
+            string sfm = String.Empty;
+            string id = String.Empty;
+            string chapFormat = "00";
+            m_chapter = 0;
+            int verseNumber = 0;
+            bool isCanonical = false;
+            bool inFootnote = false;
+            StringBuilder verseText = new StringBuilder();
+
+            m_pendingNonCanonical.Clear();
+            m_pendingExclusions.Clear();
+            m_context.Remove(0, m_context.Length);
+            m_saveContext = "";
+
+            try
+            {
+                usfx = new XmlTextReader(inputFile);
+                usfx.WhitespaceHandling = WhitespaceHandling.All;
+                while (usfx.Read())
+                {
+                    // Console.Write("{0} {1}:{2} {3}       \r", currentBookAbbrev, currentChapter, currentVerse, localSubstLine);
+
+                    if (usfx.NodeType == XmlNodeType.Element)
+                    {
+                        sfm = nonull(usfx.GetAttribute("sfm"));
+                        id = nonull(usfx.GetAttribute("id"));
+
+                        switch (usfx.Name)
+                        {
+                            case "languageCode":
+                            case "sectionBoundary":
+                            case "generated":
+                            case "rem":
+                            case "periph":
+                            case "fig":
+                            case "ndx":
+                            case "w":
+                            case "wh":
+                            case "wg":
+                            case "ide":
+                            case "h":
+                            case "cl":
+                                if (!usfx.IsEmptyElement)
+                                    isCanonical = false;
+                                break;
+                            case "book":
+                            case "id":
+                                if (id.Length > 2)
+                                {
+                                    currentBookId = id;
+                                    currentChapter = m_verse = "0";
+                                    m_chapter = verseNumber = 0;
+                                    if (id.CompareTo("PSA") == 0)
+                                        chapFormat = "000";
+                                    else
+                                        chapFormat = "00";
+                                }
+                                break;
+                            case "c":
+                                currentChapter = id;
+                                m_verse = "0";
+                                verseNumber = 0;
+                                int chNum;
+                                if (Int32.TryParse(id, out chNum))
+                                    m_chapter = chNum;
+                                else
+                                    m_chapter++;
+                                m_htmlFile = String.Format("{0}{1}.htm", currentBookId,
+                                    Math.Max(1, m_chapter).ToString(chapFormat));
+                                break;
+                            case "v":
+                                m_verse = id;
+                                if (!usfx.IsEmptyElement)
+                                {
+                                    usfx.Read();
+                                }
+                                int vnum;
+                                if (Int32.TryParse(id, out vnum))
+                                {
+                                    verseNumber = vnum;
+                                }
+                                else
+                                {   // Probably a verse range (or an encoding error).
+                                    verseNumber++;
+                                }
+                                if ((currentURL.Length > 13) && (verseText.Length > 0))
+                                {
+                                    ProcessText(verseText.ToString());
+                                    verseText.Length = 0;
+                                }
+                                currentURL = String.Format("../{0}{1}.htm#V{2}", currentBookId,
+                                    Math.Max(1, m_chapter).ToString(chapFormat), verseNumber.ToString());
+                                m_anchor = String.Format("V{0}", verseNumber.ToString());
+                                break;
+                            case "f":
+                            case "x":
+                                inFootnote = true;
+                                break;
+                            case "p":
+                                isCanonical = !sfm.StartsWith("i");
+                                break;
+                            case "q":
+                            case "qs":
+                            case "b":
+                                isCanonical = true;
+                                break;
+                            case "mt":
+                            case "s":
+                            case "cp":
+                            case "ca":
+                            case "toc":
+                            case "va":
+                            case "vp":
+                                if (!usfx.IsEmptyElement)
+                                    isCanonical = false;
+                                break;
+                            case "milestone":
+                            case "optionalLineBreak":
+                                if (isCanonical && !inFootnote)
+                                    verseText.Append(" ");
+                                break;
+                        }
+                    }
+                    else if (usfx.NodeType == XmlNodeType.Text)
+                    {
+                        if (isCanonical && !inFootnote)
+                            verseText.Append(usfx.Value);
+                    }
+                    else if (usfx.NodeType == XmlNodeType.SignificantWhitespace)
+                    {
+                        if (isCanonical && !inFootnote)
+                            verseText.Append(usfx.Value);
+                    }
+                    else if (usfx.NodeType == XmlNodeType.EndElement)
+                    {
+                        switch (usfx.Name)
+                        {
+                            case "f":
+                            case "x":
+                                inFootnote = false;
+                                break;
+                        }
+                    }
+                }
+
+
+                /********
+
+                m_inputFile = inputFile;
+                m_htmlFile = Path.ChangeExtension(Path.GetFileName(inputFile), "htm");
+                m_chapter = -1;
+                m_verse = "";
+                m_anchor = "";
+                XmlReaderSettings settings = new XmlReaderSettings();
+                settings.ConformanceLevel = ConformanceLevel.Fragment;
+                settings.IgnoreComments = true;
+                settings.ProhibitDtd = false;
+                settings.ValidationType = ValidationType.None;
+                settings.ConformanceLevel = ConformanceLevel.Fragment;
+                TextReader input = new StreamReader(inputFile, Encoding.UTF8);
+                input.ReadLine(); // Skip the HTML DOCTYPE, which the XmlReader can't cope with.
+                var content = input.ReadToEnd().Replace("&nbsp;", "&#160;"); // Enhance: should be a more efficient way to make it cope with this
+                XmlReader reader = XmlReader.Create(new MemoryStream(Encoding.UTF8.GetBytes(content)), settings);
+                while (reader.Read())
+                {
+                    switch (reader.NodeType)
+                    {
+                        case XmlNodeType.Element:
+                            ProcessElement(reader);
+                            break;
+                        case XmlNodeType.EndElement:
+                            ProcessEndElement(reader);
+                            break;
+                        case XmlNodeType.Text:
+                            ProcessText(reader.Value);
+                            break;
+                        // Review JohnT: do we need to process white space elements? Michael: yes, if they are significant.
+                    }
+                }
+                *****************/
+                if (verseText.Length > 0)
+                {
+                    ProcessText(verseText.ToString());
+                    verseText.Length = 0;
+                }
+                ProcessEndOfSentence(); // In case text does not end with sentence-final punctuation, don't want wordforms with no context.
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.Message + "\r\n" + ex.StackTrace, "Error parsing " + inputFile);
+            }
+
 		}
 
 		/// <summary>
@@ -723,6 +905,7 @@ namespace BibleFileLib
 		}
 
 		// The class of the most recent still-open element which has a class.
+        /***********
 		private string CurrentClass
 		{
 			get
@@ -735,9 +918,11 @@ namespace BibleFileLib
 				return null;
 			}
 		}
+        **********/
 
 		private void ProcessText(string text)
 		{
+            /*****
 			if (CurrentClass == "chapterlabel") // Enhance JohnT: Make this configurable.
 			{
 				int temp;
@@ -747,6 +932,7 @@ namespace BibleFileLib
 			}
 			if (m_chapter < 0 || m_pendingExclusions.Count > 0)
 				return; // not currently Scripture text we want to concord (or include in context).
+             ***/
 			EnsureWhiteSpaceEndsContext();
 			char prev = ' ';
 			int startWord = -1;
@@ -1021,6 +1207,7 @@ namespace BibleFileLib
 		//}
 
 		// This version is for the OSIStoHTML converter, which inserts literal anchors <a name="C2V5"/>
+        /****
 		private void ProcessElement(XmlReader reader)
 		{
 			string className = reader.GetAttribute("class");
@@ -1091,8 +1278,9 @@ namespace BibleFileLib
 			}
 			m_openElementStack.RemoveAt(m_openElementStack.Count - 1); // pop stack
 		}
+        *********/
 	}
-
+       
 	// Compare wordforms using the specified string comparer.
 	class WordformInfoComparer : IComparer<WordformInfo>
 	{

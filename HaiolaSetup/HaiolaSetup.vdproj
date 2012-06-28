@@ -87,6 +87,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_7BF4FEF7CF384AF08638A015D12A298A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_9F9C4B1DAF9243EEBA9578C331303520"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -94,6 +100,12 @@
         "Entry"
         {
         "MsmKey" = "8:_9FC43A2F93ED4086BF659FDEEA61F450"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A4F971A0875D4F2A920F9D5BD5339B47"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -488,6 +500,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7BF4FEF7CF384AF08638A015D12A298A"
+            {
+            "SourcePath" = "8:Z:\\Documents\\source\\prophero\\haiola\\plus.gif"
+            "TargetName" = "8:plus.gif"
+            "Tag" = "8:"
+            "Folder" = "8:_D6577D87220B40D5AB461D56EDAD5B1D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9F9C4B1DAF9243EEBA9578C331303520"
             {
             "SourcePath" = "8:Z:\\Documents\\source\\prophero\\haiola\\OneColumnSans.xml"
@@ -512,6 +544,26 @@
             {
             "SourcePath" = "8:\\\\vmware-host\\Shared Folders\\Documents\\source\\prophero\\haiola\\haiola.htm"
             "TargetName" = "8:haiola.htm"
+            "Tag" = "8:"
+            "Folder" = "8:_D6577D87220B40D5AB461D56EDAD5B1D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A4F971A0875D4F2A920F9D5BD5339B47"
+            {
+            "SourcePath" = "8:Z:\\Documents\\source\\prophero\\haiola\\minus.gif"
+            "TargetName" = "8:minus.gif"
             "Tag" = "8:"
             "Folder" = "8:_D6577D87220B40D5AB461D56EDAD5B1D"
             "Condition" = "8:"
@@ -672,7 +724,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:BibleFileLib, Version=0.0.4560.16160, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:BibleFileLib, Version=0.0.4561.24654, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_E4EE1B0A5438B0AD5E1930DA3D194455"
@@ -776,7 +828,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Haiola"
         "ProductCode" = "8:{72EF1D36-A2F1-435F-98B5-92D507D51978}"
-        "PackageCode" = "8:{5A4F392D-54FA-41C4-A3BE-7ED65BA870F5}"
+        "PackageCode" = "8:{870960ED-9707-4B8A-87B7-0E8E76F63879}"
         "UpgradeCode" = "8:{B37D5AD6-4216-4FEF-B32B-31D132FA7804}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

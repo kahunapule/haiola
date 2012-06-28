@@ -7943,6 +7943,13 @@ namespace WordSend
 			// main pass we ignore elements dc, xdc, and fdc.
 			// I (JohnT) don't know WHY these elements should be ignored unless the translation includes apocrypha, but I confirmed
 			// with Michael that it is intentional.
+            // Michael: The rationale behind the use of the dc, xdc, and fdc elements is to facilitate creating Bibles with and
+            // without Apocrypha/Deuterocanon from a common source. The United Bible Societies and other customers and partners of
+            // ours operate in an ecumenical framework where this is important. When producing a volume limited to the 66 books
+            // of the Old and New Testaments, it is best to leave out cross references leading to the other 22 (or more, depending
+            // on which denominational authority you ask) books. However, those cross references are useful when those other books
+            // are present in a volume.
+
 			bool containsDC = false;
             newChapterFound = false;
             ignore = false;
@@ -8691,7 +8698,7 @@ namespace WordSend
     		BibleBookRecord br;
     		string buttonClass = "bookLine";
     		string contentsName;
-    		string chapFmt;
+    		//string chapFmt;
     		for (i = 0; i < bookList.Count; i++)
     		{
     			br = (BibleBookRecord) bookList[i];
@@ -8700,10 +8707,10 @@ namespace WordSend
     			else
     				buttonClass = "bookLine";
     			if (br.tla == "PSA")
-    				chapFmt = "000";
+    				chapFormat = "000";
     			else
-    				chapFmt = "00";
-    			contentsName = br.tla + chapFmt + ".htm";
+    				chapFormat = "00";
+    			contentsName = br.tla + chapFormat + ".htm";
     			if (File.Exists(Path.Combine(htmDir, contentsName)))
     			{
     				htm.WriteLine("<div class=\"{0}\"><a href=\"{1}\">{2}</a></div>", buttonClass, contentsName, br.vernacularHeader);
