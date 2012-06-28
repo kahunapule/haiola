@@ -601,6 +601,7 @@ In addition, you have permission to convert the text to different file formats, 
 			// Todo JohnT: move this to a new method, and the condition to the method that calls this.
 			if (generateConcordanceCheckBox.Checked)
 			{
+                /*****
 				currentConversion = "generate XHTML for concordance";
 				usfxToHtmlConverter toXhtm = new usfxToXhtmlConverter();
 				Logit.OpenFile(Path.Combine(m_outputProjectDirectory, "XHTMLConversionReport.txt"));
@@ -627,7 +628,7 @@ In addition, you have permission to convert the text to different file formats, 
 				                        m_options.ignoreExtras,
 				                        m_options.goText);
 				Logit.CloseFile();
-
+                ******/
 				currentConversion = "Concordance";
 				string concordanceDirectory = Path.Combine(htmlPath, "conc");
 				Utils.DeleteDirectory(concordanceDirectory); // Blow away any previous results
@@ -635,7 +636,7 @@ In addition, you have permission to convert the text to different file formats, 
 				string excludedClasses =
 					"toc toc1 toc2 navButtons pageFooter chapterlabel r verse"; // from old prophero: "verse chapter notemark crmark crossRefNote parallel parallelSub noteBackRef popup crpopup overlap";
 				string headingClasses = "mt mt2 s"; // old prophero: "sectionheading maintitle2 footnote sectionsubheading";
-				var concGenerator = new ConcGenerator(xhtmlPath, concordanceDirectory)
+				var concGenerator = new ConcGenerator(m_inputProjectDirectory, concordanceDirectory)
 				                    	{
 											// Currently configurable options
 											MergeCase = m_options.MergeCase,
@@ -661,7 +662,8 @@ In addition, you have permission to convert the text to different file formats, 
 											NotesClass = "footnotes", // todo: fix if Haiola generates HTML with footnotes that should be concorded
 											NonCanonicalClasses = new HashSet<string>(headingClasses.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
 				                    	};
-				concGenerator.Run(new List<string>(Directory.GetFiles(xhtmlPath)));
+				// concGenerator.Run(new List<string>(Directory.GetFiles(xhtmlPath)));
+                concGenerator.Run(usfxFilePath);
 
 				var concFrameGenerator = new ConcFrameGenerator()
 				                         	{ConcDirectory = concordanceDirectory, LangName = m_options.vernacularTitle};
