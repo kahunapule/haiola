@@ -1068,6 +1068,8 @@ namespace BibleFileLib
 				if (MergeCase)
 				{
 					string wordformLC = wordform.ToLower(System.Globalization.CultureInfo.InvariantCulture); // review JohnT: should we select a culture?
+                    // Michael: unfortunately, we often process texts that don't fit an existing culture. The InvariantCulture is a compromise and a good
+                    // default, and probably good enough in finding the right lower case character for any language.
 					if (wordformLC != wordform)
 					{
 						// It's an upper case form of some sort.

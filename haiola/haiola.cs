@@ -26,7 +26,6 @@ namespace haiola
         string m_outputProjectDirectory; // e.g., full path to BibleConv\output\Kupang
         string m_project; // e.g., Kupang
         string currentConversion;   // e.g., "Preprocessing" or "Portable HTML"
-        public bool autorun = false;
         static bool fAllRunning = false;
         public string m_xiniPath;  // e.g., BibleConv\input\Kupang\options.xini
         public XMLini projectXini;
@@ -106,10 +105,11 @@ namespace haiola
                     Application.Exit();
             LoadWorkingDirectory();
             Application.DoEvents();
-            if (autorun)
+            triggerautorun = Program.autorun;
+            if (triggerautorun)
             {
-                WorkOnAllButton_Click(sender, e);
-                Close();
+                startTime = DateTime.UtcNow;
+                timer1.Enabled = true;
             }
         }
         private void EnsureTemplateFile(string fileName)
@@ -426,6 +426,14 @@ namespace haiola
                 File.Copy(specialCss, propherocss);
             else
                 File.Copy(Path.Combine(m_inputDirectory, "prophero.css"), propherocss);
+
+            // Copy any extra files from the htmlextras directory in the project directory to the output.
+            // This is for introduction files, pictures, etc.
+            string htmlExtras = Path.Combine(m_inputDirectory, "htmlextras");
+            if (Directory.Exists(htmlExtras))
+            {
+                WordSend.fileHelper.CopyDirectory(htmlExtras, htmlPath);
+            }
             
             usfxToHtmlConverter toHtm;
 			if (m_options.UseFrames)
@@ -578,11 +586,11 @@ In addition, you have permission to convert the text to different file formats, 
 
 			if (m_options.UseFrames)
 			{
-				// Copy any Introduction files to the output. Do this before making the chapter index, since we tell it to look for them there.
-				foreach (var path in Directory.GetFiles(m_inputProjectDirectory, "*" + UsfxToChapterIndex.IntroductionSuffix))
+				// Look for Introduction files in the output. (They were copied htmlextras earlier.)
+                // Do this before making the chapter index, since we tell it to look for them there.
+				foreach (var path in Directory.GetFiles(htmlPath, "*" + UsfxToChapterIndex.IntroductionSuffix))
 				{
 					string destFileName = Path.Combine(htmlPath, Path.GetFileName(path));
-					File.Copy(path, destFileName, true);
 					toHtm.MakeFramesFor(destFileName);
 				}
 				// Generate the ChapterIndex file
@@ -631,7 +639,9 @@ In addition, you have permission to convert the text to different file formats, 
                 ******/
 				currentConversion = "Concordance";
 				string concordanceDirectory = Path.Combine(htmlPath, "conc");
+                statusNow("Deleting " + concordanceDirectory);
 				Utils.DeleteDirectory(concordanceDirectory); // Blow away any previous results
+                statusNow("Creating " + concordanceDirectory);
 				Utils.EnsureDirectory(concordanceDirectory);
 				string excludedClasses =
 					"toc toc1 toc2 navButtons pageFooter chapterlabel r verse"; // from old prophero: "verse chapter notemark crmark crossRefNote parallel parallelSub noteBackRef popup crpopup overlap";
@@ -663,6 +673,7 @@ In addition, you have permission to convert the text to different file formats, 
 											NonCanonicalClasses = new HashSet<string>(headingClasses.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
 				                    	};
 				// concGenerator.Run(new List<string>(Directory.GetFiles(xhtmlPath)));
+                statusNow("Generating concordance.");
                 concGenerator.Run(usfxFilePath);
 
 				var concFrameGenerator = new ConcFrameGenerator()
@@ -684,25 +695,32 @@ In addition, you have permission to convert the text to different file formats, 
         public void RunCommand(string command)
         {
             System.Diagnostics.Process runningCommand = null;
-            if (Path.DirectorySeparatorChar == '/')
+            try
             {
-                runningCommand = System.Diagnostics.Process.Start("bash", " -c '" + command + "'");
-            }
-            else
-            {
-                runningCommand = System.Diagnostics.Process.Start("cmd.exe", " /c " + command);
-            }
-            if (runningCommand != null)
-            {
-                while (fAllRunning && !runningCommand.HasExited)
+                if (Path.DirectorySeparatorChar == '/')
                 {
-                    System.Windows.Forms.Application.DoEvents();
-                    System.Threading.Thread.Sleep(200);
+                    runningCommand = System.Diagnostics.Process.Start("bash", " -c '" + command + "'");
                 }
-                if ((!runningCommand.HasExited) && (!fAllRunning))
+                else
                 {
-                    runningCommand.Kill();
+                    runningCommand = System.Diagnostics.Process.Start("cmd.exe", " /c " + command);
                 }
+                if (runningCommand != null)
+                {
+                    while (fAllRunning && !runningCommand.HasExited)
+                    {
+                        System.Windows.Forms.Application.DoEvents();
+                        System.Threading.Thread.Sleep(200);
+                    }
+                    if ((!runningCommand.HasExited) && (!fAllRunning))
+                    {
+                        runningCommand.Kill();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Unable to run command " + command);
             }
         }
 
@@ -951,6 +969,8 @@ In addition, you have permission to convert the text to different file formats, 
             btnSetRootDirectory.Enabled = true;
             reloadButton.Enabled = true;
             runHighlightedButton.Enabled = true;
+            if (Program.autorun)
+                Close();
         }
 
         private void reloadButton_Click(object sender, EventArgs e)
@@ -1308,11 +1328,17 @@ In addition, you have permission to convert the text to different file formats, 
         }
 
         private DateTime startTime = new DateTime(1, 1, 1);
+        private bool triggerautorun;
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             batchLabel.Text = (DateTime.UtcNow - startTime).ToString() + " " + m_project + " " +
                 ConversionProgress;
+            if (triggerautorun)
+            {
+                triggerautorun = false;
+                WorkOnAllButton_Click(sender, e);
+            }
         }
 
     	private string ConversionProgress
@@ -1324,6 +1350,12 @@ In addition, you have permission to convert the text to different file formats, 
     			return currentConversion + " " + WordSend.usfxToHtmlConverter.conversionProgress;
     		}
     	}
+
+        private void statusNow(string s)
+        {
+            batchLabel.Text = (DateTime.UtcNow - startTime).ToString() + " " + m_project + " " + s;
+            Application.DoEvents();
+        }
 
     	private void addProgramButton_Click(object sender, EventArgs e)
         {
@@ -1556,39 +1588,46 @@ In addition, you have permission to convert the text to different file formats, 
 
     	private void UpdateBooksList(bool restoreDefaults)
     	{
-    		fAllRunning = true;
-    		GetUsfx(SelectedProject);
-    		var analyzer = new UsfxToBookAndAbbr();
-    		analyzer.Parse(GetUsfxFilePath());
-    		Dictionary<string, string> oldNames = new Dictionary<string, string>();
-    		Dictionary<string, string> oldAbbreviations = new Dictionary<string, string>();
-			if (!restoreDefaults)
-			{
-				foreach (ListViewItem item in listBooks.Items)
-				{
-					var key = item.Text;
-					var oldAbbr = item.SubItems[1].Text;
-					var oldName = item.SubItems[2].Text;
-					oldNames[key] = oldName;
-					oldAbbreviations[key] = oldAbbr;
-				}
-			}
-    		listBooks.BeginUpdate();
-    		listBooks.Items.Clear();
-    		foreach (var key in analyzer.BookIds)
-    		{
-    			string vernacularName;
-    			oldNames.TryGetValue(key, out vernacularName);
-    			if (string.IsNullOrEmpty(vernacularName))
-    				vernacularName = analyzer.VernacularNames[key];
-    			string vernacularAbbreviation;
-    			oldAbbreviations.TryGetValue(key, out vernacularAbbreviation);
-    			if (string.IsNullOrEmpty(vernacularAbbreviation))
-    				vernacularAbbreviation = analyzer.ReferenceAbbreviations[key];
+            try
+            {
+                fAllRunning = true;
+                GetUsfx(SelectedProject);
+                var analyzer = new UsfxToBookAndAbbr();
+                analyzer.Parse(GetUsfxFilePath());
+                Dictionary<string, string> oldNames = new Dictionary<string, string>();
+                Dictionary<string, string> oldAbbreviations = new Dictionary<string, string>();
+                if (!restoreDefaults)
+                {
+                    foreach (ListViewItem item in listBooks.Items)
+                    {
+                        var key = item.Text;
+                        var oldAbbr = item.SubItems[1].Text;
+                        var oldName = item.SubItems[2].Text;
+                        oldNames[key] = oldName;
+                        oldAbbreviations[key] = oldAbbr;
+                    }
+                }
+                listBooks.BeginUpdate();
+                listBooks.Items.Clear();
+                foreach (var key in analyzer.BookIds)
+                {
+                    string vernacularName;
+                    oldNames.TryGetValue(key, out vernacularName);
+                    if (string.IsNullOrEmpty(vernacularName))
+                        vernacularName = analyzer.VernacularNames[key];
+                    string vernacularAbbreviation;
+                    oldAbbreviations.TryGetValue(key, out vernacularAbbreviation);
+                    if (string.IsNullOrEmpty(vernacularAbbreviation))
+                        vernacularAbbreviation = analyzer.ReferenceAbbreviations[key];
 
-    			listBooks.Items.Add(MakeBookListItem(key, vernacularAbbreviation, vernacularName));
-    		}
-    		listBooks.EndUpdate();
+                    listBooks.Items.Add(MakeBookListItem(key, vernacularAbbreviation, vernacularName));
+                }
+                listBooks.EndUpdate();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Book list may only be updated after USFX file is generated.");
+            }
     	}
 
     	ListViewItem MakeBookListItem(string abbr, string vernAbbr, string xrefName)

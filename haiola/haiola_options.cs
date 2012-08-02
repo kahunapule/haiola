@@ -447,9 +447,8 @@ namespace haiola
 				if (m_postprocesses == null)
 				{
 					m_postprocesses = new List<string>();
-					count = ini.ReadInt("numPostprocesses", 1);
-					m_postprocesses.Add(ini.ReadString("postprocess0", "pubscripture %d %t %h %p %r"));
-					for (i = 1; i < count; i++)
+					count = ini.ReadInt("numPostprocesses", 0);
+					for (i = 0; i < count; i++)
 					{
 						m_postprocesses.Add(ini.ReadString("postprocess" + i.ToString(), ""));
 					}
