@@ -194,7 +194,7 @@ namespace sepp
             throw new Exception("Could not find required file " + fileName);
         }
         */
-        /* Good routine, currently unused
+        /* Unused
         public static void CopyDirectory(string Src, string Dst)
         {
             String[] Files;
@@ -213,7 +213,7 @@ namespace sepp
                     File.Copy(Element, Dst + Path.GetFileName(Element), true);
             }
         }
+        
         */
-
 	}
 }
