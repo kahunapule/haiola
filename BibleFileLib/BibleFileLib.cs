@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Data;
 using System.IO;
 using System.Collections;
 using System.Text;
@@ -4889,6 +4890,15 @@ namespace WordSend
 						switch (sf.tag)
 						{
 							case "c":
+                                if (inUSFXNote)
+                                {
+                                    EndUSFXNote();
+                                    Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
+                                        ":" + verseMark + "  (c)");
+                                    fatalError = true;
+                                }
+
+                                EndUSFXParagraph();
 								chapterMark = sf.attribute;
 								verseMark = "";
 								StartUSFXElement("c", "id", sf.attribute, null);
@@ -4903,6 +4913,14 @@ namespace WordSend
                                 EndUSFXElement();   // ca
                                 break;
 							case "v":
+                                verseMark = sf.attribute;
+                                if (inUSFXNote)
+                                {
+                                    EndUSFXNote();
+                                    Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
+                                        ":" + verseMark + "  (v)");
+                                    fatalError = true;
+                                }
 								StartUSFXElement(sf.tag, "id", sf.attribute, null);
 								EndUSFXElement();	// ns+v
 								WriteUSFXText(sf.text);
@@ -4919,6 +4937,13 @@ namespace WordSend
 								StartUSFXParagraph(sf.tag, sf.level, sf.info.paragraphStyle, sf.text);
 								break;
 							case "id":
+                                if (inUSFXNote)
+                                {
+                                    EndUSFXNote();
+                                    Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
+                                        ":" + verseMark + "  (id)");
+                                    fatalError = true;
+                                }
 								StartUSFXElement(sf.tag, "id", sf.attribute, sf.text);
 								EndUSFXElement();
 								break;
@@ -5060,6 +5085,14 @@ namespace WordSend
 					}
 					sf = book.NextSfm();
 				}
+                if (inUSFXNote)
+                {
+                    EndUSFXNote();
+                    Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
+                        ":" + verseMark + "  (EOF)");
+                    fatalError = true;
+                }
+
 				EndUSFXParagraph();
 				xw.WriteEndElement();	// ns+book
 				// Logit.WriteLine("END OF BOOK "+book.bookCode);
