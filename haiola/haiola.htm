@@ -1,9 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html><head>
-
   
-  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8"><title>Haiola documentation</title>
-  
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8">
+  <title>Haiola documentation</title>
 
   
   
@@ -22,7 +21,8 @@
 		H2.ctl { font-family: "Lohit Hindi"; font-size: 14pt; font-style: italic }
 		A:link { so-language: zxx }
 	-->
-	</style></head><body>
+	</style>
+</head><body>
 <h1><a href="http://haiola.org">Haiola</a> Documentation</h1>
 
 <h2>What is Haiola?</h2>
@@ -74,7 +74,9 @@ programs. It inherits major portions of Prophero and WordSend.</p>
 
 <h2>What is new in Haiola?</h2>
 
-<p><a href="http://haiola.org/download">See the change log for the list of recent changes.</a></p>
+<p><a href="http://haiola.org/download.htm">See the change log for the
+list
+of recent changes.</a></p>
 
 <h2>What is required to run Haiola?</h2>
 
@@ -184,6 +186,13 @@ management system. For Ubuntu, you can get the latest SIL fonts from
 "apt source deb http://packages.sil.org/ubuntu distro main", where
 "distro" is your current distribution (i. e. onieric).)<br>
 
+In other words, in /etc/apt/sources.list, add a line like:
+<pre wrap="">deb <a class="moz-txt-link-freetext" href="http://packages.sil.org/ubuntu">http://packages.sil.org/ubuntu</a> distributionName main<br></pre>
+
+<p>Then issue the following commands:</p>
+
+<pre>wget -O - <a class="moz-txt-link-freetext" href="http://packages.sil.org/sil.gpg">http://packages.sil.org/sil.gpg</a> | sudo apt-key add -<br>apt-get install fonts-sil-andika<br>sudo apt-get install fonts-sil-gentium-plus<br>sudo apt-get install mono-runtime<br>sudo apt-get install libmono-winforms2.0-cil<br><br></pre>
+
 2. <a href="http://haiola.org/">Download</a>
 the Haiola distribution
 .zip file and unzip it to a suitable location in your file system. Note
@@ -238,23 +247,26 @@ translation identifier<br>
 for this project<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -or-<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; usfx<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; USFX file for import<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; USFX
+file for import<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -or-<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; usx<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; USX files (i. e. an unziped Digital Bible Library bundle)<br>
-&nbsp;&nbsp; output<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; epub<br>
-
-
-
-
-
-&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; html<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sql<br>
-
-
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; USX
+files (i. e. an unziped Digital Bible Library bundle)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -and (optional)-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; htmlextras<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Files to copy directly to the html output directory, such as images,
+introduction files, etc.<br>
+&nbsp;&nbsp; output<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; epub<br>
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; html<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sql<br>
 &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; usfm<br>
 &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; usfx<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; wordml<br>
 </p>
+
 <p>Of the folders above, the ones you create are the project folders
 and ONE of Source, usfx, or usx folder for input under each project
 folder. Haiola checks for Source (USFM files) first, then if that
@@ -267,6 +279,36 @@ that Bible translation. For example, if you have a Bible translation
 BibleConv/Work/abc/Source/ and then put the USFM files in there. The
 USFM files should use Unicode UTF-8 text encoding. </p>
 
+<h2>HTML Output Options</h2>
+
+Haiola currently offers 2 options for HTML generation. Concordance
+generation can be turned on or off, and 3-panel frame-based navigation
+can be turned on or off. See the options on the "Concordance" and
+"Frames" tabs of the Haiola user interface. The most-tested HTML output
+is with concordance and frames options turned off. Only the option with
+both concordance and frames turned off supports sparse books with not
+all chapters present. If you turn the frames option on, the navigation
+generation fails if the project does not include non-canonical section
+titles. Therefore, I recommend that you use either or both of these
+options only with projects that have no incomplete books, which have
+introduction files, and which have \s section headers in all books.
+(These restrictions could be removed in a later version of Haiola if
+necessary.) The static concordance option with frame-based navigation
+is a slight improvement over the original Prophero HTML output. It
+works well on larger screens (not smart phones). This is a stop-gap
+option for search capabilities until full text search can be
+implemented. Also, please note that when generating concordance files,
+the process takes a LONG time, and may appear frozen for several
+minutes at a time. The process can be sped up some by deleting the
+output html directory before starting. If it already exits, it will be
+deleted anyway and replaced. That is why web page elements that you
+want to persist between runs must be put in the input/<span style="font-style: italic;">project</span>/htmlextras directory.<br>
+
+<br>
+
+Files placed in the input/<span style="font-style: italic;">project</span>/htmlextras
+directory and ending in "_Introduction.htm" are used in the
+navigational structure of frame-based HTML.<br>
 
 <h2>What auxiliary files does Haiola use?</h2>
 
@@ -298,7 +340,24 @@ transformations are optional. I use them to create digital signatures
 and zip files of the various output formats, then to copy the output
 files to a local image of a file server in the appropriate places for
 each project. It is up to you if you want to automate that stuff or
-just use a graphical file manager to do all of that.<br>
+just use a graphical file manager to do all of that.</p>
+
+<h2>The Books List</h2>
+
+The book abbreviation list is under construction. Its purpose is to
+tell Haiola what abbreviations are used for books in crossreferences
+and footnotes so that it can construct hyperlinks from those
+references. Currently, you must run Haiola on a project first before
+you press either of the buttons on the "Books" tab, because in expects
+to read which books are in the project from the output USFX file. (This
+behavior is subject to change.)<br>
+
+<h2>Command Line Options</h2>
+
+<p>If you specify "haiola -a" (without the quotes) on the command line,
+that
+is the same as pressing the "Run marked" button on startup, then
+closing the program when that run is completed.<br>
 </p>
 
 <h2>Who is writing Haiola?</h2>
@@ -341,7 +400,8 @@ just to make sure I haven't already fixed whatever is bugging you.<br>
 <br>
 
 If you want to get announcements of what is new with Haiola, please
-sign up for the announcement email list at <a href="http://groups.google.com/group/haiola?hl=en">http://groups.google.com/group/haiola?hl=en</a>.<br>
+sign up for the announcement email list at <a href="http://groups.google.com/group/haiola?hl=en">http://groups.google.com/group/haiola?hl=en</a>
+or <a href="http://lists.ebible.org/mailman/listinfo/haiola">http://lists.ebible.org/mailman/listinfo/haiola</a>.<br>
 
 <h2>Copyright and Permission to Copy</h2>
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -195,20 +196,27 @@ namespace haiola
                 bkInfo = new WordSend.BibleBookInfo();
             // Use the ID line.
             string result = "";
+            string chap = "";
             string line;
             StreamReader sr = new StreamReader(pathName);
-            while ((result.Length < 1) && (!sr.EndOfStream))
+            while ((!sr.EndOfStream) && (chap.Length < 1))
             {
                 line = sr.ReadLine();
                 if (line.StartsWith(@"\id ") && (line.Length > 6))
                 {
                     result = line.Substring(4, 3).ToUpper(System.Globalization.CultureInfo.InvariantCulture);
                 }
+                else if (line.StartsWith(@"\c ") && (line.Length > 3))
+                {
+                    chap = line.Substring(3).Trim();
+                }
             }
+            while (chap.Length < 3)
+                chap = "0" + chap;
             sr.Close();
             if (result.Length > 0)
             {
-                result = bkInfo.Order(result).ToString("D2") + "-" + result;
+                result = bkInfo.Order(result).ToString("D2") + "-" + result + chap;
             }
             return result;
         }
@@ -1455,6 +1463,15 @@ In addition, you have permission to convert the text to different file formats, 
             int numProjects = 0;
             int numTranslations = 0;
             int urlid = 0;
+            int numLanguages = 0;
+            int numDialects = 0;
+            int numSites = 0;
+            int c;
+            string dialect;
+            string homedomain;
+            Hashtable langTable = new Hashtable();
+            Hashtable dialectTable = new Hashtable();
+            Hashtable siteTable = new Hashtable();
             btnSetRootDirectory.Enabled = false;
             reloadButton.Enabled = false;
             m_projectsList.Enabled = false;
@@ -1468,6 +1485,7 @@ In addition, you have permission to convert the text to different file formats, 
             StreamWriter sw = new StreamWriter(Path.Combine(m_outputDirectory, "translations.csv"));
             StreamWriter sqlFile = new StreamWriter(Path.Combine(m_outputDirectory, "Bible_list.sql"));
             StreamWriter altUrlFile = new StreamWriter(Path.Combine(m_outputDirectory, "urllist.sql"));
+            StreamWriter scorecard = new StreamWriter(Path.Combine(m_outputDirectory, "scorecard.txt"));
             sqlFile.WriteLine("USE Prophero;");
             sqlFile.WriteLine("DROP TABLE IF EXISTS 'bible_list';");
             sqlFile.WriteLine(@"CREATE TABLE 'bible_list' ('translationid' VARCHAR(64) NOT NULL,
@@ -1495,6 +1513,41 @@ In addition, you have permission to convert the text to different file formats, 
                 if ((!m_options.privateProject) && (m_options.languageId.Length > 1))
                 {
                     numTranslations++;
+                    if (langTable[m_options.languageId] == null)
+                    {
+                        langTable[m_options.languageId] = 1;
+                        numLanguages++;
+                    }
+                    else
+                    {
+                        c = (int)langTable[m_options.languageId];
+                        langTable[m_options.languageId] = c + 1;
+                    }
+                    dialect = m_options.languageId + m_options.dialect;
+                    if (dialectTable[dialect] == null)
+                    {
+                        dialectTable[dialect] = 1;
+                        numDialects++;
+                    }
+                    else
+                    {
+                        c = (int)dialectTable[dialect];
+                        dialectTable[dialect] = c + 1;
+                    }
+                    homedomain = m_options.homeDomain.Trim();
+                    if (homedomain.Length > 0)
+                    {
+                        if (siteTable[homedomain] == null)
+                        {
+                            siteTable[homedomain] = 1;
+                            numSites++;
+                        }
+                        else
+                        {
+                            c = (int)siteTable[homedomain];
+                            siteTable[homedomain] = c + 1;
+                        }
+                    }
                     sw.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\",\"{10}\",\"http://{5}/{1}/\"",
                         m_options.languageId,
                         m_options.translationId,
@@ -1538,7 +1591,38 @@ In addition, you have permission to convert the text to different file formats, 
             sqlFile.Close();
             altUrlFile.Close();
             fAllRunning = false;
-            currentConversion = numProjects.ToString() + " projects; " + numTranslations.ToString() + " public. " + urlid.ToString() + " URLs.";
+            currentConversion = numProjects.ToString() + " projects; " + numTranslations.ToString() + " public. " + urlid.ToString() + " URLs " + numSites.ToString() + " sites " + numLanguages.ToString() + " languages " + numDialects.ToString() + " dialects (including languages). ";
+
+            scorecard.WriteLine("Haiola project statistics as of {0} UTC", DateTime.UtcNow.ToString("R"));
+            scorecard.WriteLine("{0} URLs", urlid.ToString());
+            scorecard.WriteLine("{0} sites", numSites.ToString());
+            scorecard.WriteLine("{0} languages", numLanguages.ToString());
+            scorecard.WriteLine("{0} dialects", numDialects.ToString());
+            scorecard.WriteLine("{0} public translations", numTranslations.ToString());
+            scorecard.WriteLine("{0} projects", numProjects.ToString());
+            scorecard.WriteLine("Translations by site:");
+            foreach (DictionaryEntry de in siteTable)
+            {
+                scorecard.WriteLine("  {0} translations at {1}", ((int)de.Value).ToString(), (string)de.Key);
+            }
+            scorecard.WriteLine("Languages with multiple translations:");
+            foreach (DictionaryEntry de in langTable)
+            {
+                if ((int)de.Value > 1)
+                {
+                    scorecard.WriteLine("  {0} translations in {1}", ((int)de.Value).ToString(), (string)de.Key);
+                }
+            }
+            scorecard.WriteLine("Dialects with multiple translations:");
+            foreach (DictionaryEntry de in dialectTable)
+            {
+                if ((int)de.Value > 1)
+                {
+                    scorecard.WriteLine("  {0} translations in {1}", ((int)de.Value).ToString(), (string)de.Key);
+                }
+            }
+            scorecard.Close();
+
             timer1.Enabled = false;
             statsLabel.Text = currentConversion;
             m_projectsList_SelectedIndexChanged(null, null);
