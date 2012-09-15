@@ -513,6 +513,14 @@
 		<sortOrder>63</sortOrder>
 		<numChapters>14</numChapters>
 	</Book>
+	<Book testament="a">
+		<sfmTla>DAG</sfmTla>
+		<osisName>AddDan</osisName>
+		<name>Daniel (Greek)</name>
+		<shortName>Daniel (Greek)</shortName>
+		<sortOrder>101</sortOrder>
+		<numChapters>12</numChapters>
+	</Book>
 	<Book testament="n">
 		<sfmTla>MAT</sfmTla>
 		<osisName>Matt</osisName>
