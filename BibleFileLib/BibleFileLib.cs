@@ -2103,8 +2103,13 @@ namespace WordSend
         public string vernacularAbbreviation;
 		public string testament;
         public StringBuilder toc;
+        public int publicationOrder;
+        public bool isPresent;
 		public BibleBookRecord()
 		{
+            sortOrder = publicationOrder = 0;
+            numChapters = 151;
+            isPresent = false;
 			tla = osisName = name = shortName = testament = vernacularAbbreviation = vernacularHeader = vernacularName = "";
             toc = new StringBuilder();
 		}
@@ -2112,9 +2117,10 @@ namespace WordSend
 
 	public class BibleBookInfo
 	{
-		public const int MAXNUMBOOKS=101;	// Includes Apocrypha + extrabiblical helps, front & back matter, etc.
+		public const int MAXNUMBOOKS=110;	// Includes Apocrypha + extrabiblical helps, front & back matter, etc.
 		public Hashtable books;
 		public BibleBookRecord[] bookArray = new BibleBookRecord[MAXNUMBOOKS];
+        public BibleBookRecord[] publishArray = new BibleBookRecord[MAXNUMBOOKS];
 		protected bool apocryphaFound;
 
         public bool isApocrypha(string abbrev)
@@ -2240,6 +2246,7 @@ namespace WordSend
 					{
 						books[bkRecord.tla] = bkRecord;
 						bookArray[bkRecord.sortOrder] = bkRecord;
+                        publishArray[bkRecord.sortOrder] = bkRecord;    // Default book publication order
 					}
 				}
 			}
@@ -2250,6 +2257,55 @@ namespace WordSend
 		{
 			ReadBookInfoFile(fileName);
 		}
+
+        /// <summary>
+        /// Reads a file indicating the proper publication order for this translation instance.
+        /// The file should be a plain text file, one line per book, with the standard 3-letter
+        /// book abbreviation being the first 3 characters on the line, in the order that this
+        /// Bible translation should be presented to the reader. All-blank lines or lines starting
+        /// with anything other than a letter or digit are comments and are ignored. Anything
+        /// after the first 3 nonblank characters of a line are ignored.
+        /// </summary>
+        /// <param name="fileName">text file to read</param>
+        public void ReadPublicationOrder(string fileName)
+        {
+            int i = 0;
+            BibleBookRecord br;
+
+            string line;
+            try
+            {
+                StreamReader sr = new StreamReader(fileName);
+                while (sr.Peek() >= 0)
+                {
+                    line = sr.ReadLine().Trim().ToUpperInvariant();
+                    if (line.Length > 3)
+                        line = line.Substring(0, 3);
+                    if ((line.Length == 3) && Char.IsLetterOrDigit(line[0]) && (i < MAXNUMBOOKS))
+                    {
+                        br = (BibleBookRecord)books[line];
+                        if (br == null)
+                        {
+                            Logit.WriteError("Bad abbreviation " + line + " in " + fileName);
+                        }
+                        else
+                        {
+                            br.publicationOrder = i;
+                            br.isPresent = false;
+                            publishArray[i] = br;
+                            i++;
+                        }
+                    }
+                }
+                if (i < MAXNUMBOOKS)
+                    publishArray[i] = null;
+                sr.Close();
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError("Error reading " + fileName + ex.Message);
+            }
+        }
 
 		public BibleBookInfo()
 		{
@@ -6444,6 +6500,7 @@ namespace WordSend
         protected ArrayList chapterFileList = new ArrayList();
         protected int chapterFileIndex = 0;
         public static ArrayList bookList = new ArrayList();
+        
         protected int bookListIndex = 0;
         protected StringBuilder footnotesToWrite;
         protected StreamWriter htm;
@@ -6461,7 +6518,7 @@ namespace WordSend
         //bool containsDC;
         bool newChapterFound;
         bool convertDigitsToKhmer;
-        BibleBookInfo bookInfo = new BibleBookInfo();
+        public BibleBookInfo bookInfo = new BibleBookInfo();
         BibleBookRecord bookRecord;
 
 		/// <summary>
@@ -7730,6 +7787,7 @@ namespace WordSend
                                                 break;
                                             case "hr":
                                                 EndHtmlTable();
+                                                EndHtmlParagraph();
                                                 WriteHtml("<hr>");
                                                 break;
                                         }
@@ -8204,8 +8262,7 @@ namespace WordSend
                                 if (!hasContentsPage)
                                     bookRecord.toc.Length = 0;
                                 bookRecord.vernacularName = vernacularLongTitle;
-                                
-                                bookList.Add(bookRecord);
+                                bookRecord.isPresent = true;
                                 break;
                             case "d":
                             case "s":
@@ -8230,11 +8287,20 @@ namespace WordSend
                 }
                 usfx.Close();
 
-				if (bookList.Count < 1)
-				{
-					Logit.WriteError("No books found to convert in " + usfxName);
-					return false;
-				}
+                int i;
+                for (i = 0; (i < BibleBookInfo.MAXNUMBOOKS) && (bookInfo.publishArray[i] != null); i++)
+                {
+                    if (bookInfo.publishArray[i].isPresent)
+                    {
+                        bookList.Add(bookInfo.publishArray[i]);
+                    }
+                }
+
+                if (bookList.Count < 1)
+                {
+                    Logit.WriteError("No books found to convert in " + usfxName);
+                    return false;
+                }
 
                 // Index page
                 GenerateIndexFile(translationId, indexHtml, goText);
@@ -8383,6 +8449,11 @@ namespace WordSend
                                     case "s":
                                         EndHtmlTable();
                                         ProcessParagraphStart(true);
+                                        break;
+                                    case "hr":
+                                        EndHtmlTable();
+                                        EndHtmlParagraph();
+                                        WriteHtml("<hr />");
                                         break;
                                     case "c":
                                         EndHtmlTable();
