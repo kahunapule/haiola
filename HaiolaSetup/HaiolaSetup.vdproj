@@ -63,6 +63,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_4406D741EC1F4C3CB051AE68305CB1CA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_4439E55F001249B6B22C8E750450880A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -81,13 +87,37 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_62434C9DAA4145D8A3962B43EE8B1F90"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_63DABBC1CB3C462F88F1882A3909AFAD"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
+        "MsmKey" = "8:_731860DE2EB5449C9D550ECDF4F0880C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_7BF4FEF7CF384AF08638A015D12A298A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8E7CCC2C16CC49879E6BFB4F930F4BAD"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_97E772F5BDD44258B25320998523FD2A"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -167,6 +197,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_E4EE1B0A5438B0AD5E1930DA3D194455"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_97E772F5BDD44258B25320998523FD2A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -420,6 +456,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4406D741EC1F4C3CB051AE68305CB1CA"
+            {
+            "SourcePath" = "8:Z:\\Documents\\source\\prophero\\haiola\\rcbookorder.txt"
+            "TargetName" = "8:rcbookorder.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_D6577D87220B40D5AB461D56EDAD5B1D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4439E55F001249B6B22C8E750450880A"
             {
             "SourcePath" = "8:Z:\\Documents\\source\\prophero\\haiola\\frameFuncs.js"
@@ -480,6 +536,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_62434C9DAA4145D8A3962B43EE8B1F90"
+            {
+            "SourcePath" = "8:Z:\\Documents\\source\\prophero\\haiola\\bookorder.txt"
+            "TargetName" = "8:bookorder.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_D6577D87220B40D5AB461D56EDAD5B1D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_63DABBC1CB3C462F88F1882A3909AFAD"
             {
             "SourcePath" = "8:Z:\\Documents\\source\\prophero\\haiola\\OneColumnSerif.xml"
@@ -500,10 +576,50 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_731860DE2EB5449C9D550ECDF4F0880C"
+            {
+            "SourcePath" = "8:Z:\\Documents\\source\\prophero\\haiola\\protestantorder.txt"
+            "TargetName" = "8:protestantorder.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_D6577D87220B40D5AB461D56EDAD5B1D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7BF4FEF7CF384AF08638A015D12A298A"
             {
             "SourcePath" = "8:Z:\\Documents\\source\\prophero\\haiola\\plus.gif"
             "TargetName" = "8:plus.gif"
+            "Tag" = "8:"
+            "Folder" = "8:_D6577D87220B40D5AB461D56EDAD5B1D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8E7CCC2C16CC49879E6BFB4F930F4BAD"
+            {
+            "SourcePath" = "8:Z:\\Documents\\source\\prophero\\haiola\\messianicorder.txt"
+            "TargetName" = "8:messianicorder.txt"
             "Tag" = "8:"
             "Folder" = "8:_D6577D87220B40D5AB461D56EDAD5B1D"
             "Condition" = "8:"
@@ -724,7 +840,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:BibleFileLib, Version=0.0.4561.24654, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:BibleFileLib, Version=0.0.4640.20484, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_E4EE1B0A5438B0AD5E1930DA3D194455"
@@ -828,7 +944,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Haiola"
         "ProductCode" = "8:{72EF1D36-A2F1-435F-98B5-92D507D51978}"
-        "PackageCode" = "8:{870960ED-9707-4B8A-87B7-0E8E76F63879}"
+        "PackageCode" = "8:{3BF711F7-8FDA-4D13-967A-0A4BAE64ADB4}"
         "UpgradeCode" = "8:{B37D5AD6-4216-4FEF-B32B-31D132FA7804}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -1363,7 +1479,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_089C2F02800A4F568A1F6B3390AF9AB1"
             {
-            "SourcePath" = "8:\\\\vmware-host\\Shared Folders\\Documents\\source\\prophero\\haiola\\obj\\x86\\Debug\\haiola.exe"
+            "SourcePath" = "8:\\\\vmware-host\\Shared Folders\\Documents\\source\\prophero\\haiola\\obj\\x86\\Release\\haiola.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_D6577D87220B40D5AB461D56EDAD5B1D"
@@ -1384,6 +1500,34 @@
             "OutputConfiguration" = "8:"
             "OutputGroupCanonicalName" = "8:Built"
             "OutputProjectGuid" = "8:{D520CCD6-B7A4-4D7E-BDFE-1DF89111383A}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_97E772F5BDD44258B25320998523FD2A"
+            {
+            "SourcePath" = "8:\\\\vmware-host\\Shared Folders\\Documents\\source\\prophero\\massregex\\obj\\x86\\Release\\massregex.exe"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_D6577D87220B40D5AB461D56EDAD5B1D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{20E590DE-DDF6-46DA-9348-D06F8F238A25}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {

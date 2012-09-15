@@ -332,7 +332,7 @@ namespace haiola
                     (fileType != ".WDL") && (fileType != ".STY") &&
                     (fileType != ".XML") && (fileType != ".HTM") &&
                     (fileType != ".KB2") && (fileType != ".HTML") &&
-                    (fileType != ".CSS") &&
+                    (fileType != ".CSS") && (fileType != ".SWP") &&
                     (fileType != ".VRS") && (!inputFile.EndsWith("~")))
                 {
                     currentConversion = "preprocessing " + filename;
@@ -462,6 +462,10 @@ namespace haiola
         	toHtm.GeneratingConcordance = m_options.GenerateConcordance;
     		toHtm.CrossRefToFilePrefixMap = m_options.CrossRefToFilePrefixMap;
     		string usfxFilePath = Path.Combine(UsfxPath, "usfx.xml");
+            string orderFile = Path.Combine(m_inputProjectDirectory, "bookorder.txt");
+            if (!File.Exists(orderFile))
+                orderFile = SFConverter.FindAuxFile("bookorder.txt");
+            toHtm.bookInfo.ReadPublicationOrder(orderFile);
     		toHtm.ConvertUsfxToHtml(usfxFilePath, htmlPath,
                 m_options.vernacularTitle,
                 m_options.languageId,
