@@ -66,7 +66,7 @@ namespace massregex
                         sep = line[0];
                         string[] parts = line.Split(new char[] { sep });
                         FindThis.Add(parts[1]); // parts[0] is the empty string before the first delimiter
-                        ReplaceWith.Add(parts[2]);
+                        ReplaceWith.Add(Regex.Unescape(parts[2]));
                     }
                 }
                 sr.Close();
@@ -74,6 +74,7 @@ namespace massregex
                 {
                     if (File.Exists(inName) && !Directory.Exists(inName))
                     {
+                        Console.WriteLine(inName);
                         inputFile = new StreamReader(inName);
                         string text = inputFile.ReadToEnd();
                         inputFile.Close();
@@ -81,9 +82,11 @@ namespace massregex
                         {
                             text = Regex.Replace(text, (string)FindThis[i], (string)ReplaceWith[i]);
                         }
-                        outputFile = new StreamWriter(Path.Combine(outDir, Path.GetFileName(inName)));
+                        string outName = Path.Combine(outDir, Path.GetFileName(inName));
+                        outputFile = new StreamWriter(outName);
                         outputFile.Write(text);
                         outputFile.Close();
+                        Console.WriteLine(" -> " + outName);
                     }
                 }
 

@@ -2104,6 +2104,7 @@ namespace WordSend
 		public string testament;
         public StringBuilder toc;
         public int publicationOrder;
+        public ArrayList chapterFiles;
         public bool isPresent;
 		public BibleBookRecord()
 		{
@@ -6589,31 +6590,31 @@ namespace WordSend
         	var formatString = FormatString(out chapNumSize);
         	string firstChapterFile = FirstChapterFile(formatString);
 
-        	if (bookListIndex >= 0)
+
+            if (bookListIndex >= 0)
             {
+
                 htm.WriteLine("<div class=\"navButtons\"><a href=\"index.htm\">{0}</a> <a href=\"{1}\">{2}</a> {3}</div>",
-                    langName, firstChapterFile, bookRecord.vernacularHeader, currentChapterPublished);
+                                langName, firstChapterFile, bookRecord.vernacularHeader, currentChapterPublished);
                 bsb.Append("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" align=\"center\"><tbody><tr><td>");
                 bsb.Append("<form name=\"bkch1\"><div class=\"navChapters\">");
                 bsb.Append("<select name=\"bksch1\" onChange=\"location=document.bkch1.bksch1.options[document.bkch1.bksch1.selectedIndex].value;\">");
-                for (i = 0; i < bookList.Count; i++)
+                i = 0;
+                while ((i < bookInfo.publishArray.Length) && (bookInfo.publishArray[i] != null))
                 {
-                    br = (BibleBookRecord)bookList[i];
-                    if (i == bookListIndex)
+                    br = (BibleBookRecord)bookInfo.publishArray[i];
+                    if (br.tla == bookRecord.tla)
                     {
                         bsb.Append(OptionSelectedOpeningElement + br.vernacularHeader + "</option>\r\n");
                     }
                     else
                     {
-                        foreach (string chapFile in chapterFileList)
+                        if (br.isPresent && (br.chapterFiles != null))
                         {
-                            if (chapFile.StartsWith(br.tla))
-                            {
-                                bsb.Append("<option value=\"" + chapFile + ".htm\">" + br.vernacularHeader + "</option>\r\n");
-                                break;
-                            }
+                            bsb.Append("<option value=\"" + br.chapterFiles[0] + ".htm\">" + br.vernacularHeader + "</option>\r\n");
                         }
                     }
+                    i++;
                 }
                 bsb.Append("</select></div>");
                 bsb.Append("</form>");
@@ -6638,8 +6639,8 @@ namespace WordSend
                 {
                     if (0 == chapterNumber)
                     {
-                        sb.Append(" &nbsp;"+linkText+"&nbsp; ");
-                        bsb.Append(OptionSelectedOpeningElement+linkText+"</option>");
+                        sb.Append(" &nbsp;" + linkText + "&nbsp; ");
+                        bsb.Append(OptionSelectedOpeningElement + linkText + "</option>");
                     }
                     else
                     {
@@ -6650,9 +6651,9 @@ namespace WordSend
                     }
                 }
                 int nextChapIndex = -1;
-                for (i = 0; i < chapterFileList.Count; i++)
+                i = 0;
+                foreach (string chFile in chapterFileList)
                 {
-                    string chFile = (string)chapterFileList[i];
                     int cn;
                     if (chFile.StartsWith(currentBookAbbrev) && (int.TryParse(chFile.Substring(chFile.Length - chapNumSize), out cn)))
                     {
@@ -6674,36 +6675,44 @@ namespace WordSend
                                 chFile, linkText));
                         }
                     }
+                    i++;
                 }
                 bsb.Append("</select>");
                 if ((nextChapIndex >= chapterFileList.Count) || (nextChapIndex < 0))
                     nextChapIndex = 0;
+            
                 s = String.Format("<a href=\"{0}#V0\">&nbsp;&gt;</a></div>",
                     (string)chapterFileList[nextChapIndex] + ".htm");
                 sb.Append(s);
                 bsb.Append(s);
                 bsb.Append("</form></td></tr></tbody></table>");
+            
+
+
             }
             else
             {
+                htm.WriteLine("<div class=\"navButtons\"><a href=\"index.htm\">{0}</a></div>", langName);
+                bsb.Append("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" align=\"center\"><tbody><tr><td>");
                 bsb.Append("<form name=\"bkch1\"><div class=\"navChapters\">");
                 bsb.Append("<select name=\"bksch1\" onChange=\"location=document.bkch1.bksch1.options[document.bkch1.bksch1.selectedIndex].value;\">");
                 bsb.Append(OptionSelectedOpeningElement + "---</option>\r\n");
-                for (i = 0; i < bookList.Count; i++)
+                i = 0;
+                BibleBookRecord bookRec;
+                while ((i < bookInfo.publishArray.Length) && (bookInfo.publishArray[i] != null))
                 {
-                    br = (BibleBookRecord)bookList[i];
-                    foreach (string chapFile in chapterFileList)
+                    bookRec = (BibleBookRecord)bookInfo.publishArray[i];
+                    if (bookRec.isPresent && (bookRec.chapterFiles != null))
                     {
-                        if (chapFile.StartsWith(br.tla))
-                        {
-                            bsb.Append("<option value=\"" + chapFile + ".htm\">" + br.vernacularHeader + "</option>\r\n");
-                            break;
-                        }
+                         bsb.Append("<option value=\"" + bookRec.chapterFiles[0] + ".htm\">" + bookRec.vernacularHeader + "</option>\r\n");
                     }
+                    i++;
                 }
                 bsb.Append("</select></div>");
                 bsb.Append("</form>");
             }
+           
+
             navButtonCode = bsb.ToString();
             if (convertDigitsToKhmer)
                 htm.WriteLine(sb.ToString());
@@ -7195,7 +7204,8 @@ namespace WordSend
                     chap = String.Format("{0}{1}", currentBookAbbrev, chapterNumber.ToString("000"));
                 else
                     chap = String.Format("{0}{1}", currentBookAbbrev, chapterNumber.ToString("00"));
-                chapterFileList.Add(chap);
+                bookRecord.chapterFiles.Add(chap);
+                //chapterFileList.Add(chap);
                 CloseHtmlFile();
             }
         }
@@ -7348,6 +7358,7 @@ namespace WordSend
                                     currentBookAbbrev = id;
                                     bookRecord = (BibleBookRecord)bookInfo.books[currentBookAbbrev];
                                 }
+                                bookRecord.chapterFiles = new ArrayList();
                                 currentBookHeader = vernacularLongTitle = String.Empty;
                                 currentChapter = currentVerse = "0";
                                 chapterNumber = 0;
@@ -8043,9 +8054,12 @@ namespace WordSend
 
 			bool containsDC = false;
             newChapterFound = false;
+            bool foundThisBook;
             ignore = false;
             StringBuilder toc = new StringBuilder();
             string chapFormat = "00";
+            int i;
+
 
             footnotesToWrite = new StringBuilder(String.Empty);
             preVerse = new StringBuilder(String.Empty);
@@ -8089,7 +8103,25 @@ namespace WordSend
                                 {
                                     currentBookAbbrev = id;
                                     bookRecord = (BibleBookRecord)bookInfo.books[currentBookAbbrev];
-                                    bookRecord.toc = new StringBuilder();
+                                    foundThisBook = false;
+                                    for (i = 0; (i < bookInfo.publishArray.Length) && (bookInfo.publishArray[i] != null) && !foundThisBook; i++)
+                                    {
+                                        if (bookInfo.publishArray[i].tla == bookRecord.tla)
+                                            foundThisBook = true;
+                                    }
+                                    if (!foundThisBook)
+                                    {
+                                        bookRecord.isPresent = false;
+                                        while ((usfx.Name != "book") || (usfx.NodeType != XmlNodeType.EndElement))
+                                        {   // Skip book
+                                            usfx.Read();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        bookRecord.toc = new StringBuilder();
+                                        bookRecord.chapterFiles = new ArrayList();
+                                    }
                                 }
                                 if (id.CompareTo("PSA") == 0)
                                     chapFormat = "000";
@@ -8249,7 +8281,6 @@ namespace WordSend
                                 {
                                     verseNumber++;
                                 }
-                                StartVerse();
                                 break;
                         }
                     }
@@ -8262,7 +8293,6 @@ namespace WordSend
                                 if (!hasContentsPage)
                                     bookRecord.toc.Length = 0;
                                 bookRecord.vernacularName = vernacularLongTitle;
-                                bookRecord.isPresent = true;
                                 break;
                             case "d":
                             case "s":
@@ -8282,17 +8312,24 @@ namespace WordSend
                                 break;
                         }
                     }
+                    else if ((usfx.NodeType == XmlNodeType.Text) && (bookRecord != null) && (bookRecord.tla == currentBookAbbrev))
+                    {   // We don't count a book as present unless there is some text in it.
+                        bookRecord.isPresent = true;
+                    }
                     conversionProgress = "navigation " + currentBookAbbrev + " " + currentChapter + ":" + currentVerse;
-                    System.Windows.Forms.Application.DoEvents();
+                    //System.Windows.Forms.Application.DoEvents();
                 }
                 usfx.Close();
 
-                int i;
                 for (i = 0; (i < BibleBookInfo.MAXNUMBOOKS) && (bookInfo.publishArray[i] != null); i++)
                 {
                     if (bookInfo.publishArray[i].isPresent)
-                    {
+                    {   // This book is in the input files and contains at least one character of text.
                         bookList.Add(bookInfo.publishArray[i]);
+                        foreach (string chapFileName in bookInfo.publishArray[i].chapterFiles)
+                        {
+                            chapterFileList.Add(chapFileName);
+                        }
                     }
                 }
 
@@ -8371,19 +8408,27 @@ namespace WordSend
                                         currentBookAbbrev = id;
                                         chapterNumber = 0;
                                         verseNumber = 0;
-                                        if (bookInfo.isApocrypha(id))
-                                            containsDC = true; // probably redundant, should be set in previous pass if ANY apocrypha
-                                        bookRecord = (BibleBookRecord)bookList[bookListIndex];
-                                        currentBookHeader = bookRecord.vernacularHeader;
-                                        hasContentsPage = bookRecord.toc.Length > 0;
-                                        currentChapter = "";
-                                        if (hasContentsPage)
+                                        bookRecord = (BibleBookRecord)bookInfo.books[id];
+                                        if (!bookRecord.isPresent)
+                                        {   // Skip book not on publication list or containing no chapters.
+                                            while ((usfx.Name != "book") || (usfx.NodeType != XmlNodeType.EndElement))
+                                            {
+                                                usfx.Read();
+                                            }
+                                        }
+                                        else
                                         {
-                                            currentChapterPublished = "0";
-                                            OpenHtmlFile();
-                                            htm.WriteLine("<div class=\"toc\"><a href=\"index.htm\">^</a></div>\r\n{0}",
-                                                bookRecord.toc.ToString());
-                                            CloseHtmlFile();
+                                            currentBookHeader = bookRecord.vernacularHeader;
+                                            hasContentsPage = bookRecord.toc.Length > 0;
+                                            currentChapter = "";
+                                            if (hasContentsPage)
+                                            {
+                                                currentChapterPublished = "0";
+                                                OpenHtmlFile();
+                                                htm.WriteLine("<div class=\"toc\"><a href=\"index.htm\">^</a></div>\r\n{0}",
+                                                    bookRecord.toc.ToString());
+                                                CloseHtmlFile();
+                                            }
                                         }
                                         break;
                                     case "id":
