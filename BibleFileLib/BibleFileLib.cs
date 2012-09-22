@@ -667,7 +667,19 @@ namespace WordSend
             s = s.Replace("\r", "\\r");
             return s;
         }
-        
+
+        /// <summary>
+        /// Escapes \ ' " CR and LF as \\ \' \" \r and \n, respectively.
+        /// </summary>
+        /// <param name="s">String to be escaped.</param>
+        /// <returns>String with escape substitutions made.</returns>
+        public static string csvString(string s)
+        {
+            s = s.Replace("\\", "\\\\");
+            s = s.Replace("\"", "\\\"");
+            return s;
+        }
+
         /// <summary>
         /// Replaces only the first instance of oldstring in string s with newstring.
         /// (String.Replace replaces ALL instances of the replacement string. This
@@ -1825,7 +1837,7 @@ namespace WordSend
 											note = note.Replace(src[i], tgt[i]);
 										s = (string)xref[at];
 										if (s == null)
-                                 xref.Add(at, note);
+                                            xref.Add(at, note);
 										else
 											xref[at] = s+"; "+note;
 									}
@@ -6479,6 +6491,7 @@ namespace WordSend
         protected string currentChapterAlternate;
         protected string wordForChapter;
         protected string currentChapterPublished;
+        protected string currentBCV;
         protected string vernacularLongTitle;
         protected string languageCode;
         protected int chapterNumber; // of the file we are currently generating
@@ -6931,6 +6944,16 @@ namespace WordSend
             htm.Write(string.Format(" <span class=\"verse\"> <a name=\"V{1}\">{0}&nbsp;</a></span>",
                 currentVersePublished, verseNumber.ToString()));
             eatSpace = true;
+            if (doXrefMerge)
+            {
+                string xn = xref.find(currentBCV);
+                if ((xn != null) && (xn.Length > 0))
+                {
+                    StartHtmlNote("x", "-");
+                    WriteHtmlText(xn);
+                    EndHtmlNote();
+                }
+            }
         }
 
         /// <summary>
@@ -7266,6 +7289,7 @@ namespace WordSend
                     currentVersePublished = LocalizeNumerals(usfx.Value.Trim());
                 }
             }
+            currentBCV = currentBookAbbrev + " " + currentChapter + ":" + currentVerse;
             int vnum;
             if (Int32.TryParse(id, out vnum))
             {
@@ -8001,6 +8025,26 @@ namespace WordSend
 		{
 			return MainFileLinkTarget(string.Format("{0}{1}.htm", bookAbbrev, chapter));
 		}
+
+        CrossReference xref;
+        bool doXrefMerge = false;
+        public void MergeXref(string xrefName)
+        {
+            doXrefMerge = false;
+            try
+            {
+                if ((xrefName != null) && File.Exists(xrefName))
+                {
+                    xref = new CrossReference(xrefName);
+                }
+                doXrefMerge = true;
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError(ex.Message);
+                throw;
+            }
+        }
 
         /// <summary>
         /// Converts the USFX file usfxName to a set of HTML files, one file per chapter, in the
