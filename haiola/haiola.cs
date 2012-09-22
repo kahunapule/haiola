@@ -466,6 +466,7 @@ namespace haiola
             if (!File.Exists(orderFile))
                 orderFile = SFConverter.FindAuxFile("bookorder.txt");
             toHtm.bookInfo.ReadPublicationOrder(orderFile);
+            toHtm.MergeXref(Path.Combine(m_inputProjectDirectory, "xref.xml"));
     		toHtm.ConvertUsfxToHtml(usfxFilePath, htmlPath,
                 m_options.vernacularTitle,
                 m_options.languageId,
@@ -1555,14 +1556,14 @@ In addition, you have permission to convert the text to different file formats, 
                     sw.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\",\"{10}\",\"http://{5}/{1}/\"",
                         m_options.languageId,
                         m_options.translationId,
-                        fileHelper.sqlString(m_options.languageName),
-                        fileHelper.sqlString(m_options.languageNameInEnglish),
-                        fileHelper.sqlString(m_options.dialect),
-                        fileHelper.sqlString(m_options.homeDomain.Trim()),
-                        fileHelper.sqlString(m_options.vernacularTitle.Trim()),
-                        fileHelper.sqlString(m_options.EnglishDescription.Trim()),
+                        fileHelper.csvString(m_options.languageName),
+                        fileHelper.csvString(m_options.languageNameInEnglish),
+                        fileHelper.csvString(m_options.dialect),
+                        fileHelper.csvString(m_options.homeDomain.Trim()),
+                        fileHelper.csvString(m_options.vernacularTitle.Trim()),
+                        fileHelper.csvString(m_options.EnglishDescription.Trim()),
                         (m_options.publicDomain || m_options.creativeCommons).ToString(),
-                        fileHelper.sqlString(m_options.publicDomain ? "public domain" : "Copyright © " + m_options.copyrightYears + " " + m_options.copyrightOwner),
+                        fileHelper.csvString(m_options.publicDomain ? "public domain" : "Copyright © " + m_options.copyrightYears + " " + m_options.copyrightOwner),
                         m_options.contentUpdateDate.ToString("yyyy-MM-dd"));
                     sqlFile.WriteLine("INSERT INTO 'bible_list' VALUES \"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\",\"{10}\",\"http://{5}/{0}/\";",
                         m_options.translationId,
