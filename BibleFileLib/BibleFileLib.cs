@@ -8036,8 +8036,8 @@ namespace WordSend
                 if ((xrefName != null) && File.Exists(xrefName))
                 {
                     xref = new CrossReference(xrefName);
+                    doXrefMerge = true;
                 }
-                doXrefMerge = true;
             }
             catch (Exception ex)
             {
