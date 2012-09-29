@@ -116,7 +116,7 @@ div.qr { text-align:right; margin-top: 0pt; text-indent: 0em }
 div.qs { text-align:right; }
 span.qt { font-style: oblique }
 div.r, div.sr {  font-size: 13pt; font-style: italic; text-align: center; margin-bottom: 6pt; color: rgb(0,0,128) }
-div.rr, div.rq {  font-size: 13pt; font-style: italic; color: rgb(0,0,128); text-align: right }
+div.rr, div.rq, span.rq {  font-size: 11pt; font-style: italic; color: rgb(0,0,128); text-align: right }
 div.s, div.s1 {  font-style: bold; color: rgb(0,0,128); text-align: center; margin-top: 8pt }
 div.s2 {  font-size: 13pt; color: rgb(0,0,128); font-style: bold; text-align: center }
 div.s3 {  font-size: 13pt; color: rgb(0,0,128); text-align: center }
