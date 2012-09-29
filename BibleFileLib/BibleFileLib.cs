@@ -8519,7 +8519,7 @@ namespace WordSend
                                             (sfm == "pm") || (sfm == "pmc") || (sfm == "pmo") ||
                                             (sfm == "pmr") || (sfm == "pr") || (sfm == "ps") ||
                                             (sfm == "psi") || (sfm == "qc") || (sfm == "qm") ||
-                                            (sfm == "qr") || (sfm == "pr") || (sfm == "ps"))
+                                            (sfm == "qr") || (sfm == "pr") || (sfm == "ps") )
                                             beforeVerse = false;
                                         if (ignoreIntros && ((sfm == "ip") || (sfm == "imt") || (sfm == "io") || (sfm == "is") || (sfm == "iot")))
                                             ignore = true;
