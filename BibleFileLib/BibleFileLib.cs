@@ -6698,7 +6698,7 @@ namespace WordSend
                     (string)chapterFileList[nextChapIndex] + ".htm");
                 sb.Append(s);
                 bsb.Append(s);
-                bsb.Append("</form></td></tr></tbody></table>");
+                bsb.Append("</form></tr></td></tbody></table>");
             
 
 
@@ -6706,7 +6706,6 @@ namespace WordSend
             else
             {
                 htm.WriteLine("<div class=\"navButtons\"><a href=\"index.htm\">{0}</a></div>", langName);
-                bsb.Append("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" align=\"center\"><tbody><tr><td>");
                 bsb.Append("<form name=\"bkch1\"><div class=\"navChapters\">");
                 bsb.Append("<select name=\"bksch1\" onChange=\"location=document.bkch1.bksch1.options[document.bkch1.bksch1.selectedIndex].value;\">");
                 bsb.Append(OptionSelectedOpeningElement + "---</option>\r\n");
