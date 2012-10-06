@@ -155,7 +155,8 @@ namespace haiola
             {
                 m_projectsList.Items.Add(Path.GetFileName(path));
                 projCount++;
-                if (File.Exists(Path.Combine(path, "options.xini")))
+                if (File.Exists(Path.Combine(path, "options.xini")) && 
+                    (Directory.Exists(Path.Combine(path, "Source")) || Directory.Exists(Path.Combine(path, "usfx"))))
                 {
                     m_projectsList.SetItemChecked(m_projectsList.Items.Count - 1, true);
                     projReady++;
