@@ -5774,6 +5774,8 @@ namespace WordSend
 			SFWriter usfmFile;
             Figure fig = new Figure();
 
+            //if (outDir.Length == 0)
+            //    outDir = ".";
 			Logit.WriteLine("inFileName="+inFileName+"  outDir="+outDir+"  outFileName="+outFileName);
 
 			try
@@ -5786,7 +5788,7 @@ namespace WordSend
                     usfxFile.Close();
                     return;
                 }
-                if (!Directory.Exists(outDir))
+                if ((outDir.Length > 1) && !Directory.Exists(outDir))
                 {
                     Directory.CreateDirectory(outDir);
                 }
@@ -5868,8 +5870,11 @@ namespace WordSend
 								if (((id != "") && (id != bookId)) || !usfmFile.Opened())
 								{
 									bookId = id;
-									usfmFile.Open(Path.Combine(outDir, bkInfo.FilePrefix(bookId)+outFileName));
-								}
+                                    if (outDir.Length > 0)
+									    usfmFile.Open(Path.Combine(outDir, bkInfo.FilePrefix(bookId)+outFileName));
+                                    else
+                                        usfmFile.Open(bkInfo.FilePrefix(bookId) + outFileName);
+                                }
 								usfmFile.WriteSFM("id", "", id, true);
 								break;
 							case "c":
