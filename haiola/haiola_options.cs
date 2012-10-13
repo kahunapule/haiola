@@ -160,6 +160,11 @@ namespace haiola
 			set { ini.WriteBool("ignoreExtras", value); }
 		}
 
+        public bool stripPictures
+        {
+            get { return ini.ReadBool("stripPictures", true); }
+            set { ini.WriteBool("stripPictures", value); }
+        }
 
 		public bool publicDomain
 		{

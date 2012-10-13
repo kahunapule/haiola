@@ -280,9 +280,20 @@ that Bible translation. For example, if you have a Bible translation
 BibleConv/Work/abc/Source/ and then put the USFM files in there. The
 USFM files should use Unicode UTF-8 text encoding. </p>
 
+<h2>Including Illustrations</h2>
+<p>To include illustrations in lightweight HTML output, include
+suitably-sized illustrations in a browser-compatible format (like .jpg). Place these files
+in the htmlextras directory. Include the exact case-sensitive file name of those illustrations,
+without path information, in the "catalog" or "file name" field of the \fig ...\fig* tag.
+Filling in the copyright field is strongly recommended, and required for some illustrations.
+The reference and caption, if present, will appear below the illustration on the web page.</p>
+<p>To enable illustration inclusion, uncheck the "strip out pictures" checkbox on them
+copyright tab. (It is there, because the most likely reason to want to strip out pictures
+is copyright limitations.)</p>
+
 <h2>HTML Output Options</h2>
 
-Haiola currently offers 2 options for HTML generation. Concordance
+<p>Haiola currently offers 2 options for HTML generation. Concordance
 generation can be turned on or off, and 3-panel frame-based navigation
 can be turned on or off. See the options on the "Concordance" and
 "Frames" tabs of the Haiola user interface. The most-tested HTML output
@@ -303,13 +314,10 @@ the process takes a LONG time, and may appear frozen for several
 minutes at a time. The process can be sped up some by deleting the
 output html directory before starting. If it already exits, it will be
 deleted anyway and replaced. That is why web page elements that you
-want to persist between runs must be put in the input/<span style="font-style: italic;">project</span>/htmlextras directory.<br>
-
-<br>
-
-Files placed in the input/<span style="font-style: italic;">project</span>/htmlextras
+want to persist between runs must be put in the input/<span style="font-style: italic;">project</span>/htmlextras directory.</p>
+<p>Files placed in the input/<span style="font-style: italic;">project</span>/htmlextras
 directory and ending in "_Introduction.htm" are used in the
-navigational structure of frame-based HTML.<br>
+navigational structure of frame-based HTML.<p>
 
 <h2>What auxiliary files does Haiola use?</h2>
 

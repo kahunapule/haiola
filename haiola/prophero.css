@@ -191,7 +191,11 @@ span.verse           { white-space:nowrap;  vertical-align: super; font-size: 11
 span.smallcaps       { font-size: smaller }
 span.crmark			 {  font-size: 11pt; vertical-align: super; margin-left: 2pt; line-height: 0}
 span.overlap        {} /* Where chapter number splits paragraph, used for part of paragraph in a different chapter. */
-
+div.figure {float:right;margin-left:2px;margin-bottom:2px;text-indent:0em}
+span.figcopr {font-size: 6pt; color: rgb(200,200,256); line-height: 7pt}
+span.figCaption {font-size: 10pt; color: rgb(0,0,128); line-height: 9pt}
+span.figref {font-size: 10pt; color: rgb(0,0,128); font-weight: bold}
+ 
 select, option { font-size: 13pt; line-height: 1.4em}
 
 /* JohnT: for tooltips. The dummy font-size rule is a trick to make IE 'notice' the hover on the span, which apparently it otherwise ignores. */
