@@ -4990,6 +4990,11 @@ namespace WordSend
                                         ":" + verseMark + "  (v)");
                                     fatalError = true;
                                 }
+                                if (usfxStyleCount > 0)
+                                {
+                                    EndUSFXStyle();
+                                    Logit.WriteError("Error: unclosed style at " + book.bookCode + " " + chapterMark + ":" + verseMark + " ");
+                                }
 								StartUSFXElement(sf.tag, "id", sf.attribute, null);
 								EndUSFXElement();	// ns+v
 								WriteUSFXText(sf.text);
@@ -5159,6 +5164,12 @@ namespace WordSend
                     EndUSFXNote();
                     Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
                         ":" + verseMark + "  (EOF)");
+                    fatalError = true;
+                }
+                if (usfxStyleCount > 0)
+                {
+                    EndUSFXStyle();
+                    Logit.WriteError("Error: unclosed style at " + book.bookCode + " " + chapterMark + ":" + verseMark + " ");
                     fatalError = true;
                 }
 
@@ -6479,6 +6490,8 @@ namespace WordSend
 
     public class usfxToHtmlConverter
     {
+        public bool stripPictures = true;
+
     	protected const string IndexFileName = "index.htm";
     	protected string usfxFileName;
         protected XmlTextReader usfx;
@@ -6627,7 +6640,7 @@ namespace WordSend
                     }
                     else
                     {
-                        if (br.isPresent && (br.chapterFiles != null))
+                        if (br.isPresent && (br.chapterFiles != null) && (br.chapterFiles.Count > 0))
                         {
                             bsb.Append("<option value=\"" + br.chapterFiles[0] + ".htm\">" + br.vernacularHeader + "</option>\r\n");
                         }
@@ -6719,7 +6732,7 @@ namespace WordSend
                 while ((i < bookInfo.publishArray.Length) && (bookInfo.publishArray[i] != null))
                 {
                     bookRec = (BibleBookRecord)bookInfo.publishArray[i];
-                    if (bookRec.isPresent && (bookRec.chapterFiles != null))
+                    if (bookRec.isPresent && (bookRec.chapterFiles != null) && (bookRec.chapterFiles.Count > 0))
                     {
                          bsb.Append("<option value=\"" + bookRec.chapterFiles[0] + ".htm\">" + bookRec.vernacularHeader + "</option>\r\n");
                     }
@@ -7167,6 +7180,14 @@ namespace WordSend
                 inTable = true;
             }
         }
+
+        protected void insertHtmlPicture(string figFileName, string figCopyright, string figCaption, string figReference)
+        {
+            WriteHtml(String.Format("<div class=\"figure\"><img src=\"{0}\"><br/><span class=\"figcopr\">{1}</br>" +
+               "</span><span class=\"figref\">{2}</span><span class=\"figCaption\"> {3}</span></div>", figFileName, figCopyright, figReference, figCaption));
+        }
+
+
 
         protected void EndHtmlTableCol()
         {
@@ -8072,6 +8093,13 @@ namespace WordSend
         {
             bool result = false;
             bool inUsfx = false;
+            string figDescription = String.Empty;
+            string figFileName = String.Empty;
+            string figSize = String.Empty;
+            string figLocation = String.Empty;
+            string figCopyright = String.Empty;
+            string figCaption = String.Empty;
+            string figReference = String.Empty; // Figure parameters
             ignoreIntros = ignoreNotes = skipHelps;
             footerTextHTML = footerHtml;
             copyrightLinkHTML = copyrightLink;
@@ -8151,6 +8179,11 @@ namespace WordSend
                                 {
                                     currentBookAbbrev = id;
                                     bookRecord = (BibleBookRecord)bookInfo.books[currentBookAbbrev];
+                                    if (bookRecord == null)
+                                    {
+                                        Logit.WriteError("Cannot process unknown book: " + currentBookAbbrev);
+                                        return false;
+                                    }
                                     foundThisBook = false;
                                     for (i = 0; (i < bookInfo.publishArray.Length) && (bookInfo.publishArray[i] != null) && !foundThisBook; i++)
                                     {
@@ -8369,18 +8402,29 @@ namespace WordSend
                 }
                 usfx.Close();
 
-                for (i = 0; (i < BibleBookInfo.MAXNUMBOOKS) && (bookInfo.publishArray[i] != null); i++)
+                try
                 {
-                    if (bookInfo.publishArray[i].isPresent)
-                    {   // This book is in the input files and contains at least one character of text.
-                        bookList.Add(bookInfo.publishArray[i]);
-                        foreach (string chapFileName in bookInfo.publishArray[i].chapterFiles)
-                        {
-                            chapterFileList.Add(chapFileName);
+
+                    for (i = 0; (i < BibleBookInfo.MAXNUMBOOKS) && (bookInfo.publishArray[i] != null); i++)
+                    {
+                        if (bookInfo.publishArray[i].isPresent && (bookInfo.publishArray[i].chapterFiles != null))
+                        {   // This book is in the input files and contains at least one character of text.
+                            bookList.Add(bookInfo.publishArray[i]);
+                            foreach (string chapFileName in bookInfo.publishArray[i].chapterFiles)
+                            {
+                                if (chapFileName != null)
+                                    chapterFileList.Add(chapFileName);
+                            }
                         }
                     }
-                }
 
+                }
+                catch (Exception err)
+                {
+                    Logit.WriteError(err.Message + " creating chapter file list.");
+                    Logit.WriteError(err.StackTrace);
+                    throw;
+                }
                 if (bookList.Count < 1)
                 {
                     Logit.WriteError("No books found to convert in " + usfxName);
@@ -8444,7 +8488,6 @@ namespace WordSend
                                     case "generated":
                                     case "rem":
                                     case "periph":
-                                    case "fig": // Illustrations not yet supported
                                     case "ndx":
                                     case "w":
                                     case "wh":
@@ -8452,6 +8495,71 @@ namespace WordSend
                                         if (!usfx.IsEmptyElement)
                                             ignore = true;
                                         break;
+                                    case "fig": // Illustrations
+                                        figDescription = figFileName = figSize = figLocation =
+                                            figCopyright = figCaption = figReference = String.Empty;
+                                        if (stripPictures)
+                                        {
+                                            ignore = true;
+                                        }
+                                        break;
+                                    case "description":
+                                        if (!usfx.IsEmptyElement)
+                                        {
+                                            usfx.Read();
+                                            if (usfx.NodeType == XmlNodeType.Text)
+                                                figDescription = EscapeHtml(usfx.Value.Trim());
+                                        }
+                                        break;
+                                    case "catalog":
+                                        if (!usfx.IsEmptyElement)
+                                        {
+                                            usfx.Read();
+                                            if (usfx.NodeType == XmlNodeType.Text)
+                                                figFileName = usfx.Value.Trim();
+                                        }
+                                        break;
+                                    case "size":
+                                        if (!usfx.IsEmptyElement)
+                                        {
+                                            usfx.Read();
+                                            if (usfx.NodeType == XmlNodeType.Text)
+                                                figSize = usfx.Value.Trim();
+                                        }
+                                        break;
+                                    case "location":
+                                        if (!usfx.IsEmptyElement)
+                                        {
+                                            usfx.Read();
+                                            if (usfx.NodeType == XmlNodeType.Text)
+                                                figLocation = usfx.Value.Trim();
+                                        }
+                                        break;
+                                    case "copyright":
+                                        if (!usfx.IsEmptyElement)
+                                        {
+                                            usfx.Read();
+                                            if (usfx.NodeType == XmlNodeType.Text)
+                                                figCopyright = EscapeHtml(usfx.Value.Trim());
+                                        }
+                                        break;
+                                    case "caption":
+                                        if (!usfx.IsEmptyElement)
+                                        {
+                                            usfx.Read();
+                                            if (usfx.NodeType == XmlNodeType.Text)
+                                                figCaption = EscapeHtml(usfx.Value.Trim());
+                                        }
+                                        break;
+                                    case "reference":
+                                        if (!usfx.IsEmptyElement)
+                                        {
+                                            usfx.Read();
+                                            if (usfx.NodeType == XmlNodeType.Text)
+                                                figReference = EscapeHtml(usfx.Value.Trim());
+                                        }
+                                        break;
+
                                     case "book":
                                         currentBookAbbrev = id;
                                         chapterNumber = 0;
@@ -8732,13 +8840,22 @@ namespace WordSend
                                     case "sectionBoundary":
                                     case "rem":
                                     case "periph":
-                                    case "fig": // Illustrations not yet supported
                                     case "ndx":
                                     case "w":
                                     case "wh":
                                     case "wg":
                                     case "id":
                                         ignore = false;
+                                        break;
+                                    case "fig":
+                                        if (stripPictures)
+                                        {
+                                            ignore = false;
+                                        }
+                                        else
+                                        {   // Actually insert the picture.
+                                            insertHtmlPicture(figFileName, figCopyright, figCaption, figReference);
+                                        }
                                         break;
                                     case "book":
                                         if (bookRecord.testament.CompareTo("x") == 0)

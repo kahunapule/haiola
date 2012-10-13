@@ -438,7 +438,7 @@ namespace haiola
 
             // Copy any extra files from the htmlextras directory in the project directory to the output.
             // This is for introduction files, pictures, etc.
-            string htmlExtras = Path.Combine(m_inputDirectory, "htmlextras");
+            string htmlExtras = Path.Combine(m_inputProjectDirectory, "htmlextras");
             if (Directory.Exists(htmlExtras))
             {
                 WordSend.fileHelper.CopyDirectory(htmlExtras, htmlPath);
@@ -456,7 +456,9 @@ namespace haiola
 			{
 				toHtm = new usfxToHtmlConverter();
 			}
-            Logit.OpenFile(Path.Combine(m_outputProjectDirectory, "HTMLConversionReport.txt"));
+            toHtm.stripPictures = m_options.stripPictures;
+            string logFile = Path.Combine(m_outputProjectDirectory, "HTMLConversionReport.txt");
+            Logit.OpenFile(logFile);
 
             toHtm.indexDateStamp = "HTML generated " + DateTime.UtcNow.ToString("d MMM yyyy") +
                 " from source files dated " + sourceDate.ToString("d MMM yyyy");
@@ -483,6 +485,19 @@ namespace haiola
                 m_options.ignoreExtras,
                 m_options.goText);
             Logit.CloseFile();
+            if (Logit.loggedError)
+            {
+                StreamReader log = new StreamReader(logFile);
+                string errors = log.ReadToEnd();
+                log.Close();
+                string message = errors;
+                if (errors.Length > 5000)
+                {
+                    // Super-long messages freeze things up
+                    message = message.Substring(0, 5000) + "\n...and more (see log file)";
+                }
+                MessageBox.Show(this, message, "Errors in " + logFile);
+            }
 
             currentConversion = "Writing auxilliary metadata files.";
             Application.DoEvents();
@@ -1043,6 +1058,7 @@ In addition, you have permission to convert the text to different file formats, 
             printPublisherTextBox.Text = m_options.printPublisher;
             electronicPublisherTextBox.Text = m_options.electronicPublisher;
             stripExtrasCheckBox.Checked = m_options.ignoreExtras;
+            stripPicturesCheckBox.Checked = m_options.stripPictures;
             
             listInputProcesses.SuspendLayout();
             listInputProcesses.Items.Clear();
@@ -1217,6 +1233,7 @@ In addition, you have permission to convert the text to different file formats, 
             m_options.printPublisher = printPublisherTextBox.Text;
             m_options.electronicPublisher = electronicPublisherTextBox.Text;
             m_options.ignoreExtras = stripExtrasCheckBox.Checked;
+            m_options.stripPictures = stripPicturesCheckBox.Checked;
 
             List<string> tableNames = new List<string>();
             foreach (string filename in listInputProcesses.Items)
@@ -1761,5 +1778,6 @@ In addition, you have permission to convert the text to different file formats, 
 			si.Text = tb.Text;
 			tb.Parent.Controls.Remove(tb);
 		}
+
     }
 }
