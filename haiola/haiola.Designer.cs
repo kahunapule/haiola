@@ -66,6 +66,11 @@
             this.label25 = new System.Windows.Forms.Label();
             this.label24 = new System.Windows.Forms.Label();
             this.copyrightTabPage = new System.Windows.Forms.TabPage();
+            this.label41 = new System.Windows.Forms.Label();
+            this.copyrightOwnerUrlTextBox = new System.Windows.Forms.TextBox();
+            this.label40 = new System.Windows.Forms.Label();
+            this.coprAbbrevTextBox = new System.Windows.Forms.TextBox();
+            this.stripPicturesCheckBox = new System.Windows.Forms.CheckBox();
             this.stripExtrasCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.silentRadioButton = new System.Windows.Forms.RadioButton();
@@ -98,6 +103,9 @@
             this.btnAddInputProcess = new System.Windows.Forms.Button();
             this.listInputProcesses = new System.Windows.Forms.ListBox();
             this.htmlTabPage = new System.Windows.Forms.TabPage();
+            this.templateLabel = new System.Windows.Forms.Label();
+            this.copyFromTemplateButton = new System.Windows.Forms.Button();
+            this.makeTemplateButton = new System.Windows.Forms.Button();
             this.label18 = new System.Windows.Forms.Label();
             this.goTextTextBox = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -165,7 +173,10 @@
             this.helpButton = new System.Windows.Forms.Button();
             this.runHighlightedButton = new System.Windows.Forms.Button();
             this.statsButton = new System.Windows.Forms.Button();
-            this.stripPicturesCheckBox = new System.Windows.Forms.CheckBox();
+            this.label42 = new System.Windows.Forms.Label();
+            this.label43 = new System.Windows.Forms.Label();
+            this.label44 = new System.Windows.Forms.Label();
+            this.label45 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.idTabPage.SuspendLayout();
             this.copyrightTabPage.SuspendLayout();
@@ -558,6 +569,10 @@
             // 
             // copyrightTabPage
             // 
+            this.copyrightTabPage.Controls.Add(this.label41);
+            this.copyrightTabPage.Controls.Add(this.copyrightOwnerUrlTextBox);
+            this.copyrightTabPage.Controls.Add(this.label40);
+            this.copyrightTabPage.Controls.Add(this.coprAbbrevTextBox);
             this.copyrightTabPage.Controls.Add(this.stripPicturesCheckBox);
             this.copyrightTabPage.Controls.Add(this.stripExtrasCheckBox);
             this.copyrightTabPage.Controls.Add(this.groupBox1);
@@ -579,13 +594,59 @@
             this.copyrightTabPage.Text = "Copyright";
             this.copyrightTabPage.UseVisualStyleBackColor = true;
             // 
+            // label41
+            // 
+            this.label41.AutoSize = true;
+            this.label41.Location = new System.Drawing.Point(29, 130);
+            this.label41.Name = "label41";
+            this.label41.Size = new System.Drawing.Size(76, 13);
+            this.label41.TabIndex = 31;
+            this.label41.Text = "© owner URL:";
+            this.label41.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // copyrightOwnerUrlTextBox
+            // 
+            this.copyrightOwnerUrlTextBox.Location = new System.Drawing.Point(126, 127);
+            this.copyrightOwnerUrlTextBox.Name = "copyrightOwnerUrlTextBox";
+            this.copyrightOwnerUrlTextBox.Size = new System.Drawing.Size(336, 20);
+            this.copyrightOwnerUrlTextBox.TabIndex = 24;
+            // 
+            // label40
+            // 
+            this.label40.AutoSize = true;
+            this.label40.Location = new System.Drawing.Point(18, 103);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(87, 13);
+            this.label40.TabIndex = 29;
+            this.label40.Text = "© owner abbrev:";
+            this.label40.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // coprAbbrevTextBox
+            // 
+            this.coprAbbrevTextBox.Location = new System.Drawing.Point(126, 100);
+            this.coprAbbrevTextBox.Name = "coprAbbrevTextBox";
+            this.coprAbbrevTextBox.Size = new System.Drawing.Size(337, 20);
+            this.coprAbbrevTextBox.TabIndex = 23;
+            // 
+            // stripPicturesCheckBox
+            // 
+            this.stripPicturesCheckBox.AutoSize = true;
+            this.stripPicturesCheckBox.Checked = true;
+            this.stripPicturesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.stripPicturesCheckBox.Location = new System.Drawing.Point(6, 339);
+            this.stripPicturesCheckBox.Name = "stripPicturesCheckBox";
+            this.stripPicturesCheckBox.Size = new System.Drawing.Size(105, 17);
+            this.stripPicturesCheckBox.TabIndex = 29;
+            this.stripPicturesCheckBox.Text = "Strip out pictures";
+            this.stripPicturesCheckBox.UseVisualStyleBackColor = true;
+            // 
             // stripExtrasCheckBox
             // 
             this.stripExtrasCheckBox.AutoSize = true;
-            this.stripExtrasCheckBox.Location = new System.Drawing.Point(6, 263);
+            this.stripExtrasCheckBox.Location = new System.Drawing.Point(7, 316);
             this.stripExtrasCheckBox.Name = "stripExtrasCheckBox";
             this.stripExtrasCheckBox.Size = new System.Drawing.Size(286, 17);
-            this.stripExtrasCheckBox.TabIndex = 26;
+            this.stripExtrasCheckBox.TabIndex = 28;
             this.stripExtrasCheckBox.Text = "Strip out introductions, cross references, and footnotes.";
             this.stripExtrasCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -667,7 +728,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(3, 235);
+            this.label16.Location = new System.Drawing.Point(4, 288);
             this.label16.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(102, 13);
@@ -676,33 +737,33 @@
             // 
             // electronicPublisherTextBox
             // 
-            this.electronicPublisherTextBox.Location = new System.Drawing.Point(119, 233);
+            this.electronicPublisherTextBox.Location = new System.Drawing.Point(120, 286);
             this.electronicPublisherTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.electronicPublisherTextBox.Name = "electronicPublisherTextBox";
             this.electronicPublisherTextBox.Size = new System.Drawing.Size(344, 20);
-            this.electronicPublisherTextBox.TabIndex = 25;
+            this.electronicPublisherTextBox.TabIndex = 27;
             // 
             // printPublisherTextBox
             // 
-            this.printPublisherTextBox.Location = new System.Drawing.Point(99, 209);
+            this.printPublisherTextBox.Location = new System.Drawing.Point(100, 262);
             this.printPublisherTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.printPublisherTextBox.Name = "printPublisherTextBox";
             this.printPublisherTextBox.Size = new System.Drawing.Size(364, 20);
-            this.printPublisherTextBox.TabIndex = 24;
+            this.printPublisherTextBox.TabIndex = 26;
             // 
             // rightsStatementTextBox
             // 
-            this.rightsStatementTextBox.Location = new System.Drawing.Point(6, 116);
+            this.rightsStatementTextBox.Location = new System.Drawing.Point(7, 169);
             this.rightsStatementTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.rightsStatementTextBox.Multiline = true;
             this.rightsStatementTextBox.Name = "rightsStatementTextBox";
             this.rightsStatementTextBox.Size = new System.Drawing.Size(458, 89);
-            this.rightsStatementTextBox.TabIndex = 23;
+            this.rightsStatementTextBox.TabIndex = 25;
             // 
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(3, 101);
+            this.label15.Location = new System.Drawing.Point(4, 154);
             this.label15.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(113, 13);
@@ -712,7 +773,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(1, 210);
+            this.label14.Location = new System.Drawing.Point(2, 263);
             this.label14.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(76, 13);
@@ -910,6 +971,13 @@
             // 
             // htmlTabPage
             // 
+            this.htmlTabPage.Controls.Add(this.label45);
+            this.htmlTabPage.Controls.Add(this.label44);
+            this.htmlTabPage.Controls.Add(this.label43);
+            this.htmlTabPage.Controls.Add(this.label42);
+            this.htmlTabPage.Controls.Add(this.templateLabel);
+            this.htmlTabPage.Controls.Add(this.copyFromTemplateButton);
+            this.htmlTabPage.Controls.Add(this.makeTemplateButton);
             this.htmlTabPage.Controls.Add(this.label18);
             this.htmlTabPage.Controls.Add(this.goTextTextBox);
             this.htmlTabPage.Controls.Add(this.label6);
@@ -930,10 +998,39 @@
             this.htmlTabPage.Text = "HTML options";
             this.htmlTabPage.UseVisualStyleBackColor = true;
             // 
+            // templateLabel
+            // 
+            this.templateLabel.AutoSize = true;
+            this.templateLabel.Location = new System.Drawing.Point(153, 10);
+            this.templateLabel.Name = "templateLabel";
+            this.templateLabel.Size = new System.Drawing.Size(87, 13);
+            this.templateLabel.TabIndex = 53;
+            this.templateLabel.Text = "Current template:";
+            // 
+            // copyFromTemplateButton
+            // 
+            this.copyFromTemplateButton.Location = new System.Drawing.Point(469, 6);
+            this.copyFromTemplateButton.Name = "copyFromTemplateButton";
+            this.copyFromTemplateButton.Size = new System.Drawing.Size(136, 24);
+            this.copyFromTemplateButton.TabIndex = 52;
+            this.copyFromTemplateButton.Text = "Copy from template";
+            this.copyFromTemplateButton.UseVisualStyleBackColor = true;
+            this.copyFromTemplateButton.Click += new System.EventHandler(this.copyFromTemplateButton_Click);
+            // 
+            // makeTemplateButton
+            // 
+            this.makeTemplateButton.Location = new System.Drawing.Point(6, 6);
+            this.makeTemplateButton.Name = "makeTemplateButton";
+            this.makeTemplateButton.Size = new System.Drawing.Size(125, 25);
+            this.makeTemplateButton.TabIndex = 51;
+            this.makeTemplateButton.Text = "Use as template";
+            this.makeTemplateButton.UseVisualStyleBackColor = true;
+            this.makeTemplateButton.Click += new System.EventHandler(this.makeTemplateButton_Click);
+            // 
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(88, 50);
+            this.label18.Location = new System.Drawing.Point(88, 79);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(76, 13);
             this.label18.TabIndex = 50;
@@ -941,7 +1038,7 @@
             // 
             // goTextTextBox
             // 
-            this.goTextTextBox.Location = new System.Drawing.Point(170, 50);
+            this.goTextTextBox.Location = new System.Drawing.Point(170, 79);
             this.goTextTextBox.Name = "goTextTextBox";
             this.goTextTextBox.Size = new System.Drawing.Size(435, 20);
             this.goTextTextBox.TabIndex = 46;
@@ -950,7 +1047,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 56);
+            this.label6.Location = new System.Drawing.Point(6, 85);
             this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(40, 13);
@@ -961,18 +1058,18 @@
             // 
             this.licenseTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.licenseTextBox.Location = new System.Drawing.Point(0, 205);
+            this.licenseTextBox.Location = new System.Drawing.Point(0, 238);
             this.licenseTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.licenseTextBox.Multiline = true;
             this.licenseTextBox.Name = "licenseTextBox";
             this.licenseTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.licenseTextBox.Size = new System.Drawing.Size(605, 255);
+            this.licenseTextBox.Size = new System.Drawing.Size(605, 162);
             this.licenseTextBox.TabIndex = 49;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 190);
+            this.label4.Location = new System.Drawing.Point(3, 219);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(275, 13);
             this.label4.TabIndex = 27;
@@ -981,16 +1078,15 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 110);
+            this.label5.Location = new System.Drawing.Point(6, 139);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(396, 13);
+            this.label5.Size = new System.Drawing.Size(110, 13);
             this.label5.TabIndex = 26;
-            this.label5.Text = "HTML for index page. {0} will be replaced with language ID; {1} with translation " +
-    "ID.";
+            this.label5.Text = "HTML for index page.";
             // 
             // indexPageTextBox
             // 
-            this.indexPageTextBox.Location = new System.Drawing.Point(0, 123);
+            this.indexPageTextBox.Location = new System.Drawing.Point(0, 152);
             this.indexPageTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.indexPageTextBox.Multiline = true;
             this.indexPageTextBox.Name = "indexPageTextBox";
@@ -1001,7 +1097,7 @@
             // footerHtmlTextBox
             // 
             this.footerHtmlTextBox.AcceptsReturn = true;
-            this.footerHtmlTextBox.Location = new System.Drawing.Point(3, 73);
+            this.footerHtmlTextBox.Location = new System.Drawing.Point(3, 102);
             this.footerHtmlTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.footerHtmlTextBox.Multiline = true;
             this.footerHtmlTextBox.Name = "footerHtmlTextBox";
@@ -1011,7 +1107,7 @@
             // 
             // homeLinkTextBox
             // 
-            this.homeLinkTextBox.Location = new System.Drawing.Point(160, 3);
+            this.homeLinkTextBox.Location = new System.Drawing.Point(160, 32);
             this.homeLinkTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.homeLinkTextBox.Name = "homeLinkTextBox";
             this.homeLinkTextBox.Size = new System.Drawing.Size(445, 20);
@@ -1019,17 +1115,17 @@
             // 
             // copyrightLinkTextBox
             // 
-            this.copyrightLinkTextBox.Location = new System.Drawing.Point(169, 27);
+            this.copyrightLinkTextBox.Location = new System.Drawing.Point(169, 56);
             this.copyrightLinkTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.copyrightLinkTextBox.Name = "copyrightLinkTextBox";
             this.copyrightLinkTextBox.Size = new System.Drawing.Size(436, 20);
             this.copyrightLinkTextBox.TabIndex = 45;
-            this.copyrightLinkTextBox.Text = "<a href=\"copyright.htm\">©</a>:";
+            this.copyrightLinkTextBox.Text = "<a href=\"copyright.htm\">%c</a>:";
             // 
             // label27
             // 
             this.label27.AutoSize = true;
-            this.label27.Location = new System.Drawing.Point(3, 5);
+            this.label27.Location = new System.Drawing.Point(3, 34);
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(134, 13);
             this.label27.TabIndex = 22;
@@ -1038,7 +1134,7 @@
             // label26
             // 
             this.label26.AutoSize = true;
-            this.label26.Location = new System.Drawing.Point(3, 22);
+            this.label26.Location = new System.Drawing.Point(3, 51);
             this.label26.Name = "label26";
             this.label26.Size = new System.Drawing.Size(150, 13);
             this.label26.TabIndex = 20;
@@ -1607,17 +1703,45 @@
             this.statsButton.UseVisualStyleBackColor = true;
             this.statsButton.Click += new System.EventHandler(this.statsButton_Click);
             // 
-            // stripPicturesCheckBox
+            // label42
             // 
-            this.stripPicturesCheckBox.AutoSize = true;
-            this.stripPicturesCheckBox.Checked = true;
-            this.stripPicturesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.stripPicturesCheckBox.Location = new System.Drawing.Point(5, 286);
-            this.stripPicturesCheckBox.Name = "stripPicturesCheckBox";
-            this.stripPicturesCheckBox.Size = new System.Drawing.Size(105, 17);
-            this.stripPicturesCheckBox.TabIndex = 27;
-            this.stripPicturesCheckBox.Text = "Strip out pictures";
-            this.stripPicturesCheckBox.UseVisualStyleBackColor = true;
+            this.label42.AutoSize = true;
+            this.label42.Location = new System.Drawing.Point(8, 414);
+            this.label42.Name = "label42";
+            this.label42.Size = new System.Drawing.Size(565, 13);
+            this.label42.TabIndex = 54;
+            this.label42.Text = "%c=short copyright; %C=long copyright %o=other rights; %w=print publisher; %i=ele" +
+    "ctronic publisher; %d=directory name";
+            // 
+            // label43
+            // 
+            this.label43.AutoSize = true;
+            this.label43.Location = new System.Drawing.Point(6, 427);
+            this.label43.Name = "label43";
+            this.label43.Size = new System.Drawing.Size(506, 13);
+            this.label43.TabIndex = 55;
+            this.label43.Tag = "";
+            this.label43.Text = "%t=translation ID; %e=Ethnologue code;%h=home domain; %p=public/private; %r=redis" +
+    "tributable/restricted";
+            // 
+            // label44
+            // 
+            this.label44.AutoSize = true;
+            this.label44.Location = new System.Drawing.Point(8, 440);
+            this.label44.Name = "label44";
+            this.label44.Size = new System.Drawing.Size(487, 13);
+            this.label44.TabIndex = 56;
+            this.label44.Text = "%l=language; %L=language name in English; %D=dialect; %a=content creator; %A=cont" +
+    "ent contributor";
+            // 
+            // label45
+            // 
+            this.label45.AutoSize = true;
+            this.label45.Location = new System.Drawing.Point(8, 401);
+            this.label45.Name = "label45";
+            this.label45.Size = new System.Drawing.Size(385, 13);
+            this.label45.TabIndex = 57;
+            this.label45.Text = "%v=vernacular title; %n=English description; %N=LWC description; %T=rev. date";
             // 
             // haiolaForm
             // 
@@ -1806,6 +1930,17 @@
 		private System.Windows.Forms.TextBox hideNavigationPanesTextBox;
 		private System.Windows.Forms.Label label38;
         private System.Windows.Forms.CheckBox stripPicturesCheckBox;
+        private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.TextBox coprAbbrevTextBox;
+        private System.Windows.Forms.Label label41;
+        private System.Windows.Forms.TextBox copyrightOwnerUrlTextBox;
+        private System.Windows.Forms.Label templateLabel;
+        private System.Windows.Forms.Button copyFromTemplateButton;
+        private System.Windows.Forms.Button makeTemplateButton;
+        private System.Windows.Forms.Label label43;
+        private System.Windows.Forms.Label label42;
+        private System.Windows.Forms.Label label45;
+        private System.Windows.Forms.Label label44;
 	}
 }
 

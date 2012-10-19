@@ -246,7 +246,19 @@ namespace haiola
 			set { ini.WriteString("copyrightOwner", value); }
 		}
 
-		public string copyrightYears
+        public string copyrightOwnerAbbrev
+        {
+            get { return ini.ReadString("copyrightOwnerAbbrev", String.Empty); }
+            set { ini.WriteString("copyrightOwnerAbbrev", value); }
+        }
+
+        public string copyrightOwnerUrl
+        {
+            get { return ini.ReadString("copyrightOwnerUrl", String.Empty); }
+            set { ini.WriteString("copyrightOwnerUrl", value); }
+        }
+
+        public string copyrightYears
 		{
 			get { return ini.ReadString("copyrightYears", String.Empty); }
 			set { ini.WriteString("copyrightYears", value); }
