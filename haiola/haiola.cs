@@ -20,6 +20,7 @@ namespace haiola
     {
         public static haiolaForm MasterInstance;
         private XMLini xini;    // Main program XML initialization file
+        private string m_currentTemplate;   // Current template project
         public string dataRootDir; // Default is BibleConv in the user's Documents folder
         string m_inputDirectory; // Always under dataRootDir, defaults to Documents/BibleConv/input
         public string m_outputDirectory; // curently Site, always under dataRootDir
@@ -411,6 +412,51 @@ namespace haiola
     		return Path.Combine(m_outputProjectDirectory, "usfx");
     	}
 
+        protected string expandPercentEscapes(string s)
+        {
+            s = s.Replace("%d", m_project);
+            s = s.Replace("%e", m_options.languageId);
+            s = s.Replace("%h", m_options.homeDomain);
+            string sc, lc;
+            if (m_options.publicDomain)
+                lc = sc = "Public Domain";
+            else if (m_options.silentCopyright)
+                lc = sc = String.Empty;
+            else if (m_options.copyrightOwnerAbbrev.Length > 0)
+            {
+                sc = "© " + m_options.copyrightYears + " " + m_options.copyrightOwnerAbbrev;
+                lc = "Copyright © " + m_options.copyrightYears + " " + m_options.copyrightOwner;
+            }
+            else
+            {
+                sc = "© " + m_options.copyrightYears + " " + m_options.copyrightOwner;
+                lc = "Copyright " + sc;
+            }
+            if ((lc.Length > 0) && (m_options.copyrightOwnerUrl.Length > 0))
+            {
+                lc = "copyright © " + m_options.copyrightYears + " <a href=\"" + m_options.copyrightOwnerUrl + "\">" + m_options.copyrightOwner + "</a>";
+            }
+            s = s.Replace("%c", sc);
+            s = s.Replace("%C", lc);
+
+            s = s.Replace("%l", m_options.languageName);
+            s = s.Replace("%L", m_options.languageNameInEnglish);
+            s = s.Replace("%D", m_options.dialect);
+            s = s.Replace("%a", m_options.contentCreator);
+            s = s.Replace("%A", m_options.contributor);
+            s = s.Replace("%v", m_options.vernacularTitle);
+            s = s.Replace("%n", m_options.EnglishDescription);
+            s = s.Replace("%N", m_options.lwcDescription);
+            s = s.Replace("%p", m_options.privateProject ? "private" : "public");
+            s = s.Replace("%r", (!m_options.privateProject) && (m_options.publicDomain || m_options.creativeCommons) ? "redistributable" : "restricted");
+            s = s.Replace("%T", m_options.contentUpdateDate.ToString("yyyy-MM-dd"));
+            s = s.Replace("%o", m_options.rightsStatement);
+            s = s.Replace("%w", m_options.printPublisher);
+            s = s.Replace("%i", m_options.electronicPublisher);
+            string result = s.Replace("%t", m_options.translationId);
+            return result;
+        }
+
     	private void ConvertUsfxToPortableHtml()
         {
             currentConversion = "writing portable HTML";
@@ -476,11 +522,11 @@ namespace haiola
                 m_options.translationId,
                 m_options.chapterLabel,
                 m_options.psalmLabel,
-                m_options.copyrightLink,
-                m_options.homeLink,
-                m_options.footerHtml,
-                m_options.indexHtml,
-                m_options.licenseHtml,
+                expandPercentEscapes(m_options.copyrightLink),
+                expandPercentEscapes(m_options.homeLink),
+                expandPercentEscapes(m_options.footerHtml),
+                expandPercentEscapes(m_options.indexHtml),
+                expandPercentEscapes(m_options.licenseHtml),
                 m_options.useKhmerDigits,
                 m_options.ignoreExtras,
                 m_options.goText);
@@ -1053,12 +1099,18 @@ In addition, you have permission to convert the text to different file formats, 
             allRightsRadioButton.Checked = m_options.allRightsReserved;
             silentRadioButton.Checked = m_options.silentCopyright;
             copyrightOwnerTextBox.Text = m_options.copyrightOwner;
+            copyrightOwnerUrlTextBox.Text = m_options.copyrightOwnerUrl;
             copyrightYearTextBox.Text = m_options.copyrightYears;
+            coprAbbrevTextBox.Text = m_options.copyrightOwnerAbbrev;
             rightsStatementTextBox.Text = m_options.rightsStatement;
             printPublisherTextBox.Text = m_options.printPublisher;
             electronicPublisherTextBox.Text = m_options.electronicPublisher;
             stripExtrasCheckBox.Checked = m_options.ignoreExtras;
             stripPicturesCheckBox.Checked = m_options.stripPictures;
+            m_currentTemplate = xini.ReadString("currentTemplate", String.Empty);
+            templateLabel.Text = "Current template: " + m_currentTemplate;
+            copyFromTemplateButton.Enabled = (m_currentTemplate.Length > 0) && (m_currentTemplate != m_project);
+            makeTemplateButton.Enabled = m_currentTemplate != m_project;
             
             listInputProcesses.SuspendLayout();
             listInputProcesses.Items.Clear();
@@ -1227,11 +1279,16 @@ In addition, you have permission to convert the text to different file formats, 
             m_options.otherLicense = otherRadioButton.Checked;
             m_options.allRightsReserved = allRightsRadioButton.Checked;
             m_options.silentCopyright = silentRadioButton.Checked;
-            m_options.copyrightOwner = copyrightOwnerTextBox.Text;
-            m_options.copyrightYears = copyrightYearTextBox.Text;
+            m_options.copyrightOwner = copyrightOwnerTextBox.Text.Trim();
+            copyrightOwnerUrlTextBox.Text = copyrightOwnerUrlTextBox.Text.Trim();
+            if ((copyrightOwnerUrlTextBox.Text.Length > 1) && !copyrightOwnerUrlTextBox.Text.ToLowerInvariant().StartsWith("http://"))
+                copyrightOwnerUrlTextBox.Text = "http://" + copyrightOwnerUrlTextBox.Text;
+            m_options.copyrightOwnerUrl = copyrightOwnerUrlTextBox.Text;
+            m_options.copyrightYears = copyrightYearTextBox.Text.Trim();
+            m_options.copyrightOwnerAbbrev = coprAbbrevTextBox.Text.Trim();
             m_options.rightsStatement = rightsStatementTextBox.Text;
-            m_options.printPublisher = printPublisherTextBox.Text;
-            m_options.electronicPublisher = electronicPublisherTextBox.Text;
+            m_options.printPublisher = printPublisherTextBox.Text.Trim();
+            m_options.electronicPublisher = electronicPublisherTextBox.Text.Trim();
             m_options.ignoreExtras = stripExtrasCheckBox.Checked;
             m_options.stripPictures = stripPicturesCheckBox.Checked;
 
@@ -1490,11 +1547,14 @@ In addition, you have permission to convert the text to different file formats, 
             int numDialects = 0;
             int numSites = 0;
             int c;
+            int coprCount = 0;
             string dialect;
             string homedomain;
+            string copr = String.Empty;
             Hashtable langTable = new Hashtable();
             Hashtable dialectTable = new Hashtable();
             Hashtable siteTable = new Hashtable();
+            Hashtable coprTable = new Hashtable();
             btnSetRootDirectory.Enabled = false;
             reloadButton.Enabled = false;
             m_projectsList.Enabled = false;
@@ -1571,6 +1631,27 @@ In addition, you have permission to convert the text to different file formats, 
                             siteTable[homedomain] = c + 1;
                         }
                     }
+                    if (m_options.publicDomain)
+                    {
+                        copr = "Public Domain";
+                    }
+                    else if (m_options.copyrightOwnerAbbrev != String.Empty)
+                    {
+                        copr = "© " + m_options.copyrightOwnerAbbrev;
+                    }
+                    else
+                    {
+                        copr = "© " + m_options.copyrightOwner;
+                    }
+                    if (coprTable[copr] == null)
+                    {
+                        coprTable[copr] = 1;
+                    }
+                    else
+                    {
+                        coprCount = (int)coprTable[copr];
+                        coprTable[copr] = coprCount + 1;
+                    }
                     sw.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\",\"{10}\",\"http://{5}/{1}/\"",
                         m_options.languageId,
                         m_options.translationId,
@@ -1626,14 +1707,14 @@ In addition, you have permission to convert the text to different file formats, 
             scorecard.WriteLine("Translations by site:");
             foreach (DictionaryEntry de in siteTable)
             {
-                scorecard.WriteLine("  {0} translations at {1}", ((int)de.Value).ToString(), (string)de.Key);
+                scorecard.WriteLine(" {0,4} translations at {1}", (int)de.Value, (string)de.Key);
             }
             scorecard.WriteLine("Languages with multiple translations:");
             foreach (DictionaryEntry de in langTable)
             {
                 if ((int)de.Value > 1)
                 {
-                    scorecard.WriteLine("  {0} translations in {1}", ((int)de.Value).ToString(), (string)de.Key);
+                    scorecard.WriteLine(" {0,4} translations in {1}", (int)de.Value, (string)de.Key);
                 }
             }
             scorecard.WriteLine("Dialects with multiple translations:");
@@ -1641,8 +1722,14 @@ In addition, you have permission to convert the text to different file formats, 
             {
                 if ((int)de.Value > 1)
                 {
-                    scorecard.WriteLine("  {0} translations in {1}", ((int)de.Value).ToString(), (string)de.Key);
+                    scorecard.WriteLine(" {0,4} translations in {1}", (int)de.Value, (string)de.Key);
                 }
+            }
+            scorecard.WriteLine("Copyright ownership:");
+            foreach (DictionaryEntry de in coprTable)
+            {
+                coprCount = (int)de.Value;
+                scorecard.WriteLine(" {0,4} {1}", coprCount, (string)de.Key);
             }
             scorecard.Close();
 
@@ -1778,6 +1865,33 @@ In addition, you have permission to convert the text to different file formats, 
 			si.Text = tb.Text;
 			tb.Parent.Controls.Remove(tb);
 		}
+
+        private void makeTemplateButton_Click(object sender, EventArgs e)
+        {
+            makeTemplateButton.Enabled = false;
+            m_currentTemplate = m_project;
+            xini.WriteString("currentTemplate", m_currentTemplate);
+            templateLabel.Text = "Current template: " + m_currentTemplate;
+            copyFromTemplateButton.Enabled = false;
+            xini.Write();
+        }
+
+        private void copyFromTemplateButton_Click(object sender, EventArgs e)
+        {
+            Options templateOptions = new Options(Path.Combine(Path.Combine(m_inputDirectory, m_currentTemplate), "options.xini"));
+            homeLinkTextBox.Text = m_options.homeLink = templateOptions.homeLink;
+            copyrightLinkTextBox.Text = m_options.copyrightLink = templateOptions.copyrightLink;
+            goTextTextBox.Text = m_options.goText = templateOptions.goText;
+            footerHtmlTextBox.Text = m_options.footerHtml = templateOptions.footerHtml;
+            indexPageTextBox.Text = m_options.indexHtml = templateOptions.indexHtml;
+            licenseTextBox.Text = m_options.licenseHtml = templateOptions.licenseHtml;
+            m_options.postprocesses = templateOptions.postprocesses;
+            postprocessListBox.SuspendLayout();
+            postprocessListBox.Items.Clear();
+            foreach (string filename in templateOptions.postprocesses)
+                postprocessListBox.Items.Add(filename);
+            postprocessListBox.ResumeLayout();
+        }
 
     }
 }
