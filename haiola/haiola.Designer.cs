@@ -145,12 +145,10 @@
 			this.colFilesVernAbbr = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.colFilesXrefs = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.framesPage = new System.Windows.Forms.TabPage();
-			this.useFramesCheckBox = new System.Windows.Forms.CheckBox();
-			this.statsLabel = new System.Windows.Forms.Label();
-			this.timer1 = new System.Windows.Forms.Timer(this.components);
-			this.helpButton = new System.Windows.Forms.Button();
-			this.runHighlightedButton = new System.Windows.Forms.Button();
-			this.statsButton = new System.Windows.Forms.Button();
+			this.showNavigationTextBox = new System.Windows.Forms.TextBox();
+			this.label39 = new System.Windows.Forms.Label();
+			this.hideNavigationPanesTextBox = new System.Windows.Forms.TextBox();
+			this.label38 = new System.Windows.Forms.Label();
 			this.nextChapterLinkTextBox = new System.Windows.Forms.TextBox();
 			this.label33 = new System.Windows.Forms.Label();
 			this.previousChapterLinkTextBox = new System.Windows.Forms.TextBox();
@@ -161,10 +159,13 @@
 			this.label36 = new System.Windows.Forms.Label();
 			this.concordanceLinkTextBox = new System.Windows.Forms.TextBox();
 			this.label37 = new System.Windows.Forms.Label();
-			this.label38 = new System.Windows.Forms.Label();
-			this.hideNavigationPanesTextBox = new System.Windows.Forms.TextBox();
-			this.label39 = new System.Windows.Forms.Label();
-			this.showNavigationTextBox = new System.Windows.Forms.TextBox();
+			this.useFramesCheckBox = new System.Windows.Forms.CheckBox();
+			this.statsLabel = new System.Windows.Forms.Label();
+			this.timer1 = new System.Windows.Forms.Timer(this.components);
+			this.helpButton = new System.Windows.Forms.Button();
+			this.runHighlightedButton = new System.Windows.Forms.Button();
+			this.statsButton = new System.Windows.Forms.Button();
+			this.btnAddSpecialProcess = new System.Windows.Forms.Button();
 			this.tabControl1.SuspendLayout();
 			this.idTabPage.SuspendLayout();
 			this.copyrightTabPage.SuspendLayout();
@@ -180,8 +181,8 @@
 			// 
 			// m_projectsList
 			// 
-			this.m_projectsList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.m_projectsList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.m_projectsList.FormattingEnabled = true;
 			this.m_projectsList.Location = new System.Drawing.Point(632, 0);
 			this.m_projectsList.Name = "m_projectsList";
@@ -757,6 +758,7 @@
 			// 
 			// processTabPage
 			// 
+			this.processTabPage.Controls.Add(this.btnAddSpecialProcess);
 			this.processTabPage.Controls.Add(this.postprocessTextBox);
 			this.processTabPage.Controls.Add(this.textBox1);
 			this.processTabPage.Controls.Add(this.mvDownButton);
@@ -846,7 +848,7 @@
 			// 
 			// moveDownButton
 			// 
-			this.moveDownButton.Location = new System.Drawing.Point(293, 59);
+			this.moveDownButton.Location = new System.Drawing.Point(415, 59);
 			this.moveDownButton.Name = "moveDownButton";
 			this.moveDownButton.Size = new System.Drawing.Size(85, 26);
 			this.moveDownButton.TabIndex = 30;
@@ -856,7 +858,7 @@
 			// 
 			// moveUpButton
 			// 
-			this.moveUpButton.Location = new System.Drawing.Point(188, 59);
+			this.moveUpButton.Location = new System.Drawing.Point(314, 59);
 			this.moveUpButton.Name = "moveUpButton";
 			this.moveUpButton.Size = new System.Drawing.Size(76, 26);
 			this.moveUpButton.TabIndex = 29;
@@ -877,7 +879,7 @@
 			// 
 			// btnRemoveInputProcess
 			// 
-			this.btnRemoveInputProcess.Location = new System.Drawing.Point(95, 59);
+			this.btnRemoveInputProcess.Location = new System.Drawing.Point(223, 59);
 			this.btnRemoveInputProcess.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.btnRemoveInputProcess.Name = "btnRemoveInputProcess";
 			this.btnRemoveInputProcess.Size = new System.Drawing.Size(66, 27);
@@ -957,8 +959,8 @@
 			// 
 			// licenseTextBox
 			// 
-			this.licenseTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)));
+			this.licenseTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
 			this.licenseTextBox.Location = new System.Drawing.Point(0, 205);
 			this.licenseTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
 			this.licenseTextBox.Multiline = true;
@@ -984,7 +986,7 @@
 			this.label5.Size = new System.Drawing.Size(396, 13);
 			this.label5.TabIndex = 26;
 			this.label5.Text = "HTML for index page. {0} will be replaced with language ID; {1} with translation " +
-				"ID.";
+    "ID.";
 			// 
 			// indexPageTextBox
 			// 
@@ -1199,8 +1201,8 @@
 			// 
 			// label31
 			// 
-			this.label31.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.label31.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.label31.AutoSize = true;
 			this.label31.Location = new System.Drawing.Point(351, 213);
 			this.label31.Name = "label31";
@@ -1218,8 +1220,8 @@
 			// 
 			// label30
 			// 
-			this.label30.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.label30.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.label30.AutoSize = true;
 			this.label30.Location = new System.Drawing.Point(17, 213);
 			this.label30.Name = "label30";
@@ -1244,7 +1246,7 @@
 			this.label22.Size = new System.Drawing.Size(473, 13);
 			this.label22.TabIndex = 21;
 			this.label22.Text = "Maximum frequency (words occurring more often than this will be excluded; use \'un" +
-				"limited\' if no limit)";
+    "limited\' if no limit)";
 			// 
 			// tbxMaxFreq
 			// 
@@ -1299,12 +1301,12 @@
 			this.label29.Size = new System.Drawing.Size(403, 13);
 			this.label29.TabIndex = 15;
 			this.label29.Text = "Characters that should be treated as parts of words (in addition to standard Unic" +
-				"ode)";
+    "ode)";
 			// 
 			// tbxWordformingChars
 			// 
-			this.tbxWordformingChars.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.tbxWordformingChars.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.tbxWordformingChars.Location = new System.Drawing.Point(12, 87);
 			this.tbxWordformingChars.Name = "tbxWordformingChars";
 			this.tbxWordformingChars.Size = new System.Drawing.Size(586, 20);
@@ -1368,8 +1370,8 @@
 			// 
 			// label32
 			// 
-			this.label32.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this.label32.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.label32.Location = new System.Drawing.Point(8, 11);
 			this.label32.Name = "label32";
 			this.label32.Size = new System.Drawing.Size(587, 58);
@@ -1430,61 +1432,39 @@
 			this.framesPage.Text = "Frames";
 			this.framesPage.UseVisualStyleBackColor = true;
 			// 
-			// useFramesCheckBox
+			// showNavigationTextBox
 			// 
-			this.useFramesCheckBox.AutoSize = true;
-			this.useFramesCheckBox.Location = new System.Drawing.Point(12, 15);
-			this.useFramesCheckBox.Name = "useFramesCheckBox";
-			this.useFramesCheckBox.Size = new System.Drawing.Size(332, 17);
-			this.useFramesCheckBox.TabIndex = 0;
-			this.useFramesCheckBox.Text = "Use the three-pane (frame-based) layout for the main text window";
-			this.useFramesCheckBox.UseVisualStyleBackColor = true;
+			this.showNavigationTextBox.Location = new System.Drawing.Point(351, 277);
+			this.showNavigationTextBox.Name = "showNavigationTextBox";
+			this.showNavigationTextBox.Size = new System.Drawing.Size(156, 20);
+			this.showNavigationTextBox.TabIndex = 41;
+			this.showNavigationTextBox.Text = "Show Navigation Panes";
 			// 
-			// statsLabel
+			// label39
 			// 
-			this.statsLabel.AutoSize = true;
-			this.statsLabel.Location = new System.Drawing.Point(4, 37);
-			this.statsLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-			this.statsLabel.Name = "statsLabel";
-			this.statsLabel.Size = new System.Drawing.Size(47, 13);
-			this.statsLabel.TabIndex = 29;
-			this.statsLabel.Text = "statistics";
+			this.label39.AutoSize = true;
+			this.label39.Location = new System.Drawing.Point(9, 280);
+			this.label39.Name = "label39";
+			this.label39.Size = new System.Drawing.Size(275, 13);
+			this.label39.TabIndex = 40;
+			this.label39.Text = "Text of button that shows navigation panes when hidden";
 			// 
-			// timer1
+			// hideNavigationPanesTextBox
 			// 
-			this.timer1.Interval = 500;
-			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+			this.hideNavigationPanesTextBox.Location = new System.Drawing.Point(351, 241);
+			this.hideNavigationPanesTextBox.Name = "hideNavigationPanesTextBox";
+			this.hideNavigationPanesTextBox.Size = new System.Drawing.Size(156, 20);
+			this.hideNavigationPanesTextBox.TabIndex = 39;
+			this.hideNavigationPanesTextBox.Text = "Hide Navigation Panes";
 			// 
-			// helpButton
+			// label38
 			// 
-			this.helpButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-			this.helpButton.Location = new System.Drawing.Point(191, 1);
-			this.helpButton.Name = "helpButton";
-			this.helpButton.Size = new System.Drawing.Size(38, 23);
-			this.helpButton.TabIndex = 2;
-			this.helpButton.Text = "&Help";
-			this.helpButton.UseVisualStyleBackColor = false;
-			this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
-			// 
-			// runHighlightedButton
-			// 
-			this.runHighlightedButton.Location = new System.Drawing.Point(484, 1);
-			this.runHighlightedButton.Name = "runHighlightedButton";
-			this.runHighlightedButton.Size = new System.Drawing.Size(96, 23);
-			this.runHighlightedButton.TabIndex = 53;
-			this.runHighlightedButton.Text = "Ru&n Highlighted";
-			this.runHighlightedButton.UseVisualStyleBackColor = true;
-			this.runHighlightedButton.Click += new System.EventHandler(this.runHighlightedButton_Click);
-			// 
-			// statsButton
-			// 
-			this.statsButton.Location = new System.Drawing.Point(586, 1);
-			this.statsButton.Name = "statsButton";
-			this.statsButton.Size = new System.Drawing.Size(39, 23);
-			this.statsButton.TabIndex = 54;
-			this.statsButton.Text = "&Stats";
-			this.statsButton.UseVisualStyleBackColor = true;
-			this.statsButton.Click += new System.EventHandler(this.statsButton_Click);
+			this.label38.AutoSize = true;
+			this.label38.Location = new System.Drawing.Point(9, 244);
+			this.label38.Name = "label38";
+			this.label38.Size = new System.Drawing.Size(206, 13);
+			this.label38.TabIndex = 38;
+			this.label38.Text = "Text of button that hides navigation panes";
 			// 
 			// nextChapterLinkTextBox
 			// 
@@ -1571,39 +1551,71 @@
 			this.label37.TabIndex = 28;
 			this.label37.Text = "Hotlink in the main table of contents to the Concordance";
 			// 
-			// label38
+			// useFramesCheckBox
 			// 
-			this.label38.AutoSize = true;
-			this.label38.Location = new System.Drawing.Point(9, 244);
-			this.label38.Name = "label38";
-			this.label38.Size = new System.Drawing.Size(206, 13);
-			this.label38.TabIndex = 38;
-			this.label38.Text = "Text of button that hides navigation panes";
+			this.useFramesCheckBox.AutoSize = true;
+			this.useFramesCheckBox.Location = new System.Drawing.Point(12, 15);
+			this.useFramesCheckBox.Name = "useFramesCheckBox";
+			this.useFramesCheckBox.Size = new System.Drawing.Size(332, 17);
+			this.useFramesCheckBox.TabIndex = 0;
+			this.useFramesCheckBox.Text = "Use the three-pane (frame-based) layout for the main text window";
+			this.useFramesCheckBox.UseVisualStyleBackColor = true;
 			// 
-			// hideNavigationPanesTextBox
+			// statsLabel
 			// 
-			this.hideNavigationPanesTextBox.Location = new System.Drawing.Point(351, 241);
-			this.hideNavigationPanesTextBox.Name = "hideNavigationPanesTextBox";
-			this.hideNavigationPanesTextBox.Size = new System.Drawing.Size(156, 20);
-			this.hideNavigationPanesTextBox.TabIndex = 39;
-			this.hideNavigationPanesTextBox.Text = "Hide Navigation Panes";
+			this.statsLabel.AutoSize = true;
+			this.statsLabel.Location = new System.Drawing.Point(4, 37);
+			this.statsLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+			this.statsLabel.Name = "statsLabel";
+			this.statsLabel.Size = new System.Drawing.Size(47, 13);
+			this.statsLabel.TabIndex = 29;
+			this.statsLabel.Text = "statistics";
 			// 
-			// label39
+			// timer1
 			// 
-			this.label39.AutoSize = true;
-			this.label39.Location = new System.Drawing.Point(9, 280);
-			this.label39.Name = "label39";
-			this.label39.Size = new System.Drawing.Size(275, 13);
-			this.label39.TabIndex = 40;
-			this.label39.Text = "Text of button that shows navigation panes when hidden";
+			this.timer1.Interval = 500;
+			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
 			// 
-			// showNavigationTextBox
+			// helpButton
 			// 
-			this.showNavigationTextBox.Location = new System.Drawing.Point(351, 277);
-			this.showNavigationTextBox.Name = "showNavigationTextBox";
-			this.showNavigationTextBox.Size = new System.Drawing.Size(156, 20);
-			this.showNavigationTextBox.TabIndex = 41;
-			this.showNavigationTextBox.Text = "Show Navigation Panes";
+			this.helpButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+			this.helpButton.Location = new System.Drawing.Point(191, 1);
+			this.helpButton.Name = "helpButton";
+			this.helpButton.Size = new System.Drawing.Size(38, 23);
+			this.helpButton.TabIndex = 2;
+			this.helpButton.Text = "&Help";
+			this.helpButton.UseVisualStyleBackColor = false;
+			this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
+			// 
+			// runHighlightedButton
+			// 
+			this.runHighlightedButton.Location = new System.Drawing.Point(484, 1);
+			this.runHighlightedButton.Name = "runHighlightedButton";
+			this.runHighlightedButton.Size = new System.Drawing.Size(96, 23);
+			this.runHighlightedButton.TabIndex = 53;
+			this.runHighlightedButton.Text = "Ru&n Highlighted";
+			this.runHighlightedButton.UseVisualStyleBackColor = true;
+			this.runHighlightedButton.Click += new System.EventHandler(this.runHighlightedButton_Click);
+			// 
+			// statsButton
+			// 
+			this.statsButton.Location = new System.Drawing.Point(586, 1);
+			this.statsButton.Name = "statsButton";
+			this.statsButton.Size = new System.Drawing.Size(39, 23);
+			this.statsButton.TabIndex = 54;
+			this.statsButton.Text = "&Stats";
+			this.statsButton.UseVisualStyleBackColor = true;
+			this.statsButton.Click += new System.EventHandler(this.statsButton_Click);
+			// 
+			// btnAddSpecialProcess
+			// 
+			this.btnAddSpecialProcess.Location = new System.Drawing.Point(98, 59);
+			this.btnAddSpecialProcess.Name = "btnAddSpecialProcess";
+			this.btnAddSpecialProcess.Size = new System.Drawing.Size(100, 27);
+			this.btnAddSpecialProcess.TabIndex = 40;
+			this.btnAddSpecialProcess.Text = "+ Add process";
+			this.btnAddSpecialProcess.UseVisualStyleBackColor = true;
+			this.btnAddSpecialProcess.Click += new System.EventHandler(this.btnAddSpecialProcess_Click);
 			// 
 			// haiolaForm
 			// 
@@ -1791,6 +1803,7 @@
 		private System.Windows.Forms.Label label39;
 		private System.Windows.Forms.TextBox hideNavigationPanesTextBox;
 		private System.Windows.Forms.Label label38;
+		private System.Windows.Forms.Button btnAddSpecialProcess;
 	}
 }
 
