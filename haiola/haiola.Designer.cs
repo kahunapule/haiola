@@ -70,7 +70,6 @@
             this.copyrightOwnerUrlTextBox = new System.Windows.Forms.TextBox();
             this.label40 = new System.Windows.Forms.Label();
             this.coprAbbrevTextBox = new System.Windows.Forms.TextBox();
-            this.stripPicturesCheckBox = new System.Windows.Forms.CheckBox();
             this.stripExtrasCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.silentRadioButton = new System.Windows.Forms.RadioButton();
@@ -103,6 +102,10 @@
             this.btnAddInputProcess = new System.Windows.Forms.Button();
             this.listInputProcesses = new System.Windows.Forms.ListBox();
             this.htmlTabPage = new System.Windows.Forms.TabPage();
+            this.label45 = new System.Windows.Forms.Label();
+            this.label44 = new System.Windows.Forms.Label();
+            this.label43 = new System.Windows.Forms.Label();
+            this.label42 = new System.Windows.Forms.Label();
             this.templateLabel = new System.Windows.Forms.Label();
             this.copyFromTemplateButton = new System.Windows.Forms.Button();
             this.makeTemplateButton = new System.Windows.Forms.Button();
@@ -173,10 +176,6 @@
             this.helpButton = new System.Windows.Forms.Button();
             this.runHighlightedButton = new System.Windows.Forms.Button();
             this.statsButton = new System.Windows.Forms.Button();
-            this.label42 = new System.Windows.Forms.Label();
-            this.label43 = new System.Windows.Forms.Label();
-            this.label44 = new System.Windows.Forms.Label();
-            this.label45 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.idTabPage.SuspendLayout();
             this.copyrightTabPage.SuspendLayout();
@@ -573,7 +572,6 @@
             this.copyrightTabPage.Controls.Add(this.copyrightOwnerUrlTextBox);
             this.copyrightTabPage.Controls.Add(this.label40);
             this.copyrightTabPage.Controls.Add(this.coprAbbrevTextBox);
-            this.copyrightTabPage.Controls.Add(this.stripPicturesCheckBox);
             this.copyrightTabPage.Controls.Add(this.stripExtrasCheckBox);
             this.copyrightTabPage.Controls.Add(this.groupBox1);
             this.copyrightTabPage.Controls.Add(this.label16);
@@ -627,18 +625,6 @@
             this.coprAbbrevTextBox.Name = "coprAbbrevTextBox";
             this.coprAbbrevTextBox.Size = new System.Drawing.Size(337, 20);
             this.coprAbbrevTextBox.TabIndex = 23;
-            // 
-            // stripPicturesCheckBox
-            // 
-            this.stripPicturesCheckBox.AutoSize = true;
-            this.stripPicturesCheckBox.Checked = true;
-            this.stripPicturesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.stripPicturesCheckBox.Location = new System.Drawing.Point(6, 339);
-            this.stripPicturesCheckBox.Name = "stripPicturesCheckBox";
-            this.stripPicturesCheckBox.Size = new System.Drawing.Size(105, 17);
-            this.stripPicturesCheckBox.TabIndex = 29;
-            this.stripPicturesCheckBox.Text = "Strip out pictures";
-            this.stripPicturesCheckBox.UseVisualStyleBackColor = true;
             // 
             // stripExtrasCheckBox
             // 
@@ -997,6 +983,46 @@
             this.htmlTabPage.TabIndex = 3;
             this.htmlTabPage.Text = "HTML options";
             this.htmlTabPage.UseVisualStyleBackColor = true;
+            // 
+            // label45
+            // 
+            this.label45.AutoSize = true;
+            this.label45.Location = new System.Drawing.Point(8, 401);
+            this.label45.Name = "label45";
+            this.label45.Size = new System.Drawing.Size(385, 13);
+            this.label45.TabIndex = 57;
+            this.label45.Text = "%v=vernacular title; %n=English description; %N=LWC description; %T=rev. date";
+            // 
+            // label44
+            // 
+            this.label44.AutoSize = true;
+            this.label44.Location = new System.Drawing.Point(8, 440);
+            this.label44.Name = "label44";
+            this.label44.Size = new System.Drawing.Size(487, 13);
+            this.label44.TabIndex = 56;
+            this.label44.Text = "%l=language; %L=language name in English; %D=dialect; %a=content creator; %A=cont" +
+    "ent contributor";
+            // 
+            // label43
+            // 
+            this.label43.AutoSize = true;
+            this.label43.Location = new System.Drawing.Point(6, 427);
+            this.label43.Name = "label43";
+            this.label43.Size = new System.Drawing.Size(506, 13);
+            this.label43.TabIndex = 55;
+            this.label43.Tag = "";
+            this.label43.Text = "%t=translation ID; %e=Ethnologue code;%h=home domain; %p=public/private; %r=redis" +
+    "tributable/restricted";
+            // 
+            // label42
+            // 
+            this.label42.AutoSize = true;
+            this.label42.Location = new System.Drawing.Point(8, 414);
+            this.label42.Name = "label42";
+            this.label42.Size = new System.Drawing.Size(565, 13);
+            this.label42.TabIndex = 54;
+            this.label42.Text = "%c=short copyright; %C=long copyright %o=other rights; %w=print publisher; %i=ele" +
+    "ctronic publisher; %d=directory name";
             // 
             // templateLabel
             // 
@@ -1703,46 +1729,6 @@
             this.statsButton.UseVisualStyleBackColor = true;
             this.statsButton.Click += new System.EventHandler(this.statsButton_Click);
             // 
-            // label42
-            // 
-            this.label42.AutoSize = true;
-            this.label42.Location = new System.Drawing.Point(8, 414);
-            this.label42.Name = "label42";
-            this.label42.Size = new System.Drawing.Size(565, 13);
-            this.label42.TabIndex = 54;
-            this.label42.Text = "%c=short copyright; %C=long copyright %o=other rights; %w=print publisher; %i=ele" +
-    "ctronic publisher; %d=directory name";
-            // 
-            // label43
-            // 
-            this.label43.AutoSize = true;
-            this.label43.Location = new System.Drawing.Point(6, 427);
-            this.label43.Name = "label43";
-            this.label43.Size = new System.Drawing.Size(506, 13);
-            this.label43.TabIndex = 55;
-            this.label43.Tag = "";
-            this.label43.Text = "%t=translation ID; %e=Ethnologue code;%h=home domain; %p=public/private; %r=redis" +
-    "tributable/restricted";
-            // 
-            // label44
-            // 
-            this.label44.AutoSize = true;
-            this.label44.Location = new System.Drawing.Point(8, 440);
-            this.label44.Name = "label44";
-            this.label44.Size = new System.Drawing.Size(487, 13);
-            this.label44.TabIndex = 56;
-            this.label44.Text = "%l=language; %L=language name in English; %D=dialect; %a=content creator; %A=cont" +
-    "ent contributor";
-            // 
-            // label45
-            // 
-            this.label45.AutoSize = true;
-            this.label45.Location = new System.Drawing.Point(8, 401);
-            this.label45.Name = "label45";
-            this.label45.Size = new System.Drawing.Size(385, 13);
-            this.label45.TabIndex = 57;
-            this.label45.Text = "%v=vernacular title; %n=English description; %N=LWC description; %T=rev. date";
-            // 
             // haiolaForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1928,8 +1914,7 @@
 		private System.Windows.Forms.TextBox showNavigationTextBox;
 		private System.Windows.Forms.Label label39;
 		private System.Windows.Forms.TextBox hideNavigationPanesTextBox;
-		private System.Windows.Forms.Label label38;
-        private System.Windows.Forms.CheckBox stripPicturesCheckBox;
+        private System.Windows.Forms.Label label38;
         private System.Windows.Forms.Label label40;
         private System.Windows.Forms.TextBox coprAbbrevTextBox;
         private System.Windows.Forms.Label label41;
