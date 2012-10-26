@@ -6490,7 +6490,8 @@ namespace WordSend
 
     public class usfxToHtmlConverter
     {
-        public bool stripPictures = true;
+        public bool stripPictures = false;
+        public string htmlextrasDir = String.Empty;
 
     	protected const string IndexFileName = "index.htm";
     	protected string usfxFileName;
@@ -6576,6 +6577,41 @@ namespace WordSend
                 return fileHelper.KhmerDigits(s);
             else
                 return s;
+        }
+
+        protected string CheckPicture(string pictureName)
+        {
+            string actualName = String.Empty;
+            string picturePath;
+            string searchName, foundName, foundExt;
+            if ((htmlextrasDir.Length > 5) && (!stripPictures))
+            {
+                pictureName = Path.GetFileName(pictureName);
+                picturePath = Path.Combine(htmlextrasDir, pictureName);
+                if (File.Exists(picturePath))
+                    actualName = pictureName;
+                else
+                {
+                    searchName = Path.GetFileNameWithoutExtension(pictureName).ToLowerInvariant();
+                    string[] fileEntries = Directory.GetFiles(htmlextrasDir);
+                    foreach (string fileName in fileEntries)
+                    {
+                        foundName = Path.GetFileNameWithoutExtension(fileName).ToLowerInvariant();
+                        if (foundName == searchName)
+                        {
+                            foundExt = Path.GetExtension(fileName).ToLowerInvariant();
+                            if ((foundExt == ".jpg") || (foundExt == ".jpeg") || (foundExt == ".gif") ||
+                                (foundExt == ".png") || (foundExt == ".bmp") || (foundExt == ".tif") ||
+                                (foundExt == ".tiff"))
+                            {
+                                return Path.GetFileName(fileName);
+                            }
+                        }
+                     
+                    }
+                }
+            }
+            return actualName;
         }
 
         FootNoteCaller footNoteCall = new FootNoteCaller("* † ‡ § ** †† ‡‡ §§ *** ††† ‡‡‡ §§§");
@@ -7183,8 +7219,12 @@ namespace WordSend
 
         protected void insertHtmlPicture(string figFileName, string figCopyright, string figCaption, string figReference)
         {
-            WriteHtml(String.Format("<div class=\"figure\"><img src=\"{0}\"><br/><span class=\"figcopr\">{1}</br>" +
-               "</span><span class=\"figref\">{2}</span><span class=\"figCaption\"> {3}</span></div>", figFileName, figCopyright, figReference, figCaption));
+            figFileName = CheckPicture(figFileName);
+            if (figFileName.Length > 4)
+            {
+                WriteHtml(String.Format("<div class=\"figure\"><img src=\"{0}\"><br/><span class=\"figcopr\">{1}</br>" +
+                   "</span><span class=\"figref\">{2}</span><span class=\"figCaption\"> {3}</span></div>", figFileName, figCopyright, figReference, figCaption));
+            }
         }
 
 

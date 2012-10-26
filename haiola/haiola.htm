@@ -2,6 +2,7 @@
 <html><head>
 
 
+
   
   <meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8"><title>Haiola documentation</title>
   
@@ -287,9 +288,14 @@ in the htmlextras directory. Include the exact case-sensitive file name of those
 without path information, in the "catalog" or "file name" field of the \fig ...\fig* tag.
 Filling in the copyright field is strongly recommended, and required for some illustrations.
 The reference and caption, if present, will appear below the illustration on the web page.</p>
-<p>To enable illustration inclusion, uncheck the "strip out pictures" checkbox on them
-copyright tab. (It is there, because the most likely reason to want to strip out pictures
-is copyright limitations.)</p>
+<p>If illustrations have a different suffix, i.e. ".jpg" instead of
+".TIF" in the htmlextras directory, but the base file name matches, the
+extension will automatically be changed in the HTML output. If an
+illustration is missing in the htmlextras directory, no &lt;IMG&gt; tag
+will be generated. Thus, if you have copyright permission to include
+only selected image files, just put those files for which you have
+permission in the htmlextras directory for that project.<br>
+</p>
 
 <h2>HTML Output Options</h2>
 
@@ -317,9 +323,9 @@ deleted anyway and replaced. That is why web page elements that you
 want to persist between runs must be put in the input/<span style="font-style: italic;">project</span>/htmlextras directory.</p>
 <p>Files placed in the input/<span style="font-style: italic;">project</span>/htmlextras
 directory and ending in "_Introduction.htm" are used in the
-navigational structure of frame-based HTML.<p>
+navigational structure of frame-based HTML.</p><p>
 
-<h2>What auxiliary files does Haiola use?</h2>
+</p><h2>What auxiliary files does Haiola use?</h2>
 
 <p>Besides the files in the installation bundle, you provide any
 regular expression substitution files to operate on the input files to

@@ -502,7 +502,8 @@ namespace haiola
 			{
 				toHtm = new usfxToHtmlConverter();
 			}
-            toHtm.stripPictures = m_options.stripPictures;
+            toHtm.stripPictures = false;
+            toHtm.htmlextrasDir = Path.Combine(m_inputProjectDirectory, "htmlextras");
             string logFile = Path.Combine(m_outputProjectDirectory, "HTMLConversionReport.txt");
             Logit.OpenFile(logFile);
 
@@ -938,6 +939,7 @@ In addition, you have permission to convert the text to different file formats, 
             Application.DoEvents();
             if (fAllRunning)
                 DoPostprocess();
+            System.Diagnostics.Process.Start(Path.Combine(Path.Combine(m_outputProjectDirectory, "html"), "index.htm"));
             Application.DoEvents();
         }
 
@@ -1106,7 +1108,6 @@ In addition, you have permission to convert the text to different file formats, 
             printPublisherTextBox.Text = m_options.printPublisher;
             electronicPublisherTextBox.Text = m_options.electronicPublisher;
             stripExtrasCheckBox.Checked = m_options.ignoreExtras;
-            stripPicturesCheckBox.Checked = m_options.stripPictures;
             m_currentTemplate = xini.ReadString("currentTemplate", String.Empty);
             templateLabel.Text = "Current template: " + m_currentTemplate;
             copyFromTemplateButton.Enabled = (m_currentTemplate.Length > 0) && (m_currentTemplate != m_project);
@@ -1290,7 +1291,6 @@ In addition, you have permission to convert the text to different file formats, 
             m_options.printPublisher = printPublisherTextBox.Text.Trim();
             m_options.electronicPublisher = electronicPublisherTextBox.Text.Trim();
             m_options.ignoreExtras = stripExtrasCheckBox.Checked;
-            m_options.stripPictures = stripPicturesCheckBox.Checked;
 
             List<string> tableNames = new List<string>();
             foreach (string filename in listInputProcesses.Items)
