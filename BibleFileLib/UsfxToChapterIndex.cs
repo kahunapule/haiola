@@ -124,13 +124,13 @@ namespace BibleFileLib
 							break;
 						case "c":
 							var currentChapter = id;
-							var currentChapterPublished = LocalizeNumerals(currentChapter);
+							var currentChapterPublished = fileHelper.LocalizeDigits(currentChapter);
 
 							if (!usfx.IsEmptyElement)
 							{
 								usfx.Read();
 								if (usfx.NodeType == XmlNodeType.Text)
-									currentChapterPublished = LocalizeNumerals(usfx.Value.Trim());
+									currentChapterPublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
 							}
 							int chNum;
 							if (Int32.TryParse(id, out chNum))
@@ -186,8 +186,9 @@ namespace BibleFileLib
 			CloseHtmlFile();
 		}
 
-		private bool convertDigitsToKhmer = false; // todo: configure
+		//private bool convertDigitsToKhmer = false; // todo: configure
 
+        /* Replaced by FileHelper.LocalizeDigits
 		public string LocalizeNumerals(string s)
 		{
 			if (convertDigitsToKhmer)
@@ -195,6 +196,7 @@ namespace BibleFileLib
 			else
 				return s;
 		}
+         */
 		protected string GetNamedAttribute(string attributeName)
 		{
 			string result = usfx.GetAttribute(attributeName);

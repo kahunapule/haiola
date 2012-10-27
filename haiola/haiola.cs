@@ -528,7 +528,6 @@ namespace haiola
                 expandPercentEscapes(m_options.footerHtml),
                 expandPercentEscapes(m_options.indexHtml),
                 expandPercentEscapes(m_options.licenseHtml),
-                m_options.useKhmerDigits,
                 m_options.ignoreExtras,
                 m_options.goText);
             Logit.CloseFile();
@@ -1140,8 +1139,9 @@ In addition, you have permission to convert the text to different file formats, 
             indexPageTextBox.Text = m_options.indexHtml;
             licenseTextBox.Text = m_options.licenseHtml;
             versificationComboBox.Text = m_options.versificationScheme;
-            arabicNumeralsRadioButton.Checked = m_options.useArabicDigits;
-            khmerNumeralsRadioButton.Checked = m_options.useKhmerDigits;
+            numberSystemComboBox.Text = m_options.numberSystem;
+            //arabicNumeralsRadioButton.Checked = m_options.useArabicDigits;
+            //khmerNumeralsRadioButton.Checked = m_options.useKhmerDigits;
             privateCheckBox.Checked = m_options.privateProject;
             homeDomainTextBox.Text = m_options.homeDomain;
 
@@ -1315,8 +1315,7 @@ In addition, you have permission to convert the text to different file formats, 
             m_options.indexHtml = indexPageTextBox.Text;
             m_options.licenseHtml = licenseTextBox.Text;
             m_options.versificationScheme = versificationComboBox.Text;
-            m_options.useArabicDigits = arabicNumeralsRadioButton.Checked;
-            m_options.useKhmerDigits = khmerNumeralsRadioButton.Checked;
+            m_options.numberSystem = fileHelper.SetDigitLocale(numberSystemComboBox.Text.Trim());
             m_options.privateProject = privateCheckBox.Checked;
             m_options.homeDomain = homeDomainTextBox.Text.Trim();
 
