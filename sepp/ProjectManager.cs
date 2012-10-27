@@ -391,8 +391,7 @@ namespace sepp
                 m_options.m_footerHtml,
                 m_options.m_indexHtml,
                 m_options.m_licenseHtml,
-                m_options.m_useKhmerDigits,
-                m_options.m_ignoreExtras);
+                m_options.m_ignoreExtras, "Go!");
             Logit.CloseFile();
             string postprocess = Path.Combine(WorkPath, "postprocess.bat");
             if (File.Exists(postprocess))

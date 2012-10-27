@@ -702,7 +702,268 @@ namespace WordSend
                 return s;
             return s.Substring(0, pos) + newstring + s.Substring(pos + oldstring.Length);
         }
+        
+        // The following linguistically diverse number sets might not display correctly unless
+        // you have appropriate Unicode fonts installed.
+        public const string ArabicDigits = "٠١٢٣٤٥٦٧٨٩";
+        public const string BengaliDigits = "০১২৩৪৫৬৭৮৯";
+        public const string ChineseSimplifiedDigits = "〇一二三四五六七八九";
+        public const string ChineseTraditionalDigits = "零壹貳參肆伍陸柒捌玖";
+        public const string ChineseHuaMaDigits = "〇〡〢〣〤〥〦〧〨〩";
+        public const string DevangariDigits = "०१२३४५६७८९";
+        public const string EthiopicDigits = " ፩፪፫፬፭፮፯፰፱";
+        public const string EthiopicTens = " ፲፳፴፵፶፷፸፹፺";
+        public const string EthiopicHundred = "፻";
+        public const string EthiopicTenThousand = "፼";
+        public const string GugaratiDigits = "૦૧૨૩૪૫૬૭૮૯";
+        public const string GurmukhiDigits = "੦੧੨੩੪੫੬੭੮੯";
+        public const string KannadaDigits = "೦೧೨೩೪೫೬೭೮೯";
+        public const string KhmerDigits = "០១២៣៤៥៦៧៨៩";
+        public const string LaoDigits = "໐໑໒໓໔໕໖໗໘໙";
+        public const string LimbuDigits = "᥆᥇᥈᥉᥊᥋᥌᥍᥎᥏";
+        public const string MalayalamDigits = "൦൧൨൩൪൫൬൭൮൯";
+        public const string MongolianDigits = "᠐᠑᠒᠓᠔᠕᠖᠗᠘᠙";
+        public const string BurmeseDigits = "၀၁၂၃၄၅၆၇၈၉";
+        public const string OriyaDigits = "୦୧୨୩୪୫୬୭୮୯";
+        public const string TamilDigits = "௦௧௨௩௪௫௬௭௮௯";
+        public const string TeluguDigits = "౦౧౨౩౪౫౬౭౮౯";
+        public const string ThaiDigits = "๐๑๒๓๔๕๖๗๘๙";
+        public const string TibetanDigits = "༠༡༢༣༤༥༦༧༨༩";
+        public const string UrduDigits = "۰۱۲۳۴۵۶۷۸۹";
+        public const string RomanDigits = " ⅠⅡⅢⅣⅤⅥⅦⅧⅨ";
+        protected static string CurrentDigits = String.Empty;
 
+        public static bool LocalizingDigits
+        {
+            get { return CurrentDigits != String.Empty; }
+        }
+
+        public static string SetDigitLocale(string digitPlace)
+        {
+            switch (digitPlace)
+            {
+                case "Arabic":
+                    CurrentDigits = ArabicDigits;
+                    break;
+                case "Bengali":
+                    CurrentDigits = BengaliDigits;
+                    break;
+                case "Burmese (Myanmar)":
+                    CurrentDigits = BurmeseDigits;
+                    break;
+                case "Chinese (Simplified)":
+                    CurrentDigits = ChineseSimplifiedDigits;
+                    break;
+                case "Chinese (Traditional)":
+                    CurrentDigits = ChineseTraditionalDigits;
+                    break;
+                case "Chinese (hua ma)":
+                    CurrentDigits = ChineseHuaMaDigits;
+                    break;
+                case "Devangari":
+                    CurrentDigits = DevangariDigits;
+                    break;
+                case "Ethiopic (Ge'ez)":
+                    CurrentDigits = EthiopicDigits;
+                    break;
+                case "Gujarati":
+                    CurrentDigits = GugaratiDigits;
+                    break;
+                case "Gurmukhi":
+                    CurrentDigits = GurmukhiDigits;
+                    break;
+                case "Kannada":
+                    CurrentDigits = KannadaDigits;
+                    break;
+                case "Khmer":
+                    CurrentDigits = KhmerDigits;
+                    break;
+                case "Lao":
+                    CurrentDigits = LaoDigits;
+                    break;
+                case "Limbu":
+                    CurrentDigits = LimbuDigits;
+                    break;
+                case "Malayalam":
+                    CurrentDigits = MalayalamDigits;
+                    break;
+                case "Mongolian":
+                    CurrentDigits = MongolianDigits;
+                    break;
+                case "Oriya":
+                    CurrentDigits = OriyaDigits;
+                    break;
+                case "Roman":
+                    CurrentDigits = RomanDigits;
+                    break;
+                case "Tamil":
+                    CurrentDigits = TamilDigits;
+                    break;
+                case "Telugu":
+                    CurrentDigits = TeluguDigits;
+                    break;
+                case "Thai":
+                    CurrentDigits = ThaiDigits;
+                    break;
+                case "Tibetan":
+                    CurrentDigits = TibetanDigits;
+                    break;
+                case "Urdu":
+                    CurrentDigits = UrduDigits;
+                    break;
+                case "Default":
+                default:
+                    CurrentDigits = String.Empty;
+                    digitPlace = "Default";
+                    break;
+            }
+            return digitPlace;
+        }
+
+        public static string LocalizeDigits(string s)
+        {
+            return ReplaceDigits(s, CurrentDigits);
+        }
+
+        public static string ReplaceDigits(string s, string newDigits)
+        {
+            if ((newDigits == null) || (newDigits.Length < 10))
+            {
+                return s;
+            }
+            if (newDigits == EthiopicDigits)
+            {
+                return EthiopicNumerals(s);
+            }
+            else if (newDigits == RomanDigits)
+            {
+                return RomanNumerals(s);
+            }
+            else
+            {
+                StringBuilder sb = new StringBuilder();
+                int n;
+                foreach (char c in s)
+                {
+                    if (Char.IsDigit(c))
+                    {
+                        n = ((int)c) - ((int)'0');
+                        sb.Append(newDigits[n]);
+                    }
+                    else
+                    {
+                        sb.Append(c);
+                    }
+                }
+                return sb.ToString();
+            }
+        }
+
+
+
+        public static string EthiopicNumerals(string s)
+        {
+            StringBuilder sb = new StringBuilder();
+            int i, n;
+            int place = 0;
+            for (i = s.Length - 1; i >= 0; i--)
+            {
+                if (Char.IsDigit(s[i]))
+                {
+                    n = ((int)s[i]) - ((int)'0');
+                    if (place == 0)
+                    {
+                        if (n > 0)
+                        {
+                            sb.Insert(0, EthiopicDigits[n]);
+                        }
+                        place++;
+                    }
+                    else if (place == 1)
+                    {
+                        if (n > 0)
+                        {
+                            sb.Insert(0, EthiopicTens[n]);
+                        }
+                        place++;
+                    }
+                    else if (place == 2)
+                    {
+                        sb.Insert(0, EthiopicHundred);
+                        if (n > 0)
+                        {
+                            sb.Insert(0, EthiopicDigits[n]);
+                        }
+                        place++;
+                    }
+                    else if (place == 3)
+                    {
+                        if (n > 0)
+                        {
+                            sb.Insert(0, EthiopicTens[n]);
+                        }
+                        place++;
+                    }
+                    else if (place == 4)
+                    {
+                        sb.Insert(0, EthiopicTenThousand);
+                        if (n > 0)
+                        {
+                            sb.Insert(0, EthiopicDigits[n]);
+                        }
+                        place++;
+                    }
+                    else if (place == 5)
+                    {
+                        if (n > 0)
+                        {
+                            sb.Insert(0, EthiopicDigits[n]);
+                        }
+                        place = 0;
+                    }
+                }
+                else
+                {
+                    place = 0;
+                    sb.Insert(0, s[i]);
+                }
+            }
+            return sb.ToString();
+        }
+
+
+        public static string RomanNumerals(string s)
+        {
+            string[,] RomanUnits = {{"","Ⅰ","Ⅱ","Ⅲ","Ⅳ","Ⅴ","Ⅵ","Ⅶ","Ⅷ","Ⅸ"},
+            {"", "Ⅹ","ⅩⅩ","ⅩⅩⅩ","ⅩⅬ","Ⅼ","ⅬⅩ","ⅬⅩⅩ","ⅬⅩⅩⅩ","ⅩⅭ"},
+            {"", "Ⅽ", "ⅭⅭ", "ⅭⅭⅭ", "ⅭⅮ", "Ⅾ", "ⅮⅭ", "ⅮⅭⅭ", "ⅮⅭⅭⅭ", "ⅩⅯ"},
+            { "", "Ⅿ", "ⅯⅯ", "ⅯⅯⅯ", "ⅯV̅", "V̅", "V̅Ⅿ", "V̅ⅯⅯ", "V̅ⅯⅯⅯ", "ⅯX̅̅"}};
+            StringBuilder sb = new StringBuilder();
+            int i, n;
+            int place = 0;
+            for (i = s.Length - 1; i >= 0; i--)
+            {
+                if (Char.IsDigit(s[i]))
+                {
+                    n = ((int)s[i]) - ((int)'0');
+                    sb.Insert(0, RomanUnits[place, n]);
+                    place++;
+                    if (place > 3)
+                        place = 0;
+                }
+                else
+                {
+                    place = 0;
+                    sb.Insert(0, s[i]);
+                }
+            }
+            sb.Replace("ⅩⅡ", "Ⅻ");
+            sb.Replace("ⅩⅠ", "Ⅺ");
+            return sb.ToString();
+        }
+
+
+/*
         public static string KhmerDigits(string s)
         {
             StringBuilder sb = new StringBuilder();
@@ -747,7 +1008,7 @@ namespace WordSend
             }
             return sb.ToString();
         }
-
+*/
         /// <summary>
         /// Property that returns the full path to the running executable program.
         /// </summary>
@@ -6550,7 +6811,6 @@ namespace WordSend
         private bool hasContentsPage;
         //bool containsDC;
         bool newChapterFound;
-        bool convertDigitsToKhmer;
         public BibleBookInfo bookInfo = new BibleBookInfo();
         BibleBookRecord bookRecord;
 
@@ -6571,20 +6831,13 @@ namespace WordSend
 		/// </summary>
 		public bool GeneratingConcordance { get; set; }
 
-        public string LocalizeNumerals(string s)
-        {
-            if (convertDigitsToKhmer)
-                return fileHelper.KhmerDigits(s);
-            else
-                return s;
-        }
 
         protected string CheckPicture(string pictureName)
         {
             string actualName = String.Empty;
             string picturePath;
             string searchName, foundName, foundExt;
-            if ((htmlextrasDir.Length > 5) && (!stripPictures))
+            if ((htmlextrasDir.Length > 5) && (Directory.Exists(htmlextrasDir)) && (!stripPictures))
             {
                 pictureName = Path.GetFileName(pictureName);
                 picturePath = Path.Combine(htmlextrasDir, pictureName);
@@ -6701,7 +6954,7 @@ namespace WordSend
                 bsb.Append("<select name=\"ch1sel\" onChange=\"location=document.ch1.ch1sel.options[document.ch1.ch1sel.selectedIndex].value;\">");
 
                 i = 0;
-                string linkText = LocalizeNumerals("0");
+                string linkText = fileHelper.LocalizeDigits("0");
                 if (hasContentsPage)
                 {
                     if (0 == chapterNumber)
@@ -6727,7 +6980,7 @@ namespace WordSend
                         // The first match for this book is the next chapter from the contents chapter (0).
                         if (nextChapIndex == -1)
                             nextChapIndex = i;
-                        linkText = LocalizeNumerals(cn.ToString());
+                        linkText = fileHelper.LocalizeDigits(cn.ToString());
                         if (cn == chapterNumber)
                         {
                             sb.Append(String.Format(" &nbsp;{0}&nbsp; ", linkText));
@@ -6780,7 +7033,7 @@ namespace WordSend
            
 
             navButtonCode = bsb.ToString();
-            if (convertDigitsToKhmer)
+            if (fileHelper.LocalizingDigits)
                 htm.WriteLine(sb.ToString());
             else
                 htm.WriteLine(navButtonCode);
@@ -7301,7 +7554,7 @@ namespace WordSend
         private void ProcessChapter()
         {
             currentChapter = id;
-            currentChapterPublished = LocalizeNumerals(currentChapter);
+            currentChapterPublished = fileHelper.LocalizeDigits(currentChapter);
             currentChapterAlternate = String.Empty;
             currentVerse = currentVersePublished = currentVerseAlternate = String.Empty;
             verseNumber = 0;
@@ -7309,7 +7562,7 @@ namespace WordSend
             {
                 usfx.Read();
                 if (usfx.NodeType == XmlNodeType.Text)
-                    currentChapterPublished = LocalizeNumerals(usfx.Value.Trim());
+                    currentChapterPublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
             }
             int chNum;
             if (Int32.TryParse(id, out chNum))
@@ -7327,7 +7580,7 @@ namespace WordSend
         private void VirtualChapter()
         {
             currentChapter = "1";
-            currentChapterPublished = LocalizeNumerals(currentChapter);
+            currentChapterPublished = fileHelper.LocalizeDigits(currentChapter);
             chapterNumber = 1;
             currentChapterAlternate = String.Empty;
             currentVerse = currentVersePublished = currentVerseAlternate = String.Empty;
@@ -7344,14 +7597,14 @@ namespace WordSend
         private void ProcessVerse()
         {
             currentVerse = id;
-            currentVersePublished = LocalizeNumerals(currentVerse);
+            currentVersePublished = fileHelper.LocalizeDigits(currentVerse);
             currentVerseAlternate = "";
             if (!usfx.IsEmptyElement)
             {
                 usfx.Read();
                 if (usfx.NodeType == XmlNodeType.Text)
                 {
-                    currentVersePublished = LocalizeNumerals(usfx.Value.Trim());
+                    currentVersePublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
                 }
             }
             currentBCV = currentBookAbbrev + " " + currentChapter + ":" + currentVerse;
@@ -7484,7 +7737,7 @@ namespace WordSend
                                     usfx.Read();
                                     if (usfx.NodeType == XmlNodeType.Text)
                                     {
-                                        currentVersePublished = LocalizeNumerals(usfx.Value.Trim());
+                                        currentVersePublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
                                     }
                                 }
                                 int vnum;
@@ -7591,9 +7844,8 @@ namespace WordSend
         /// <param name="sqlFileName">Name of the SQL file to write.</param>
         /// <param name="translationId">Unique ID of this translation</param>
         /// <param name="skipHelps">True iff you want to skip conversion of introductions and notes</param>
-        /// <param name="useKhmerDigits">True iff you want to convert chapter and verse numbers to Khmer digits</param>
         /// <returns>true iff the conversion was successful</returns>
-        public bool Usfx2Sql(string usfxName, string sqlFileName, string translationId, bool skipHelps = false, bool useKhmerDigits = false)
+        public bool Usfx2Sql(string usfxName, string sqlFileName, string translationId, bool skipHelps = false)
         {
             bool result = false;
             bool inUsfx = false;
@@ -7605,7 +7857,6 @@ namespace WordSend
             StringBuilder sqlChapterList = new StringBuilder();
             StringBuilder pending = new StringBuilder();
             StringBuilder searchText = new StringBuilder();
-            convertDigitsToKhmer = useKhmerDigits;
             
             try
             {
@@ -7705,7 +7956,7 @@ namespace WordSend
                                             if (chapterNumber == 0)
                                                 wordForChapter = usfx.Value.Trim();
                                             else
-                                                currentChapterPublished = LocalizeNumerals(usfx.Value.Trim());
+                                                currentChapterPublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
                                         }
                                         break;
                                     case "p":
@@ -7773,7 +8024,7 @@ namespace WordSend
                                         {
                                             usfx.Read();
                                             if (usfx.NodeType == XmlNodeType.Text)
-                                                currentChapterPublished = LocalizeNumerals(usfx.Value.Trim());
+                                                currentChapterPublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
                                         }
                                         break;
                                     case "ca":
@@ -7817,7 +8068,7 @@ namespace WordSend
                                         {
                                             usfx.Read();
                                             if (usfx.NodeType == XmlNodeType.Text)
-                                                currentVerseAlternate = LocalizeNumerals(usfx.Value.Trim());
+                                                currentVerseAlternate = fileHelper.LocalizeDigits(usfx.Value.Trim());
                                         }
                                         break;
                                     case "vp":
@@ -7826,7 +8077,7 @@ namespace WordSend
                                         {
                                             usfx.Read();
                                             if (usfx.NodeType == XmlNodeType.Text)
-                                                currentVersePublished = LocalizeNumerals(usfx.Value.Trim());
+                                                currentVersePublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
                                         }
                                         break;
                                     case "qt":
@@ -8129,7 +8380,7 @@ namespace WordSend
         /// <returns>true iff the conversion succeeded</returns>
         public bool ConvertUsfxToHtml(string usfxName, string htmlDir, string languageName, string languageId, string translationId,
             string chapterLabelName, string psalmLabelName, string copyrightLink, string homeLink, string footerHtml,
-            string indexHtml, string licenseHtml, bool useKhmerDigits = false, bool skipHelps = false, string goText = "Go!")
+            string indexHtml, string licenseHtml, bool skipHelps, string goText)
         {
             bool result = false;
             bool inUsfx = false;
@@ -8151,7 +8402,6 @@ namespace WordSend
             psalmLabel = psalmLabelName;
             chapterNumber = verseNumber = 0;
             bookList.Clear();
-            convertDigitsToKhmer = useKhmerDigits;
             currentBookAbbrev = currentBookTitle = currentChapterPublished = wordForChapter = String.Empty;
             currentChapter = currentFileName = currentVerse = languageCode = String.Empty;
             inPreverse = inFootnote = inFootnoteStyle = inTextStyle = inParagraph = chopChapter = false;
@@ -8319,12 +8569,12 @@ namespace WordSend
                                     if (chapterNumber == 0)
                                         wordForChapter = usfx.Value.Trim();
                                     else
-                                        currentChapterPublished = LocalizeNumerals(usfx.Value.Trim());
+                                        currentChapterPublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
                                 }
                                 break;
                             case "c":
                                 currentChapter = id;
-                                currentChapterPublished = LocalizeNumerals(currentChapter);
+                                currentChapterPublished = fileHelper.LocalizeDigits(currentChapter);
                                 currentChapterAlternate = String.Empty;
                                 currentVerse = currentVersePublished = currentVerseAlternate = String.Empty;
                                 verseNumber = 0;
@@ -8332,7 +8582,7 @@ namespace WordSend
                                 {
                                     usfx.Read();
                                     if (usfx.NodeType == XmlNodeType.Text)
-                                        currentChapterPublished = LocalizeNumerals(usfx.Value.Trim());
+                                        currentChapterPublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
                                 }
                                 int chNum;
                                 if (Int32.TryParse(id, out chNum))
@@ -8349,7 +8599,7 @@ namespace WordSend
                                 {
                                     usfx.Read();
                                     if (usfx.NodeType == XmlNodeType.Text)
-                                        currentChapterPublished = LocalizeNumerals(usfx.Value.Trim());
+                                        currentChapterPublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
                                 }
                                 break;
                             case "ca":
@@ -8383,14 +8633,14 @@ namespace WordSend
                                 break;
                             case "v":
                                 currentVerse = id;
-                                currentVersePublished = LocalizeNumerals(currentVerse);
+                                currentVersePublished = fileHelper.LocalizeDigits(currentVerse);
                                 currentVerseAlternate = "";
                                 if (!usfx.IsEmptyElement)
                                 {
                                     usfx.Read();
                                     if (usfx.NodeType == XmlNodeType.Text)
                                     {
-                                        currentVersePublished = LocalizeNumerals(usfx.Value.Trim());
+                                        currentVersePublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
                                     }
                                 }
                                 int vnum;
@@ -8656,7 +8906,7 @@ namespace WordSend
                                             if (chapterNumber == 0)
                                                 wordForChapter = usfx.Value.Trim();
                                             else
-                                                currentChapterPublished = LocalizeNumerals(usfx.Value.Trim());
+                                                currentChapterPublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
                                         }
                                         break;
                                     case "p":
@@ -8705,7 +8955,7 @@ namespace WordSend
                                         {
                                             usfx.Read();
                                             if (usfx.NodeType == XmlNodeType.Text)
-                                                currentChapterPublished = LocalizeNumerals(usfx.Value.Trim());
+                                                currentChapterPublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
                                         }
                                         break;
                                     case "ca":
@@ -8749,7 +8999,7 @@ namespace WordSend
                                         {
                                             usfx.Read();
                                             if (usfx.NodeType == XmlNodeType.Text)
-                                                currentVerseAlternate = LocalizeNumerals(usfx.Value.Trim());
+                                                currentVerseAlternate = fileHelper.LocalizeDigits(usfx.Value.Trim());
                                         }
                                         break;
                                     case "vp":
@@ -8758,7 +9008,7 @@ namespace WordSend
                                         {
                                             usfx.Read();
                                             if (usfx.NodeType == XmlNodeType.Text)
-                                                currentVersePublished = LocalizeNumerals(usfx.Value.Trim());
+                                                currentVersePublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
                                         }
                                         break;
                                     case "qt":

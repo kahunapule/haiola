@@ -128,9 +128,6 @@
             this.altLinkTextBox = new System.Windows.Forms.TextBox();
             this.label21 = new System.Windows.Forms.Label();
             this.versificationComboBox = new System.Windows.Forms.ComboBox();
-            this.numeralsGroupBox = new System.Windows.Forms.GroupBox();
-            this.khmerNumeralsRadioButton = new System.Windows.Forms.RadioButton();
-            this.arabicNumeralsRadioButton = new System.Windows.Forms.RadioButton();
             this.label17 = new System.Windows.Forms.Label();
             this.concordanceTabPage = new System.Windows.Forms.TabPage();
             this.label31 = new System.Windows.Forms.Label();
@@ -176,6 +173,8 @@
             this.helpButton = new System.Windows.Forms.Button();
             this.runHighlightedButton = new System.Windows.Forms.Button();
             this.statsButton = new System.Windows.Forms.Button();
+            this.numberSystemComboBox = new System.Windows.Forms.ComboBox();
+            this.label46 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.idTabPage.SuspendLayout();
             this.copyrightTabPage.SuspendLayout();
@@ -183,7 +182,6 @@
             this.processTabPage.SuspendLayout();
             this.htmlTabPage.SuspendLayout();
             this.advancedTabPage.SuspendLayout();
-            this.numeralsGroupBox.SuspendLayout();
             this.concordanceTabPage.SuspendLayout();
             this.booksPage.SuspendLayout();
             this.framesPage.SuspendLayout();
@@ -1168,13 +1166,14 @@
             // 
             // advancedTabPage
             // 
+            this.advancedTabPage.Controls.Add(this.label46);
+            this.advancedTabPage.Controls.Add(this.numberSystemComboBox);
             this.advancedTabPage.Controls.Add(this.deleteLinkButton);
             this.advancedTabPage.Controls.Add(this.addLinkButton);
             this.advancedTabPage.Controls.Add(this.altLinkListBox);
             this.advancedTabPage.Controls.Add(this.altLinkTextBox);
             this.advancedTabPage.Controls.Add(this.label21);
             this.advancedTabPage.Controls.Add(this.versificationComboBox);
-            this.advancedTabPage.Controls.Add(this.numeralsGroupBox);
             this.advancedTabPage.Controls.Add(this.label17);
             this.advancedTabPage.Location = new System.Drawing.Point(4, 22);
             this.advancedTabPage.Margin = new System.Windows.Forms.Padding(2);
@@ -1254,39 +1253,6 @@
             this.versificationComboBox.Name = "versificationComboBox";
             this.versificationComboBox.Size = new System.Drawing.Size(184, 21);
             this.versificationComboBox.TabIndex = 49;
-            // 
-            // numeralsGroupBox
-            // 
-            this.numeralsGroupBox.Controls.Add(this.khmerNumeralsRadioButton);
-            this.numeralsGroupBox.Controls.Add(this.arabicNumeralsRadioButton);
-            this.numeralsGroupBox.Location = new System.Drawing.Point(276, 11);
-            this.numeralsGroupBox.Name = "numeralsGroupBox";
-            this.numeralsGroupBox.Size = new System.Drawing.Size(193, 75);
-            this.numeralsGroupBox.TabIndex = 36;
-            this.numeralsGroupBox.TabStop = false;
-            this.numeralsGroupBox.Text = " numerals ";
-            // 
-            // khmerNumeralsRadioButton
-            // 
-            this.khmerNumeralsRadioButton.AutoSize = true;
-            this.khmerNumeralsRadioButton.Location = new System.Drawing.Point(9, 45);
-            this.khmerNumeralsRadioButton.Name = "khmerNumeralsRadioButton";
-            this.khmerNumeralsRadioButton.Size = new System.Drawing.Size(100, 17);
-            this.khmerNumeralsRadioButton.TabIndex = 51;
-            this.khmerNumeralsRadioButton.TabStop = true;
-            this.khmerNumeralsRadioButton.Text = "Khmer numerals";
-            this.khmerNumeralsRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // arabicNumeralsRadioButton
-            // 
-            this.arabicNumeralsRadioButton.AutoSize = true;
-            this.arabicNumeralsRadioButton.Location = new System.Drawing.Point(9, 22);
-            this.arabicNumeralsRadioButton.Name = "arabicNumeralsRadioButton";
-            this.arabicNumeralsRadioButton.Size = new System.Drawing.Size(184, 17);
-            this.arabicNumeralsRadioButton.TabIndex = 50;
-            this.arabicNumeralsRadioButton.TabStop = true;
-            this.arabicNumeralsRadioButton.Text = "European/Hindu/Arabic numerals";
-            this.arabicNumeralsRadioButton.UseVisualStyleBackColor = true;
             // 
             // label17
             // 
@@ -1729,6 +1695,48 @@
             this.statsButton.UseVisualStyleBackColor = true;
             this.statsButton.Click += new System.EventHandler(this.statsButton_Click);
             // 
+            // numberSystemComboBox
+            // 
+            this.numberSystemComboBox.FormattingEnabled = true;
+            this.numberSystemComboBox.Items.AddRange(new object[] {
+            "Default",
+            "Arabic",
+            "Bengali",
+            "Burmese (Myanmar)",
+            "Chinese (Simplified)",
+            "Chinese (Traditional)",
+            "Chinese (hua ma)",
+            "Devangari",
+            "Ethiopic (Ge\'ez)",
+            "Gujarati",
+            "Gurmukhi",
+            "Kannada",
+            "Khmer",
+            "Lao",
+            "Limbu",
+            "Malayalam",
+            "Mongolian",
+            "Oriya",
+            "Roman",
+            "Tamil",
+            "Telugu",
+            "Thai",
+            "Tibetan",
+            "Urdu"});
+            this.numberSystemComboBox.Location = new System.Drawing.Point(373, 6);
+            this.numberSystemComboBox.Name = "numberSystemComboBox";
+            this.numberSystemComboBox.Size = new System.Drawing.Size(222, 21);
+            this.numberSystemComboBox.TabIndex = 50;
+            // 
+            // label46
+            // 
+            this.label46.AutoSize = true;
+            this.label46.Location = new System.Drawing.Point(313, 6);
+            this.label46.Name = "label46";
+            this.label46.Size = new System.Drawing.Size(54, 13);
+            this.label46.TabIndex = 56;
+            this.label46.Text = "Numerals:";
+            // 
             // haiolaForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1766,8 +1774,6 @@
             this.htmlTabPage.PerformLayout();
             this.advancedTabPage.ResumeLayout(false);
             this.advancedTabPage.PerformLayout();
-            this.numeralsGroupBox.ResumeLayout(false);
-            this.numeralsGroupBox.PerformLayout();
             this.concordanceTabPage.ResumeLayout(false);
             this.concordanceTabPage.PerformLayout();
             this.booksPage.ResumeLayout(false);
@@ -1844,9 +1850,6 @@
         private System.Windows.Forms.RadioButton otherRadioButton;
         private System.Windows.Forms.RadioButton ccRadioButton;
         private System.Windows.Forms.RadioButton pdRadioButton;
-        private System.Windows.Forms.GroupBox numeralsGroupBox;
-        private System.Windows.Forms.RadioButton khmerNumeralsRadioButton;
-        private System.Windows.Forms.RadioButton arabicNumeralsRadioButton;
         private System.Windows.Forms.DateTimePicker updateDateTimePicker;
         private System.Windows.Forms.RadioButton silentRadioButton;
         private System.Windows.Forms.ComboBox versificationComboBox;
@@ -1926,6 +1929,8 @@
         private System.Windows.Forms.Label label42;
         private System.Windows.Forms.Label label45;
         private System.Windows.Forms.Label label44;
+        private System.Windows.Forms.Label label46;
+        private System.Windows.Forms.ComboBox numberSystemComboBox;
 	}
 }
 
