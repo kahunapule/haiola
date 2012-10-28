@@ -1112,6 +1112,8 @@ In addition, you have permission to convert the text to different file formats, 
             copyFromTemplateButton.Enabled = (m_currentTemplate.Length > 0) && (m_currentTemplate != m_project);
             makeTemplateButton.Enabled = m_currentTemplate != m_project;
             
+
+
             listInputProcesses.SuspendLayout();
             listInputProcesses.Items.Clear();
             foreach (string filename in m_options.preprocessingTables)
@@ -1139,7 +1141,7 @@ In addition, you have permission to convert the text to different file formats, 
             indexPageTextBox.Text = m_options.indexHtml;
             licenseTextBox.Text = m_options.licenseHtml;
             versificationComboBox.Text = m_options.versificationScheme;
-            numberSystemComboBox.Text = m_options.numberSystem;
+            numberSystemComboBox.Text = fileHelper.SetDigitLocale(m_options.numberSystem);
             //arabicNumeralsRadioButton.Checked = m_options.useArabicDigits;
             //khmerNumeralsRadioButton.Checked = m_options.useKhmerDigits;
             privateCheckBox.Checked = m_options.privateProject;
