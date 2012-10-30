@@ -122,6 +122,8 @@
             this.label27 = new System.Windows.Forms.Label();
             this.label26 = new System.Windows.Forms.Label();
             this.advancedTabPage = new System.Windows.Forms.TabPage();
+            this.label46 = new System.Windows.Forms.Label();
+            this.numberSystemComboBox = new System.Windows.Forms.ComboBox();
             this.deleteLinkButton = new System.Windows.Forms.Button();
             this.addLinkButton = new System.Windows.Forms.Button();
             this.altLinkListBox = new System.Windows.Forms.ListBox();
@@ -173,8 +175,6 @@
             this.helpButton = new System.Windows.Forms.Button();
             this.runHighlightedButton = new System.Windows.Forms.Button();
             this.statsButton = new System.Windows.Forms.Button();
-            this.numberSystemComboBox = new System.Windows.Forms.ComboBox();
-            this.label46 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.idTabPage.SuspendLayout();
             this.copyrightTabPage.SuspendLayout();
@@ -1183,6 +1183,45 @@
             this.advancedTabPage.Text = "Advanced";
             this.advancedTabPage.UseVisualStyleBackColor = true;
             // 
+            // label46
+            // 
+            this.label46.AutoSize = true;
+            this.label46.Location = new System.Drawing.Point(313, 6);
+            this.label46.Name = "label46";
+            this.label46.Size = new System.Drawing.Size(54, 13);
+            this.label46.TabIndex = 56;
+            this.label46.Text = "Numerals:";
+            // 
+            // numberSystemComboBox
+            // 
+            this.numberSystemComboBox.FormattingEnabled = true;
+            this.numberSystemComboBox.Items.AddRange(new object[] {
+            "Default",
+            "Arabic",
+            "Bengali",
+            "Burmese (Myanmar)",
+            "Devangari",
+            "Ethiopic (Ge\'ez)",
+            "Gujarati",
+            "Gurmukhi",
+            "Kannada",
+            "Khmer",
+            "Lao",
+            "Limbu",
+            "Malayalam",
+            "Mongolian",
+            "Oriya",
+            "Roman",
+            "Tamil",
+            "Telugu",
+            "Thai",
+            "Tibetan",
+            "Urdu"});
+            this.numberSystemComboBox.Location = new System.Drawing.Point(373, 6);
+            this.numberSystemComboBox.Name = "numberSystemComboBox";
+            this.numberSystemComboBox.Size = new System.Drawing.Size(222, 21);
+            this.numberSystemComboBox.TabIndex = 50;
+            // 
             // deleteLinkButton
             // 
             this.deleteLinkButton.Location = new System.Drawing.Point(20, 173);
@@ -1694,48 +1733,6 @@
             this.statsButton.Text = "&Stats";
             this.statsButton.UseVisualStyleBackColor = true;
             this.statsButton.Click += new System.EventHandler(this.statsButton_Click);
-            // 
-            // numberSystemComboBox
-            // 
-            this.numberSystemComboBox.FormattingEnabled = true;
-            this.numberSystemComboBox.Items.AddRange(new object[] {
-            "Default",
-            "Arabic",
-            "Bengali",
-            "Burmese (Myanmar)",
-            "Chinese (Simplified)",
-            "Chinese (Traditional)",
-            "Chinese (hua ma)",
-            "Devangari",
-            "Ethiopic (Ge\'ez)",
-            "Gujarati",
-            "Gurmukhi",
-            "Kannada",
-            "Khmer",
-            "Lao",
-            "Limbu",
-            "Malayalam",
-            "Mongolian",
-            "Oriya",
-            "Roman",
-            "Tamil",
-            "Telugu",
-            "Thai",
-            "Tibetan",
-            "Urdu"});
-            this.numberSystemComboBox.Location = new System.Drawing.Point(373, 6);
-            this.numberSystemComboBox.Name = "numberSystemComboBox";
-            this.numberSystemComboBox.Size = new System.Drawing.Size(222, 21);
-            this.numberSystemComboBox.TabIndex = 50;
-            // 
-            // label46
-            // 
-            this.label46.AutoSize = true;
-            this.label46.Location = new System.Drawing.Point(313, 6);
-            this.label46.Name = "label46";
-            this.label46.Size = new System.Drawing.Size(54, 13);
-            this.label46.TabIndex = 56;
-            this.label46.Text = "Numerals:";
             // 
             // haiolaForm
             // 
