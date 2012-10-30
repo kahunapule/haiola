@@ -826,7 +826,7 @@ namespace WordSend
         }
 
         public static string ReplaceDigits(string s, string newDigits)
-        {
+        {   // TODO: implement logic for the different Chinese numeral systems, which require more than simple digit substitution, and which have many dialect and usage options.
             if ((newDigits == null) || (newDigits.Length < 10))
             {
                 return s;
