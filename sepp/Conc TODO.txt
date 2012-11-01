@@ -1,0 +1,284 @@
+Things to do on Concordance
+1. Finish getting cross-references to work. (done)
+2. Get top-level index file working. (done)
+4. Proofread comparing with Chuck's sample (formatting roughly matched, detailed proof-read assigned to Sharon)
+5. Try to make it faster to highlight, especially avoid changing when not needed. (done)
+15. Handle multiple level 2 titles, even if out of expected order. (done)
+16. Parallel passage subheadings should be centered. (done)
+9. Build comprehensive set of strings to translate/improve. (done)
+12. Integrate introductions. (done)
+18. Make line spacing uniform.
+3. Research CD auto-load. (done, not tested)
+6. Check in (including FilesToCopy) (of course needs doing again occasionally)
+C. Color references in concordance. (Maybe make whole line hot?)
+D. Go to top (of Scripture) button somewhere...proposing row of controls at top Kembali ke bagian awal buku.
+B. Visit counter (investigated...can't do more till ready to put online)
+G. (For web site only. Omit occurrences of pung dia dong sang deng ko beta kasi ju bosong bilang sonde ada su itu bekin ma dari tu jadi pi mau kotong satu lu te) - postpone till web site version
+I. Fonts folder on CD, possibly add Font install instructions to opening screen.
+J. Increase max context slightly, and make more willing to shorten to word boundary.
+N. Verse numbers in body text and references in concordance in dark red.
+O. Increase space between back reference and body of notes.
+U. Include Copyright notice in printout footer and if possible in text copied.
+A. Alphabet option for word tree
+Since last report:
+E. Rework Introduction wording as reaquested in detailed messsage. (and follow-up message)
+F. Insert logo and "strip of cloth" graphic into Introduction.
+L. Option to include header and footnote text in concordance (somehow distinguished).
+R. Save Doc intro files as HTML and link in that form.
+W. Check out odd *** in 2Tim 2:11 (done...but not solved. Awaiting JohnD's comments)
+H. Tweak stylesheet for preferred fonts (Gentium/TNR for body, Andika DR AuSIL/Tahoma/Arial for headings...to be confirmed. 12/14 pt for body, 10/12 for notes.
+P. Hover window or separate pane for footnotes.
+Since Monday report:
+Q. Note marker sequence restarts each chapter. Separate sequences for footnotes and xrefs. (xrefs use smaller, lighter letters.
+S. Generate complete set of anchors for bridges.
+AD. Use * (asterisk or star), † (dagger), ‡ (double dagger),  § (section mark) and doubling for footnotes.
+T. Check footnote backrefs to bridges. (yes, a problem...e.g. C27V55-56)
+AA. Insert copyright notice (Tahoma, red) after each title block.
+AC. Non-canonical stuff should use jud for titles and cat for footnotes.
+Y. Solve *** problems (awaiting JohnD's input)
+Z. Get \bt etc deletion working right (new version in C# does not seem to work)
+Since Monday evening report
+AJ. RandyH says callers are being separated from text again.
+AF. Figure way to do alternate style sheet for IE, and use to fix drop caps.
+AB. Replace Intro screen and move logo above cloth image.
+AE. Make startup application.
+AQ. Check that startup has error checking wherever needed.
+AP. Make startup localizable and send to Chuck for all translations.
+AL. Graphical layout enhancements requested by Chuck.
+AM. Add progress bar to startup app.
+AN. Create file to make startup run automatically and test
+AG.  Copyright (unbold, regular, -2pt) –and add parentheses (?) that ought to be sufficient with the bright red.
+AH. Pastel green for \ft popups.
+AI. Restore size of cf callers (and remove bold from ft callers)
+AJ. CV anchors are not being generated for ranges like 9-10 (single to double digit).
+X. Add Creed hot link. Convert DOC to HTML.
+AS. 'Install Details' still needs translation
+AR. Look at Chuck's TB stylesheet and try to figure out fonts.
+AU. Fix alignment in introductions. (And made outline have hotlinks)
+----RC1.
+AF. Make copyright watermark/background.
+AZ. Do something to make it easy to tell the current book. (but: not for introductions yet)
+AX. Fix English layout of installer.
+AW. Very pale yellow background for left pane.
+BA. Icon copied to disk by install so it shows up for shortcuts even after removing the CD.
+BB. Fixed missing quote that prevented CREED link working in IE.
+BC. Enlarge footnote font to 9 pt.
+BD. Add subheadings to non-canonical list.
+BE. Fix duplicate anchors generated for subheadings.
+BL. Added empty line at end of each book to solve problem where IE does not scroll far enough.
+BM. Added pass to clean up duplicate anchors in HTML. This allows words in duplicate Mark 16:9-10 to be concorded properly.
+BN. Cleaned up various errors I introduced in converting introduction outlines to be tables with hot links.
+BO. Made footnotes in introductions more like Scripture style.
+BP. Used table format for list in Mark intro, preventing IE from overlaying lines.
+BQ. Tracked down and fixed faulty backref from footnote
+BR. Made footnote backrefs use correct href even if <reference> contents are not right.
+BS. Cleaned up problem where footnotes in headings were not handled properly, embedding footnote text in heading.
+BT. Got current book display to work in IE(7)
+AT. Awaiting Chuck's input...should we warn if font already installed? Should we overwrite?
+BH. > 10. The footnote reference markers in the book intros and the Creed 
+> are quite different from the footnote reference markers in the 
+> scriptures themselves. Any way of making these more consistent 
+> (match the scripture pattern)?
+BV. Added recommendation to use FireFox.
+BJ. Catastrophic problems with IE: v7 crashes, v6 mis-renders with badly overlapping text.
+	- override style to prevent footnote popups and watermark. (done, needs testing)
+AO. Investigate whether we can do anything to improve failure mode when no DotNet on startup.
+Report 22 August (RC3)
+BY. In IE, some links purple even though not visited.-- can't fix
+CA. Handle \qm for Genesis
+CB. Solve not always seeing progress bar for installation and/or add a 'Finished' dialog?
+BZ. Navigation bar is not high enough for IE6 or when FF uses larger font size. (Made it bigger, and forbade showing scroll bars.
+CC: Force popups not to be bold and centered (which could previously be inherited from caller in section heading).
+
+Important list:
+
+BF. > 5. For “knowing where you are”, your wondering about highlighting 
+> the active concordance selection (the whole line) I think is a very 
+> good idea. When I’ve selected a passage, it goes there, but when I 
+> glance back up to the top pane, I’m not sure which one I last 
+> selected. So if it were highlighted, that would be very helpful.
+BG. > 6. Again, for “knowing where you are”, when we actually select a \cf
+> (not just hover) and it jumps to the end of the book, it would be 
+> helpful if the \cf or \ft that we selected to go to (e.g. to get the
+> active links) could be highlighted. Several times I’ve jumped there,
+> and haven’t been able to figure out which one I was supposed to be 
+> at. In my mind I was wanting to follow the links, but not paying 
+> enough attention to either where I started from or where I was 
+> going. I think highlighting the target footnote would deal with that
+> type of recurring senior moment. If possible.
+BI. > 8. The font sizes in the book intros and the Creed are internally 
+> uneven (e.g. list of book themes smaller than main text) on my 3 
+> test computers.
+BK. Implement language chooser in startup.
+BU. "return to top" button gives error in IE on Vista
+BX. Startup green button fails on IE6 machine
+
+Lower priority
+M. Make longer chapter lists collapsible.
+K. (Optional...tweak sorting, n..ng..ny..o. TBC: sorting of glottal)
+AV. Make watermark print
+BW. Installer looks a little odd at 120DPI.
+
+ZA. Make Sepp smart about creating missing directories.
+
+
+Notes on hover window:
+- Without DocType, FF underlines popup and won't turn it off, even with text-decoration: none.
+- With DocType, IE underlines by default but allows override. But, FF then drops the underline to the baseline.
+- Found a technique, involving a comment starting [if IE], for applying different style rules to IE.
+- IE always puts note below right of target, even if that causes it to be clipped.
+- FF does the same with relative positioning (a a {position: relative;}; span has top, left specified). However its default puts the popup on the far left, which is usually less pretty but always reasonable. Decided to go with this. Nothing seems to make either do consistently reasonable positioning.
+- Heading blocks show through in IE (and in FF till I added z-index: 1).
+
+NB: check that adding DocType does not mess up Tidy or concgenerator.
+
+Kalo kotong tarima, bilang, Kristus mati ganti sang kotong,
+itu sama ke kotong ju mati kasi tenga idop yang lama, ***
+
+7. Go over JohnW's list again
+	- possibly make chapter indexes collapsible
+8. Go over emails to Chuck, make list of further questions.
+10. Send a new draft (of a subset).
+11. Review all FilesToCopy for improved naming and text.
+13. Write doc for running program.
+14. Change intermediate form to \it...it* rather than using \em.
+17. Drop caps don't work in IE .
+
+Possible to do:
+- Research printing CD labels. - NA
+- enhance program to build complete files
+	- copy stuff from FilesToCopy
+- Allow root directory to be configured. (partly done, one variable in program)
+11. Consider making back-to-verse link in footnotes a superscript. (decided no)
+
+Frame organization:
+Initially:
+index
+	navigation (navigation.htm)
+	body (root.htm)
+		index: ChapterIndex.htm
+		main: Introduction.htm
+individual book HTMs go in pane main.
+treemaster replaces root:
+
+treemaster.htm:
+	outer: concTreeIndex.htm
+
+Notes:
+window.open(href, windowname, 'width=400,height=150,location=yes,scrollbars=yes');
+
+try top.frames['framename']
+
+Forcing frames if inner doc opened.
+http://www.webreference.com/js/column36/forcing.html
+
+onclick="parent.body.main.location = parent.body.main.location.pathname"
+	concholder: treeMain.htm
+		conc: treeConc.htm
+		main: treeText.htm
+wl files replace treeConc.htm in pane conc
+book files replace treeText.htm in pane main
+
+
+window.clipboardData.setData("Text", "some text for the clipboard");
+(also getData)
+
+Closest I've gotten is
+window.clipboardData.setText('Text',parent.body.main.window.getSelection() + ' copyright')
+
+getting the selection works in FF, not sure in IE.
+FF says clipboardData has no properties.
+IE says some unspecified object does not support some unspecified function. Apparently clipboardData is specific to IE and getSelection() is specific to FF.
+
+Notes on hacking IE:
+
+Tan Hack:
+Any rules starting * html target only IE browsers.
+Any rule with property name containing escaped non-hex letter apply uniquely to IE5.
+
+Note need to put IE6 and above in 'standards' mode not quirks mode. Use DocType, don't know how yet.
+
+Commented Backslash hack targets IE5 Mac.
+
+  <link href="mainstyles.css" rel="stylesheet" type="text/css" />
+ 
+<!--[if IE]>
+  <link href="all-ie.css" rel="stylesheet" type="text/css" />
+<![endif]-->
+ 
+<!--[if lte IE 6]>
+  <link href="lte-ie6.css" rel="stylesheet" type="text/css" />
+<![endif]-->
+ 
+<!--[if lt IE 6]>
+  <link href="ie5.5.css" rel="stylesheet" type="text/css" />
+<![endif]-->
+
+Set CurrentUICulture before InitializeComponent is called. (Would it work to call it again?)
+
+<body background="drkrainbow.gif" bgproperties="fixed">
+
+<style>
+<!--
+body {
+background-image: url(image.gif);
+background-repeat: no-repeat;
+background-attachment: fixed;
+}
+//-->
+</style>
+
+If you want to place the watermark in a specific location on your Web page (say, the middle of the page), add the background-position property to your style to place the image.
+
+
+On the new ConcStartup:
+Implement buttons:
+	Browse
+	Install
+	Fonts
+	Browser
+	Run
+Implement background picture
+Localization
+Icon
+http://www.codeguru.com/cpp/controls/editctrl/backgroundcolor/article.php/c9047__1
+
+run 128, 255, 128
+255, 255, 128 middle
+exit 255, 192, 192
+
+  // Call the base class implementation first! Otherwise, it may
+   // undo what we're trying to accomplish here.
+   HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
+	pDC->SetTextColor(RGB(255, 0, 0));
+
+   // Are we painting the IDC_MYSTATIC control? We can use
+   // CWnd::GetDlgCtrlID() to perform the most efficient test.
+   if (pWnd->GetDlgCtrlID() != IDCANCEL)
+   {
+      // Set the background color to pink
+      pDC->SetBkColor(RGB(255, 192, 192));
+
+      // Return handle to our CBrush object
+      hbr = m_brush;
+   }
+   return hbr;
+
+HBRUSH CConcStartupDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor) 
+{
+ 
+}
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+
+Checklist for assembling RC:
+Generate all -> Conc folder
+Copy FilesToCopyIndonesian to Conc folder
+Move index.htm from Conc folder to root.
+Add Release build of ConcStartup.exe
+Add Resources folder (master copy is in debug directory of ConcSetup)
+	- Fonts
+	- Firefox installer (not for upload)
+	- Cloth.ico
+	- Splash.jpg
+Add autorun.inf from ConcStartup debug directory.
+Possibly add Indonesian.loc

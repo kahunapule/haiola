@@ -1,0 +1,17 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title>Navigation Bar</title>
+      <style type="text/css">
+         body {margin-top:2pt; margin-left:2pt; background:gray}
+         input {font-weight:bold}
+      </style>
+      <script src="Navigation.js" type="text/javascript"></script>
+</head>
+<body>
+      <input type="button" value="Kembali ke bagian awal buku" title="Kembali ke bagian awal buku"
+         onclick="if (parent.body.main) parent.body.main.location = parent.body.main.location.pathname; else parent.body.concholder.main.location = parent.body.concholder.main.location.pathname;"/>
+		<span id="book" class="NavBookName" style="background: lightgreen; padding-left:3pt; padding-right:3pt" > </span>
+</body>
+</html>
+
