@@ -1204,7 +1204,6 @@ In addition, you have permission to convert the text to different file formats, 
             Application.DoEvents();
             if (fAllRunning)
                 DoPostprocess();
-            System.Diagnostics.Process.Start(Path.Combine(Path.Combine(m_outputProjectDirectory, "html"), "index.htm"));
             Application.DoEvents();
         }
 

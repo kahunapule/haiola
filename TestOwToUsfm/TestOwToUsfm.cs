@@ -754,11 +754,13 @@ more";
             Assert.That(result, Is.EqualTo(expected));
         }
 
+        // TODO: Eradicate unsafe code.
         private unsafe string ConvertCC(string input)
         {
             return ConvertCC(input, @"c:/OW_To_PT.cct");
         }
 
+        // TODO: Eradicate unsafe code.
         private unsafe string ConvertCC(string input, string tablePath)
         {
             byte[] inputBytes = Encoding.UTF8.GetBytes(input);
