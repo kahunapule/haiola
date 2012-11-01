@@ -634,6 +634,13 @@ namespace BibleFileLib
                                     Math.Max(1, m_chapter).ToString(chapFormat));
                                 break;
                             case "v":
+                                // Process any accumulated verse text BEFORE we update m_verse or the URL, etc., since it
+                                // belongs to the previous verse and should not have the new number.
+                                if ((currentURL.Length > 13) && (verseText.Length > 0))
+                                {
+                                    ProcessText(verseText.ToString());
+                                    verseText.Length = 0;
+                                }
                                 m_verse = id;
                                 if (!usfx.IsEmptyElement)
                                 {
@@ -647,11 +654,6 @@ namespace BibleFileLib
                                 else
                                 {   // Probably a verse range (or an encoding error).
                                     verseNumber++;
-                                }
-                                if ((currentURL.Length > 13) && (verseText.Length > 0))
-                                {
-                                    ProcessText(verseText.ToString());
-                                    verseText.Length = 0;
                                 }
                                 currentURL = String.Format("../{0}{1}.htm#V{2}", currentBookId,
                                     Math.Max(1, m_chapter).ToString(chapFormat), verseNumber.ToString());
