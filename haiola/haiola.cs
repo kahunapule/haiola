@@ -119,12 +119,12 @@ namespace haiola
         	EnsureTemplateFile(fileName, m_inputDirectory);
         }
  
-        private void EnsureTemplateFile(string fileName, string destDirecgtory)
+        private void EnsureTemplateFile(string fileName, string destDirectory)
         {
             try
             {
                 string sourcePath = WordSend.SFConverter.FindAuxFile(fileName);
-				string destPath = Path.Combine(destDirecgtory, fileName);
+				string destPath = Path.Combine(destDirectory, fileName);
                 if ((!File.Exists(destPath)) && (File.Exists(sourcePath)))
                 {
                     File.Copy(sourcePath, destPath);
@@ -1047,6 +1047,9 @@ In addition, you have permission to convert the text to different file formats, 
             runHighlightedButton.Enabled = true;
             if (Program.autorun)
                 Close();
+            else
+                System.Diagnostics.Process.Start(Path.Combine(Path.Combine(m_outputProjectDirectory, "html"), "index.htm"));
+
         }
 
         private void reloadButton_Click(object sender, EventArgs e)
@@ -1532,6 +1535,7 @@ In addition, you have permission to convert the text to different file formats, 
             btnSetRootDirectory.Enabled = true;
             reloadButton.Enabled = true;
             runHighlightedButton.Enabled = true;
+            System.Diagnostics.Process.Start(Path.Combine(Path.Combine(m_outputProjectDirectory, "html"), "index.htm"));
         }
 
     	private string SelectedProject

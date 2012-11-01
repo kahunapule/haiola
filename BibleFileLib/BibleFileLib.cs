@@ -8426,7 +8426,6 @@ namespace WordSend
             string chapFormat = "00";
             int i;
 
-
             footnotesToWrite = new StringBuilder(String.Empty);
             preVerse = new StringBuilder(String.Empty);
             try
