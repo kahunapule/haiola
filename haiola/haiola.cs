@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -21,6 +22,7 @@ namespace haiola
         public static haiolaForm MasterInstance;
         private const string kFootnotesProcess = "footnotes.process"; // identifier for the (so far only one) file transformation process built into Haiola
         private XMLini xini;    // Main program XML initialization file
+        private string m_currentTemplate;   // Current template project
         public string dataRootDir; // Default is BibleConv in the user's Documents folder
         string m_inputDirectory; // Always under dataRootDir, defaults to Documents/BibleConv/input
         public string m_outputDirectory; // curently Site, always under dataRootDir
@@ -28,7 +30,6 @@ namespace haiola
         string m_outputProjectDirectory; // e.g., full path to BibleConv\output\Kupang
         string m_project; // e.g., Kupang
         string currentConversion;   // e.g., "Preprocessing" or "Portable HTML"
-        public bool autorun = false;
         static bool fAllRunning = false;
         public string m_xiniPath;  // e.g., BibleConv\input\Kupang\options.xini
         public XMLini projectXini;
@@ -108,10 +109,11 @@ namespace haiola
                     Application.Exit();
             LoadWorkingDirectory();
             Application.DoEvents();
-            if (autorun)
+            triggerautorun = Program.autorun;
+            if (triggerautorun)
             {
-                WorkOnAllButton_Click(sender, e);
-                Close();
+                startTime = DateTime.UtcNow;
+                timer1.Enabled = true;
             }
         }
         private void EnsureTemplateFile(string fileName)
@@ -156,7 +158,8 @@ namespace haiola
             {
                 m_projectsList.Items.Add(Path.GetFileName(path));
                 projCount++;
-                if (File.Exists(Path.Combine(path, "options.xini")))
+                if (File.Exists(Path.Combine(path, "options.xini")) && 
+                    (Directory.Exists(Path.Combine(path, "Source")) || Directory.Exists(Path.Combine(path, "usfx"))))
                 {
                     m_projectsList.SetItemChecked(m_projectsList.Items.Count - 1, true);
                     projReady++;
@@ -197,20 +200,27 @@ namespace haiola
                 bkInfo = new WordSend.BibleBookInfo();
             // Use the ID line.
             string result = "";
+            string chap = "";
             string line;
             StreamReader sr = new StreamReader(pathName);
-            while ((result.Length < 1) && (!sr.EndOfStream))
+            while ((!sr.EndOfStream) && (chap.Length < 1))
             {
                 line = sr.ReadLine();
                 if (line.StartsWith(@"\id ") && (line.Length > 6))
                 {
                     result = line.Substring(4, 3).ToUpper(System.Globalization.CultureInfo.InvariantCulture);
                 }
+                else if (line.StartsWith(@"\c ") && (line.Length > 3))
+                {
+                    chap = line.Substring(3).Trim();
+                }
             }
+            while (chap.Length < 3)
+                chap = "0" + chap;
             sr.Close();
             if (result.Length > 0)
             {
-                result = bkInfo.Order(result).ToString("D2") + "-" + result;
+                result = bkInfo.Order(result).ToString("D2") + "-" + result + chap;
             }
             return result;
         }
@@ -590,7 +600,7 @@ namespace haiola
                     (fileType != ".WDL") && (fileType != ".STY") &&
                     (fileType != ".XML") && (fileType != ".HTM") &&
                     (fileType != ".KB2") && (fileType != ".HTML") &&
-                    (fileType != ".CSS") &&
+                    (fileType != ".CSS") && (fileType != ".SWP") &&
                     (fileType != ".VRS") && (!inputFile.EndsWith("~")))
                 {
                     currentConversion = "preprocessing " + filename;
@@ -668,6 +678,51 @@ namespace haiola
     		return Path.Combine(m_outputProjectDirectory, "usfx");
     	}
 
+        protected string expandPercentEscapes(string s)
+        {
+            s = s.Replace("%d", m_project);
+            s = s.Replace("%e", m_options.languageId);
+            s = s.Replace("%h", m_options.homeDomain);
+            string sc, lc;
+            if (m_options.publicDomain)
+                lc = sc = "Public Domain";
+            else if (m_options.silentCopyright)
+                lc = sc = String.Empty;
+            else if (m_options.copyrightOwnerAbbrev.Length > 0)
+            {
+                sc = "© " + m_options.copyrightYears + " " + m_options.copyrightOwnerAbbrev;
+                lc = "Copyright © " + m_options.copyrightYears + " " + m_options.copyrightOwner;
+            }
+            else
+            {
+                sc = "© " + m_options.copyrightYears + " " + m_options.copyrightOwner;
+                lc = "Copyright " + sc;
+            }
+            if ((lc.Length > 0) && (m_options.copyrightOwnerUrl.Length > 0))
+            {
+                lc = "copyright © " + m_options.copyrightYears + " <a href=\"" + m_options.copyrightOwnerUrl + "\">" + m_options.copyrightOwner + "</a>";
+            }
+            s = s.Replace("%c", sc);
+            s = s.Replace("%C", lc);
+
+            s = s.Replace("%l", m_options.languageName);
+            s = s.Replace("%L", m_options.languageNameInEnglish);
+            s = s.Replace("%D", m_options.dialect);
+            s = s.Replace("%a", m_options.contentCreator);
+            s = s.Replace("%A", m_options.contributor);
+            s = s.Replace("%v", m_options.vernacularTitle);
+            s = s.Replace("%n", m_options.EnglishDescription);
+            s = s.Replace("%N", m_options.lwcDescription);
+            s = s.Replace("%p", m_options.privateProject ? "private" : "public");
+            s = s.Replace("%r", (!m_options.privateProject) && (m_options.publicDomain || m_options.creativeCommons) ? "redistributable" : "restricted");
+            s = s.Replace("%T", m_options.contentUpdateDate.ToString("yyyy-MM-dd"));
+            s = s.Replace("%o", m_options.rightsStatement);
+            s = s.Replace("%w", m_options.printPublisher);
+            s = s.Replace("%i", m_options.electronicPublisher);
+            string result = s.Replace("%t", m_options.translationId);
+            return result;
+        }
+
     	private void ConvertUsfxToPortableHtml()
         {
             currentConversion = "writing portable HTML";
@@ -692,6 +747,14 @@ namespace haiola
                 File.Copy(specialCss, propherocss);
             else
                 File.Copy(Path.Combine(m_inputDirectory, "prophero.css"), propherocss);
+
+            // Copy any extra files from the htmlextras directory in the project directory to the output.
+            // This is for introduction files, pictures, etc.
+            string htmlExtras = Path.Combine(m_inputProjectDirectory, "htmlextras");
+            if (Directory.Exists(htmlExtras))
+            {
+                WordSend.fileHelper.CopyDirectory(htmlExtras, htmlPath);
+            }
             
             usfxToHtmlConverter toHtm;
 			if (m_options.UseFrames)
@@ -705,28 +768,48 @@ namespace haiola
 			{
 				toHtm = new usfxToHtmlConverter();
 			}
-            Logit.OpenFile(Path.Combine(m_outputProjectDirectory, "HTMLConversionReport.txt"));
+            toHtm.stripPictures = false;
+            toHtm.htmlextrasDir = Path.Combine(m_inputProjectDirectory, "htmlextras");
+            string logFile = Path.Combine(m_outputProjectDirectory, "HTMLConversionReport.txt");
+            Logit.OpenFile(logFile);
 
             toHtm.indexDateStamp = "HTML generated " + DateTime.UtcNow.ToString("d MMM yyyy") +
                 " from source files dated " + sourceDate.ToString("d MMM yyyy");
         	toHtm.GeneratingConcordance = m_options.GenerateConcordance;
     		toHtm.CrossRefToFilePrefixMap = m_options.CrossRefToFilePrefixMap;
     		string usfxFilePath = Path.Combine(UsfxPath, "usfx.xml");
+            string orderFile = Path.Combine(m_inputProjectDirectory, "bookorder.txt");
+            if (!File.Exists(orderFile))
+                orderFile = SFConverter.FindAuxFile("bookorder.txt");
+            toHtm.bookInfo.ReadPublicationOrder(orderFile);
+            toHtm.MergeXref(Path.Combine(m_inputProjectDirectory, "xref.xml"));
     		toHtm.ConvertUsfxToHtml(usfxFilePath, htmlPath,
                 m_options.vernacularTitle,
                 m_options.languageId,
                 m_options.translationId,
                 m_options.chapterLabel,
                 m_options.psalmLabel,
-                m_options.copyrightLink,
-                m_options.homeLink,
-                m_options.footerHtml,
-                m_options.indexHtml,
-                m_options.licenseHtml,
-                m_options.useKhmerDigits,
+                expandPercentEscapes(m_options.copyrightLink),
+                expandPercentEscapes(m_options.homeLink),
+                expandPercentEscapes(m_options.footerHtml),
+                expandPercentEscapes(m_options.indexHtml),
+                expandPercentEscapes(m_options.licenseHtml),
                 m_options.ignoreExtras,
                 m_options.goText);
             Logit.CloseFile();
+            if (Logit.loggedError)
+            {
+                StreamReader log = new StreamReader(logFile);
+                string errors = log.ReadToEnd();
+                log.Close();
+                string message = errors;
+                if (errors.Length > 5000)
+                {
+                    // Super-long messages freeze things up
+                    message = message.Substring(0, 5000) + "\n...and more (see log file)";
+                }
+                MessageBox.Show(this, message, "Errors in " + logFile);
+            }
 
             currentConversion = "Writing auxilliary metadata files.";
             Application.DoEvents();
@@ -844,11 +927,11 @@ In addition, you have permission to convert the text to different file formats, 
 
 			if (m_options.UseFrames)
 			{
-				// Copy any Introduction files to the output. Do this before making the chapter index, since we tell it to look for them there.
-				foreach (var path in Directory.GetFiles(m_inputProjectDirectory, "*" + UsfxToChapterIndex.IntroductionSuffix))
+				// Look for Introduction files in the output. (They were copied htmlextras earlier.)
+                // Do this before making the chapter index, since we tell it to look for them there.
+				foreach (var path in Directory.GetFiles(htmlPath, "*" + UsfxToChapterIndex.IntroductionSuffix))
 				{
 					string destFileName = Path.Combine(htmlPath, Path.GetFileName(path));
-					File.Copy(path, destFileName, true);
 					toHtm.MakeFramesFor(destFileName);
 				}
 				// Generate the ChapterIndex file
@@ -867,6 +950,7 @@ In addition, you have permission to convert the text to different file formats, 
 			// Todo JohnT: move this to a new method, and the condition to the method that calls this.
 			if (generateConcordanceCheckBox.Checked)
 			{
+                /*****
 				currentConversion = "generate XHTML for concordance";
 				usfxToHtmlConverter toXhtm = new usfxToXhtmlConverter();
 				Logit.OpenFile(Path.Combine(m_outputProjectDirectory, "XHTMLConversionReport.txt"));
@@ -893,15 +977,17 @@ In addition, you have permission to convert the text to different file formats, 
 				                        m_options.ignoreExtras,
 				                        m_options.goText);
 				Logit.CloseFile();
-
+                ******/
 				currentConversion = "Concordance";
 				string concordanceDirectory = Path.Combine(htmlPath, "conc");
+                statusNow("Deleting " + concordanceDirectory);
 				Utils.DeleteDirectory(concordanceDirectory); // Blow away any previous results
+                statusNow("Creating " + concordanceDirectory);
 				Utils.EnsureDirectory(concordanceDirectory);
 				string excludedClasses =
 					"toc toc1 toc2 navButtons pageFooter chapterlabel r verse"; // from old prophero: "verse chapter notemark crmark crossRefNote parallel parallelSub noteBackRef popup crpopup overlap";
 				string headingClasses = "mt mt2 s"; // old prophero: "sectionheading maintitle2 footnote sectionsubheading";
-				var concGenerator = new ConcGenerator(xhtmlPath, concordanceDirectory)
+				var concGenerator = new ConcGenerator(m_inputProjectDirectory, concordanceDirectory)
 				                    	{
 											// Currently configurable options
 											MergeCase = m_options.MergeCase,
@@ -927,7 +1013,9 @@ In addition, you have permission to convert the text to different file formats, 
 											NotesClass = "footnotes", // todo: fix if Haiola generates HTML with footnotes that should be concorded
 											NonCanonicalClasses = new HashSet<string>(headingClasses.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
 				                    	};
-				concGenerator.Run(new List<string>(Directory.GetFiles(xhtmlPath)));
+				// concGenerator.Run(new List<string>(Directory.GetFiles(xhtmlPath)));
+                statusNow("Generating concordance.");
+                concGenerator.Run(usfxFilePath);
 
 				var concFrameGenerator = new ConcFrameGenerator()
 				                         	{ConcDirectory = concordanceDirectory, LangName = m_options.vernacularTitle};
@@ -948,25 +1036,32 @@ In addition, you have permission to convert the text to different file formats, 
         public void RunCommand(string command)
         {
             System.Diagnostics.Process runningCommand = null;
-            if (Path.DirectorySeparatorChar == '/')
+            try
             {
-                runningCommand = System.Diagnostics.Process.Start("bash", " -c '" + command + "'");
-            }
-            else
-            {
-                runningCommand = System.Diagnostics.Process.Start("cmd.exe", " /c " + command);
-            }
-            if (runningCommand != null)
-            {
-                while (fAllRunning && !runningCommand.HasExited)
+                if (Path.DirectorySeparatorChar == '/')
                 {
-                    System.Windows.Forms.Application.DoEvents();
-                    System.Threading.Thread.Sleep(200);
+                    runningCommand = System.Diagnostics.Process.Start("bash", " -c '" + command + "'");
                 }
-                if ((!runningCommand.HasExited) && (!fAllRunning))
+                else
                 {
-                    runningCommand.Kill();
+                    runningCommand = System.Diagnostics.Process.Start("cmd.exe", " /c " + command);
                 }
+                if (runningCommand != null)
+                {
+                    while (fAllRunning && !runningCommand.HasExited)
+                    {
+                        System.Windows.Forms.Application.DoEvents();
+                        System.Threading.Thread.Sleep(200);
+                    }
+                    if ((!runningCommand.HasExited) && (!fAllRunning))
+                    {
+                        runningCommand.Kill();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Unable to run command " + command);
             }
         }
 
@@ -1109,6 +1204,7 @@ In addition, you have permission to convert the text to different file formats, 
             Application.DoEvents();
             if (fAllRunning)
                 DoPostprocess();
+            System.Diagnostics.Process.Start(Path.Combine(Path.Combine(m_outputProjectDirectory, "html"), "index.htm"));
             Application.DoEvents();
         }
 
@@ -1215,6 +1311,8 @@ In addition, you have permission to convert the text to different file formats, 
             btnSetRootDirectory.Enabled = true;
             reloadButton.Enabled = true;
             runHighlightedButton.Enabled = true;
+            if (Program.autorun)
+                Close();
         }
 
         private void reloadButton_Click(object sender, EventArgs e)
@@ -1268,12 +1366,20 @@ In addition, you have permission to convert the text to different file formats, 
             allRightsRadioButton.Checked = m_options.allRightsReserved;
             silentRadioButton.Checked = m_options.silentCopyright;
             copyrightOwnerTextBox.Text = m_options.copyrightOwner;
+            copyrightOwnerUrlTextBox.Text = m_options.copyrightOwnerUrl;
             copyrightYearTextBox.Text = m_options.copyrightYears;
+            coprAbbrevTextBox.Text = m_options.copyrightOwnerAbbrev;
             rightsStatementTextBox.Text = m_options.rightsStatement;
             printPublisherTextBox.Text = m_options.printPublisher;
             electronicPublisherTextBox.Text = m_options.electronicPublisher;
             stripExtrasCheckBox.Checked = m_options.ignoreExtras;
+            m_currentTemplate = xini.ReadString("currentTemplate", String.Empty);
+            templateLabel.Text = "Current template: " + m_currentTemplate;
+            copyFromTemplateButton.Enabled = (m_currentTemplate.Length > 0) && (m_currentTemplate != m_project);
+            makeTemplateButton.Enabled = m_currentTemplate != m_project;
             
+
+
             listInputProcesses.SuspendLayout();
             listInputProcesses.Items.Clear();
             foreach (string filename in m_options.preprocessingTables)
@@ -1301,8 +1407,9 @@ In addition, you have permission to convert the text to different file formats, 
             indexPageTextBox.Text = m_options.indexHtml;
             licenseTextBox.Text = m_options.licenseHtml;
             versificationComboBox.Text = m_options.versificationScheme;
-            arabicNumeralsRadioButton.Checked = m_options.useArabicDigits;
-            khmerNumeralsRadioButton.Checked = m_options.useKhmerDigits;
+            numberSystemComboBox.Text = fileHelper.SetDigitLocale(m_options.numberSystem);
+            //arabicNumeralsRadioButton.Checked = m_options.useArabicDigits;
+            //khmerNumeralsRadioButton.Checked = m_options.useKhmerDigits;
             privateCheckBox.Checked = m_options.privateProject;
             homeDomainTextBox.Text = m_options.homeDomain;
 
@@ -1441,11 +1548,16 @@ In addition, you have permission to convert the text to different file formats, 
             m_options.otherLicense = otherRadioButton.Checked;
             m_options.allRightsReserved = allRightsRadioButton.Checked;
             m_options.silentCopyright = silentRadioButton.Checked;
-            m_options.copyrightOwner = copyrightOwnerTextBox.Text;
-            m_options.copyrightYears = copyrightYearTextBox.Text;
+            m_options.copyrightOwner = copyrightOwnerTextBox.Text.Trim();
+            copyrightOwnerUrlTextBox.Text = copyrightOwnerUrlTextBox.Text.Trim();
+            if ((copyrightOwnerUrlTextBox.Text.Length > 1) && !copyrightOwnerUrlTextBox.Text.ToLowerInvariant().StartsWith("http://"))
+                copyrightOwnerUrlTextBox.Text = "http://" + copyrightOwnerUrlTextBox.Text;
+            m_options.copyrightOwnerUrl = copyrightOwnerUrlTextBox.Text;
+            m_options.copyrightYears = copyrightYearTextBox.Text.Trim();
+            m_options.copyrightOwnerAbbrev = coprAbbrevTextBox.Text.Trim();
             m_options.rightsStatement = rightsStatementTextBox.Text;
-            m_options.printPublisher = printPublisherTextBox.Text;
-            m_options.electronicPublisher = electronicPublisherTextBox.Text;
+            m_options.printPublisher = printPublisherTextBox.Text.Trim();
+            m_options.electronicPublisher = electronicPublisherTextBox.Text.Trim();
             m_options.ignoreExtras = stripExtrasCheckBox.Checked;
 
             List<string> tableNames = new List<string>();
@@ -1471,8 +1583,7 @@ In addition, you have permission to convert the text to different file formats, 
             m_options.indexHtml = indexPageTextBox.Text;
             m_options.licenseHtml = licenseTextBox.Text;
             m_options.versificationScheme = versificationComboBox.Text;
-            m_options.useArabicDigits = arabicNumeralsRadioButton.Checked;
-            m_options.useKhmerDigits = khmerNumeralsRadioButton.Checked;
+            m_options.numberSystem = fileHelper.SetDigitLocale(numberSystemComboBox.Text.Trim());
             m_options.privateProject = privateCheckBox.Checked;
             m_options.homeDomain = homeDomainTextBox.Text.Trim();
 
@@ -1588,11 +1699,17 @@ In addition, you have permission to convert the text to different file formats, 
         }
 
         private DateTime startTime = new DateTime(1, 1, 1);
+        private bool triggerautorun;
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             batchLabel.Text = (DateTime.UtcNow - startTime).ToString() + " " + m_project + " " +
                 ConversionProgress;
+            if (triggerautorun)
+            {
+                triggerautorun = false;
+                WorkOnAllButton_Click(sender, e);
+            }
         }
 
     	private string ConversionProgress
@@ -1604,6 +1721,12 @@ In addition, you have permission to convert the text to different file formats, 
     			return currentConversion + " " + WordSend.usfxToHtmlConverter.conversionProgress;
     		}
     	}
+
+        private void statusNow(string s)
+        {
+            batchLabel.Text = (DateTime.UtcNow - startTime).ToString() + " " + m_project + " " + s;
+            Application.DoEvents();
+        }
 
     	private void addProgramButton_Click(object sender, EventArgs e)
         {
@@ -1703,6 +1826,18 @@ In addition, you have permission to convert the text to different file formats, 
             int numProjects = 0;
             int numTranslations = 0;
             int urlid = 0;
+            int numLanguages = 0;
+            int numDialects = 0;
+            int numSites = 0;
+            int c;
+            int coprCount = 0;
+            string dialect;
+            string homedomain;
+            string copr = String.Empty;
+            Hashtable langTable = new Hashtable();
+            Hashtable dialectTable = new Hashtable();
+            Hashtable siteTable = new Hashtable();
+            Hashtable coprTable = new Hashtable();
             btnSetRootDirectory.Enabled = false;
             reloadButton.Enabled = false;
             m_projectsList.Enabled = false;
@@ -1716,6 +1851,7 @@ In addition, you have permission to convert the text to different file formats, 
             StreamWriter sw = new StreamWriter(Path.Combine(m_outputDirectory, "translations.csv"));
             StreamWriter sqlFile = new StreamWriter(Path.Combine(m_outputDirectory, "Bible_list.sql"));
             StreamWriter altUrlFile = new StreamWriter(Path.Combine(m_outputDirectory, "urllist.sql"));
+            StreamWriter scorecard = new StreamWriter(Path.Combine(m_outputDirectory, "scorecard.txt"));
             sqlFile.WriteLine("USE Prophero;");
             sqlFile.WriteLine("DROP TABLE IF EXISTS 'bible_list';");
             sqlFile.WriteLine(@"CREATE TABLE 'bible_list' ('translationid' VARCHAR(64) NOT NULL,
@@ -1743,17 +1879,73 @@ In addition, you have permission to convert the text to different file formats, 
                 if ((!m_options.privateProject) && (m_options.languageId.Length > 1))
                 {
                     numTranslations++;
+                    if (langTable[m_options.languageId] == null)
+                    {
+                        langTable[m_options.languageId] = 1;
+                        numLanguages++;
+                    }
+                    else
+                    {
+                        c = (int)langTable[m_options.languageId];
+                        langTable[m_options.languageId] = c + 1;
+                    }
+                    dialect = m_options.languageId + m_options.dialect;
+                    if (dialectTable[dialect] == null)
+                    {
+                        dialectTable[dialect] = 1;
+                        numDialects++;
+                    }
+                    else
+                    {
+                        c = (int)dialectTable[dialect];
+                        dialectTable[dialect] = c + 1;
+                    }
+                    homedomain = m_options.homeDomain.Trim();
+                    if (homedomain.Length > 0)
+                    {
+                        if (siteTable[homedomain] == null)
+                        {
+                            siteTable[homedomain] = 1;
+                            numSites++;
+                        }
+                        else
+                        {
+                            c = (int)siteTable[homedomain];
+                            siteTable[homedomain] = c + 1;
+                        }
+                    }
+                    if (m_options.publicDomain)
+                    {
+                        copr = "Public Domain";
+                    }
+                    else if (m_options.copyrightOwnerAbbrev != String.Empty)
+                    {
+                        copr = "© " + m_options.copyrightOwnerAbbrev;
+                    }
+                    else
+                    {
+                        copr = "© " + m_options.copyrightOwner;
+                    }
+                    if (coprTable[copr] == null)
+                    {
+                        coprTable[copr] = 1;
+                    }
+                    else
+                    {
+                        coprCount = (int)coprTable[copr];
+                        coprTable[copr] = coprCount + 1;
+                    }
                     sw.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\",\"{10}\",\"http://{5}/{1}/\"",
                         m_options.languageId,
                         m_options.translationId,
-                        fileHelper.sqlString(m_options.languageName),
-                        fileHelper.sqlString(m_options.languageNameInEnglish),
-                        fileHelper.sqlString(m_options.dialect),
-                        fileHelper.sqlString(m_options.homeDomain.Trim()),
-                        fileHelper.sqlString(m_options.vernacularTitle.Trim()),
-                        fileHelper.sqlString(m_options.EnglishDescription.Trim()),
+                        fileHelper.csvString(m_options.languageName),
+                        fileHelper.csvString(m_options.languageNameInEnglish),
+                        fileHelper.csvString(m_options.dialect),
+                        fileHelper.csvString(m_options.homeDomain.Trim()),
+                        fileHelper.csvString(m_options.vernacularTitle.Trim()),
+                        fileHelper.csvString(m_options.EnglishDescription.Trim()),
                         (m_options.publicDomain || m_options.creativeCommons).ToString(),
-                        fileHelper.sqlString(m_options.publicDomain ? "public domain" : "Copyright © " + m_options.copyrightYears + " " + m_options.copyrightOwner),
+                        fileHelper.csvString(m_options.publicDomain ? "public domain" : "Copyright © " + m_options.copyrightYears + " " + m_options.copyrightOwner),
                         m_options.contentUpdateDate.ToString("yyyy-MM-dd"));
                     sqlFile.WriteLine("INSERT INTO 'bible_list' VALUES \"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\",\"{10}\",\"http://{5}/{0}/\";",
                         m_options.translationId,
@@ -1786,7 +1978,44 @@ In addition, you have permission to convert the text to different file formats, 
             sqlFile.Close();
             altUrlFile.Close();
             fAllRunning = false;
-            currentConversion = numProjects.ToString() + " projects; " + numTranslations.ToString() + " public. " + urlid.ToString() + " URLs.";
+            currentConversion = numProjects.ToString() + " projects; " + numTranslations.ToString() + " public. " + urlid.ToString() + " URLs " + numSites.ToString() + " sites " + numLanguages.ToString() + " languages " + numDialects.ToString() + " dialects (including languages). ";
+
+            scorecard.WriteLine("Haiola project statistics as of {0} UTC", DateTime.UtcNow.ToString("R"));
+            scorecard.WriteLine("{0} URLs", urlid.ToString());
+            scorecard.WriteLine("{0} sites", numSites.ToString());
+            scorecard.WriteLine("{0} languages", numLanguages.ToString());
+            scorecard.WriteLine("{0} dialects", numDialects.ToString());
+            scorecard.WriteLine("{0} public translations", numTranslations.ToString());
+            scorecard.WriteLine("{0} projects", numProjects.ToString());
+            scorecard.WriteLine("Translations by site:");
+            foreach (DictionaryEntry de in siteTable)
+            {
+                scorecard.WriteLine(" {0,4} translations at {1}", (int)de.Value, (string)de.Key);
+            }
+            scorecard.WriteLine("Languages with multiple translations:");
+            foreach (DictionaryEntry de in langTable)
+            {
+                if ((int)de.Value > 1)
+                {
+                    scorecard.WriteLine(" {0,4} translations in {1}", (int)de.Value, (string)de.Key);
+                }
+            }
+            scorecard.WriteLine("Dialects with multiple translations:");
+            foreach (DictionaryEntry de in dialectTable)
+            {
+                if ((int)de.Value > 1)
+                {
+                    scorecard.WriteLine(" {0,4} translations in {1}", (int)de.Value, (string)de.Key);
+                }
+            }
+            scorecard.WriteLine("Copyright ownership:");
+            foreach (DictionaryEntry de in coprTable)
+            {
+                coprCount = (int)de.Value;
+                scorecard.WriteLine(" {0,4} {1}", coprCount, (string)de.Key);
+            }
+            scorecard.Close();
+
             timer1.Enabled = false;
             statsLabel.Text = currentConversion;
             m_projectsList_SelectedIndexChanged(null, null);
@@ -1836,39 +2065,46 @@ In addition, you have permission to convert the text to different file formats, 
 
     	private void UpdateBooksList(bool restoreDefaults)
     	{
-    		fAllRunning = true;
-    		GetUsfx(SelectedProject);
-    		var analyzer = new UsfxToBookAndAbbr();
-    		analyzer.Parse(GetUsfxFilePath());
-    		Dictionary<string, string> oldNames = new Dictionary<string, string>();
-    		Dictionary<string, string> oldAbbreviations = new Dictionary<string, string>();
-			if (!restoreDefaults)
-			{
-				foreach (ListViewItem item in listBooks.Items)
-				{
-					var key = item.Text;
-					var oldAbbr = item.SubItems[1].Text;
-					var oldName = item.SubItems[2].Text;
-					oldNames[key] = oldName;
-					oldAbbreviations[key] = oldAbbr;
-				}
-			}
-    		listBooks.BeginUpdate();
-    		listBooks.Items.Clear();
-    		foreach (var key in analyzer.BookIds)
-    		{
-    			string vernacularName;
-    			oldNames.TryGetValue(key, out vernacularName);
-    			if (string.IsNullOrEmpty(vernacularName))
-    				vernacularName = analyzer.VernacularNames[key];
-    			string vernacularAbbreviation;
-    			oldAbbreviations.TryGetValue(key, out vernacularAbbreviation);
-    			if (string.IsNullOrEmpty(vernacularAbbreviation))
-    				vernacularAbbreviation = analyzer.ReferenceAbbreviations[key];
+            try
+            {
+                fAllRunning = true;
+                GetUsfx(SelectedProject);
+                var analyzer = new UsfxToBookAndAbbr();
+                analyzer.Parse(GetUsfxFilePath());
+                Dictionary<string, string> oldNames = new Dictionary<string, string>();
+                Dictionary<string, string> oldAbbreviations = new Dictionary<string, string>();
+                if (!restoreDefaults)
+                {
+                    foreach (ListViewItem item in listBooks.Items)
+                    {
+                        var key = item.Text;
+                        var oldAbbr = item.SubItems[1].Text;
+                        var oldName = item.SubItems[2].Text;
+                        oldNames[key] = oldName;
+                        oldAbbreviations[key] = oldAbbr;
+                    }
+                }
+                listBooks.BeginUpdate();
+                listBooks.Items.Clear();
+                foreach (var key in analyzer.BookIds)
+                {
+                    string vernacularName;
+                    oldNames.TryGetValue(key, out vernacularName);
+                    if (string.IsNullOrEmpty(vernacularName))
+                        vernacularName = analyzer.VernacularNames[key];
+                    string vernacularAbbreviation;
+                    oldAbbreviations.TryGetValue(key, out vernacularAbbreviation);
+                    if (string.IsNullOrEmpty(vernacularAbbreviation))
+                        vernacularAbbreviation = analyzer.ReferenceAbbreviations[key];
 
-    			listBooks.Items.Add(MakeBookListItem(key, vernacularAbbreviation, vernacularName));
-    		}
-    		listBooks.EndUpdate();
+                    listBooks.Items.Add(MakeBookListItem(key, vernacularAbbreviation, vernacularName));
+                }
+                listBooks.EndUpdate();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Book list may only be updated after USFX file is generated.");
+            }
     	}
 
     	ListViewItem MakeBookListItem(string abbr, string vernAbbr, string xrefName)
@@ -1912,5 +2148,33 @@ In addition, you have permission to convert the text to different file formats, 
 			si.Text = tb.Text;
 			tb.Parent.Controls.Remove(tb);
 		}
+
+        private void makeTemplateButton_Click(object sender, EventArgs e)
+        {
+            makeTemplateButton.Enabled = false;
+            m_currentTemplate = m_project;
+            xini.WriteString("currentTemplate", m_currentTemplate);
+            templateLabel.Text = "Current template: " + m_currentTemplate;
+            copyFromTemplateButton.Enabled = false;
+            xini.Write();
+        }
+
+        private void copyFromTemplateButton_Click(object sender, EventArgs e)
+        {
+            Options templateOptions = new Options(Path.Combine(Path.Combine(m_inputDirectory, m_currentTemplate), "options.xini"));
+            homeLinkTextBox.Text = m_options.homeLink = templateOptions.homeLink;
+            copyrightLinkTextBox.Text = m_options.copyrightLink = templateOptions.copyrightLink;
+            goTextTextBox.Text = m_options.goText = templateOptions.goText;
+            footerHtmlTextBox.Text = m_options.footerHtml = templateOptions.footerHtml;
+            indexPageTextBox.Text = m_options.indexHtml = templateOptions.indexHtml;
+            licenseTextBox.Text = m_options.licenseHtml = templateOptions.licenseHtml;
+            m_options.postprocesses = templateOptions.postprocesses;
+            postprocessListBox.SuspendLayout();
+            postprocessListBox.Items.Clear();
+            foreach (string filename in templateOptions.postprocesses)
+                postprocessListBox.Items.Add(filename);
+            postprocessListBox.ResumeLayout();
+        }
+
     }
 }

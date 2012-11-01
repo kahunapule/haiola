@@ -160,6 +160,13 @@ namespace haiola
 			set { ini.WriteBool("ignoreExtras", value); }
 		}
 
+ /*
+        public bool stripPictures
+        {
+            get { return ini.ReadBool("stripPictures", true); }
+            set { ini.WriteBool("stripPictures", value); }
+        }
+        */
 
 		public bool publicDomain
 		{
@@ -241,7 +248,19 @@ namespace haiola
 			set { ini.WriteString("copyrightOwner", value); }
 		}
 
-		public string copyrightYears
+        public string copyrightOwnerAbbrev
+        {
+            get { return ini.ReadString("copyrightOwnerAbbrev", String.Empty); }
+            set { ini.WriteString("copyrightOwnerAbbrev", value); }
+        }
+
+        public string copyrightOwnerUrl
+        {
+            get { return ini.ReadString("copyrightOwnerUrl", String.Empty); }
+            set { ini.WriteString("copyrightOwnerUrl", value); }
+        }
+
+        public string copyrightYears
 		{
 			get { return ini.ReadString("copyrightYears", String.Empty); }
 			set { ini.WriteString("copyrightYears", value); }
@@ -410,6 +429,12 @@ namespace haiola
 			set { ini.WriteBool("useArabicDigits", value); }
 		}
 
+        public string numberSystem
+        {
+            get { return ini.ReadString("numberSystem", ini.ReadBool("useKhmerDigits", false) ? "Khmer" : "Default"); }
+            set { ini.WriteString("numberSystem", value); }
+        }
+
 		public List<string> preprocessingTables
 		{
 			get
@@ -447,9 +472,8 @@ namespace haiola
 				if (m_postprocesses == null)
 				{
 					m_postprocesses = new List<string>();
-					count = ini.ReadInt("numPostprocesses", 1);
-					m_postprocesses.Add(ini.ReadString("postprocess0", "pubscripture %d %t %h %p %r"));
-					for (i = 1; i < count; i++)
+					count = ini.ReadInt("numPostprocesses", 0);
+					for (i = 0; i < count; i++)
 					{
 						m_postprocesses.Add(ini.ReadString("postprocess" + i.ToString(), ""));
 					}
@@ -876,7 +900,7 @@ namespace haiola
 "<ul>\r\n"+
 "<li>You include the above copyright information and that you make it\r\n"+
 "clear that the work came from <a href=\"http://pngscriptures.org/\">http://pngscriptures.org/</a>.</li>\r\n"+
-"<li>You do not sell this work for a profit.<br />\r\n"+
+"<li>You do not sell this work for a profit.F< />\r\n"+
 "</li>\r\n"+
 "<li>You do not make any derivative works that change any of the\r\n"+
 "actual words or punctuation of the Scriptures.</li>\r\n"+

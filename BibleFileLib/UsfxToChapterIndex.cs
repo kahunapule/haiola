@@ -93,7 +93,9 @@ namespace BibleFileLib
 							break;
 						case "p":
 							// Review Michael (JohnT): should we use other levels? Always or only if there is no level 1 mt?
-							if (sfm == "mt" && (level == "" || level == "1"))
+                            // We should either use all levels of \mt or just use \h. In other cases, I use \mt as a fallback
+                            // when \h is absent in the source file. \mt is required, and \h is sometimes absent. -- Michael
+							if (sfm == "mt") // && (level == "" || level == "1"))
 							{
 								usfx.Read();
 								if (usfx.NodeType == XmlNodeType.Text)
@@ -122,13 +124,13 @@ namespace BibleFileLib
 							break;
 						case "c":
 							var currentChapter = id;
-							var currentChapterPublished = LocalizeNumerals(currentChapter);
+							var currentChapterPublished = fileHelper.LocalizeDigits(currentChapter);
 
 							if (!usfx.IsEmptyElement)
 							{
 								usfx.Read();
 								if (usfx.NodeType == XmlNodeType.Text)
-									currentChapterPublished = LocalizeNumerals(usfx.Value.Trim());
+									currentChapterPublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
 							}
 							int chNum;
 							if (Int32.TryParse(id, out chNum))
@@ -160,6 +162,7 @@ namespace BibleFileLib
 							//    <p class="IndexChapterList"><a target="top" href="frame_MRK01.htm">1</a> <a target="top" href="frame_MRK02.htm">2</a>...  </p>
 							//</div>
 							htm.WriteLine("<div id=\"" + bookId + "\" class=\"BookChapIndex\">");
+                            // A TOC page is ONLY generated if there are headings in the book to generate it with.
 							htm.WriteLine("<p class=\"IndexBookName\"><a target=\"_top\" href=\""
 								+ UsfxToFramedHtmlConverter.TopFrameName(bookId, 0) + "\">" // bookid00{0} is the id generated for the TOC page.
 								+ usfxToHtmlConverter.EscapeHtml(vernacularName) + "</a></p>");
@@ -183,8 +186,9 @@ namespace BibleFileLib
 			CloseHtmlFile();
 		}
 
-		private bool convertDigitsToKhmer = false; // todo: configure
+		//private bool convertDigitsToKhmer = false; // todo: configure
 
+        /* Replaced by FileHelper.LocalizeDigits
 		public string LocalizeNumerals(string s)
 		{
 			if (convertDigitsToKhmer)
@@ -192,6 +196,7 @@ namespace BibleFileLib
 			else
 				return s;
 		}
+         */
 		protected string GetNamedAttribute(string attributeName)
 		{
 			string result = usfx.GetAttribute(attributeName);
