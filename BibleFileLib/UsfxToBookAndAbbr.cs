@@ -70,8 +70,10 @@ namespace BibleFileLib
 								bookId = id;
 							break;
 						case "p":
-							// Review Michael (JohnT): should we use other levels? Always or only if there is no level 1 mt?
-							if (sfm == "mt" && (level == "" || level == "1"))
+							// Michael (JohnT): should we use other levels? Always or only if there is no level 1 mt?
+                            // If you want the whole main title, you must use all levels of \mt#. If you want a shorter
+                            // title, then \h is the thing to look for.
+							if (sfm == "mt") // && (level == "" || level == "1"))
 							{
 								usfx.Read();
 								if (usfx.NodeType == XmlNodeType.Text)

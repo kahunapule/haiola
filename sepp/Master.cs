@@ -18,7 +18,6 @@ namespace sepp
         public string dataRootDir; // Default is BibleConv in the user's documents folder
         string m_inputDirectory;
         public string m_siteDirectory; // curently Site, always under dataRootDir
-        public bool autorun = false;
 
 		public Master()
 		{
@@ -62,7 +61,7 @@ namespace sepp
 					Application.Exit();
 			LoadWorkingDirectory();
             Application.DoEvents();
-            if (autorun)
+            if (Program.autorun)
             {
                 WorkOnAllButton_Click(sender, e);
                 Close();

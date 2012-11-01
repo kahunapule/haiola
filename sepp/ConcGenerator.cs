@@ -528,7 +528,8 @@ namespace sepp
 					case XmlNodeType.Text:
 						ProcessText(reader.Value);
 						break;
-						// Review JohnT: do we need to process white space elements?
+					// JohnT: do we need to process white space elements?
+                    // Michael: EnsureWhiteSpaceEndsContext(); kind of makes the need to do so go away.
 				}
 			}
 			ProcessEndOfSentence(); // In case text does not end with sentence-final punctuation, don't want wordforms with no context.
@@ -821,7 +822,10 @@ namespace sepp
 			{
 				if (MergeCase)
 				{
-					string wordformLC = wordform.ToLower(System.Globalization.CultureInfo.InvariantCulture); // review JohnT: should we select a culture?
+					string wordformLC = wordform.ToLower(System.Globalization.CultureInfo.InvariantCulture); // JohnT: should we select a culture?
+                    // Michael: probably not. It is too hard to find the right one (which may not actually exist), and the sets of upper/lower case
+                    // characters in Unicode are reasonably uniform in Unicode in different writing systems. The main exception is when PUA characters
+                    // are involved, in which case selecting a culture doesn't help.
 					if (wordformLC != wordform)
 					{
 						// It's an upper case form of some sort.

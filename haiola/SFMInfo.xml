@@ -799,7 +799,7 @@
 		<levelExpected>false</levelExpected>
 		<comment>Not in USFM: use /rq instead.</comment>
 	</sfm>
-	<sfm kind="paragraph">
+	<sfm kind="character">
 		<tag>rq</tag>
 		<endTag>rq*</endTag><paragraphStyle>Right Reference</paragraphStyle>
 		<nestingAllowed>false</nestingAllowed>
