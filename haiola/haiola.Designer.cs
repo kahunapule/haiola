@@ -88,6 +88,7 @@
             this.copyrightOwnerTextBox = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.processTabPage = new System.Windows.Forms.TabPage();
+            this.btnAddSpecialProcess = new System.Windows.Forms.Button();
             this.postprocessTextBox = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.mvDownButton = new System.Windows.Forms.Button();
@@ -804,6 +805,7 @@
             // 
             // processTabPage
             // 
+            this.processTabPage.Controls.Add(this.btnAddSpecialProcess);
             this.processTabPage.Controls.Add(this.postprocessTextBox);
             this.processTabPage.Controls.Add(this.textBox1);
             this.processTabPage.Controls.Add(this.mvDownButton);
@@ -825,6 +827,16 @@
             this.processTabPage.TabIndex = 1;
             this.processTabPage.Text = "Processes";
             this.processTabPage.UseVisualStyleBackColor = true;
+            // 
+            // btnAddSpecialProcess
+            // 
+            this.btnAddSpecialProcess.Location = new System.Drawing.Point(395, 59);
+            this.btnAddSpecialProcess.Name = "btnAddSpecialProcess";
+            this.btnAddSpecialProcess.Size = new System.Drawing.Size(100, 27);
+            this.btnAddSpecialProcess.TabIndex = 40;
+            this.btnAddSpecialProcess.Text = "+ Add process";
+            this.btnAddSpecialProcess.UseVisualStyleBackColor = true;
+            this.btnAddSpecialProcess.Click += new System.EventHandler(this.btnAddSpecialProcess_Click);
             // 
             // postprocessTextBox
             // 
@@ -1915,6 +1927,7 @@
 		private System.Windows.Forms.Label label39;
 		private System.Windows.Forms.TextBox hideNavigationPanesTextBox;
         private System.Windows.Forms.Label label38;
+        private System.Windows.Forms.Button btnAddSpecialProcess;
         private System.Windows.Forms.Label label40;
         private System.Windows.Forms.TextBox coprAbbrevTextBox;
         private System.Windows.Forms.Label label41;

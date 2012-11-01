@@ -155,13 +155,13 @@ namespace BibleFileLib
 							if (vernacularName.Length == 0)
 								vernacularName = mtName;
 							// We want to produce something like
-							//<div class="BookChapIndex">
+							//<div id = "MRK" class="BookChapIndex">
 							//  <p class="IndexBookName"><a target="top" href="frame_MRKTOC.htm">Markus</a></p>
 							//        <p class="IndexIntroduction"><a target="top" href="frame_MRK-Intro-Q.htm">Pengantar Buku</a></p>
 
 							//    <p class="IndexChapterList"><a target="top" href="frame_MRK01.htm">1</a> <a target="top" href="frame_MRK02.htm">2</a>...  </p>
 							//</div>
-							htm.WriteLine("<div class=\"BookChapIndex\">");
+							htm.WriteLine("<div id=\"" + bookId + "\" class=\"BookChapIndex\">");
                             // A TOC page is ONLY generated if there are headings in the book to generate it with.
 							htm.WriteLine("<p class=\"IndexBookName\"><a target=\"_top\" href=\""
 								+ UsfxToFramedHtmlConverter.TopFrameName(bookId, 0) + "\">" // bookid00{0} is the id generated for the TOC page.
