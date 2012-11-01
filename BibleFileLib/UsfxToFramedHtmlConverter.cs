@@ -129,13 +129,15 @@ namespace BibleFileLib
 		public override void MakeFramesFor(string htmPath)
 		{
 			string htmName = Path.GetFileName(htmPath);
+			string bookId = htmName.Substring(0, 3);
 			string directory = Path.GetDirectoryName(htmPath);
 			var topFrameName = MainFramePrefix + htmName;
 			var topFramePath = Path.Combine(directory, topFrameName);
 			var interiorFrameName = InteriorFramePrefix + htmName;
 			var interiorFramePath = Path.Combine(directory, interiorFrameName);
 			WriteFrameFile(topFramePath, "rows=\"35, *\" onload=\"onLoad()\"", true, "navigation", NavigationFileName, "body", interiorFrameName, "frameFuncs.js");
-			WriteFrameFile(interiorFramePath, "cols=\"20%,80%\"", false, "index", UsfxToChapterIndex.ChapIndexFileName, "main", htmName, null);
+			// We put the bookId as the hash of the URL for the chapter index so that the current book is always visible.
+			WriteFrameFile(interiorFramePath, "cols=\"20%,80%\"", false, "index", UsfxToChapterIndex.ChapIndexFileName + "#" + bookId, "main", htmName, null);
 		}
 
 		protected override void WriteNavButtons()
