@@ -18,12 +18,12 @@
 
 
 
-body	{ font-family: 'Andika', 'AndikaRegular', 'Tahoma', 'andika_apacregular', 'liberation_sansregular', 'sans-serif'; font-size: 13pt; line-height: 1.4em }
+body	{ font-family: 'Andika', 'AndikaRegular', 'Tahoma', 'Liberation Sans', 'andika_apacregular', 'sans-serif'; font-size: 13pt; line-height: 1.4em }
 body.mainDoc	{
 	background-color: rgb(239,255,255);
 	min-width: 120px
 	}
-select { font-family:  'Andika', 'AndikaRegular', 'Tahoma', 'andika_apacregular', 'liberation_sansregular', 'sans-serif'; font-size: 13pt; line-height: 1.4em }
+select { font-family:  'Andika', 'AndikaRegular', 'Tahoma', 'Liberation Sans', 'andika_apacregular', 'sans-serif'; font-size: 13pt; line-height: 1.4em }
 
 /* Styles for USFM elements -- div for paragraph and span for character styles */
 span.add { color: rgb(16,16,16); font-style: italic }
