@@ -635,7 +635,14 @@ namespace haiola
             Application.DoEvents();
             Utils.DeleteDirectory(UsfxPath);
             if ((m_options.languageId.Length < 3) || (m_options.translationId.Length < 3))
+            {
+                MessageBox.Show(this,
+                                string.Format(
+                                    "language and translation ids (%0 and %1) must be at least three characters each",
+                                    m_options.languageId, m_options.translationId),
+                                "ERROR");
                 return;
+            }
             Utils.EnsureDirectory(UsfxPath);
             string logFile = Path.Combine(m_outputProjectDirectory, "ConversionReports.txt");
             Logit.OpenFile(logFile);
@@ -1164,7 +1171,7 @@ In addition, you have permission to convert the text to different file formats, 
                                     log.Close();
                                     MessageBox.Show(errors, "Errors in " + logFile);
                                 }
-                                currentConversion = "converted USFM to USFX.";
+                                currentConversion = "converted USFX to USFM.";
                             }
                             else if (xr.Name == "vernacularParms")
                             {
