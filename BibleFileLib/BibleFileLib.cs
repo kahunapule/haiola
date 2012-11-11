@@ -6053,6 +6053,7 @@ namespace WordSend
 			try
 			{
 				XmlFileReader usfxFile = new XmlFileReader(inFileName);
+                usfxFile.WhitespaceHandling = WhitespaceHandling.All;
                 if (!((usfxFile.MoveToContent() == XmlNodeType.Element) && (usfxFile.Name == "usfx")))
                 {
                     // Not a USFX file. Skip it.
@@ -6068,292 +6069,296 @@ namespace WordSend
 				while (!usfxFile.EOF)
 				{
 					usfxFile.Read();
-					if (usfxFile.NodeType == XmlNodeType.Element)
-					{
-						// The SFM name is the element name UNLESS sfm attribute overrides it.
-						sfm = usfxFile.Name;
-						id = level = style = who = "";
-						if (usfxFile.HasAttributes)
-						{
-							for (i = 0; i < usfxFile.AttributeCount; i++)
-							{
-								usfxFile.MoveToAttribute(i);
-								switch (usfxFile.Name)
-								{
-									case "id":
-										id = usfxFile.Value;
-										break;
-									case "charset":
-										id = usfxFile.Value;
-										break;
-									case "level":
-										level = usfxFile.Value;
-										break;
-									case "sfm":
-										sfm = usfxFile.Value;
-										break;
-									case "style":
-										style = usfxFile.Value;
-										break;
-									case "attribute":
-										id = usfxFile.Value;
-										break;
-									case "caller":
-										// footnote caller, sfm attribute
-										id = usfxFile.Value;
-										break;
-									case "who":
-										// makes sense with <quoteStart>
-										who = usfxFile.Value;
-										break;
-									case "xmlns:ns0":
-									case "xmlns:xsi":
-									case "xsi:noNamespaceSchemaLocation":
-										// ignore these
-										break;
-									default:
-										Logit.WriteError("Unrecognized attribute: "+usfxFile.Name+"="+usfxFile.Value);
-										break;
-								}
-							}
-							usfxFile.MoveToElement();
-						}
-						firstCol = !tags.info(sfm).hasEndTag();
-						if (!firstCol)
-						{
-							tagPair = new stringPair();
-							tagPair.old = usfxFile.Name;
-							tagPair.niu = sfm+"*";
-							sfmPairStack.Push(tagPair);
-						}
+                    if (usfxFile.NodeType == XmlNodeType.Element)
+                    {
+                        // The SFM name is the element name UNLESS sfm attribute overrides it.
+                        sfm = usfxFile.Name;
+                        id = level = style = who = "";
+                        if (usfxFile.HasAttributes)
+                        {
+                            for (i = 0; i < usfxFile.AttributeCount; i++)
+                            {
+                                usfxFile.MoveToAttribute(i);
+                                switch (usfxFile.Name)
+                                {
+                                    case "id":
+                                        id = usfxFile.Value;
+                                        break;
+                                    case "charset":
+                                        id = usfxFile.Value;
+                                        break;
+                                    case "level":
+                                        level = usfxFile.Value;
+                                        break;
+                                    case "sfm":
+                                        sfm = usfxFile.Value;
+                                        break;
+                                    case "style":
+                                        style = usfxFile.Value;
+                                        break;
+                                    case "attribute":
+                                        id = usfxFile.Value;
+                                        break;
+                                    case "caller":
+                                        // footnote caller, sfm attribute
+                                        id = usfxFile.Value;
+                                        break;
+                                    case "who":
+                                        // makes sense with <quoteStart>
+                                        who = usfxFile.Value;
+                                        break;
+                                    case "xmlns:ns0":
+                                    case "xmlns:xsi":
+                                    case "xsi:noNamespaceSchemaLocation":
+                                        // ignore these
+                                        break;
+                                    default:
+                                        Logit.WriteError("Unrecognized attribute: " + usfxFile.Name + "=" + usfxFile.Value);
+                                        break;
+                                }
+                            }
+                            usfxFile.MoveToElement();
+                        }
+                        firstCol = !tags.info(sfm).hasEndTag();
+                        if (!firstCol)
+                        {
+                            tagPair = new stringPair();
+                            tagPair.old = usfxFile.Name;
+                            tagPair.niu = sfm + "*";
+                            sfmPairStack.Push(tagPair);
+                        }
 
-						switch (usfxFile.Name)
-						{
-							case "book":
-								// Open USFM file if we have an ID
-								if (id != "")
-								{
-									bookId = id;
-									usfmFile.Open(Path.Combine(outDir, bkInfo.FilePrefix(bookId)+outFileName));
-								}
-								break;
-							case "id":
-								// Open USFM file if it is not open already
-								if (((id != "") && (id != bookId)) || !usfmFile.Opened())
-								{
-									bookId = id;
+                        switch (usfxFile.Name)
+                        {
+                            case "book":
+                                // Open USFM file if we have an ID
+                                if (id != "")
+                                {
+                                    bookId = id;
+                                    usfmFile.Open(Path.Combine(outDir, bkInfo.FilePrefix(bookId) + outFileName));
+                                }
+                                break;
+                            case "id":
+                                // Open USFM file if it is not open already
+                                if (((id != "") && (id != bookId)) || !usfmFile.Opened())
+                                {
+                                    bookId = id;
                                     if (outDir.Length > 0)
-									    usfmFile.Open(Path.Combine(outDir, bkInfo.FilePrefix(bookId)+outFileName));
+                                        usfmFile.Open(Path.Combine(outDir, bkInfo.FilePrefix(bookId) + outFileName));
                                     else
                                         usfmFile.Open(bkInfo.FilePrefix(bookId) + outFileName);
                                 }
-								usfmFile.WriteSFM("id", "", id, true);
-								break;
-							case "c":
-								chapter = id;
-								usfmFile.WriteSFM(sfm, "", id, true);
-								if (!usfxFile.IsEmptyElement)
-								{
-									ignore = true;
-								}
-								break;
-							case "v":
-								verse = id;
-								usfmFile.WriteSFM(sfm, "", id, true);
-								if (!usfxFile.IsEmptyElement)
-								{
-									ignore = true;
-								}
-								break;
-							case "fig":
-								if (!usfxFile.IsEmptyElement)
-								{
-									ignore = true;
-								}
-								usfmFile.WriteSFM(sfm, "", "", false);
-								break;
-							case "generated":
-								if (!usfxFile.IsEmptyElement)
-								{
-									ignore = true;
-								}
-								break;
-							case "table":
-								// Do nothing... the table row and column elements are enough.
-								break;
-							case "quoteStart":
-								quoteLevel++;
-								/* Do nothing. Read the quotation mark from the element contents.
-								if (!usfxFile.IsEmptyElement)
-								{
-									ignore = true;
-								}
-								// The following is an ethnocentric simplification of
-								// English rules of punctuation.
-								// Warning: results may be wrong if you mix
-								// markers and actual quotation marks.
-								if ((quoteLevel % 2) == 1)
+                                usfmFile.WriteSFM("id", "", id, true);
+                                break;
+                            case "c":
+                                chapter = id;
+                                usfmFile.WriteSFM(sfm, "", id, true);
+                                if (!usfxFile.IsEmptyElement)
+                                {
+                                    ignore = true;
+                                }
+                                break;
+                            case "v":
+                                verse = id;
+                                usfmFile.WriteSFM(sfm, "", id, true);
+                                if (!usfxFile.IsEmptyElement)
+                                {
+                                    ignore = true;
+                                }
+                                break;
+                            case "fig":
+                                if (!usfxFile.IsEmptyElement)
+                                {
+                                    ignore = true;
+                                }
+                                usfmFile.WriteSFM(sfm, "", "", false);
+                                break;
+                            case "generated":
+                                if (!usfxFile.IsEmptyElement)
+                                {
+                                    ignore = true;
+                                }
+                                break;
+                            case "table":
+                                // Do nothing... the table row and column elements are enough.
+                                break;
+                            case "quoteStart":
+                                quoteLevel++;
+                                /* Do nothing. Read the quotation mark from the element contents.
+                                if (!usfxFile.IsEmptyElement)
+                                {
+                                    ignore = true;
+                                }
+                                // The following is an ethnocentric simplification of
+                                // English rules of punctuation.
+                                // Warning: results may be wrong if you mix
+                                // markers and actual quotation marks.
+                                if ((quoteLevel % 2) == 1)
                                     usfmFile.WriteString("“");
-								else
-									usfmFile.WriteString("‘");
-								*/
-								break;
-							case "quoteRemind":
-								/* Do nothing. Read the quotation mark from the element contents.
-								if (!usfxFile.IsEmptyElement)
-								{
-									ignore = true;
-								}
-								*/
-								break;
-							case "quoteEnd":
-								/* Do nothing. Read the quotation mark from the element contents.
-								if (!usfxFile.IsEmptyElement)
-								{
-									ignore = true;
-								}
-								// The following is an ethnocentric simplification of
-								// English rules of punctuation.
-								if ((quoteLevel % 2) == 1)
-									usfmFile.WriteString("”");
-								else
-									usfmFile.WriteString("’");
-								*/
-								quoteLevel--;
-								if (quoteLevel < 0)
-								{
-									Logit.WriteLine("Warning: unmatched quoteEnd at "+
-										bookId+" "+chapter+":"+verse);
-									quoteLevel = 0;
-								}
-								break;
-							case "p":
-								if (quoteLevel > 0)
-								{
-									for (i = quoteLevel; i > 0; i--)
-									{
-										if ((i % 2) == 1)
-											usfmFile.WriteString("“");
-										else
-											usfmFile.WriteString("‘");
-									}
-								}
-								usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag());
-								afterBlankLine = true;
-								break;
-							case "b":
-								afterBlankLine = true;
-								usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag());
-								break;
-							case "q":
-								if (afterBlankLine)
-								{
-									if (quoteLevel > 0)
-									{
-										for (i = quoteLevel; i > 0; i--)
-										{
-											if ((i % 2) == 1)
-												usfmFile.WriteString("“");
-											else
-												usfmFile.WriteString("‘");
-										}
-									}
-								}
-								else
-								{
-									afterBlankLine = true;
-								}
-								usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag());
-								break;
+                                else
+                                    usfmFile.WriteString("‘");
+                                */
+                                break;
+                            case "quoteRemind":
+                                /* Do nothing. Read the quotation mark from the element contents.
+                                if (!usfxFile.IsEmptyElement)
+                                {
+                                    ignore = true;
+                                }
+                                */
+                                break;
+                            case "quoteEnd":
+                                /* Do nothing. Read the quotation mark from the element contents.
+                                if (!usfxFile.IsEmptyElement)
+                                {
+                                    ignore = true;
+                                }
+                                // The following is an ethnocentric simplification of
+                                // English rules of punctuation.
+                                if ((quoteLevel % 2) == 1)
+                                    usfmFile.WriteString("”");
+                                else
+                                    usfmFile.WriteString("’");
+                                */
+                                quoteLevel--;
+                                if (quoteLevel < 0)
+                                {
+                                    Logit.WriteLine("Warning: unmatched quoteEnd at " +
+                                        bookId + " " + chapter + ":" + verse);
+                                    quoteLevel = 0;
+                                }
+                                break;
+                            case "p":
+                                if (quoteLevel > 0)
+                                {
+                                    for (i = quoteLevel; i > 0; i--)
+                                    {
+                                        if ((i % 2) == 1)
+                                            usfmFile.WriteString("“");
+                                        else
+                                            usfmFile.WriteString("‘");
+                                    }
+                                }
+                                usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag());
+                                afterBlankLine = true;
+                                break;
+                            case "b":
+                                afterBlankLine = true;
+                                usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag());
+                                break;
+                            case "q":
+                                if (afterBlankLine)
+                                {
+                                    if (quoteLevel > 0)
+                                    {
+                                        for (i = quoteLevel; i > 0; i--)
+                                        {
+                                            if ((i % 2) == 1)
+                                                usfmFile.WriteString("“");
+                                            else
+                                                usfmFile.WriteString("‘");
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    afterBlankLine = true;
+                                }
+                                usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag());
+                                break;
                             case "languageCode":
                                 usfxFile.Read();
                                 if (usfxFile.NodeType == XmlNodeType.Text)
                                     languageCode = usfxFile.Value;
                                 break;
                             default:
-								usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag());
-								break;
-						}
-					}
-					else if (usfxFile.NodeType == XmlNodeType.EndElement)
-					{
-						switch (usfxFile.Name)
-						{
-							case "book":
-								// close output file.
-								usfmFile.Close();
-								bookId = "";
-								break;
-							case "description":
-								fig.description = s;
-								break;
-							case "catalog":
-								fig.catalog = s;
-								break;
-							case "size":
+                                usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag());
+                                break;
+                        }
+                    }
+                    else if (usfxFile.NodeType == XmlNodeType.EndElement)
+                    {
+                        switch (usfxFile.Name)
+                        {
+                            case "book":
+                                // close output file.
+                                usfmFile.Close();
+                                bookId = "";
+                                break;
+                            case "description":
+                                fig.description = s;
+                                break;
+                            case "catalog":
+                                fig.catalog = s;
+                                break;
+                            case "size":
                                 fig.size = s;
-								break;
-							case "location":
+                                break;
+                            case "location":
                                 fig.location = s;
-								break;
-							case "copyright":
+                                break;
+                            case "copyright":
                                 fig.copyright = s;
-								break;
-							case "caption":
+                                break;
+                            case "caption":
                                 fig.caption = s;
-								break;
-							case "reference":
+                                break;
+                            case "reference":
                                 fig.reference = s;
-								break;
-							case "fig":
-								ignore = false;
-								usfmFile.WriteString(fig.figSpec);
-								if (sfmPairStack.Count > 0)
-								{
-									tagPair = (stringPair)sfmPairStack.Peek();
-									if (usfxFile.Name == tagPair.old)
-									{
-										usfmFile.WriteSFM(tagPair.niu, "", "", false);
-										sfmPairStack.Pop();
-									}
-								}
-								break;
-							case "c":
-							case "v":
-							case "generated":
-								ignore = false;
-								break;
-							case "quoteStart":
-							case "quoteRemind":
-							case "quoteEnd":
-								// Do nothing.
-								break;
-							default:
-								if (sfmPairStack.Count > 0)
-								{
-									tagPair = (stringPair)sfmPairStack.Peek();
-									if (usfxFile.Name == tagPair.old)
-									{
-										usfmFile.WriteSFM(tagPair.niu, "", "", false);
-										sfmPairStack.Pop();
-									}
-								}
-								break;
-						}
-					}
-					else if (usfxFile.NodeType == XmlNodeType.Text)
-					{
-						s = usfxFile.Value;
-						if (!ignore)
-						{
-							afterBlankLine = false;
-							usfmFile.WriteString(usfxFile.Value);
-						}
-					}
-					else if (usfxFile.NodeType == XmlNodeType.SignificantWhitespace)
-					{
-						usfmFile.WriteString(" ");
-					}
+                                break;
+                            case "fig":
+                                ignore = false;
+                                usfmFile.WriteString(fig.figSpec);
+                                if (sfmPairStack.Count > 0)
+                                {
+                                    tagPair = (stringPair)sfmPairStack.Peek();
+                                    if (usfxFile.Name == tagPair.old)
+                                    {
+                                        usfmFile.WriteSFM(tagPair.niu, "", "", false);
+                                        sfmPairStack.Pop();
+                                    }
+                                }
+                                break;
+                            case "c":
+                            case "v":
+                            case "generated":
+                                ignore = false;
+                                break;
+                            case "quoteStart":
+                            case "quoteRemind":
+                            case "quoteEnd":
+                                // Do nothing.
+                                break;
+                            default:
+                                if (sfmPairStack.Count > 0)
+                                {
+                                    tagPair = (stringPair)sfmPairStack.Peek();
+                                    if (usfxFile.Name == tagPair.old)
+                                    {
+                                        usfmFile.WriteSFM(tagPair.niu, "", "", false);
+                                        sfmPairStack.Pop();
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                    else if (usfxFile.NodeType == XmlNodeType.Text)
+                    {
+                        s = usfxFile.Value;
+                        if (!ignore)
+                        {
+                            afterBlankLine = false;
+                            usfmFile.WriteString(usfxFile.Value);
+                        }
+                    }
+                    else if (usfxFile.NodeType == XmlNodeType.SignificantWhitespace)
+                    {
+                        usfmFile.WriteString(" ");
+                    }
+                    else if (usfxFile.NodeType == XmlNodeType.Whitespace)
+                    {   // The XML parser thinks some significant whitespace is insignificant.
+                        usfmFile.WriteString(" ");
+                    }
 				}
                 usfmFile.Close();
 				usfxFile.Close();
@@ -8425,7 +8430,6 @@ namespace WordSend
             StringBuilder toc = new StringBuilder();
             string chapFormat = "00";
             int i;
-
 
             footnotesToWrite = new StringBuilder(String.Empty);
             preVerse = new StringBuilder(String.Empty);

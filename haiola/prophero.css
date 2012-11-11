@@ -6,114 +6,24 @@
 
 
 @font-face {
-    font-family: 'liberation_sansregular';
-    src: url('../css/liberationsans-regular-webfont.eot');
-    src: url('../css/liberationsans-regular-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../css/liberationsans-regular-webfont.woff') format('woff'),
-         url('../css/liberationsans-regular-webfont.ttf') format('truetype'),
-         url('../css/liberationsans-regular-webfont.svg#liberation_sansregular') format('svg');
-    font-weight: normal;
-    font-style: normal;
-
-}
-/*
-@font-face {
-    font-family: 'liberation_sansitalic';
-    src: url('../css/liberationsans-italic-webfont.eot');
-    src: url('../css/liberationsans-italic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../css/liberationsans-italic-webfont.woff') format('woff'),
-         url('../css/liberationsans-italic-webfont.ttf') format('truetype'),
-         url('../css/liberationsans-italic-webfont.svg#liberation_sansitalic') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'liberation_sansbold_italic';
-    src: url('../css/liberationsans-bolditalic-webfont.eot');
-    src: url('../css/liberationsans-bolditalic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../css/liberationsans-bolditalic-webfont.woff') format('woff'),
-         url('../css/liberationsans-bolditalic-webfont.ttf') format('truetype'),
-         url('../css/liberationsans-bolditalic-webfont.svg#liberation_sansbold_italic') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'liberation_sans_narrowregular';
-    src: url('../css/liberationsansnarrow-regular-webfont.eot');
-    src: url('../css/liberationsansnarrow-regular-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../css/liberationsansnarrow-regular-webfont.woff') format('woff'),
-         url('../css/liberationsansnarrow-regular-webfont.ttf') format('truetype'),
-         url('../css/liberationsansnarrow-regular-webfont.svg#liberation_sans_narrowregular') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'liberation_sans_narrowitalic';
-    src: url('../css/liberationsansnarrow-italic-webfont.eot');
-    src: url('../css/liberationsansnarrow-italic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../css/liberationsansnarrow-italic-webfont.woff') format('woff'),
-         url('../css/liberationsansnarrow-italic-webfont.ttf') format('truetype'),
-         url('../css/liberationsansnarrow-italic-webfont.svg#liberation_sans_narrowitalic') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'liberation_sansbold';
-    src: url('../css/liberationsans-bold-webfont.eot');
-    src: url('../css/liberationsans-bold-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../css/liberationsans-bold-webfont.woff') format('woff'),
-         url('../css/liberationsans-bold-webfont.ttf') format('truetype'),
-         url('../css/liberationsans-bold-webfont.svg#liberation_sansbold') format('svg');
-    font-weight: normal;
-    font-style: normal;
-
-}
-
-@font-face {
-    font-family: 'liberation_sans_narrowBdIt';
-    src: url('../css/liberationsansnarrow-bolditalic-webfont.eot');
-    src: url('../css/liberationsansnarrow-bolditalic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../css/liberationsansnarrow-bolditalic-webfont.woff') format('woff'),
-         url('../css/liberationsansnarrow-bolditalic-webfont.ttf') format('truetype'),
-         url('../css/liberationsansnarrow-bolditalic-webfont.svg#liberation_sans_narrowBdIt') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'liberation_sans_narrowbold';
-    src: url('../css/liberationsansnarrow-bold-webfont.eot');
-    src: url('../css/liberationsansnarrow-bold-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../css/liberationsansnarrow-bold-webfont.woff') format('woff'),
-         url('../css/liberationsansnarrow-bold-webfont.ttf') format('truetype'),
-         url('../css/liberationsansnarrow-bold-webfont.svg#liberation_sans_narrowbold') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-*/
-
-@font-face {
-    font-family: 'andika';
-    src: url('../css/andika-r-web.eot');
-    src: url('../css/andika-r-web.eot?#iefix') format('embedded-opentype'),
-         url('../css/Andika-R.woff') format('woff'),
-         url('../css/Andika-R.ttf') format('truetype'),
-         url('../css/andika-r-web.svg#AndikaRegular') format('svg');
+    font-family: 'andika_apacregular';
+    src: url('../css/andikaapac-r-webfont.eot');
+    src: url('../css/andikaapac-r-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../css/andikaapac-r-webfont.woff') format('woff'),
+         url('../css/andikaapac-r-webfont.ttf') format('truetype'),
+         url('../css/andikaapac-r-webfont.svg#andika_apacregular') format('svg');
     font-weight: normal;
     font-style: normal;
 }
 
 
-body	{ font-family: 'Andika', 'AndikaRegular', 'Tahoma', 'liberation_sansregular', 'sans-serif'; font-size: 13pt; line-height: 1.4em }
+
+body	{ font-family: 'Andika', 'AndikaRegular', 'Tahoma', 'Liberation Sans', 'andika_apacregular', 'sans-serif'; font-size: 13pt; line-height: 1.4em }
 body.mainDoc	{
 	background-color: rgb(239,255,255);
 	min-width: 120px
 	}
-select { font-family: 'Andika', 'AndikaRegular', 'Tahoma', 'liberation_sansregular', 'sans-serif'; font-size: 13pt; line-height: 1.4em }
+select { font-family:  'Andika', 'AndikaRegular', 'Tahoma', 'Liberation Sans', 'andika_apacregular', 'sans-serif'; font-size: 13pt; line-height: 1.4em }
 
 /* Styles for USFM elements -- div for paragraph and span for character styles */
 span.add { color: rgb(16,16,16); font-style: italic }
