@@ -963,7 +963,7 @@ namespace WordSend
         }
 
 
-/*
+/*      Replaced by the more general method, above.
         public static string KhmerDigits(string s)
         {
             StringBuilder sb = new StringBuilder();
@@ -2389,6 +2389,71 @@ namespace WordSend
 		}
 	}
 
+    public class LanguageCodeInfo
+    {
+        public Hashtable langCodes;
+        
+        public string ShortCode(string tla)
+        {
+            string bla = (string)langCodes[tla];
+            if (bla != null)
+            {
+                if (bla.Length == 2)
+                    return bla;
+            }
+            return tla;
+        }
+
+        public LanguageCodeInfo()
+        {
+            string tla = String.Empty;
+            string bla = String.Empty;
+            langCodes = new Hashtable(509);
+            XmlTextReader langInfo = new XmlTextReader(SFConverter.FindAuxFile("langnames.xml"));
+            langInfo.WhitespaceHandling = WhitespaceHandling.Significant;
+            while (langInfo.Read())
+            {
+                if (langInfo.NodeType == XmlNodeType.Element)
+                {
+                    switch (langInfo.Name)
+                    {
+                        case "lang":
+                            tla = bla = String.Empty;
+                            break;
+                        case "tla":
+                            if (!langInfo.IsEmptyElement)
+                            {
+                                langInfo.Read();
+                                if (langInfo.NodeType == XmlNodeType.Text)
+                                {
+                                    tla = langInfo.Value;
+                                }
+                            }
+                            break;
+                        case "bla":
+                            if (!langInfo.IsEmptyElement)
+                            {
+                                langInfo.Read();
+                                if (langInfo.NodeType == XmlNodeType.Text)
+                                {
+                                    bla = langInfo.Value;
+                                }
+                            }
+                            break;
+                    }
+                }
+                else if (langInfo.NodeType == XmlNodeType.EndElement)
+                {
+                    if (langInfo.Name == "lang")
+                    {
+                        if (bla.Length == 2)
+                            langCodes[tla] = bla;
+                    }
+                }
+            }
+        }
+    }
+
 	public class BibleBookInfo
 	{
 		public const int MAXNUMBOOKS=110;	// Includes Apocrypha + extrabiblical helps, front & back matter, etc.
@@ -2960,8 +3025,35 @@ namespace WordSend
 			sfms.Add(sfm);
 		}
 
+        private int sfmPeekIndex;
+        private int peekChapter;
+
+        // Peeks ahead, starting right after the last SFM returned by NextSfm().
+        public SfmObject PeekSfm()
+        {
+            SfmObject result;
+            ArrayList sfmList;
+            if (peekChapter >= chapterList.Count)
+                return null;
+            sfmList = (ArrayList)chapterList[peekChapter];
+            if (sfmList == null)
+                return null;
+            if (sfmPeekIndex < sfmList.Count)
+            {
+                result = (SfmObject)sfmList[sfmPeekIndex++];
+            }
+            else
+            {
+                sfmPeekIndex = 0;
+                peekChapter++;
+                result = PeekSfm();
+            }
+            return result;
+        }
+
 		public SfmObject NextSfm()
 		{
+            SfmObject result;
 			ArrayList sfmList;
 			if (chapterIndex >= chapterList.Count)
 				return null;
@@ -2970,14 +3062,17 @@ namespace WordSend
 				return null;
 			if (sfmIndex < sfmList.Count)
 			{
-				return (SfmObject)sfmList[sfmIndex++];
+				result = (SfmObject)sfmList[sfmIndex++];
 			}
 			else
 			{
 				sfmIndex = 0;
 				chapterIndex++;
-				return NextSfm();
+				result = NextSfm();
 			}
+            sfmPeekIndex = sfmIndex;
+            peekChapter = chapterIndex;
+            return result;
 		}
 
 		public SfmObject FirstSfm()
@@ -4094,6 +4189,18 @@ namespace WordSend
 //				EndUSFXParagraph();
 		}
 
+        private bool inVerse;
+
+        protected void EndUsfxVerse()
+        {
+            if (inVerse)
+            {
+                xw.WriteStartElement("ve");
+                xw.WriteEndElement();   // ve
+                inVerse = false;
+            }
+        }
+
 		protected void EndUSFXParagraph()
 		{
 			if (inUsfxParagraph)
@@ -4111,7 +4218,6 @@ namespace WordSend
 					xw.WriteEndElement();
 					usfxNestLevel--;
 				}
-
 				// Logit.WriteLine("Ending paragraph");
 				xw.WriteEndElement();	// ns+p
 				inUsfxParagraph = false;
@@ -5191,253 +5297,381 @@ namespace WordSend
 			}
 		}
 
+
+        const string canonicalParagraphTags = "b q p pc ph phi pm pi pmc pmo pmr pr psi qc qm qr";
+
+        protected bool inTable, inTableRow, inTableColumn;
+
+        protected void EndTableColumn()
+        {
+            if (inTableColumn)
+            {
+                EndUSFXElement();   // th/thr/tc/tcr
+                inTableColumn = false;
+            }
+        }
+
+        protected void EndUsfxTableRow()
+        {
+            if (inTableRow)
+            {
+                EndUSFXElement();   // tr
+                inTableRow = false;
+            }
+        }
+
+        protected void EndUsfxTable()
+        {
+            EndTableColumn();
+            EndUsfxTableRow();
+            if (inTable)
+            {
+                EndUSFXElement();   // table
+                inTable = false;
+            }
+        }
+
+        protected void StartUsfxTable()
+        {
+            if (!inTable)
+            {
+                StartUSFXElement("table");
+                inTable = true;
+            }
+        }
+
 		protected void WriteUSFXBook(int bknum)
 		{
+            SfmObject peek;
             Figure fig = new Figure();
-			book = books[bknum];
-			if ((bkInfo.bookArray[bknum] != null) && (book != null))
-			{
-				inPsalms = (book.bookCode == "PSA");
-				bkRec = (BibleBookRecord)bkInfo.bookArray[bknum];
-				if (bkRec == null)
-				{
-					Logit.WriteError("ERROR: BibleBookInfo array item "+bknum.ToString()+" missing.");
-                    fatalError = true;
-					xw.WriteAttributeString("sortOrder", bknum.ToString());
-				}
-				sf = book.FirstSfm();
-				xw.WriteStartElement(ns+"book");
-				xw.WriteAttributeString("id", book.bookCode);
-				// Logit.WriteLine("Starting book: "+book.vernacularName+" ("+book.bookCode+").");
-				while (sf != null)
-				{
-					switch (sf.info.kind)
-					{
-						case "paragraph":
-							StartUSFXParagraph(sf.tag, sf.level, sf.info.paragraphStyle, sf.text);
-							break;
-						case "meta":
-						switch (sf.tag)
-						{
-							case "c":
-                                if (inUSFXNote)
+            inVerse = false;
+            inTable = false;
+            inTableRow = false;
+            inTableColumn = false;
+            try
+            {
+			    book = books[bknum];
+			    if ((bkInfo.bookArray[bknum] != null) && (book != null))
+			    {
+				    inPsalms = (book.bookCode == "PSA");
+				    bkRec = (BibleBookRecord)bkInfo.bookArray[bknum];
+				    if (bkRec == null)
+				    {
+					    Logit.WriteError("ERROR: BibleBookInfo array item "+bknum.ToString()+" missing.");
+                        fatalError = true;
+					    xw.WriteAttributeString("sortOrder", bknum.ToString());
+				    }
+				    sf = book.FirstSfm();
+				    xw.WriteStartElement(ns+"book");
+				    xw.WriteAttributeString("id", book.bookCode);
+				    // Logit.WriteLine("Starting book: "+book.vernacularName+" ("+book.bookCode+").");
+				    while (sf != null)
+				    {
+					    switch (sf.info.kind)
+					    {
+						    case "paragraph":
+                                EndUsfxTable();
+                                if (inVerse)
                                 {
-                                    EndUSFXNote();
-                                    Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
-                                        ":" + verseMark + "  (c)");
-                                    fatalError = true;
+                                    peek = book.PeekSfm();
+                                    if (peek == null)
+                                    {
+                                        EndUsfxVerse();
+                                    }
+                                    else if (!canonicalParagraphTags.Contains(sf.tag))
+                                    {
+                                        EndUsfxVerse();
+                                    }
+                                    else
+                                    {
+                                        bool notext = sf.text.Trim().Length == 0;
+                                        if (notext && ((peek.tag == "v") || (peek.tag == "c") || (peek.tag == "book")))
+                                        {
+                                            EndUsfxVerse();
+                                        }
+                                    }
                                 }
+							    StartUSFXParagraph(sf.tag, sf.level, sf.info.paragraphStyle, sf.text);
+							    break;
+						    case "meta":
+						        switch (sf.tag)
+						        {
+							        case "c":
+                                        EndUsfxVerse();
+                                        EndUSFXParagraph();
+								        chapterMark = sf.attribute;
+								        verseMark = "";
+                                        if (inUSFXNote)
+                                        {
+                                            EndUSFXNote();
+                                            Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
+                                                ":" + verseMark + "  (c)");
+                                            fatalError = true;
+                                        }
+								        StartUSFXElement("c", "id", sf.attribute, null);
+								        EndUSFXElement();	// ns+c
+								        WriteUSFXText(sf.text);
+								        break;
+                                    case "ca":
+                                        StartUSFXElement("ca");
+                                        WriteUSFXText(sf.text);
+                                        break;
+                                    case "ca*":
+                                        EndUSFXElement();   // ca
+                                        break;
+							        case "v":
+                                        EndUsfxVerse();
+                                        verseMark = sf.attribute;
+                                        inVerse = true;
+                                        if (inUSFXNote)
+                                        {
+                                            EndUSFXNote();
+                                            Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
+                                                ":" + verseMark + "  (v)");
+                                            fatalError = true;
+                                        }
+                                        if (usfxStyleCount > 0)
+                                        {
+                                            EndUSFXStyle();
+                                            Logit.WriteError("Error: unclosed style at " + book.bookCode + " " + chapterMark + ":" + verseMark + " ");
+                                        }
+								        StartUSFXElement(sf.tag, "id", sf.attribute, null);
+								        EndUSFXElement();	// ns+v
+								        WriteUSFXText(sf.text);
+								        break;
+                                    case "va":
+                                    case "vp":
+                                        StartUSFXElement(sf.tag, null, null, sf.text);
+                                        break;
+                                    case "va*":
+                                    case "vp*":
+                                        EndUSFXElement();
+                                        break;
+							        case "nb":
+								        StartUSFXParagraph(sf.tag, sf.level, sf.info.paragraphStyle, sf.text);
+								        break;
+							        case "id":
+                                        if (inUSFXNote)
+                                        {
+                                            EndUSFXNote();
+                                            Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
+                                                ":" + verseMark + "  (id)");
+                                            fatalError = true;
+                                        }
+                                        EndUsfxVerse();
+                                        EndUSFXParagraph();
+								        StartUSFXElement(sf.tag, "id", sf.attribute, sf.text);
+								        EndUSFXElement();
+								        break;
+                                    case "toc":
+                                        EndUSFXParagraph();
+                                        StartUSFXElement(sf.tag, "level", sf.attribute, sf.text);
+                                        EndUSFXElement();
+                                        break;
+                                    case "ide":
+								        StartUSFXElement(sf.tag, "charset", sf.attribute, sf.text.Trim());
+								        EndUSFXElement();
+								        break;
+							        case "rem":
+                                    case "periph":
+                                        EndUSFXParagraph();
+                                        StartUSFXElement(sf.tag, null, null, sf.text);
+                                        EndUSFXElement();
+                                        break;
+                                    case "cp":
+                                        StartUSFXElement(sf.tag, "id", sf.attribute, null);
+                                        EndUSFXElement();
+                                        break;
+                                    case "sts":
+							        case "e":
+                                            // EndUSFXParagraph();
+								        StartUSFXElement(sf.tag, null, null, sf.text);
+								        EndUSFXElement();
+								        break;
+                                    case "cl":  // Vernacular name for "Chapter"
+                                    case "h":
+                                        EndUSFXParagraph();
+								        StartUSFXElement(sf.tag, null, null, sf.text);
+								        EndUSFXElement();
+                                        break;
+							        default:
+                                        // in WriteUSFXBook
+								        WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, sf.text);
+                                        if (inFootnote)
+                                        {
+                                            Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
+                                                ":" + verseMark);
+                                            fatalError = true;
+                                        }
+								        break;
 
-                                EndUSFXParagraph();
-								chapterMark = sf.attribute;
-								verseMark = "";
-								StartUSFXElement("c", "id", sf.attribute, null);
-								EndUSFXElement();	// ns+c
-								WriteUSFXText(sf.text);
-								break;
-                            case "ca":
-                                StartUSFXElement("ca");
-                                WriteUSFXText(sf.text);
-                                break;
-                            case "ca*":
-                                EndUSFXElement();   // ca
-                                break;
-							case "v":
-                                verseMark = sf.attribute;
-                                if (inUSFXNote)
+						        }
+							    break;
+                            case "table":
+                                switch (sf.tag)
                                 {
-                                    EndUSFXNote();
-                                    Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
-                                        ":" + verseMark + "  (v)");
+                                    case "tr":
+                                        StartUsfxTable();
+                                        EndTableColumn();
+                                        EndUsfxTableRow();
+                                        StartUSFXElement("tr");
+                                        inTableRow = true;
+                                        break;
+                                    case "th":
+                                        EndTableColumn();
+                                        StartUSFXElement("th", "level", sf.level.ToString(), sf.text);
+                                        inTableColumn = true;
+                                        break;
+                                    case "thr":
+                                        EndTableColumn();
+                                        StartUSFXElement("th", "level", sf.level.ToString(), sf.text);
+                                        inTableColumn = true;
+                                        break;
+                                    case "tc":
+                                        EndTableColumn();
+                                        StartUSFXElement("tc", "level", sf.level.ToString(), sf.text);
+                                        inTableColumn = true;
+                                        break;
+                                    case "tcr":
+                                        EndTableColumn();
+                                        StartUSFXElement("tc", "level", sf.level.ToString(), sf.text);
+                                        inTableColumn = true;
+                                        break;
+                                }
+                                break;
+						    case "note":
+						    switch (sf.tag)
+						    {
+							    case "f":	// Regular footnote
+							    case "x":	// Cross reference footnote
+								    StartUSFXNote(sf.tag, sf.attribute, sf.text);
+								    break;
+							    case "fe":	// End note
+								    if (inUSFXNote)
+								    {	// This test is for an error where someone used old PNGSFM syntax for ending a footnote.
+									    // This should never happen with real USFM, as end notes are not allowed in footnotes.
+									    // End notes are not recommended for use in minority language Bibles. I don't even like
+									    // them in majority language Bibles.
+									    EndUSFXNote();
+									    WriteUSFXText(sf.text);
+								    }
+								    else
+								    {	// A real end note
+									    StartUSFXNote(sf.tag, sf.attribute, sf.text);
+								    }
+								    break;
+							    case "f*":
+							    case "fe*":
+							    case "x*":
+								    EndUSFXNote();
+								    WriteUSFXText(sf.text);
+								    break;
+							    default:
+                               	    WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, sf.text);
+								    break;
+						    }
+							    break;
+						    case "character":
+							    if (sf.tag.EndsWith("*"))
+							    {
+								    if (inUSFXNote)
+								    {
+									    EndUSFXNoteStyle();
+								    }
+								    else
+								    {
+									    EndUSFXStyle();
+								    }
+								    WriteUSFXText(sf.text);
+							    }
+							    else
+							    {
+								    if (inUSFXNote)
+								    {
+									    StartUSFXNoteStyle(sf.tag, sf.text);
+								    }
+								    else
+								    {
+									    StartUSFXStyle(sf.tag, sf.text);
+								    }
+							    }
+							    break;
+                            case "figure":
+                                if (sf.tag == "fig")
+                                {
+                                    fig.figSpec = sf.text;
+                                    xw.WriteStartElement("fig");
+                                    xw.WriteElementString("description", fig.description);
+                                    xw.WriteElementString("catalog", fig.catalog);
+                                    xw.WriteElementString("size", fig.size);
+                                    xw.WriteElementString("location", fig.location);
+                                    xw.WriteElementString("copyright", fig.copyright);
+                                    xw.WriteElementString("caption", fig.caption);
+                                    xw.WriteElementString("reference", fig.reference);
+                                    xw.WriteEndElement();   // fig
+                                }
+                                else if (sf.tag == "fig*")
+                                {
+                                    if (sf.text.Length > 0)
+                                        xw.WriteString(sf.text);
+                                }
+                                else
+                                {
+                                    Logit.WriteError("ERROR: INVALID FIGURE TAG \\" + sf.tag);
                                     fatalError = true;
+                                    xw.WriteString("\\" + sf.tag + " " + sf.text);
                                 }
-                                if (usfxStyleCount > 0)
-                                {
-                                    EndUSFXStyle();
-                                    Logit.WriteError("Error: unclosed style at " + book.bookCode + " " + chapterMark + ":" + verseMark + " ");
-                                }
-								StartUSFXElement(sf.tag, "id", sf.attribute, null);
-								EndUSFXElement();	// ns+v
-								WriteUSFXText(sf.text);
-								break;
-                            case "va":
-                            case "vp":
-                                StartUSFXElement(sf.tag, null, null, sf.text);
                                 break;
-                            case "va*":
-                            case "vp*":
-                                EndUSFXElement();
-                                break;
-							case "nb":
-								StartUSFXParagraph(sf.tag, sf.level, sf.info.paragraphStyle, sf.text);
-								break;
-							case "id":
-                                if (inUSFXNote)
-                                {
-                                    EndUSFXNote();
-                                    Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
-                                        ":" + verseMark + "  (id)");
-                                    fatalError = true;
-                                }
-								StartUSFXElement(sf.tag, "id", sf.attribute, sf.text);
-								EndUSFXElement();
-								break;
-                            case "toc":
-                                StartUSFXElement(sf.tag, "level", sf.attribute, sf.text);
-                                EndUSFXElement();
-                                break;
-                            case "ide":
-								StartUSFXElement(sf.tag, "charset", sf.attribute, sf.text.Trim());
-								EndUSFXElement();
-								break;
-							case "rem":
-                            case "periph":
-                                StartUSFXElement(sf.tag, null, null, sf.text);
-                                EndUSFXElement();
-                                break;
-                            case "sts":
-							case "h":
-							case "e":
-                            case "cp":  // Published chapter designator (not necessarily Arabic numerals)
-                            case "cl":  // Vernacular name for "Chapter"
-                                    // EndUSFXParagraph();
-									StartUSFXElement(sf.tag, null, null, sf.text);
-									EndUSFXElement();
-								break;
-							default:
-                                // in WriteUSFXBook
-								WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, sf.text);
-                                if (inFootnote)
-                                {
-                                    Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
-                                        ":" + verseMark);
-                                    fatalError = true;
-                                }
-								break;
+                            /*							
+                                                                        case "sidebar":
+                                                                            break;
+                                                                        case "dc":
+                                                                            break;
+                                                                        case "layout":
+                                                                            break;
+                                                                        case "index":
+                                                                            break;
+                                                                        case "table":
+                                                                            break;
+                                            */
+						    case "ignore":
+							    break;
+						    default:
+							    WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, sf.text);
+							    break;
+					    }
+					    sf = book.NextSfm();
+				    }
+                    if (inUSFXNote)
+                    {
+                        EndUSFXNote();
+                        Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
+                            ":" + verseMark + "  (EOF)");
+                        fatalError = true;
+                    }
+                    if (usfxStyleCount > 0)
+                    {
+                        EndUSFXStyle();
+                        Logit.WriteError("Error: unclosed style at " + book.bookCode + " " + chapterMark + ":" + verseMark + " ");
+                        fatalError = true;
+                    }
+                    EndUsfxVerse();
+				    EndUSFXParagraph();
+				    xw.WriteEndElement();	// ns+book
+				    // Logit.WriteLine("END OF BOOK "+book.bookCode);
+			    }
 
-						}
-							break;
-						case "note":
-						switch (sf.tag)
-						{
-							case "f":	// Regular footnote
-							case "x":	// Cross reference footnote
-								StartUSFXNote(sf.tag, sf.attribute, sf.text);
-								break;
-							case "fe":	// End note
-								if (inUSFXNote)
-								{	// This test is for an error where someone used old PNGSFM syntax for ending a footnote.
-									// This should never happen with real USFM, as end notes are not allowed in footnotes.
-									// End notes are not recommended for use in minority language Bibles. I don't even like
-									// them in majority language Bibles.
-									EndUSFXNote();
-									WriteUSFXText(sf.text);
-								}
-								else
-								{	// A real end note
-									StartUSFXNote(sf.tag, sf.attribute, sf.text);
-								}
-								break;
-							case "f*":
-							case "fe*":
-							case "x*":
-								EndUSFXNote();
-								WriteUSFXText(sf.text);
-								break;
-							default:
-                               	WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, sf.text);
-								break;
-						}
-							break;
-						case "character":
-							if (sf.tag.EndsWith("*"))
-							{
-								if (inUSFXNote)
-								{
-									EndUSFXNoteStyle();
-								}
-								else
-								{
-									EndUSFXStyle();
-								}
-								WriteUSFXText(sf.text);
-							}
-							else
-							{
-								if (inUSFXNote)
-								{
-									StartUSFXNoteStyle(sf.tag, sf.text);
-								}
-								else
-								{
-									StartUSFXStyle(sf.tag, sf.text);
-								}
-							}
-							break;
-                        case "figure":
-                            if (sf.tag == "fig")
-                            {
-                                fig.figSpec = sf.text;
-                                xw.WriteStartElement("fig");
-                                xw.WriteElementString("description", fig.description);
-                                xw.WriteElementString("catalog", fig.catalog);
-                                xw.WriteElementString("size", fig.size);
-                                xw.WriteElementString("location", fig.location);
-                                xw.WriteElementString("copyright", fig.copyright);
-                                xw.WriteElementString("caption", fig.caption);
-                                xw.WriteElementString("reference", fig.reference);
-                                xw.WriteEndElement();   // fig
-                            }
-                            else if (sf.tag == "fig*")
-                            {
-                                if (sf.text.Length > 0)
-                                    xw.WriteString(sf.text);
-                            }
-                            else
-                            {
-                                Logit.WriteError("ERROR: INVALID FIGURE TAG \\" + sf.tag);
-                                fatalError = true;
-                                xw.WriteString("\\" + sf.tag + " " + sf.text);
-                            }
-                            break;
-                        /*							
-                                                                    case "sidebar":
-                                                                        break;
-                                                                    case "dc":
-                                                                        break;
-                                                                    case "layout":
-                                                                        break;
-                                                                    case "index":
-                                                                        break;
-                                                                    case "table":
-                                                                        break;
-                                        */
-						case "ignore":
-							break;
-						default:
-							WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, sf.text);
-							break;
-					}
-					sf = book.NextSfm();
-				}
-                if (inUSFXNote)
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError("Error writing USFX file at " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                if (sf != null)
                 {
-                    EndUSFXNote();
-                    Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
-                        ":" + verseMark + "  (EOF)");
-                    fatalError = true;
+                    Logit.WriteError("handling \\" + sf.tag);
                 }
-                if (usfxStyleCount > 0)
-                {
-                    EndUSFXStyle();
-                    Logit.WriteError("Error: unclosed style at " + book.bookCode + " " + chapterMark + ":" + verseMark + " ");
-                    fatalError = true;
-                }
+                Logit.WriteError(ex.Message + "\r\n" + ex.StackTrace);
+            }
 
-				EndUSFXParagraph();
-				xw.WriteEndElement();	// ns+book
-				// Logit.WriteLine("END OF BOOK "+book.bookCode);
-			}
 		}
 
 		public int ParseInt(string s, int defaultValue)
@@ -5730,7 +5964,7 @@ namespace WordSend
 								if (xr.Name != "xmlns:ns0")
 									xw.WriteAttributeString(xr.Name, xr.Value);
 							}
-							xw.WriteAttributeString("xmlns:ns0", "http://ebible.org/usfx/usfx-2009-07-12.xsd");
+							xw.WriteAttributeString("xmlns:ns0", "http://ebible.org/usfx/usfx-2012-11-09.xsd");
 							xr.MoveToElement();
 						}
 						else if (xr.Name == "w:ftr")
@@ -5874,9 +6108,9 @@ namespace WordSend
 				inUsfxParagraph = false;
 				usfxStyleCount = 0;
 				xw.WriteStartElement(ns+"usfx");
-				xw.WriteAttributeString("xmlns:ns0", @"http://eBible.org/usfx/usfx-2009-07-12.xsd");
+				xw.WriteAttributeString("xmlns:ns0", @"http://eBible.org/usfx/usfx-2012-11-09.xsd");
 				xw.WriteAttributeString("xmlns:xsi", @"http://www.w3.org/2001/XMLSchema-instance");
-				xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", @"usfx-2009-07-12.xsd");
+				xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", @"usfx-2012-11-09.xsd");
                 if (languageCode.Length == 3)
                     xw.WriteElementString("languageCode", languageCode);
 				for (j = 0; j < BibleBookInfo.MAXNUMBOOKS; j++)
@@ -5939,7 +6173,7 @@ namespace WordSend
 						{
 							xw.WriteStartElement("usfx");
 							xw.WriteAttributeString("xmlns:xsi", @"http://www.w3.org/2001/XMLSchema-instance");
-							xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", @"usfx-2009-07-12.xsd");
+							xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", @"usfx-2012-11-09.xsd");
 							inBody = true;
 						}
 						else if (xr.Name.StartsWith(ns))
@@ -6166,6 +6400,14 @@ namespace WordSend
                                     ignore = true;
                                 }
                                 break;
+                            case "ve":
+                                // Verse end: there is no equivalent markup in USFM.
+                                // Markup can be recovered algorithmically on re-import.
+                                if (!usfxFile.IsEmptyElement)
+                                {
+                                    ignore = true;
+                                }
+                                break;
                             case "fig":
                                 if (!usfxFile.IsEmptyElement)
                                 {
@@ -6321,6 +6563,7 @@ namespace WordSend
                                 break;
                             case "c":
                             case "v":
+                            case "ve":
                             case "generated":
                                 ignore = false;
                                 break;
@@ -7209,7 +7452,6 @@ namespace WordSend
             {
                 EndHtmlNote();
                 EndHtmlTextStyle();
-                EndHtmlTable();
                 EndHtmlParagraph();
                 htm.WriteLine("<div class=\"pageFooter\">");
                 WriteHtmlFootnotes();
@@ -8062,13 +8304,11 @@ namespace WordSend
                                         }
                                         break;
                                     case "v":
-                                        EndHtmlTable();
                                         if (chapterNumber == 0)
                                             VirtualChapter();
                                         ProcessVerse();
                                         break;
                                     case "va":
-                                        EndHtmlTable();
                                         if (!usfx.IsEmptyElement)
                                         {
                                             usfx.Read();
@@ -8077,7 +8317,6 @@ namespace WordSend
                                         }
                                         break;
                                     case "vp":
-                                        EndHtmlTable();
                                         if (!usfx.IsEmptyElement)
                                         {
                                             usfx.Read();
@@ -8109,44 +8348,30 @@ namespace WordSend
                                             sfm = usfx.Name;
                                         StartHtmlTextStyle(sfm);
                                         break;
-                                    case "milestone":
-                                        switch (sfm)
-                                        {
-                                            case "th":
-                                                EndHtmlTableCol();
-                                                StartHtmlTable();
-                                                WriteHtml("<td><b>");
-                                                inTableCol = true;
-                                                inTableBold = true;
-                                                break;
-                                            case "tr":
-                                                EndHtmlTableRow();
-                                                StartHtmlTable();
-                                                WriteHtml("<tr>");
-                                                inTableRow = true;
-                                                break;
-                                            case "thr":
-                                                EndHtmlTableCol();
-                                                WriteHtml("<td align=\"right\"><b>");
-                                                inTableBold = true;
-                                                inTableCol = true;
-                                                break;
-                                            case "tc":
-                                                EndHtmlTableCol();
-                                                WriteHtml("<td>");
-                                                inTableCol = true;
-                                                break;
-                                            case "tcr":
-                                                EndHtmlTableCol();
-                                                WriteHtml("<td align=\"right\">");
-                                                inTableCol = true;
-                                                break;
-                                            case "hr":
-                                                EndHtmlTable();
-                                                EndHtmlParagraph();
-                                                WriteHtml("<hr>");
-                                                break;
-                                        }
+                                    case "table":
+                                        StartHtmlTable();
+                                        break;
+                                    case "th":
+                                        WriteHtml("<td><b>");
+                                        inTableCol = true;
+                                        inTableBold = true;
+                                        break;
+                                    case "tr":
+                                        WriteHtml("<tr>");
+                                        inTableRow = true;
+                                        break;
+                                    case "thr":
+                                        WriteHtml("<td align=\"right\"><b>");
+                                        inTableBold = true;
+                                        inTableCol = true;
+                                        break;
+                                    case "tc":
+                                        WriteHtml("<td>");
+                                        inTableCol = true;
+                                        break;
+                                    case "tcr":
+                                        WriteHtml("<td align=\"right\">");
+                                        inTableCol = true;
                                         break;
 
                                     case "f":
@@ -8307,7 +8532,18 @@ namespace WordSend
                                     case "dc":
                                         ignore = false;
                                         break;
-
+                                    case "table":
+                                        EndHtmlTable();
+                                        break;
+                                    case "tr":
+                                        EndHtmlTableRow();
+                                        break;
+                                    case "tc":
+                                    case "tcr":
+                                    case "th":
+                                    case "thr":
+                                        EndHtmlTableCol();
+                                        break;
                                 }
                             }
                             break;
@@ -8914,7 +9150,6 @@ namespace WordSend
                                         }
                                         break;
                                     case "p":
-                                        EndHtmlTable();
                                         bool beforeVerse = true;
                                         if ((bookRecord.testament.CompareTo("x") == 0) ||
                                             (sfm.Length == 0) || (sfm == "p") || (sfm == "fp") ||
@@ -8936,22 +9171,18 @@ namespace WordSend
                                     case "q":
                                     case "qs":  // qs is really a text style with paragraph attributes, but HTML/CSS can't handle that.
                                     case "b":
-                                        EndHtmlTable();
                                         ProcessParagraphStart(false);
                                         break;
                                     case "mt":
                                     case "d":
                                     case "s":
-                                        EndHtmlTable();
                                         ProcessParagraphStart(true);
                                         break;
                                     case "hr":
-                                        EndHtmlTable();
                                         EndHtmlParagraph();
                                         WriteHtml("<hr />");
                                         break;
                                     case "c":
-                                        EndHtmlTable();
                                         ProcessChapter();
                                         break;
                                     case "cp":
@@ -8992,13 +9223,11 @@ namespace WordSend
                                         }
                                         break;
                                     case "v":
-                                        EndHtmlTable();
                                         if (chapterNumber == 0)
                                             VirtualChapter();
                                         ProcessVerse();
                                         break;
                                     case "va":
-                                        EndHtmlTable();
                                         if (!usfx.IsEmptyElement)
                                         {
                                             usfx.Read();
@@ -9007,7 +9236,6 @@ namespace WordSend
                                         }
                                         break;
                                     case "vp":
-                                        EndHtmlTable();
                                         if (!usfx.IsEmptyElement)
                                         {
                                             usfx.Read();
@@ -9039,43 +9267,30 @@ namespace WordSend
                                             sfm = usfx.Name;
                                         StartHtmlTextStyle(sfm);
                                         break;
-                                    case "milestone":
-                                        switch (sfm)
-                                        {
-                                            case "th":
-                                                EndHtmlTableCol();
-                                                StartHtmlTable();
-                                                WriteHtml("<td><b>");
-                                                inTableCol = true;
-                                                inTableBold = true;
-                                                break;
-                                            case "tr":
-                                                EndHtmlTableRow();
-                                                StartHtmlTable();
-                                                WriteHtml("<tr>");
-                                                inTableRow = true;
-                                                break;
-                                            case "thr":
-                                                EndHtmlTableCol();
-                                                WriteHtml("<td align=\"right\"><b>");
-                                                inTableBold = true;
-                                                inTableCol = true;
-                                                break;
-                                            case "tc":
-                                                EndHtmlTableCol();
-                                                WriteHtml("<td>");
-                                                inTableCol = true;
-                                                break;
-                                            case "tcr":
-                                                EndHtmlTableCol();
-                                                WriteHtml("<td align=\"right\">");
-                                                inTableCol = true;
-                                                break;
-                                            case "hr":
-                                                EndHtmlTable();
-												WriteHorizontalRule();
-                                          break;
-                                        }
+                                    case "table":
+                                        StartHtmlTable();
+                                        break;
+                                    case "th":
+                                        WriteHtml("<td><b>");
+                                        inTableCol = true;
+                                        inTableBold = true;
+                                        break;
+                                    case "tr":
+                                        WriteHtml("<tr>");
+                                        inTableRow = true;
+                                        break;
+                                    case "thr":
+                                        WriteHtml("<td align=\"right\"><b>");
+                                        inTableBold = true;
+                                        inTableCol = true;
+                                        break;
+                                    case "tc":
+                                        WriteHtml("<td>");
+                                        inTableCol = true;
+                                        break;
+                                    case "tcr":
+                                        WriteHtml("<td align=\"right\">");
+                                        inTableCol = true;
                                         break;
 
                                     case "f":
@@ -9237,6 +9452,18 @@ namespace WordSend
                                     case "wj":
                                     case "cs":
                                         EndHtmlTextStyle();
+                                        break;
+                                    case "table":
+                                        EndHtmlTable();
+                                        break;
+                                    case "tr":
+                                        EndHtmlTableRow();
+                                        break;
+                                    case "thr":
+                                    case "th":
+                                    case "tc":
+                                    case "tcr":
+                                        EndHtmlTableCol();
                                         break;
                                     case "f":
                                     case "x":

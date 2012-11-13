@@ -601,7 +601,8 @@ namespace haiola
                     (fileType != ".XML") && (fileType != ".HTM") &&
                     (fileType != ".KB2") && (fileType != ".HTML") &&
                     (fileType != ".CSS") && (fileType != ".SWP") &&
-                    (fileType != ".VRS") && (!inputFile.EndsWith("~")))
+                    (fileType != ".VRS") && (!inputFile.EndsWith("~")) &&
+                    (filename.ToLower() != "autocorrect.txt"))
                 {
                     currentConversion = "preprocessing " + filename;
                     Application.DoEvents();
@@ -1188,6 +1189,80 @@ In addition, you have permission to convert the text to different file formats, 
             }
         }
 
+        private void ConvertUsfxToMosis()
+        {
+            currentConversion = "writing MOSIS";
+            if ((m_options.languageId.Length < 3) || (m_options.translationId.Length < 3))
+                return;
+            string UsfxPath = Path.Combine(m_outputProjectDirectory, "usfx");
+            string mosisPath = Path.Combine(m_outputProjectDirectory, "mosis");
+            if (!Directory.Exists(UsfxPath))
+            {
+                MessageBox.Show(this, UsfxPath + " not found!", "ERROR");
+                return;
+            }
+            string usfxFilePath = Path.Combine(UsfxPath, "usfx.xml");
+            string mosisFilePath = Path.Combine(mosisPath, m_options.translationId + "_osis.xml");
+
+            Utils.EnsureDirectory(m_outputDirectory);
+            Utils.EnsureDirectory(m_outputProjectDirectory);
+            Utils.EnsureDirectory(mosisPath);
+
+            usfxToMosisConverter toMosis = new usfxToMosisConverter();
+            toMosis.languageCode = m_options.languageId;
+            toMosis.translationId = m_options.translationId;
+            toMosis.revisionDateTime = m_options.contentUpdateDate;
+            toMosis.vernacularTitle = m_options.vernacularTitle;
+            toMosis.contentCreator = m_options.contentCreator;
+            toMosis.contentContributor = m_options.contributor;
+            toMosis.englishDescription = m_options.EnglishDescription;
+            toMosis.lwcDescription = m_options.lwcDescription;
+            toMosis.printPublisher = m_options.printPublisher;
+            toMosis.ePublisher = m_options.electronicPublisher;
+            toMosis.languageName = m_options.languageNameInEnglish;
+            toMosis.dialect = m_options.dialect;
+            toMosis.vernacularLanguageName = m_options.languageName;
+            toMosis.copyrightNotice = m_options.publicDomain ? "public domain" : "Copyright © " + m_options.copyrightYears + " " + m_options.copyrightOwner;
+            if (m_options.publicDomain)
+            {
+                toMosis.rightsNotice = @"This work is in the Public Domain. That means that it is not copyrighted.
+ It is still subject to God's Law concerning His Word, including the Great Commission (Matthew 28:18-20).
+";
+            }
+            else if (m_options.creativeCommons)
+            {
+                toMosis.rightsNotice = @"This Bible translation is made available to you under the terms of the
+ Creative Commons Attribution-Noncommercial-No Derivative Works license (http://creativecommons.org/licenses/by-nc-nd/3.0/).
+ In addition, you have permission to make derivative works that are only extracts and/or file format changes, but which do not alter any of the words or punctuation.
+";
+            }
+            else
+            {
+                toMosis.rightsNotice = String.Empty;
+            }
+            if (m_options.rightsStatement.Length > 0)
+            {
+                toMosis.rightsNotice += m_options.rightsStatement;
+            }
+            string logFile = Path.Combine(m_outputProjectDirectory, "MosisConversionReport.txt");
+            Logit.OpenFile(logFile);
+            toMosis.ConvertUsfxToMosis(usfxFilePath, mosisFilePath);
+            Logit.CloseFile();
+            if (Logit.loggedError)
+            {
+                StreamReader log = new StreamReader(logFile);
+                string errors = log.ReadToEnd();
+                log.Close();
+                string message = errors;
+                if (errors.Length > 5000)
+                {
+                    // Super-long messages freeze things up
+                    message = message.Substring(0, 5000) + "\n...and more (see log file)";
+                }
+                MessageBox.Show(this, message, "Errors in " + logFile);
+            }
+        }
+
         private void ProcessOneProject(string projDirName)
         {
             SetCurrentProject(projDirName);
@@ -1201,6 +1276,9 @@ In addition, you have permission to convert the text to different file formats, 
         	Application.DoEvents();
             if (fAllRunning)
                 ConvertUsfxToPortableHtml();
+            Application.DoEvents();
+            if (fAllRunning)
+                ConvertUsfxToMosis();
             Application.DoEvents();
             if (fAllRunning)
                 DoPostprocess();
