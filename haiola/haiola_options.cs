@@ -81,19 +81,19 @@ namespace haiola
 		public string languageName
 		{
 			get { return ini.ReadString("languageName", String.Empty); }
-			set { ini.WriteString("languageName", value); }
+			set { ini.WriteString("languageName", value.Trim()); }
 		}
 
 		public string languageNameInEnglish
 		{
 			get { return ini.ReadString("languageNameInEnglish", String.Empty); }
-			set { ini.WriteString("languageNameInEnglish", value); }
+			set { ini.WriteString("languageNameInEnglish", value.Trim()); }
 		}
 
 		public string languageId
 		{
 			get { return ini.ReadString("languageId", String.Empty); }
-			set { ini.WriteString("languageId", value); }
+			set { ini.WriteString("languageId", value.Trim()); }
 		}
 
 		public string translationId
@@ -105,45 +105,45 @@ namespace haiola
 					dialect = "-" + dialect;
 				return ini.ReadString("translationId", ini.ReadString("languageId", String.Empty) + dialect);
 			}
-			set { ini.WriteString("translationId", value); }
+			set { ini.WriteString("translationId", value.Trim()); }
 		}
 
 
 		public string dialect
 		{
 			get { return ini.ReadString("dialect", String.Empty); }
-			set { ini.WriteString("dialect", value); }
+			set { ini.WriteString("dialect", value.Trim()); }
 		}
 
 
 		public string contentCreator
 		{
 			get { return ini.ReadString("contentCreator", "Wycliffe Bible Translators"); }
-			set { ini.WriteString("contentCreator", value); }
+			set { ini.WriteString("contentCreator", value.Trim()); }
 		}
 
 		public string contributor
 		{
 			get { return ini.ReadString("contributor", String.Empty); }
-			set { ini.WriteString("contributor", value); }
+			set { ini.WriteString("contributor", value.Trim()); }
 		}
 
 		public string vernacularTitle
 		{
 			get { return ini.ReadString("vernacularTitle", String.Empty); }
-			set { ini.WriteString("vernacularTitle", value); }
+			set { ini.WriteString("vernacularTitle", value.Trim()); }
 		}
 
 		public string EnglishDescription
 		{
 			get { return ini.ReadString("EnglishDescription", String.Empty); }
-			set { ini.WriteString("EnglishDescription", value); }
+			set { ini.WriteString("EnglishDescription", value.Trim()); }
 		}
 
 		public string lwcDescription
 		{
 			get { return ini.ReadString("lwcDescription", String.Empty); }
-			set { ini.WriteString("lwcDescription", value); }
+			set { ini.WriteString("lwcDescription", value.Trim()); }
 		}
 
 
@@ -245,91 +245,91 @@ namespace haiola
 		public string copyrightOwner
 		{
 			get { return ini.ReadString("copyrightOwner", String.Empty); }
-			set { ini.WriteString("copyrightOwner", value); }
+			set { ini.WriteString("copyrightOwner", value.Trim()); }
 		}
 
         public string copyrightOwnerAbbrev
         {
             get { return ini.ReadString("copyrightOwnerAbbrev", String.Empty); }
-            set { ini.WriteString("copyrightOwnerAbbrev", value); }
+            set { ini.WriteString("copyrightOwnerAbbrev", value.Trim()); }
         }
 
         public string copyrightOwnerUrl
         {
             get { return ini.ReadString("copyrightOwnerUrl", String.Empty); }
-            set { ini.WriteString("copyrightOwnerUrl", value); }
+            set { ini.WriteString("copyrightOwnerUrl", value.Trim()); }
         }
 
         public string copyrightYears
 		{
 			get { return ini.ReadString("copyrightYears", String.Empty); }
-			set { ini.WriteString("copyrightYears", value); }
+			set { ini.WriteString("copyrightYears", value.Trim()); }
 		}
 
 		public string rightsStatement
 		{
 			get { return ini.ReadString("rightsStatement", String.Empty); }
-			set { ini.WriteString("rightsStatement", value); }
+			set { ini.WriteString("rightsStatement", value.Trim()); }
 		}
 
 		public string printPublisher
 		{
 			get { return ini.ReadString("printPublisher", String.Empty); }
-			set { ini.WriteString("printPublisher", value); }
+			set { ini.WriteString("printPublisher", value.Trim()); }
 		}
 
 		public string electronicPublisher
 		{
 			get { return ini.ReadString("electronicPublisher", "PNG Bible Translation Association"); }
-			set { ini.WriteString("electronicPublisher", value); }
+			set { ini.WriteString("electronicPublisher", value.Trim()); }
 		}
 
 		public string homeLink
 		{
 			get { return ini.ReadString("homeLink", String.Empty); }
-			set { ini.WriteString("homeLink", value); }
+			set { ini.WriteString("homeLink", value.Trim()); }
 		}
 
 		public string copyrightLink
 		{
 			get { return ini.ReadString("copyrightLink", "<a href=\"copyright.htm\">©</a>"); }
-			set { ini.WriteString("copyrightLink", value); }
+			set { ini.WriteString("copyrightLink", value.Trim()); }
 		}
 
 		public string goText
 		{
 			get { return ini.ReadString("goText", "Go!"); }
-			set { ini.WriteString("goText", value); }
+            set { ini.WriteString("goText", value.Trim()); }
 		}
 
 		public string footerHtml
 		{
 			get { return ini.ReadString("footerHtml", String.Empty); }
-			set { ini.WriteString("footerHtml", value); }
+            set { ini.WriteString("footerHtml", value.Trim()); }
 		}
 
 		public string indexHtml
 		{
 			get { return ini.ReadString("indexHtml", String.Empty); }
-			set { ini.WriteString("indexHtml", value); }
+            set { ini.WriteString("indexHtml", value.Trim()); }
 		}
 
 		public string licenseHtml
 		{
 			get { return ini.ReadString("licenseHtml", String.Empty); }
-			set { ini.WriteString("licenseHtml", value); }
+            set { ini.WriteString("licenseHtml", value.Trim()); }
 		}
 
 		public string versificationScheme
 		{
 			get { return ini.ReadString("versificationScheme", "Automatic"); }
-			set { ini.WriteString("versificationScheme", value); }
+            set { ini.WriteString("versificationScheme", value.Trim()); }
 		}
 
 		public string psalmLabel
 		{
 			get { return ini.ReadString("psalmLabel", String.Empty); }
-			set { ini.WriteString("psalmLabel", value); }
+            set { ini.WriteString("psalmLabel", value.Trim()); }
 		}
 
 		public string chapterLabel
