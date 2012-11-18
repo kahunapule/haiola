@@ -96,8 +96,27 @@ namespace BibleFileLib
 			string rootFileName = "root.htm";
 			string rootFilePath = Path.Combine(htmDir, rootFileName);
 			WriteFrameFile(indexFilePath, "rows=\"35, *\"", true, "navigation", NavigationFileName, "body", rootFileName, null);
+		    var firstFrameContents = "Introduction.htm";
+            if (!File.Exists(Path.Combine(htmDir, firstFrameContents)))
+		    {
+		        // We want to point the first frame instead at the first thing we have.
+		        var firstBook = (from br in bookInfo.publishArray where br != null && br.HasContent select br).FirstOrDefault();
+                if (firstBook != null)
+                {
+                    var bookId = firstBook.tla;
+                    var tocFile = bookId + "00"; // Enhance: refactor to encapsulate this knowledge somewhere.
+                    if (bookId == "PSA")
+                        tocFile += "0";
+                    if (File.Exists(Path.Combine(htmDir, Path.ChangeExtension(tocFile, "htm"))))
+                        firstFrameContents = tocFile;
+                    else
+                    {
+                        firstFrameContents = tocFile.Substring(0, tocFile.Length - 1) + "1"; // Review: what if no chapter 1??
+                    }
+                }
+		    }
 			WriteFrameFile(rootFilePath, "cols=\"20%,80%\"", false, "index", UsfxToChapterIndex.ChapIndexFileName, "main",
-			               "Introduction.htm", null);
+                           Path.ChangeExtension(firstFrameContents, "htm"), null);
 
 			// Also generate navigation file.
 			var navPath = Path.Combine(htmDir, NavigationFileName);

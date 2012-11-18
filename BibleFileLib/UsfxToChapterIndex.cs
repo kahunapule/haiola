@@ -64,6 +64,8 @@ namespace BibleFileLib
 				htm.WriteLine("</div>");
 			}
 
+		    string htmDirectory = Path.GetDirectoryName(chapterIndexPath);
+
 			if (chapterNumber > 1)
 			{
 				htm.WriteLine("<p class=\"IndexChapterList\">" + chapterLinks + "</p>");
@@ -162,9 +164,13 @@ namespace BibleFileLib
 							//    <p class="IndexChapterList"><a target="top" href="frame_MRK01.htm">1</a> <a target="top" href="frame_MRK02.htm">2</a>...  </p>
 							//</div>
 							htm.WriteLine("<div id=\"" + bookId + "\" class=\"BookChapIndex\">");
-                            // A TOC page is ONLY generated if there are headings in the book to generate it with.
-							htm.WriteLine("<p class=\"IndexBookName\"><a target=\"_top\" href=\""
-								+ UsfxToFramedHtmlConverter.TopFrameName(bookId, 0) + "\">" // bookid00{0} is the id generated for the TOC page.
+                            // A TOC page is ONLY generated if there are headings in the book to generate it with. If there isn't one, the book name
+                            // link goes straight to chapter 1. (bookid00{0} is the id generated for the TOC page by TopFrameName(bookId, 0))
+					        var firstFrameName = UsfxToFramedHtmlConverter.TopFrameName(bookId, 0);
+                            if (!File.Exists(Path.Combine(htmDirectory, firstFrameName)))
+                                firstFrameName = UsfxToFramedHtmlConverter.TopFrameName(bookId, 1);
+                            htm.WriteLine("<p class=\"IndexBookName\"><a target=\"_top\" href=\""
+								+ firstFrameName + "\">"
 								+ usfxToHtmlConverter.EscapeHtml(vernacularName) + "</a></p>");
 							// If we have an introduction file for this book generate a link to it.
 							string introductionFileName = bookId + IntroductionSuffix;
