@@ -2387,6 +2387,11 @@ namespace WordSend
 			tla = osisName = name = shortName = testament = vernacularAbbreviation = vernacularHeader = vernacularName = "";
             toc = new StringBuilder();
 		}
+
+        public bool HasContent
+        {
+            get { return isPresent && chapterFiles != null && chapterFiles.Count > 0; }
+        }
 	}
 
 	public class BibleBookInfo
@@ -6934,7 +6939,7 @@ namespace WordSend
                     }
                     else
                     {
-                        if (br.isPresent && (br.chapterFiles != null) && (br.chapterFiles.Count > 0))
+                        if (br.HasContent)
                         {
                             bsb.Append("<option value=\"" + br.chapterFiles[0] + ".htm\">" + br.vernacularHeader + "</option>\r\n");
                         }
