@@ -33,6 +33,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_123385DCA6674EFDB5AEF382AD40FD09"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_21F65CCFF69E4AC882F094737198A21F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -88,19 +94,13 @@
         "Entry"
         {
         "MsmKey" = "8:_4E6E215521895D49A2751FC0E8BADA9F"
-        "OwnerKey" = "8:_3AAE10150E114102B1518343870EC68B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_4E6E215521895D49A2751FC0E8BADA9F"
-        "OwnerKey" = "8:_69B83DE7118FAE4DDBA6DB99A1C371CC"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_4E6E215521895D49A2751FC0E8BADA9F"
         "OwnerKey" = "8:_8FBC278002474880B5E02AAE8F410727"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4E6E215521895D49A2751FC0E8BADA9F"
+        "OwnerKey" = "8:_3AAE10150E114102B1518343870EC68B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -125,18 +125,6 @@
         {
         "MsmKey" = "8:_63DABBC1CB3C462F88F1882A3909AFAD"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_69B83DE7118FAE4DDBA6DB99A1C371CC"
-        "OwnerKey" = "8:_8FBC278002474880B5E02AAE8F410727"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_69B83DE7118FAE4DDBA6DB99A1C371CC"
-        "OwnerKey" = "8:_3AAE10150E114102B1518343870EC68B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -244,13 +232,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_3AAE10150E114102B1518343870EC68B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_69B83DE7118FAE4DDBA6DB99A1C371CC"
+        "OwnerKey" = "8:_97E772F5BDD44258B25320998523FD2A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -262,7 +244,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_97E772F5BDD44258B25320998523FD2A"
+        "OwnerKey" = "8:_3AAE10150E114102B1518343870EC68B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -400,6 +382,26 @@
             {
             "SourcePath" = "8:\\\\vmware-host\\Shared Folders\\Documents\\source\\prophero\\haiola\\SFMInfo.xsd"
             "TargetName" = "8:SFMInfo.xsd"
+            "Tag" = "8:"
+            "Folder" = "8:_D6577D87220B40D5AB461D56EDAD5B1D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_123385DCA6674EFDB5AEF382AD40FD09"
+            {
+            "SourcePath" = "8:..\\haiola\\langnames.xml"
+            "TargetName" = "8:langnames.xml"
             "Tag" = "8:"
             "Folder" = "8:_D6577D87220B40D5AB461D56EDAD5B1D"
             "Condition" = "8:"
@@ -560,7 +562,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:BibleFileLib, Version=0.0.4659.19051, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:BibleFileLib, Version=0.0.4695.19256, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
                     "_4E6E215521895D49A2751FC0E8BADA9F"
@@ -665,37 +667,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_69B83DE7118FAE4DDBA6DB99A1C371CC"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:haiola, Version=0.0.0.1, Culture=neutral, processorArchitecture=x86"
-                "ScatterAssemblies"
-                {
-                    "_69B83DE7118FAE4DDBA6DB99A1C371CC"
-                    {
-                    "Name" = "8:haiola.exe"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:haiola.exe"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_D6577D87220B40D5AB461D56EDAD5B1D"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_731860DE2EB5449C9D550ECDF4F0880C"
@@ -1035,7 +1006,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Haiola"
         "ProductCode" = "8:{72EF1D36-A2F1-435F-98B5-92D507D51978}"
-        "PackageCode" = "8:{6822C22C-D0ED-4D23-8639-9A86332C092E}"
+        "PackageCode" = "8:{0BBE5C77-A677-4400-9B17-84D644821BC8}"
         "UpgradeCode" = "8:{B37D5AD6-4216-4FEF-B32B-31D132FA7804}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

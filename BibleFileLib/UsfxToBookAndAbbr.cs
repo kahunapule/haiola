@@ -25,10 +25,9 @@ namespace BibleFileLib
 		/// <summary>
 		/// Same values as VernacularNames.Keys and ReferenceAbbreviations.Keys, but in the order they appear in the file.
 		/// </summary>
-		public List<string> BookIds { get; private set; } 
+		public List<string> BookIds { get; private set; }
 
 		private XmlTextReader usfx;
-
 		private string vernacularName = ""; // from toc level 1 if found
 		private string mtName = ""; // from p sfm = mt level = 1
 		private string bookId = ""; // ID of current book
