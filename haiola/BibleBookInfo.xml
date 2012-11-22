@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSPY v2004 rel. 3 U (http://www.xmlspy.com) by Michael Paul Johnson (private) -->
-<BibleBookInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="C:\sil\onyx\BibleBookInfo.xsd">
+<BibleBookInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="BibleBookInfo.xsd">
 	<Book testament="x">
 		<sfmTla>FRT</sfmTla>
 		<osisName>Preface</osisName>

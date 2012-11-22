@@ -620,6 +620,38 @@ namespace haiola
             }
         }
 
+        private int loggedLineCount = 0;
+
+        private void showMessageString(string s)
+        {
+            loggedLineCount++;
+            if (loggedLineCount < 9)
+            {
+                messagesListBox.Items.Add(s);
+                messagesListBox.SelectedIndex = messagesListBox.Items.Count - 1;
+            }
+            else if (loggedLineCount == 10)
+            {
+                messagesListBox.Items.Add("More messages are in " + Logit.logFileName);
+                messagesListBox.SelectedIndex = messagesListBox.Items.Count - 1;
+
+            }
+            if (Logit.loggedError)
+            {
+                BackColor = messagesListBox.BackColor = Color.LightPink;
+                m_options.lastRunResult = false;
+            }
+            Application.DoEvents();
+        }
+
+        private void logProjectStart(string s)
+        {
+            loggedLineCount = 0;
+            messagesListBox.Items.Add(DateTime.Now.ToString() + " " + s);
+            messagesListBox.SelectedIndex = messagesListBox.Items.Count - 1;
+            m_options.lastRunResult = true;
+        }
+
         private void ConvertUsfmToUsfx()
         {
             string UsfmDir = Path.Combine(m_outputProjectDirectory, "usfm");
@@ -640,6 +672,8 @@ namespace haiola
             Utils.EnsureDirectory(UsfxPath);
             string logFile = Path.Combine(m_outputProjectDirectory, "ConversionReports.txt");
             Logit.OpenFile(logFile);
+            Logit.UpdateStatus = updateConversionProgress;
+            Logit.GUIWriteString = showMessageString;
             SFConverter.scripture = new Scriptures();
             Logit.loggedError = false;
 
@@ -654,16 +688,7 @@ namespace haiola
             Logit.CloseFile();
             if (Logit.loggedError)
             {
-                StreamReader log = new StreamReader(logFile);
-                string errors = log.ReadToEnd();
-                log.Close();
-            	string message = errors;
-				if (errors.Length > 5000)
-				{
-					// Super-long messages freeze things up
-					message = message.Substring(0, 5000) + "\n...and more (see log file)";
-				}
-                MessageBox.Show(this, message, "Errors in " + logFile);
+                m_options.lastRunResult = false;
             }
             currentConversion = "converted USFM to USFX.";
             Application.DoEvents();
@@ -773,7 +798,8 @@ namespace haiola
             toHtm.htmlextrasDir = Path.Combine(m_inputProjectDirectory, "htmlextras");
             string logFile = Path.Combine(m_outputProjectDirectory, "HTMLConversionReport.txt");
             Logit.OpenFile(logFile);
-
+            Logit.GUIWriteString = showMessageString;
+            Logit.UpdateStatus = updateConversionProgress;
             toHtm.indexDateStamp = "HTML generated " + DateTime.UtcNow.ToString("d MMM yyyy") +
                 " from source files dated " + sourceDate.ToString("d MMM yyyy");
         	toHtm.GeneratingConcordance = m_options.GenerateConcordance;
@@ -800,16 +826,7 @@ namespace haiola
             Logit.CloseFile();
             if (Logit.loggedError)
             {
-                StreamReader log = new StreamReader(logFile);
-                string errors = log.ReadToEnd();
-                log.Close();
-                string message = errors;
-                if (errors.Length > 5000)
-                {
-                    // Super-long messages freeze things up
-                    message = message.Substring(0, 5000) + "\n...and more (see log file)";
-                }
-                MessageBox.Show(this, message, "Errors in " + logFile);
+                m_options.lastRunResult = false;
             }
 
             currentConversion = "Writing auxilliary metadata files.";
@@ -1152,6 +1169,8 @@ In addition, you have permission to convert the text to different file formats, 
 
                                 logFile = Path.Combine(m_outputProjectDirectory, "usfx2usfm_log.txt");
                                 Logit.OpenFile(logFile);
+                                Logit.GUIWriteString = showMessageString;
+                                Logit.UpdateStatus = updateConversionProgress;
                                 SFConverter.scripture = new Scriptures();
                                 Logit.loggedError = false;
                                 currentConversion = "converting from USFX to USFM";
@@ -1160,10 +1179,7 @@ In addition, you have permission to convert the text to different file formats, 
                                 Logit.CloseFile();
                                 if (Logit.loggedError)
                                 {
-                                    StreamReader log = new StreamReader(logFile);
-                                    string errors = log.ReadToEnd();
-                                    log.Close();
-                                    MessageBox.Show(errors, "Errors in " + logFile);
+                                    m_options.lastRunResult = false;
                                 }
                                 currentConversion = "converted USFM to USFX.";
                             }
@@ -1246,20 +1262,12 @@ In addition, you have permission to convert the text to different file formats, 
             }
             string logFile = Path.Combine(m_outputProjectDirectory, "MosisConversionReport.txt");
             Logit.OpenFile(logFile);
+            Logit.GUIWriteString = showMessageString;
             toMosis.ConvertUsfxToMosis(usfxFilePath, mosisFilePath);
             Logit.CloseFile();
             if (Logit.loggedError)
             {
-                StreamReader log = new StreamReader(logFile);
-                string errors = log.ReadToEnd();
-                log.Close();
-                string message = errors;
-                if (errors.Length > 5000)
-                {
-                    // Super-long messages freeze things up
-                    message = message.Substring(0, 5000) + "\n...and more (see log file)";
-                }
-                MessageBox.Show(this, message, "Errors in " + logFile);
+                m_options.lastRunResult = false;
             }
         }
 
@@ -1268,7 +1276,7 @@ In addition, you have permission to convert the text to different file formats, 
             SetCurrentProject(projDirName);
         	m_xiniPath = Path.Combine(m_inputProjectDirectory, "options.xini");
             displayOptions();
-
+            logProjectStart("Processing " + m_options.translationId + " in " + m_inputProjectDirectory);
             Application.DoEvents();
             if (!fAllRunning)
                 return;
@@ -1283,6 +1291,7 @@ In addition, you have permission to convert the text to different file formats, 
             if (fAllRunning)
                 DoPostprocess();
             Application.DoEvents();
+            m_options.Write();
         }
 
     	private void SetCurrentProject(string projDirName)
@@ -1330,7 +1339,12 @@ In addition, you have permission to convert the text to different file formats, 
             checkAllButton.Enabled = false;
             unmarkAllButton.Enabled = false;
             runHighlightedButton.Enabled = false;
+            messagesListBox.Items.Clear();
+            messagesListBox.BackColor = Color.LightGreen;
+            tabControl1.SelectedTab = messagesTabPage;
+            BackColor = Color.LightGreen;
             startTime = DateTime.UtcNow;
+            Application.DoEvents();
             timer1.Enabled = true;
             if (fAllRunning)
             {
@@ -1391,8 +1405,11 @@ In addition, you have permission to convert the text to different file formats, 
             if (Program.autorun)
                 Close();
             else
-                System.Diagnostics.Process.Start(Path.Combine(Path.Combine(m_outputProjectDirectory, "html"), "index.htm"));
-
+            {
+                string index = Path.Combine(Path.Combine(m_outputProjectDirectory, "html"), "index.htm");
+                if (File.Exists(index))
+                    System.Diagnostics.Process.Start(index);
+            }
         }
 
         private void reloadButton_Click(object sender, EventArgs e)
@@ -1457,7 +1474,10 @@ In addition, you have permission to convert the text to different file formats, 
             templateLabel.Text = "Current template: " + m_currentTemplate;
             copyFromTemplateButton.Enabled = (m_currentTemplate.Length > 0) && (m_currentTemplate != m_project);
             makeTemplateButton.Enabled = m_currentTemplate != m_project;
-            
+            if (m_options.lastRunResult)
+                BackColor = Color.LightGreen;
+            else
+                BackColor = Color.LightPink;
 
 
             listInputProcesses.SuspendLayout();
@@ -1778,12 +1798,19 @@ In addition, you have permission to convert the text to different file formats, 
             SaveOptions();
         }
 
+        private void updateConversionProgress(string progressMessage)
+        {
+            currentConversion = progressMessage;
+            batchLabel.Text = (DateTime.UtcNow - startTime).ToString().Substring(0, 8) + " " + m_project + " " + currentConversion;
+            Application.DoEvents();
+        }
+
         private DateTime startTime = new DateTime(1, 1, 1);
         private bool triggerautorun;
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            batchLabel.Text = (DateTime.UtcNow - startTime).ToString() + " " + m_project + " " +
+            batchLabel.Text = (DateTime.UtcNow - startTime).ToString().Substring(0,8) + " " + m_project + " " +
                 ConversionProgress;
             if (triggerautorun)
             {
@@ -1866,7 +1893,12 @@ In addition, you have permission to convert the text to different file formats, 
             checkAllButton.Enabled = false;
             unmarkAllButton.Enabled = false;
             runHighlightedButton.Enabled = false;
+            messagesListBox.Items.Clear();
+            messagesListBox.BackColor = Color.LightGreen;
+            tabControl1.SelectedTab = messagesTabPage;
             startTime = DateTime.UtcNow;
+            BackColor = Color.LightGreen;
+            Application.DoEvents();
             timer1.Enabled = true;
             if (fAllRunning)
             {
