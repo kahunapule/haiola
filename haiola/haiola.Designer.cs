@@ -171,6 +171,8 @@
             this.concordanceLinkTextBox = new System.Windows.Forms.TextBox();
             this.label37 = new System.Windows.Forms.Label();
             this.useFramesCheckBox = new System.Windows.Forms.CheckBox();
+            this.messagesTabPage = new System.Windows.Forms.TabPage();
+            this.messagesListBox = new System.Windows.Forms.ListBox();
             this.statsLabel = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.helpButton = new System.Windows.Forms.Button();
@@ -186,6 +188,7 @@
             this.concordanceTabPage.SuspendLayout();
             this.booksPage.SuspendLayout();
             this.framesPage.SuspendLayout();
+            this.messagesTabPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // m_projectsList
@@ -285,6 +288,7 @@
             this.tabControl1.Controls.Add(this.concordanceTabPage);
             this.tabControl1.Controls.Add(this.booksPage);
             this.tabControl1.Controls.Add(this.framesPage);
+            this.tabControl1.Controls.Add(this.messagesTabPage);
             this.tabControl1.Location = new System.Drawing.Point(0, 75);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(2);
             this.tabControl1.Name = "tabControl1";
@@ -1700,6 +1704,27 @@
             this.useFramesCheckBox.Text = "Use the three-pane (frame-based) layout for the main text window";
             this.useFramesCheckBox.UseVisualStyleBackColor = true;
             // 
+            // messagesTabPage
+            // 
+            this.messagesTabPage.Controls.Add(this.messagesListBox);
+            this.messagesTabPage.Location = new System.Drawing.Point(4, 22);
+            this.messagesTabPage.Name = "messagesTabPage";
+            this.messagesTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.messagesTabPage.Size = new System.Drawing.Size(618, 462);
+            this.messagesTabPage.TabIndex = 10;
+            this.messagesTabPage.Text = "Messages";
+            this.messagesTabPage.UseVisualStyleBackColor = true;
+            // 
+            // messagesListBox
+            // 
+            this.messagesListBox.FormattingEnabled = true;
+            this.messagesListBox.HorizontalScrollbar = true;
+            this.messagesListBox.Location = new System.Drawing.Point(0, 6);
+            this.messagesListBox.Name = "messagesListBox";
+            this.messagesListBox.ScrollAlwaysVisible = true;
+            this.messagesListBox.Size = new System.Drawing.Size(617, 446);
+            this.messagesListBox.TabIndex = 0;
+            // 
             // statsLabel
             // 
             this.statsLabel.AutoSize = true;
@@ -1788,6 +1813,7 @@
             this.booksPage.ResumeLayout(false);
             this.framesPage.ResumeLayout(false);
             this.framesPage.PerformLayout();
+            this.messagesTabPage.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1941,6 +1967,8 @@
         private System.Windows.Forms.Label label44;
         private System.Windows.Forms.Label label46;
         private System.Windows.Forms.ComboBox numberSystemComboBox;
+        private System.Windows.Forms.TabPage messagesTabPage;
+        private System.Windows.Forms.ListBox messagesListBox;
 	}
 }
 

@@ -543,7 +543,7 @@
 		<tag>mte</tag>
 		<paragraphStyle>Book Title at Ending</paragraphStyle>
 	</sfm>
-	<sfm kind="meta">
+	<sfm kind="paragraph">
 		<tag>nb</tag>
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
