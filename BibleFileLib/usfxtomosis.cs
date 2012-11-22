@@ -271,17 +271,24 @@ namespace WordSend
             }
         }
 
+        protected const string osisSchema = "osisCore.2.1.1.xsd";
+        protected const string osisNamespace = "http://www.bibletechnologies.net/2003/OSIS/namespace";
+//        protected const string osisSchema = "mosisCore.2.1.1.xsd";
+//        protected const string osisNamespace = "http://ebible.org/mosisCore.2.1.1.xsd";
 
         protected void OpenMosisFile(string mosisFileName)
         {
+            string schemaPath = Path.Combine(Path.GetDirectoryName(mosisFileName), osisSchema);
+            if (!File.Exists(schemaPath))
+                File.Copy(SFConverter.FindAuxFile(osisSchema), schemaPath);
+            
             mosis = new XmlTextWriter(mosisFileName, Encoding.UTF8);
             mosis.Formatting = Formatting.Indented;
             mosis.WriteStartDocument();
             StartMosisElement("osis");
-            mosis.WriteAttributeString("xmlns", "http://www.bibletechnologies.net/2003/OSIS/namespace");
+            mosis.WriteAttributeString("xmlns", osisNamespace);
             mosis.WriteAttributeString("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            mosis.WriteAttributeString("xsi:schemaLocation",
-                "http://www.bibletechnologies.net/2003/OSIS/namespace http://eBible.org/osisCore.2.1.1.xsd");
+            mosis.WriteAttributeString("xsi:schemaLocation", osisNamespace + " " + osisSchema);
             StartMosisElement("osisText");
             mosis.WriteAttributeString("osisIDWork", osisWorkId);
             mosis.WriteAttributeString("osisRefWork", "bible");
@@ -1105,14 +1112,48 @@ namespace WordSend
                 Logit.ShowStatus("reading OSIS Schema and " + mosisFileName);
                 lastElementWritten = "validating MOSIS file";
                 currentElement = "";
+                Directory.SetCurrentDirectory(Path.GetDirectoryName(SFConverter.FindAuxFile(osisSchema)));
+                XmlTextReader txtreader = new XmlTextReader(mosisFileName);
+                // XmlValidatingReader is used for compatibility with Mono, in spite of the warning message.
+                XmlValidatingReader reader = new XmlValidatingReader(txtreader);
+
+                // Set the validation event handler
+
+                reader.ValidationEventHandler += new ValidationEventHandler(ValidationCallBack);
+
+                // Read XML data
+
+                while (reader.Read())
+                {
+                    if (reader.NodeType == XmlNodeType.Element)
+                    {
+                        currentElement = reader.Name;
+                        string verseId = reader.GetAttribute("osisID");
+                        if (verseId != null)
+                        {
+                            osisVerseId = verseId;
+                            Logit.ShowStatus("validating mosis " + osisVerseId);
+                        }
+                    }
+                }
+                reader.Close();
+
+
+
+
+
+
+/*  NOTE: A WARNING MESSAGE SAYS THAT System.Xml.XmlValidatingReader is obsolete, BUT it still works, and the
+ *  suggested replacement function, commented out below, does not work with Mono. Functionality in Mono is
+ *  more important than being warning-free in this case. When the following code works in Mono on Linux,
+ *  the above code could be commented out, instead.
                 XmlReaderSettings settings = new XmlReaderSettings();
-                settings.Schemas.Add("http://www.bibletechnologies.net/2003/OSIS/namespace", SFConverter.FindAuxFile("osisCore.2.1.1.xsd"));
+                settings.Schemas.Add(osisNamespace, osisSchema);
                 settings.ValidationType = ValidationType.Schema;
                 settings.ValidationFlags = XmlSchemaValidationFlags.ReportValidationWarnings;
                 settings.ValidationEventHandler += new ValidationEventHandler(ValidationCallBack);
                 XmlReader mr = XmlTextReader.Create(mosisFileName, settings);
 
-                // Read XML data
                 while (mr.Read())
                 {
                     if (mr.NodeType == XmlNodeType.Element)
@@ -1127,6 +1168,8 @@ namespace WordSend
                     }
                 }
                 mr.Close();
+ * 
+ */
             }
             catch (Exception ex)
             {
