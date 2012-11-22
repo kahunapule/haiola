@@ -429,6 +429,13 @@ namespace haiola
 			set { ini.WriteBool("useArabicDigits", value); }
 		}
 
+        public bool lastRunResult
+        {
+            get { return ini.ReadBool("lastRunResult", false); }
+            set { ini.WriteBool("lastRunResult", value); }
+        }
+
+
         public string numberSystem
         {
             get { return ini.ReadString("numberSystem", ini.ReadBool("useKhmerDigits", false) ? "Khmer" : "Default"); }

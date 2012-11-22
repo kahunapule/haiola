@@ -29,6 +29,7 @@ using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using System.Xml.Schema;
 using System.Diagnostics;
 
 
@@ -446,10 +447,18 @@ namespace WordSend
 	public class Logit
 	{
 		public static StringDelegate GUIWriteString;
+        public static StringDelegate UpdateStatus;
 		public static bool useConsole;
 //		public static System.Windows.Forms.ListBox lstBox;
 		protected static System.IO.StreamWriter sw;
         public static bool loggedError = false;
+        public static string logFileName = String.Empty;
+
+        public static void ShowStatus(string s)
+        {
+            if (UpdateStatus != null)
+                UpdateStatus(s);
+        }
 
         public static void WriteError(string s)
         {
@@ -471,12 +480,14 @@ namespace WordSend
 
 		public static void OpenFile(string fName)
 		{
+            loggedError = false;
 			try
 			{
 				CloseFile();
 				sw = new StreamWriter(fName, false);
 				if (useConsole)
 					Console.WriteLine("Log file opened: "+fName);
+                logFileName = fName;
 			}
 			catch
 			{
@@ -2677,6 +2688,7 @@ namespace WordSend
 		public string text;	// Text up to the next \.
 		public bool isEndTag;	// True for explicit end tags (tag ends in *)
 		public TagRecord info;  // Information about this particular tag
+        public static string currentParagraph;  // Most recently encountered paragraph (after chapter)
 
         // The following state variables are used for input context validation on read.
         private static string prevTag = String.Empty;
@@ -2685,6 +2697,7 @@ namespace WordSend
         private static string currentBook = String.Empty;
         private static string currentChapter = String.Empty;
         private static string currentVerse = String.Empty;
+        private const string columnTags = "th thr tc tcr";
 
 		public SfmObject()
 		{
@@ -2696,6 +2709,7 @@ namespace WordSend
         private void validate()
         {
             bool endFound = false;
+            int i;
 
             if (tag.Length < 1)
                 return;  // Nothing to do.
@@ -2708,14 +2722,46 @@ namespace WordSend
                     currentBook = attribute;
                     currentChapter = "0";
                     currentVerse = "0";
+                    currentParagraph = String.Empty;
                 }
                 else if (tag.CompareTo("c") == 0)
                 {
+                    currentParagraph = String.Empty;
+                    for (i = 0; i < attribute.Length; i++)
+                    {
+                        if (!Char.IsDigit(attribute[i]))
+                        {
+                            Logit.WriteError("Bad chapter value of " + attribute + " at " + currentBook + " " + currentChapter + ":" + currentVerse);
+                            i = attribute.Length;
+                        }
+                    }
                     currentChapter = attribute;
                     currentVerse = "0";
                 }
                 else if (tag.CompareTo("v") == 0)
+                {
+                    for (i = 0; i < attribute.Length; i++)
+                    {
+                        if (!((attribute[i] == '-') || Char.IsDigit(attribute[i])))
+                        {
+                            Logit.WriteError("Bad verse value of " + attribute + " at " + currentBook + " " + currentChapter + ":" + attribute);
+                            i = attribute.Length;
+                        }
+                    }
                     currentVerse = attribute;
+                    if (currentParagraph == String.Empty)
+                        Logit.WriteError("USFM error: no paragraph started at " + currentBook + " " + currentChapter + ":" + currentVerse);
+                }
+            }
+            if ((info.kind.CompareTo("paragraph") == 0) || (tag == "nb"))
+            {
+                currentParagraph = tag;
+                if ((tag == "b") && (text.Trim().Length > 0))
+                    Logit.WriteError("USFM error: \\b is not empty at " + currentBook + " " + currentChapter + ":" + currentVerse);
+            }
+            if ((prevTag == "tr") && (!columnTags.Contains(tag)))
+            {
+                Logit.WriteError("USFM error: table row missing column at " + currentBook + " " + currentChapter + ":" + currentVerse);
             }
 
             // Check to see if we have properly ended a tag range.
@@ -3573,7 +3619,7 @@ namespace WordSend
             }
 			UsfxStyleSuspended = false;
 			isNTPP = true;
-			Logit.WriteLine("--- "+DateTime.Now.ToLongDateString()+" "+DateTime.Now.ToLongTimeString()+" ---");
+			// Logit.WriteLine("--- "+DateTime.Now.ToLongDateString()+" "+DateTime.Now.ToLongTimeString()+" ---");
 			books = new BibleBook[BibleBookInfo.MAXNUMBOOKS];
 			bkInfo = new BibleBookInfo();
 			tags = new TagInfo();
@@ -4010,21 +4056,30 @@ namespace WordSend
 					if (sfm != null)
 					{
 						inUsfxParagraph = true;
-						if ((sfm == "p") || (sfm == "b") || (sfm == "q") || (sfm == "d") || (sfm == "s") || (sfm == "generated"))
-							xw.WriteStartElement(ns+sfm);
-						else
-						{
-							xw.WriteStartElement(ns+"p");
-							xw.WriteAttributeString("sfm", sfm);
-							if ((styleName != null) && (styleName != ""))
-								xw.WriteAttributeString("style", styleName);
-						}
+                        if ((sfm == "d") || (sfm == "s"))
+                        {
+                            EndUsfxVerse();
+                            xw.WriteStartElement(ns + sfm);
+                        }
+                        else if ((sfm == "p") || (sfm == "b") || (sfm == "q") || (sfm == "generated"))
+                        {
+                            xw.WriteStartElement(ns + sfm);
+                        }
+                        else
+                        {
+                            xw.WriteStartElement(ns + "p");
+                            xw.WriteAttributeString("sfm", sfm);
+                            if ((styleName != null) && (styleName != ""))
+                                xw.WriteAttributeString("style", styleName);
+                        }
 						if (level > 1)
 							xw.WriteAttributeString("level", level.ToString());
 					}
 				}
 				if (contents != null)
 					WriteUSFXText(StripLeadingWhiteSpace(contents));
+                if (sfm == "b")
+                    EndUSFXParagraph();
 			}
 			catch (System.Exception ex)
 			{
@@ -4198,11 +4253,32 @@ namespace WordSend
 
         protected void EndUsfxVerse()
         {
-            if (inVerse)
+            SfmObject peek;
+            const string stopTags = "v c id";
+            const string canonicalParagraphs = "p q m pmo pm pmc pi mi nb cls li pc pr ph";
+            bool moreCanonicalText = false;
+            bool inCanonicalParagraph = false;
+            if (inVerse && (usfxStyleCount == 0))
             {
-                xw.WriteStartElement("ve");
-                xw.WriteEndElement();   // ve
-                inVerse = false;
+                if ((!(sf == null)) && !stopTags.Contains(sf.tag))
+                {
+                    peek = book.PeekSfm();
+                    while ((peek != null) && (!stopTags.Contains(peek.tag)) && (!moreCanonicalText))
+                    {
+                        if (peek.info.kind == "paragraph")
+                            inCanonicalParagraph = canonicalParagraphs.Contains(peek.tag);
+                        if (inCanonicalParagraph)
+                            if (peek.text.Trim().Length > 0)
+                                moreCanonicalText = true;
+                        peek = book.PeekSfm();
+                    }
+                }
+                if (!moreCanonicalText)
+                {
+                    xw.WriteStartElement("ve");
+                    xw.WriteEndElement();   // ve
+                    inVerse = false;
+                }
             }
         }
 
@@ -4215,6 +4291,7 @@ namespace WordSend
 					// Logit.WriteLine("Ending style level "+usfxStyleCount.ToString());
 					usfxStyleCount--;
 					xw.WriteEndElement();
+                    activeCharacterStyle = String.Empty;
 				}
 
 				while (usfxNestLevel > 0)
@@ -4485,26 +4562,51 @@ namespace WordSend
 			WriteUSFXText(content);
 		}
 
-		protected static string charStyleTagList = " add bd bdit bk em it k nd no ord pn pro qac qs qt sc sig sls tl wr wj fk fm fq fr ft fv xk xo xq xt";
+		protected static string charStyleTagList = " add bd bdit bk em it k nd no ord pn pro qac qr qs qt rq sc sig sls tl wr wj fk fm fq fr ft fv xk xo xq xt";
 
 		protected string suspendedUsfxStyle;
 		protected bool UsfxStyleSuspended;
+        protected static string activeCharacterStyle = String.Empty;
 
 		protected void StartUSFXStyle(string sfm, string content)
 		{
 			EndWordMLTextRun();
 			if (embedUsfx)
 			{
-				usfxStyleCount++;
-				// Logit.WriteLine("Starting style "+sfm+" level "+usfxStyleCount.ToString());
-				if (charStyleTagList.IndexOf(sfm) > 0)
-					xw.WriteStartElement(ns+sfm);
-				else
-				{
-					xw.WriteStartElement(ns+"cs");
-					xw.WriteAttributeString("sfm", sfm);
-				}
-				suspendedUsfxStyle = sfm;
+                if (activeCharacterStyle == String.Empty)
+                {
+                    usfxStyleCount++;
+                    // Logit.WriteLine("Starting style "+sfm+" level "+usfxStyleCount.ToString());
+                    if (charStyleTagList.IndexOf(sfm) > 0)
+                        xw.WriteStartElement(ns + sfm);
+                    else
+                    {
+                        xw.WriteStartElement(ns + "cs");
+                        xw.WriteAttributeString("sfm", sfm);
+                    }
+                    suspendedUsfxStyle = sfm;
+                    activeCharacterStyle = sfm;
+                }
+                else
+                {
+                    Logit.WriteLine("Warning: Started new character style " + sfm + " without terminating " +
+                        activeCharacterStyle + " at " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                    if (activeCharacterStyle != sfm)
+                    {
+                        EndUSFXStyle();
+                        usfxStyleCount++;
+                        // Logit.WriteLine("Starting style "+sfm+" level "+usfxStyleCount.ToString());
+                        if (charStyleTagList.IndexOf(sfm) > 0)
+                            xw.WriteStartElement(ns + sfm);
+                        else
+                        {
+                            xw.WriteStartElement(ns + "cs");
+                            xw.WriteAttributeString("sfm", sfm);
+                        }
+                        suspendedUsfxStyle = sfm;
+                        activeCharacterStyle = sfm;
+                    }
+                }
 			}
 			WriteUSFXText(content);
 		}
@@ -4516,6 +4618,7 @@ namespace WordSend
 				// Logit.WriteLine(" Ending style level "+usfxStyleCount.ToString());
 				usfxStyleCount--;
 				xw.WriteEndElement();
+                activeCharacterStyle = String.Empty;
 			}
 		}
 
@@ -5347,7 +5450,6 @@ namespace WordSend
 
 		protected void WriteUSFXBook(int bknum)
 		{
-            SfmObject peek;
             Figure fig = new Figure();
             inVerse = false;
             inTable = false;
@@ -5376,26 +5478,7 @@ namespace WordSend
 					    {
 						    case "paragraph":
                                 EndUsfxTable();
-                                if (inVerse)
-                                {
-                                    peek = book.PeekSfm();
-                                    if (peek == null)
-                                    {
-                                        EndUsfxVerse();
-                                    }
-                                    else if (!canonicalParagraphTags.Contains(sf.tag))
-                                    {
-                                        EndUsfxVerse();
-                                    }
-                                    else
-                                    {
-                                        bool notext = sf.text.Trim().Length == 0;
-                                        if (notext && ((peek.tag == "v") || (peek.tag == "c") || (peek.tag == "book")))
-                                        {
-                                            EndUsfxVerse();
-                                        }
-                                    }
-                                }
+                                EndUsfxVerse();
 							    StartUSFXParagraph(sf.tag, sf.level, sf.info.paragraphStyle, sf.text);
 							    break;
 						    case "meta":
@@ -5437,8 +5520,8 @@ namespace WordSend
                                         }
                                         if (usfxStyleCount > 0)
                                         {
+                                            Logit.WriteError("Error: unclosed style " + currentCharacterStyle + " at " + book.bookCode + " " + chapterMark + ":" + verseMark + " ");
                                             EndUSFXStyle();
-                                            Logit.WriteError("Error: unclosed style at " + book.bookCode + " " + chapterMark + ":" + verseMark + " ");
                                         }
 								        StartUSFXElement(sf.tag, "id", sf.attribute, null);
 								        EndUSFXElement();	// ns+v
@@ -5656,8 +5739,8 @@ namespace WordSend
                     }
                     if (usfxStyleCount > 0)
                     {
-                        EndUSFXStyle();
                         Logit.WriteError("Error: unclosed style at " + book.bookCode + " " + chapterMark + ":" + verseMark + " ");
+                        EndUSFXStyle();
                         fatalError = true;
                     }
                     EndUsfxVerse();
@@ -6092,10 +6175,27 @@ namespace WordSend
 		}
 
         public string languageCode = "";
+        protected string UsfxFileName;
+        protected string currentElement;
+        protected string validationBook;
+        protected string validationChapter;
+        protected string validationVerse;
+        protected string validationLocation;
+
+        private void UsfxValidationCallBack(object sender, ValidationEventArgs error)
+        {
+            if (error.Severity == XmlSeverityType.Error)
+                Logit.WriteError("ERROR in " + UsfxFileName + " at " + validationLocation + " after " + currentElement + "\r\n" + error.Message);
+            else
+                Logit.WriteError("Warning in " + UsfxFileName + " at " + validationLocation + "after " + currentElement + "\r\n" + error.Message);
+        }
+
+
 
 		public void WriteUSFX(string fileName)
 		{
 			int j;
+            UsfxFileName = fileName;
 
 			ns = SFConverter.jobIni.ReadString("nameSpace", "");
 			ns.Trim();
@@ -6112,6 +6212,7 @@ namespace WordSend
 				usfxNestLevel = 0;
 				inUsfxParagraph = false;
 				usfxStyleCount = 0;
+                activeCharacterStyle = String.Empty;
 				xw.WriteStartElement(ns+"usfx");
 				xw.WriteAttributeString("xmlns:ns0", @"http://eBible.org/usfx/usfx-2012-11-09.xsd");
 				xw.WriteAttributeString("xmlns:xsi", @"http://www.w3.org/2001/XMLSchema-instance");
@@ -6126,6 +6227,47 @@ namespace WordSend
 				xw.WriteEndDocument();
 				xw.Close();
 //				Logit.WriteLine(fileName+" written.");
+
+                // Validate this file against the Schema
+                /*
+                validationLocation = "header";
+                currentElement = "";
+                XmlReaderSettings settings = new XmlReaderSettings();
+                settings.Schemas.Add("http://ebible.org/usfx-2012-11-18.xsd", SFConverter.FindAuxFile("usfx-2012-11-18.xsd"));
+                settings.ValidationType = ValidationType.Schema;
+                settings.ValidationFlags = XmlSchemaValidationFlags.ReportValidationWarnings;
+                settings.ValidationEventHandler += new ValidationEventHandler(UsfxValidationCallBack);
+                XmlReader ur = XmlTextReader.Create(UsfxFileName, settings);
+
+                // Read XML data
+                while (ur.Read())
+                {
+                    if (ur.NodeType == XmlNodeType.Element)
+                    {
+                        currentElement = ur.Name;
+                        string id = ur.GetAttribute("id");
+                        if (id != null)
+                        {
+                            switch (ur.Name)
+                            {
+                                case "book":
+                                    validationBook = validationLocation = id;
+                                    break;
+                                case "c":
+                                    validationChapter = id;
+                                    validationLocation = validationBook + "." + validationChapter;
+                                    break;
+                                case "v":
+                                    validationVerse = id;
+                                    validationLocation = validationBook + "." + validationChapter + "." + validationVerse;
+                                    break;
+                            }
+                        }
+                    }
+                }
+                ur.Close();
+                */
+
 			}
 			catch (System.Exception ex)
 			{
@@ -8349,6 +8491,7 @@ namespace WordSend
                                     case "ior":
                                     case "wj":
                                     case "cs":
+                                    case "rq":
                                         if (sfm.Length == 0)
                                             sfm = usfx.Name;
                                         StartHtmlTextStyle(sfm);
@@ -8514,6 +8657,7 @@ namespace WordSend
                                     case "ior":
                                     case "wj":
                                     case "cs":
+                                    case "rq":
                                         EndHtmlTextStyle();
                                         break;
                                     case "f":
@@ -9268,6 +9412,7 @@ namespace WordSend
                                     case "ior":
                                     case "wj":
                                     case "cs":
+                                    case "rq":
                                         if (sfm.Length == 0)
                                             sfm = usfx.Name;
                                         StartHtmlTextStyle(sfm);

@@ -16,3 +16,5 @@
 /---/—/
 /--/—/
 /\\restore /\rem /
+/\\v (\d*)\,(\d*) /\v $1-$2 / Fix bad verse bridge syntax
+/// Strip out ^Z characters (CPM EOF leftovers)

@@ -86,11 +86,6 @@
     <Reference Include="System.XML">
       <Name>System.XML</Name>
     </Reference>
-    <ProjectReference Include="..\BibleFileLib\BibleFileLib.csproj">
-      <Name>BibleFileLib</Name>
-      <Project>{F8AAB011-442B-46E6-91D4-B130C74F081B}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.ico" />
@@ -103,6 +98,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BibleFileLib\BibleFileLib.csproj">
+      <Project>{F8AAB011-442B-46E6-91D4-B130C74F081B}</Project>
+      <Name>BibleFileLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
