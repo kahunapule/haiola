@@ -632,7 +632,7 @@ namespace haiola
             }
             else if (loggedLineCount == 10)
             {
-                messagesListBox.Items.Add("More messages are in " + Logit.logFileName);
+                messagesListBox.Items.Add("MORE ERRORS ARE LISTED IN " + Logit.logFileName);
                 messagesListBox.SelectedIndex = messagesListBox.Items.Count - 1;
 
             }
@@ -1807,9 +1807,12 @@ In addition, you have permission to convert the text to different file formats, 
 
         private void updateConversionProgress(string progressMessage)
         {
-            currentConversion = progressMessage;
-            batchLabel.Text = (DateTime.UtcNow - startTime).ToString().Substring(0, 8) + " " + m_project + " " + currentConversion;
-            Application.DoEvents();
+            if (currentConversion != progressMessage)
+            {
+                currentConversion = progressMessage;
+                // batchLabel.Text = (DateTime.UtcNow - startTime).ToString().Substring(0, 8) + " " + m_project + " " + currentConversion;
+                Application.DoEvents();
+            }
         }
 
         private DateTime startTime = new DateTime(1, 1, 1);
@@ -1817,8 +1820,13 @@ In addition, you have permission to convert the text to different file formats, 
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            string progress;
+            if (currentConversion == "Concordance")
+                progress = ConcGenerator.Stage + " " + ConcGenerator.Progress;
+            else
+                progress = currentConversion + " " + WordSend.usfxToHtmlConverter.conversionProgress;
             batchLabel.Text = (DateTime.UtcNow - startTime).ToString().Substring(0,8) + " " + m_project + " " +
-                ConversionProgress;
+                progress;
             if (triggerautorun)
             {
                 triggerautorun = false;
@@ -1826,6 +1834,7 @@ In addition, you have permission to convert the text to different file formats, 
             }
         }
 
+        /*
     	private string ConversionProgress
     	{
     		get
@@ -1835,10 +1844,11 @@ In addition, you have permission to convert the text to different file formats, 
     			return currentConversion + " " + WordSend.usfxToHtmlConverter.conversionProgress;
     		}
     	}
+        */
 
         private void statusNow(string s)
         {
-            batchLabel.Text = (DateTime.UtcNow - startTime).ToString() + " " + m_project + " " + s;
+            batchLabel.Text = (DateTime.UtcNow - startTime).ToString().Substring(0, 8) + " " + m_project + " " + s;
             Application.DoEvents();
         }
 
