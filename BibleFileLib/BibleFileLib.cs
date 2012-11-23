@@ -4535,6 +4535,11 @@ namespace WordSend
 			if (inUSFXNote)
 			{
 				// Logit.WriteLine(" Ending note.");
+                if (inFootnoteParagraph)
+                {
+                    xw.WriteEndElement();   // fp
+                    inFootnoteParagraph = false;
+                }
 				xw.WriteEndElement();	// f, x
 				inUSFXNote = false;
 			}
@@ -4892,6 +4897,7 @@ namespace WordSend
 		protected string chapterLabel;
         public bool fatalError;
 		string templateName;
+        protected bool inFootnoteParagraph = false;
 
 		protected void WriteWordMLBook(int bknum)
 		{
@@ -5477,6 +5483,25 @@ namespace WordSend
 					    switch (sf.info.kind)
 					    {
 						    case "paragraph":
+                                if (inUSFXNote)
+                                {
+                                    if (sf.tag == "fp")
+                                    {
+                                        if (inFootnoteParagraph)
+                                        {
+                                            xw.WriteEndElement();   // fp
+                                        }
+                                        inFootnoteParagraph = true;
+                                        xw.WriteStartElement("fp");
+                                    }
+                                    else
+                                    {
+                                        Logit.WriteError("ERROR: paragraph tag " + sf.tag + " is not allowed in a footnote. " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                                        EndFootnote();
+                                        fatalError = true;
+                                    }
+                                }
+
                                 EndUsfxTable();
                                 EndUsfxVerse();
 							    StartUSFXParagraph(sf.tag, sf.level, sf.info.paragraphStyle, sf.text);
@@ -5487,6 +5512,7 @@ namespace WordSend
 							        case "c":
                                         EndUsfxVerse();
                                         EndUSFXParagraph();
+                                        EndUsfxTable();
 								        chapterMark = sf.attribute;
 								        verseMark = "";
                                         if (inUSFXNote)
@@ -6427,9 +6453,9 @@ namespace WordSend
 			SFWriter usfmFile;
             Figure fig = new Figure();
 
-            //if (outDir.Length == 0)
+            // if (outDir.Length == 0)
             //    outDir = ".";
-			Logit.WriteLine("inFileName="+inFileName+"  outDir="+outDir+"  outFileName="+outFileName);
+			// Logit.WriteLine("inFileName="+inFileName+"  outDir="+outDir+"  outFileName="+outFileName);
 
 			try
 			{
