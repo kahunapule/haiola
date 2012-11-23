@@ -175,7 +175,7 @@ namespace WordSend
             return osisVerseId + ".seID." + serialNumber.ToString("00000");
         }
 
-        protected void SetListLevel(int level, bool canonical)
+        protected void SetListLevel(int level, bool canonical = false)
         {
             while (listLevel > level)
             {   // Let the XmlTextWriter sort out the actual order of the list and item end elements.
@@ -230,7 +230,9 @@ namespace WordSend
         protected void EndCurrentChapter()
         {
             EndCurrentVerse();
+            SetListLevel(0);
             EndLineGroup();
+            
             if (epeID.Length > 0)
             {
                 StartMosisElement("chapter");
@@ -273,8 +275,6 @@ namespace WordSend
 
         protected const string osisSchema = "osisCore.2.1.1.xsd";
         protected const string osisNamespace = "http://www.bibletechnologies.net/2003/OSIS/namespace";
-//        protected const string osisSchema = "mosisCore.2.1.1.xsd";
-//        protected const string osisNamespace = "http://ebible.org/mosisCore.2.1.1.xsd";
 
         protected void OpenMosisFile(string mosisFileName)
         {
@@ -311,7 +311,11 @@ namespace WordSend
  of any punctuation. ALL correct punctuation for quotations for this language, dialect, and translation style, if any, are already
  in the text of the Scriptures. This is why the n attribute of <q> is always the empty string. Because of these limitations, this
  file may be good to include in archives, BUT not to the exclusion of the source USFM, USFX, or USX file(s) from which this Modified
- OSIS file was generated.");
+ OSIS file was generated.
+
+ The schema location given in the headers is local in the current directory for performance and access reasons, but it is not
+ necessarily packaged with this file. The schema can be found at its home at http://www.bibletechnologies.net/osisCore.2.1.1.xsd
+ or mirrored at http://ebible.org/" + osisSchema + " .");
             WriteMosisEndElement();
             StartMosisElement("revisionDesc");
             WriteMosisElementString("date", OsisDateTime(revisionDateTime));
@@ -500,6 +504,7 @@ namespace WordSend
                 {
                     osisWorkId += "." + translationId.Substring(4);
                 }
+                osisWorkId = osisWorkId.Replace('-', '.');
                 OpenMosisFile(mosisFileName);
                 CheckElementLevel(2, "just wrote header");
                 chaptereID = epeID = vpeID = qeID = verseeID = currentTestament = osisVersesId = osisVerseId = String.Empty;
@@ -596,6 +601,9 @@ namespace WordSend
                             case "sig":
                                 StartElementWithAttribute("signed");
                                 break;
+                            case "sls":
+                                StartElementWithAttribute("foreign", "type", "x-secondaryLanguage");
+                                break;
                             case "tl":
                                 StartElementWithAttribute("foreign");
                                 break;
@@ -625,13 +633,16 @@ namespace WordSend
                                 break;
                             case "glo":
                             case "ide":
-                            case "fig": // Don't bother with figures and OSIS. Too hard, and not supported by the readers.
+                            case "fig": // Don't bother with figures and OSIS. Not supported by the readers, so not worth the effort.
                             case "fdc":
                             case "fm":  // Should not actually be in any field texts. Safe to skip.
                             case "idx": // Peripherals - Back Matter Index
                             case "ie":  // Introduction end
                             case "iex": // Introduction explanatory or bridge text
                                 SkipElement();
+                                break;
+                            case "fp":
+                                StartElementWithAttribute("p", "type", "x-footnote");
                                 break;
                             case "fq":
                                 StartElementWithAttribute("q", "who", "unknown", "type", "x-footnote");
@@ -905,18 +916,18 @@ namespace WordSend
                                         case "nb":
                                         case "m":
                                         case "":
-                                            StartMosisElement("p");
+                                            StartElementWithAttribute("p");
                                             break;
                                         case "cls":
                                             StartElementWithAttribute("closer");
                                             break;
                                         case "hr":  // Horizontal rule not supported. Try a line break.
-                                            StartMosisElement("lb");
+                                            StartElementWithAttribute("lb");
                                             break;
                                         case "ib":
                                             EndLineGroup();
                                             SetListLevel(0, true);
-                                            StartMosisElement("lb");
+                                            StartElementWithAttribute("lb");
                                             break;
                                         case "im":
                                             StartElementWithAttribute("p", "type", "x-" + sfm, "canonical", "false");
@@ -959,6 +970,7 @@ namespace WordSend
                                             indentLevel = int.Parse(level.Trim());
                                             SetListLevel(indentLevel, false);
                                             break;
+                                        case "pi":
                                         case "li":
                                             if (level == String.Empty)
                                                 level = "1";
@@ -971,12 +983,6 @@ namespace WordSend
                                         default:
                                             StartElementWithAttribute("p", "type", "x-" + sfm);
                                             break;
-                                    }
-                                    if (usfx.IsEmptyElement)
-                                    {
-                                        if (itemLevel > 0)
-                                            itemLevel--;
-                                        WriteMosisEndElement();
                                     }
                                 }
                                 break;
@@ -1072,20 +1078,22 @@ namespace WordSend
                             case "d":
                             case "dc":
                             case "em":
-                            case "s":
-                            case "it":
                             case "fk":
+                            case "fp":
                             case "fq":
                             case "fqa":
                             case "fr":
                             case "fv":
+                            case "it":
                             case "k":
+                            case "nd":
                             case "qt":
                             case "r":
                             case "rq":
+                            case "s":
                             case "sc":
                             case "sig":
-                            case "nd":
+                            case "sls":
                             case "table":
                             case "tc":
                             case "tcr":

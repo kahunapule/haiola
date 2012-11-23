@@ -1340,6 +1340,14 @@ In addition, you have permission to convert the text to different file formats, 
 
     	private void WorkOnAllButton_Click(object sender, EventArgs e)
         {
+            if (fAllRunning)
+            {
+                fAllRunning = false;
+                WorkOnAllButton.Enabled = false;
+                WorkOnAllButton.Text = "Stopping...";
+                Application.DoEvents();
+                return;
+            }
             btnSetRootDirectory.Enabled = false;
             reloadButton.Enabled = false;
             m_projectsList.Enabled = false;
@@ -1353,14 +1361,6 @@ In addition, you have permission to convert the text to different file formats, 
             startTime = DateTime.UtcNow;
             Application.DoEvents();
             timer1.Enabled = true;
-            if (fAllRunning)
-            {
-                fAllRunning = false;
-                WorkOnAllButton.Enabled = false;
-                WorkOnAllButton.Text = "Stopping...";
-                Application.DoEvents();
-                return;
-            }
             fAllRunning = true;
             WorkOnAllButton.Text = "Stop";
             SaveOptions();
@@ -1481,11 +1481,13 @@ In addition, you have permission to convert the text to different file formats, 
             templateLabel.Text = "Current template: " + m_currentTemplate;
             copyFromTemplateButton.Enabled = (m_currentTemplate.Length > 0) && (m_currentTemplate != m_project);
             makeTemplateButton.Enabled = m_currentTemplate != m_project;
-            if (m_options.lastRunResult)
-                BackColor = Color.LightGreen;
-            else
-                BackColor = Color.LightPink;
-
+            if (!fAllRunning)
+            {
+                if (m_options.lastRunResult)
+                    BackColor = Color.LightGreen;
+                else
+                    BackColor = Color.LightPink;
+            }
 
             listInputProcesses.SuspendLayout();
             listInputProcesses.Items.Clear();
@@ -1904,6 +1906,14 @@ In addition, you have permission to convert the text to different file formats, 
 
         private void runHighlightedButton_Click(object sender, EventArgs e)
         {
+            if (fAllRunning)
+            {
+                fAllRunning = false;
+                WorkOnAllButton.Enabled = false;
+                WorkOnAllButton.Text = "Stopping...";
+                Application.DoEvents();
+                return;
+            }
             btnSetRootDirectory.Enabled = false;
             reloadButton.Enabled = false;
             m_projectsList.Enabled = false;
@@ -1917,14 +1927,6 @@ In addition, you have permission to convert the text to different file formats, 
             BackColor = Color.LightGreen;
             Application.DoEvents();
             timer1.Enabled = true;
-            if (fAllRunning)
-            {
-                fAllRunning = false;
-                WorkOnAllButton.Enabled = false;
-                WorkOnAllButton.Text = "Stopping...";
-                Application.DoEvents();
-                return;
-            }
             fAllRunning = true;
             WorkOnAllButton.Text = "Stop";
             SaveOptions();
