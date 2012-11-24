@@ -7216,6 +7216,12 @@ namespace WordSend
 		/// </summary>
 		string parallelPassage;
 
+        /// <summary>
+        /// Null except when we have seen an "x" element and not yet seen the corresponding "/x". Then we accumulate here the material we will write to
+        /// the footnote, after attempting to convert relevant parts to cross-refs.
+        /// </summary>
+        private string xRef;
+
 		public usfxToHtmlConverter()
 		{
 			ConcordanceLinkText = "Concordance";
@@ -7750,9 +7756,13 @@ namespace WordSend
         {
             if (!ignore)
             {
+                var escapeHtml = EscapeHtml(text);
                 if (inFootnote)
                 {
-                    footnotesToWrite.Append(EscapeHtml(text));
+                    if (xRef != null && !inFootnoteStyle)
+                        xRef += escapeHtml; // accumluate for hot-link processing.
+                    else
+                        footnotesToWrite.Append(escapeHtml);
                     // Also written to main document section for pop-up.
                 }
                 else
@@ -7763,7 +7773,7 @@ namespace WordSend
                         eatSpace = false;
                     }
                 }
-                WriteHtml(EscapeHtml(text));
+                WriteHtml(escapeHtml);
             }
         }
 
@@ -7809,7 +7819,11 @@ namespace WordSend
                 if (style == "f")
                     marker = footNoteCall.Marker();
                 else
+                {
+                    // style =="x", cross-ref: start accumulating text we will process for hot link cross-refs
+                    xRef = "";
                     marker = "✡";
+                }
             }
             if (string.Compare(marker, "-") == 0)
                 marker = "";
@@ -7827,6 +7841,9 @@ namespace WordSend
             {
                 EndHtmlNoteStyle();
                 WriteHtml("</span></a>");   // End popup text
+                if (xRef != null)
+                    footnotesToWrite.Append(ConvertCrossRefsToHotLinks(xRef));
+                xRef = null;
                 footnotesToWrite.Append("</p>\r\n");    // End footnote paragraph
                 inFootnote = false;
             }
