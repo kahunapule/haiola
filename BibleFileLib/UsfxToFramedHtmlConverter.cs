@@ -84,6 +84,18 @@ namespace BibleFileLib
 			return string.Format(" onload=\"onLoadBook('{0}')\"", currentBookHeader);
 		}
 
+        /// <summary>
+        /// Override to make the hot link affect the whole page, so we don't just update one pane, but put the right URL for the target
+        /// chapter into the main URL box.
+        /// </summary>
+        internal override string HotlinkLeadIn
+        {
+            get
+            {
+                return "<a target=\"_top\" href=\"";
+            }
+        }
+
 		/// <summary>
 		/// Overrride for now to generate a master frame file. It expects to find an Introduction.htm for the main pane. Later we may generate the introduction itself, or copy one if found...
 		/// </summary>

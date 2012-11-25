@@ -9973,8 +9973,8 @@ namespace WordSend
 			// Put anything in the input before the reference
 			output.Append(input.Substring(0, start));
 			// The next bit will be part of the anchor, so start it.
-			output.Append("<a href=\"");
-			output.Append(anchor);
+			output.Append(HotlinkLeadIn);
+			output.Append(MainFileLinkTarget(anchor));
 			output.Append("\">");
 			// The bit that should be the text of the anchor: input from start to end of reference.
 			output.Append(input.Substring(start, m.Index + m.Length - start));
@@ -9983,6 +9983,14 @@ namespace WordSend
 			// And add anything else, possibly final punctuation
 			output.Append(input.Substring(m.Index + m.Length));
 		}
+
+        /// <summary>
+        /// The start of a hot link. Framed html converter overrides to make the target _top.
+        /// </summary>
+        internal virtual string HotlinkLeadIn
+        {
+            get { return "<a href=\""; }
+        }
     }
 
 	public class SFConverter
