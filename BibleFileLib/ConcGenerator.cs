@@ -765,8 +765,7 @@ namespace BibleFileLib
         /// <summary>
         /// Call this whenever the key factors we use in determining an occurrence are about to change, to build occurrences
         /// for whatever verse text we have accumulated. Then reset verseText.
-        /// If we don't have a workable URL for this verseText, we still want to reset it; in that case, the words will not
-        /// be concorded.
+        /// If we don't have a workable URL for this verseText, we will output those words later, as part of the next verse.
         /// </summary>
         /// <param name="verseText"></param>
         /// <param name="currentURL"></param>
@@ -775,8 +774,8 @@ namespace BibleFileLib
 	        if ((currentURL.Length > 13) && (verseText.Length > 0))
 	        {
 	            ProcessText(verseText.ToString());
-	        }
-            verseText.Length = 0;
+                verseText.Length = 0;
+            }
         }
 
 	    /// <summary>
