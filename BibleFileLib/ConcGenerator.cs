@@ -569,7 +569,9 @@ namespace BibleFileLib
             m_chapter = 0;
             int verseNumber = 0;
             bool isCanonical = false;
-            bool inFootnote = false;
+            // Set true in elements that should be ignored (not concorded).
+            // Currently this is footnotes (both regular and cross-ref) and paragraphs (<p>) where the sfm is "r", indicating a list of cross-refs.
+            bool inIgnoredElement = false;
             StringBuilder verseText = new StringBuilder();
 
             m_pendingNonCanonical.Clear();
@@ -661,9 +663,10 @@ namespace BibleFileLib
                                 break;
                             case "f":
                             case "x":
-                                inFootnote = true;
+                                inIgnoredElement = true;
                                 break;
                             case "p":
+                                inIgnoredElement = sfm == "r";
                                 isCanonical = !sfm.StartsWith("i");
                                 break;
                             case "q":
@@ -683,19 +686,19 @@ namespace BibleFileLib
                                 break;
                             case "milestone":
                             case "optionalLineBreak":
-                                if (isCanonical && !inFootnote)
+                                if (isCanonical && !inIgnoredElement)
                                     verseText.Append(" ");
                                 break;
                         }
                     }
                     else if (usfx.NodeType == XmlNodeType.Text)
                     {
-                        if (isCanonical && !inFootnote)
+                        if (isCanonical && !inIgnoredElement)
                             verseText.Append(usfx.Value);
                     }
                     else if (usfx.NodeType == XmlNodeType.SignificantWhitespace)
                     {
-                        if (isCanonical && !inFootnote)
+                        if (isCanonical && !inIgnoredElement)
                             verseText.Append(usfx.Value);
                     }
                     else if (usfx.NodeType == XmlNodeType.EndElement)
@@ -704,7 +707,8 @@ namespace BibleFileLib
                         {
                             case "f":
                             case "x":
-                                inFootnote = false;
+                            case "p":
+                                inIgnoredElement = false;
                                 break;
                         }
                     }
