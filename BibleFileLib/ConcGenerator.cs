@@ -612,6 +612,9 @@ namespace BibleFileLib
                                 break;
                             case "book":
                             case "id":
+                                // Process any accumulated verse text BEFORE we update m_chapter etc., since it
+                                // belongs to the previous chapter and should not have the new number.
+                                ProcessVerseText(verseText, currentURL);
                                 if (id.Length > 2)
                                 {
                                     currentBookId = id;
@@ -624,6 +627,9 @@ namespace BibleFileLib
                                 }
                                 break;
                             case "c":
+                                // Process any accumulated verse text BEFORE we update m_chapter etc., since it
+                                // belongs to the previous chapter and should not have the new number.
+                                ProcessVerseText(verseText, currentURL);
                                 currentChapter = id;
                                 m_verse = "0";
                                 verseNumber = 0;
@@ -638,11 +644,7 @@ namespace BibleFileLib
                             case "v":
                                 // Process any accumulated verse text BEFORE we update m_verse or the URL, etc., since it
                                 // belongs to the previous verse and should not have the new number.
-                                if ((currentURL.Length > 13) && (verseText.Length > 0))
-                                {
-                                    ProcessText(verseText.ToString());
-                                    verseText.Length = 0;
-                                }
+                                ProcessVerseText(verseText, currentURL);
                                 m_verse = id;
                                 if (!usfx.IsEmptyElement)
                                 {
@@ -749,11 +751,7 @@ namespace BibleFileLib
                     }
                 }
                 *****************/
-                if (verseText.Length > 0)
-                {
-                    ProcessText(verseText.ToString());
-                    verseText.Length = 0;
-                }
+                ProcessVerseText(verseText, currentURL);
                 ProcessEndOfSentence(); // In case text does not end with sentence-final punctuation, don't want wordforms with no context.
             }
             catch (Exception ex)
@@ -764,7 +762,24 @@ namespace BibleFileLib
 
 		}
 
-		/// <summary>
+        /// <summary>
+        /// Call this whenever the key factors we use in determining an occurrence are about to change, to build occurrences
+        /// for whatever verse text we have accumulated. Then reset verseText.
+        /// If we don't have a workable URL for this verseText, we still want to reset it; in that case, the words will not
+        /// be concorded.
+        /// </summary>
+        /// <param name="verseText"></param>
+        /// <param name="currentURL"></param>
+	    private void ProcessVerseText(StringBuilder verseText, string currentURL)
+	    {
+	        if ((currentURL.Length > 13) && (verseText.Length > 0))
+	        {
+	            ProcessText(verseText.ToString());
+	        }
+            verseText.Length = 0;
+        }
+
+	    /// <summary>
 		/// Make an HTML file containing the occurrences of a particular wordform, with links to the text and click actions
 		/// to highlight the key word in the destination file.
 		/// 
