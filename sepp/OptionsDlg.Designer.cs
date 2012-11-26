@@ -196,7 +196,7 @@ namespace sepp
             this.copyrightLinkTextBox.Name = "copyrightLinkTextBox";
             this.copyrightLinkTextBox.Size = new System.Drawing.Size(785, 20);
             this.copyrightLinkTextBox.TabIndex = 2;
-            this.copyrightLinkTextBox.Text = "<a href=\"copyright.htm\">©</a>";
+            this.copyrightLinkTextBox.Text = "<a href=\"copyright.htm\">%c</a>";
             // 
             // label28
             // 

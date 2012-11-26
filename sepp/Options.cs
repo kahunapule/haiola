@@ -51,7 +51,7 @@ namespace sepp
         public string m_languageName = string.Empty;
         public string m_chapterLabel = string.Empty;
         public string m_psalmLabel = string.Empty;
-        public string m_copyrightLink = "<a href=\"copyright.htm\">©</a>";
+        public string m_copyrightLink = "<a href=\"copyright.htm\">%c</a>";
         public string m_homeLink = "<a href=\"../index.htm\"><img alt=\"^\" src=\"../css/home_sm.png\" border=\"0\" /></a>";
         public string m_footerHtml = string.Empty;
         public string m_indexHtml = "<div class=\"toc1\"><a href=\"http://pngscriptures.org/{0}/{0}_html.zip\">{0}_html.zip</a></div>\r\n"+
