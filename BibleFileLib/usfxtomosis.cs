@@ -61,6 +61,7 @@ namespace WordSend
         protected string vpeID;
         protected string chaptereID;
         protected string epeID;
+        protected string altChapterID;
         protected string qeID;
         protected int serialNumber = 0;
         protected int noteNumber = 0;
@@ -232,7 +233,13 @@ namespace WordSend
             EndCurrentVerse();
             SetListLevel(0);
             EndLineGroup();
-            
+            if (altChapterID.Length > 0)
+            {
+                StartMosisElement("chapter");
+                mosis.WriteAttributeString("eID", altChapterID);
+                WriteMosisEndElement();
+                altChapterID = string.Empty;
+            }
             if (epeID.Length > 0)
             {
                 StartMosisElement("chapter");
@@ -507,7 +514,7 @@ namespace WordSend
                 osisWorkId = osisWorkId.Replace('-', '.');
                 OpenMosisFile(mosisFileName);
                 CheckElementLevel(2, "just wrote header");
-                chaptereID = epeID = vpeID = qeID = verseeID = currentTestament = osisVersesId = osisVerseId = String.Empty;
+                altChapterID = chaptereID = epeID = vpeID = qeID = verseeID = currentTestament = osisVersesId = osisVerseId = String.Empty;
                 mtStarted = false;
                 inPoetryLine = false;
                 eatPoetryLineEnd = false;
@@ -547,6 +554,8 @@ namespace WordSend
                                 break;
                             case "book":
                                 currentBookHeader = currentBookTitle = String.Empty;
+                                currentChapter = currentChapterPublished = currentChapterAlternate = String.Empty;
+                                currentVerse = currentVersePublished = currentVerseAlternate = String.Empty;
                                 mtStarted = false;
                                 if (id.Length > 2)
                                 {
@@ -591,6 +600,9 @@ namespace WordSend
                                 break;
                             case "optionalLineBreak":
                                 // Discard. No true standard equivalent, and not very meaningful in electronic publishing.
+                                break;
+                            case "pn":
+                                StartElementWithAttribute("name");
                                 break;
                             case "qt":
                                 StartElementWithAttribute("seg", "type", "otPassage");
@@ -723,9 +735,67 @@ namespace WordSend
                                     StartElementWithAttribute("title", "type", "chapter");
                                 }
                                 break;
+                            case "ca":
+                                SkipElement();
+                                /* This feature is not supported by The Sword Project.
+                                altChapterID = StartId();
+                                if (!usfx.IsEmptyElement)
+                                {
+                                    usfx.Read();
+                                    if (usfx.NodeType == XmlNodeType.Text)
+                                    {
+                                        currentChapterAlternate = usfx.Value.Trim();
+                                        usfx.Read();
+                                        if (usfx.NodeType != XmlNodeType.EndElement)
+                                        {
+                                            Logit.WriteError("Unexpected node type after <ca> text at " + osisVerseId + ": " + usfx.NodeType.ToString());
+                                        }
+                                        else if (usfx.Name != "ca")
+                                        {
+                                            Logit.WriteError("Unexpected node name after <ca> text at " + osisVerseId + ": " + usfx.Name);
+                                        }
+                                        else
+                                        {
+                                            StartElementWithAttribute("chapter", "osisRef", osisVerseId, "type", "x-alternate", "n", currentChapterAlternate);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Logit.WriteError("ca is empty at " + osisVerseId);
+                                    }
+                                }
+                                */
+                                break;
                             case "cp":
+                                SkipElement();
+                                /* This feature is not supported by the Sword Project.
                                 epeID = StartId();
-                                StartElementWithAttribute("chapter", "osisRef", osisVerseId, "sID", epeID, "n", id);
+                                if (!usfx.IsEmptyElement)
+                                {
+                                    usfx.Read();
+                                    if (usfx.NodeType == XmlNodeType.Text)
+                                    {
+                                        currentChapterPublished = usfx.Value.Trim();
+                                        usfx.Read();
+                                        if (usfx.NodeType != XmlNodeType.EndElement)
+                                        {
+                                            Logit.WriteError("Unexpected node type after <cp> text at " + osisVerseId + ": " + usfx.NodeType.ToString());
+                                        }
+                                        else if (usfx.Name != "cp")
+                                        {
+                                            Logit.WriteError("Unexpected node name after <cp> text at " + osisVerseId + ": " + usfx.Name);
+                                        }
+                                        else
+                                        {
+                                            StartElementWithAttribute("chapter", "osisRef", osisVerseId, "type", "x-published", "n", currentChapterPublished);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Logit.WriteError("cp is empty at " + osisVerseId);
+                                    }
+                                }
+                                */
                                 break;
                             case "v":
                                 EndCurrentVerse();
@@ -817,6 +887,9 @@ namespace WordSend
                             case "nd":
                                 StartElementWithAttribute("divineName");
                                 break;
+                            case "no":
+                                StartElementWithAttribute("hi", "type", "normal");
+                                break;
                             case "s":
                                 SetListLevel(0, true);
                                 EndLineGroup();
@@ -872,7 +945,10 @@ namespace WordSend
                                 Logit.WriteLine("Warning: milestone encountered at " + osisVerseId);
                                 break;
                             case "p":
-                                EndLineGroup();
+                                if (sfm != "iq")
+                                {
+                                    EndLineGroup();
+                                }
                                 if (level == String.Empty)
                                     level = "1";
                                 if ((sfm != "li") && (sfm != "ili"))
@@ -944,13 +1020,16 @@ namespace WordSend
                                             StartElementWithAttribute("seg", "type", "keyword");
                                             break;
                                         case "iq":
+                                            SetListLevel(0, true);
                                             if (level == String.Empty)
                                                 level = "1";
-                                            if (level == "1")
+                                            if ((level == "1") || !inLineGroup)
                                             {
                                                 StartLineGroup();
                                             }
                                             StartElementWithAttribute("l", "level", level, "canonical", "false");
+                                            if (!usfx.IsEmptyElement)
+                                                inPoetryLine = true;
                                             break;
                                         case "imte":
                                         case "imt":
@@ -1013,6 +1092,9 @@ namespace WordSend
                             case "xo":  // Origin reference
                                 StartElementWithAttribute("reference", "osisRef", osisVerseId);
                                 break;
+                            case "xq":  // Not useful for Sword modules.
+                                // StartElementWithAttribute("q", "marker", "");
+                                break;
                             default:
                                 Logit.WriteLine("Unhandled tag: " + usfx.Name + " at " + osisVerseId);
                                 break;
@@ -1046,7 +1128,14 @@ namespace WordSend
                                     itemLevel--;
                                 CheckMinimumLevel(5, "Ending " + usfx.Name + " " + osisVerseId);
                                 inNote = false;
-                                WriteMosisEndElement();
+                                if (eatPoetryLineEnd)
+                                {
+                                    eatPoetryLineEnd = false;
+                                }
+                                else
+                                {
+                                    WriteMosisEndElement();
+                                }
                                 break;
                             case "q":
                                 if (eatPoetryLineEnd)
@@ -1087,6 +1176,8 @@ namespace WordSend
                             case "it":
                             case "k":
                             case "nd":
+                            case "no":
+                            case "pn":
                             case "qt":
                             case "r":
                             case "rq":
@@ -1102,6 +1193,7 @@ namespace WordSend
                             case "tl":
                             case "tr":
                             case "xo":
+                            // case "xq": Not useful for Sword modules.
                                 WriteMosisEndElement();    // note, hi, reference, title, l, transChange, etc.
                                 break;
                         }
