@@ -94,12 +94,15 @@ namespace BibleFileLib
 								bookId = id;
 							break;
 						case "p":
-							// Review Michael (JohnT): should we use other levels? Always or only if there is no level 1 mt?
-                            // We should either use all levels of \mt or just use \h. In other cases, I use \mt as a fallback
-                            // when \h is absent in the source file. \mt is required, and \h is sometimes absent. -- Michael
 							if (sfm == "mt") // && (level == "" || level == "1"))
 							{
-								usfx.Read();
+                                // mt paragraphs contain main title information. We accumulate all we find (at any level) in mtName,
+                                // and eventually use it as the vernacular name for the book (what appears in the title/content pane)
+                                // if we don't find a <h> element or a <toc level="1"> element. If we find either of those, they are
+                                // likely to be more concise and appropriate names for this sort of pane.
+                                // We should either use all levels of \mt or just use \h. In other cases, I use \mt as a fallback
+                                // when \h is absent in the source file. \mt is required, and \h is sometimes absent. -- Michael
+                                usfx.Read();
 								if (usfx.NodeType == XmlNodeType.Text)
 								{
 									if (mtName.Length > 0)
@@ -109,8 +112,19 @@ namespace BibleFileLib
 								}
 							}
 							break;
-						case "toc":
-							if (!usfx.IsEmptyElement)
+                        case "h":
+                            if (!usfx.IsEmptyElement)
+                            {
+                                usfx.Read();
+                                if (usfx.NodeType == XmlNodeType.Text)
+                                {
+                                     vernacularName = usfxToHtmlConverter.EscapeHtml(usfx.Value.Trim());
+                                }
+                            }
+                            break;
+                        case "toc":
+                            // Use toc level=1 if we didn't already get one from <h>. If we did, prefer that.
+							if (!usfx.IsEmptyElement && vernacularName.Length == 0)
 							{
 								usfx.Read();
 								if (usfx.NodeType == XmlNodeType.Text)
