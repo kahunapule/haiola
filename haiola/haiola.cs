@@ -28,7 +28,7 @@ namespace haiola
         public string m_outputDirectory; // curently Site, always under dataRootDir
         string m_inputProjectDirectory; //e.g., full path to BibleConv\input\Kupang
         string m_outputProjectDirectory; // e.g., full path to BibleConv\output\Kupang
-        string m_project; // e.g., Kupang
+        string m_project = String.Empty; // e.g., Kupang
         string currentConversion;   // e.g., "Preprocessing" or "Portable HTML"
         static bool fAllRunning = false;
         public string m_xiniPath;  // e.g., BibleConv\input\Kupang\options.xini
@@ -95,7 +95,7 @@ namespace haiola
         {
             SaveOptions();
             if (GetRootDirectory())
-                LoadWorkingDirectory();
+                LoadWorkingDirectory(true);
         }
 
         private void haiolaForm_Load(object sender, EventArgs e)
@@ -107,7 +107,7 @@ namespace haiola
             if (!Directory.Exists(m_inputDirectory))
                 if (!GetRootDirectory())
                     Application.Exit();
-            LoadWorkingDirectory();
+            LoadWorkingDirectory(true);
             Application.DoEvents();
             triggerautorun = Program.autorun;
             if (triggerautorun)
@@ -138,7 +138,7 @@ namespace haiola
             }
         }
 
-        private void LoadWorkingDirectory()
+        private void LoadWorkingDirectory(bool all)
         {
             int projCount = 0;
             int projReady = 0;
@@ -156,12 +156,26 @@ namespace haiola
 
             foreach (string path in Directory.GetDirectories(m_inputDirectory))
             {
-                m_projectsList.Items.Add(Path.GetFileName(path));
+                string project = Path.GetFileName(path);
+                m_projectsList.Items.Add(project);
                 projCount++;
+                m_project = project;
+                m_inputProjectDirectory = Path.Combine(m_inputDirectory, m_project);
+                m_outputProjectDirectory = Path.Combine(m_outputDirectory, m_project);
+                m_xiniPath = Path.Combine(m_inputProjectDirectory, "options.xini");
+                if (m_options == null)
+                {
+                    m_options = new Options(m_xiniPath);
+                }
+                else
+                {
+                    m_options.Reload(m_xiniPath);
+                }
+
                 if (File.Exists(Path.Combine(path, "options.xini")) && 
                     (Directory.Exists(Path.Combine(path, "Source")) || Directory.Exists(Path.Combine(path, "usfx"))))
                 {
-                    m_projectsList.SetItemChecked(m_projectsList.Items.Count - 1, true);
+                    m_projectsList.SetItemChecked(m_projectsList.Items.Count - 1, all || !m_options.lastRunResult);
                     projReady++;
                 }
                 else
@@ -1351,7 +1365,7 @@ In addition, you have permission to convert the text to different file formats, 
             btnSetRootDirectory.Enabled = false;
             reloadButton.Enabled = false;
             m_projectsList.Enabled = false;
-            checkAllButton.Enabled = false;
+            markRetryButton.Enabled = false;
             unmarkAllButton.Enabled = false;
             runHighlightedButton.Enabled = false;
             messagesListBox.Items.Clear();
@@ -1404,7 +1418,7 @@ In addition, you have permission to convert the text to different file formats, 
             WorkOnAllButton.Enabled = true;
             WorkOnAllButton.Text = "Run marked";
             m_projectsList.Enabled = true;
-            checkAllButton.Enabled = true;
+            markRetryButton.Enabled = true;
             unmarkAllButton.Enabled = true;
             btnSetRootDirectory.Enabled = true;
             reloadButton.Enabled = true;
@@ -1422,9 +1436,10 @@ In addition, you have permission to convert the text to different file formats, 
         private void reloadButton_Click(object sender, EventArgs e)
         {
             SaveOptions();
-            LoadWorkingDirectory();
+            LoadWorkingDirectory(true);
         }
 
+        /*
         private void checkAllButton_Click(object sender, EventArgs e)
         {
             int i;
@@ -1433,6 +1448,7 @@ In addition, you have permission to convert the text to different file formats, 
                 m_projectsList.SetItemChecked(i, true);
 
         }
+        */ 
 
         private void unmarkAllButton_Click(object sender, EventArgs e)
         {
@@ -1917,7 +1933,7 @@ In addition, you have permission to convert the text to different file formats, 
             btnSetRootDirectory.Enabled = false;
             reloadButton.Enabled = false;
             m_projectsList.Enabled = false;
-            checkAllButton.Enabled = false;
+            markRetryButton.Enabled = false;
             unmarkAllButton.Enabled = false;
             runHighlightedButton.Enabled = false;
             messagesListBox.Items.Clear();
@@ -1940,7 +1956,7 @@ In addition, you have permission to convert the text to different file formats, 
             WorkOnAllButton.Enabled = true;
             WorkOnAllButton.Text = "Run marked";
             m_projectsList.Enabled = true;
-            checkAllButton.Enabled = true;
+            markRetryButton.Enabled = true;
             unmarkAllButton.Enabled = true;
             btnSetRootDirectory.Enabled = true;
             reloadButton.Enabled = true;
@@ -1973,7 +1989,7 @@ In addition, you have permission to convert the text to different file formats, 
             btnSetRootDirectory.Enabled = false;
             reloadButton.Enabled = false;
             m_projectsList.Enabled = false;
-            checkAllButton.Enabled = false;
+            markRetryButton.Enabled = false;
             unmarkAllButton.Enabled = false;
             runHighlightedButton.Enabled = false;
             WorkOnAllButton.Enabled = false;
@@ -2154,7 +2170,7 @@ In addition, you have permission to convert the text to different file formats, 
             WorkOnAllButton.Enabled = true;
             WorkOnAllButton.Text = "Run marked";
             m_projectsList.Enabled = true;
-            checkAllButton.Enabled = true;
+            markRetryButton.Enabled = true;
             unmarkAllButton.Enabled = true;
             btnSetRootDirectory.Enabled = true;
             reloadButton.Enabled = true;
@@ -2306,6 +2322,12 @@ In addition, you have permission to convert the text to different file formats, 
             foreach (string filename in templateOptions.postprocesses)
                 postprocessListBox.Items.Add(filename);
             postprocessListBox.ResumeLayout();
+        }
+
+        private void markRetryButton_Click(object sender, EventArgs e)
+        {
+            SaveOptions();
+            LoadWorkingDirectory(false);
         }
 
     }
