@@ -33,7 +33,6 @@
             this.m_projectsList = new System.Windows.Forms.CheckedListBox();
             this.batchLabel = new System.Windows.Forms.Label();
             this.unmarkAllButton = new System.Windows.Forms.Button();
-            this.checkAllButton = new System.Windows.Forms.Button();
             this.workDirLabel = new System.Windows.Forms.Label();
             this.reloadButton = new System.Windows.Forms.Button();
             this.WorkOnAllButton = new System.Windows.Forms.Button();
@@ -178,6 +177,7 @@
             this.helpButton = new System.Windows.Forms.Button();
             this.runHighlightedButton = new System.Windows.Forms.Button();
             this.statsButton = new System.Windows.Forms.Button();
+            this.markRetryButton = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.idTabPage.SuspendLayout();
             this.copyrightTabPage.SuspendLayout();
@@ -196,11 +196,11 @@
             this.m_projectsList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.m_projectsList.FormattingEnabled = true;
-            this.m_projectsList.Location = new System.Drawing.Point(632, 0);
+            this.m_projectsList.Location = new System.Drawing.Point(720, 0);
             this.m_projectsList.Name = "m_projectsList";
             this.m_projectsList.ScrollAlwaysVisible = true;
-            this.m_projectsList.Size = new System.Drawing.Size(262, 559);
-            this.m_projectsList.TabIndex = 52;
+            this.m_projectsList.Size = new System.Drawing.Size(265, 559);
+            this.m_projectsList.TabIndex = 10;
             this.m_projectsList.SelectedIndexChanged += new System.EventHandler(this.m_projectsList_SelectedIndexChanged);
             // 
             // batchLabel
@@ -215,25 +215,14 @@
             // 
             // unmarkAllButton
             // 
-            this.unmarkAllButton.Location = new System.Drawing.Point(300, 1);
+            this.unmarkAllButton.Location = new System.Drawing.Point(370, 1);
             this.unmarkAllButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.unmarkAllButton.Name = "unmarkAllButton";
             this.unmarkAllButton.Size = new System.Drawing.Size(73, 23);
-            this.unmarkAllButton.TabIndex = 4;
+            this.unmarkAllButton.TabIndex = 5;
             this.unmarkAllButton.Text = "&Unmark all";
             this.unmarkAllButton.UseVisualStyleBackColor = true;
             this.unmarkAllButton.Click += new System.EventHandler(this.unmarkAllButton_Click);
-            // 
-            // checkAllButton
-            // 
-            this.checkAllButton.Location = new System.Drawing.Point(232, 1);
-            this.checkAllButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.checkAllButton.Name = "checkAllButton";
-            this.checkAllButton.Size = new System.Drawing.Size(64, 23);
-            this.checkAllButton.TabIndex = 3;
-            this.checkAllButton.Text = "&Mark all";
-            this.checkAllButton.UseVisualStyleBackColor = true;
-            this.checkAllButton.Click += new System.EventHandler(this.checkAllButton_Click);
             // 
             // workDirLabel
             // 
@@ -247,22 +236,22 @@
             // 
             // reloadButton
             // 
-            this.reloadButton.Location = new System.Drawing.Point(128, 1);
+            this.reloadButton.Location = new System.Drawing.Point(171, 2);
             this.reloadButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.reloadButton.Name = "reloadButton";
-            this.reloadButton.Size = new System.Drawing.Size(58, 23);
+            this.reloadButton.Size = new System.Drawing.Size(97, 23);
             this.reloadButton.TabIndex = 1;
-            this.reloadButton.Text = "Re&load";
+            this.reloadButton.Text = "M&ark ready";
             this.reloadButton.UseVisualStyleBackColor = true;
             this.reloadButton.Click += new System.EventHandler(this.reloadButton_Click);
             // 
             // WorkOnAllButton
             // 
-            this.WorkOnAllButton.Location = new System.Drawing.Point(377, 1);
+            this.WorkOnAllButton.Location = new System.Drawing.Point(447, 1);
             this.WorkOnAllButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.WorkOnAllButton.Name = "WorkOnAllButton";
-            this.WorkOnAllButton.Size = new System.Drawing.Size(102, 23);
-            this.WorkOnAllButton.TabIndex = 5;
+            this.WorkOnAllButton.Size = new System.Drawing.Size(117, 23);
+            this.WorkOnAllButton.TabIndex = 6;
             this.WorkOnAllButton.Text = "&Run marked";
             this.WorkOnAllButton.UseVisualStyleBackColor = true;
             this.WorkOnAllButton.Click += new System.EventHandler(this.WorkOnAllButton_Click);
@@ -294,8 +283,8 @@
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.ShowToolTips = true;
-            this.tabControl1.Size = new System.Drawing.Size(626, 488);
-            this.tabControl1.TabIndex = 6;
+            this.tabControl1.Size = new System.Drawing.Size(715, 488);
+            this.tabControl1.TabIndex = 9;
             this.tabControl1.Leave += new System.EventHandler(this.tabControl1_Leave);
             // 
             // idTabPage
@@ -329,7 +318,7 @@
             this.idTabPage.Margin = new System.Windows.Forms.Padding(2);
             this.idTabPage.Name = "idTabPage";
             this.idTabPage.Padding = new System.Windows.Forms.Padding(2);
-            this.idTabPage.Size = new System.Drawing.Size(618, 462);
+            this.idTabPage.Size = new System.Drawing.Size(707, 462);
             this.idTabPage.TabIndex = 0;
             this.idTabPage.Text = "Identification";
             this.idTabPage.UseVisualStyleBackColor = true;
@@ -339,7 +328,7 @@
             this.lwcDescriptionTextBox.Location = new System.Drawing.Point(149, 290);
             this.lwcDescriptionTextBox.Multiline = true;
             this.lwcDescriptionTextBox.Name = "lwcDescriptionTextBox";
-            this.lwcDescriptionTextBox.Size = new System.Drawing.Size(326, 59);
+            this.lwcDescriptionTextBox.Size = new System.Drawing.Size(553, 59);
             this.lwcDescriptionTextBox.TabIndex = 33;
             // 
             // label20
@@ -366,7 +355,7 @@
             // 
             this.homeDomainTextBox.Location = new System.Drawing.Point(148, 361);
             this.homeDomainTextBox.Name = "homeDomainTextBox";
-            this.homeDomainTextBox.Size = new System.Drawing.Size(328, 20);
+            this.homeDomainTextBox.Size = new System.Drawing.Size(554, 20);
             this.homeDomainTextBox.TabIndex = 16;
             // 
             // label19
@@ -404,7 +393,7 @@
             this.descriptionTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.descriptionTextBox.Multiline = true;
             this.descriptionTextBox.Name = "descriptionTextBox";
-            this.descriptionTextBox.Size = new System.Drawing.Size(328, 96);
+            this.descriptionTextBox.Size = new System.Drawing.Size(554, 96);
             this.descriptionTextBox.TabIndex = 15;
             // 
             // label10
@@ -423,7 +412,7 @@
             this.titleTextBox.Location = new System.Drawing.Point(149, 159);
             this.titleTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.titleTextBox.Name = "titleTextBox";
-            this.titleTextBox.Size = new System.Drawing.Size(328, 20);
+            this.titleTextBox.Size = new System.Drawing.Size(554, 20);
             this.titleTextBox.TabIndex = 14;
             // 
             // label9
@@ -442,7 +431,7 @@
             this.contributorTextBox.Location = new System.Drawing.Point(149, 135);
             this.contributorTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.contributorTextBox.Name = "contributorTextBox";
-            this.contributorTextBox.Size = new System.Drawing.Size(328, 20);
+            this.contributorTextBox.Size = new System.Drawing.Size(554, 20);
             this.contributorTextBox.TabIndex = 13;
             // 
             // label8
@@ -461,7 +450,7 @@
             this.creatorTextBox.Location = new System.Drawing.Point(149, 107);
             this.creatorTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.creatorTextBox.Name = "creatorTextBox";
-            this.creatorTextBox.Size = new System.Drawing.Size(328, 20);
+            this.creatorTextBox.Size = new System.Drawing.Size(554, 20);
             this.creatorTextBox.TabIndex = 12;
             // 
             // label7
@@ -491,7 +480,7 @@
             this.engLangNameTextBox.Location = new System.Drawing.Point(149, 59);
             this.engLangNameTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.engLangNameTextBox.Name = "engLangNameTextBox";
-            this.engLangNameTextBox.Size = new System.Drawing.Size(328, 20);
+            this.engLangNameTextBox.Size = new System.Drawing.Size(553, 20);
             this.engLangNameTextBox.TabIndex = 10;
             // 
             // label2
@@ -510,7 +499,7 @@
             this.dialectTextBox.Location = new System.Drawing.Point(149, 83);
             this.dialectTextBox.Margin = new System.Windows.Forms.Padding(2);
             this.dialectTextBox.Name = "dialectTextBox";
-            this.dialectTextBox.Size = new System.Drawing.Size(328, 20);
+            this.dialectTextBox.Size = new System.Drawing.Size(553, 20);
             this.dialectTextBox.TabIndex = 11;
             // 
             // translationIdTextBox
@@ -537,7 +526,7 @@
             this.languageNameTextBox.Location = new System.Drawing.Point(149, 33);
             this.languageNameTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.languageNameTextBox.Name = "languageNameTextBox";
-            this.languageNameTextBox.Size = new System.Drawing.Size(327, 20);
+            this.languageNameTextBox.Size = new System.Drawing.Size(553, 20);
             this.languageNameTextBox.TabIndex = 9;
             // 
             // ethnologueCodeTextBox
@@ -590,7 +579,7 @@
             this.copyrightTabPage.Location = new System.Drawing.Point(4, 22);
             this.copyrightTabPage.Margin = new System.Windows.Forms.Padding(2);
             this.copyrightTabPage.Name = "copyrightTabPage";
-            this.copyrightTabPage.Size = new System.Drawing.Size(618, 462);
+            this.copyrightTabPage.Size = new System.Drawing.Size(707, 462);
             this.copyrightTabPage.TabIndex = 2;
             this.copyrightTabPage.Text = "Copyright";
             this.copyrightTabPage.UseVisualStyleBackColor = true;
@@ -827,7 +816,7 @@
             this.processTabPage.Margin = new System.Windows.Forms.Padding(2);
             this.processTabPage.Name = "processTabPage";
             this.processTabPage.Padding = new System.Windows.Forms.Padding(2);
-            this.processTabPage.Size = new System.Drawing.Size(618, 462);
+            this.processTabPage.Size = new System.Drawing.Size(707, 462);
             this.processTabPage.TabIndex = 1;
             this.processTabPage.Text = "Processes";
             this.processTabPage.UseVisualStyleBackColor = true;
@@ -846,7 +835,7 @@
             // 
             this.postprocessTextBox.Location = new System.Drawing.Point(7, 297);
             this.postprocessTextBox.Name = "postprocessTextBox";
-            this.postprocessTextBox.Size = new System.Drawing.Size(520, 20);
+            this.postprocessTextBox.Size = new System.Drawing.Size(695, 20);
             this.postprocessTextBox.TabIndex = 38;
             // 
             // textBox1
@@ -904,7 +893,7 @@
             this.postprocessListBox.FormattingEnabled = true;
             this.postprocessListBox.Location = new System.Drawing.Point(7, 324);
             this.postprocessListBox.Name = "postprocessListBox";
-            this.postprocessListBox.Size = new System.Drawing.Size(521, 134);
+            this.postprocessListBox.Size = new System.Drawing.Size(695, 134);
             this.postprocessListBox.TabIndex = 39;
             // 
             // moveDownButton
@@ -966,7 +955,7 @@
             this.listInputProcesses.Location = new System.Drawing.Point(7, 94);
             this.listInputProcesses.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.listInputProcesses.Name = "listInputProcesses";
-            this.listInputProcesses.Size = new System.Drawing.Size(521, 69);
+            this.listInputProcesses.Size = new System.Drawing.Size(695, 69);
             this.listInputProcesses.TabIndex = 31;
             // 
             // htmlTabPage
@@ -993,7 +982,7 @@
             this.htmlTabPage.Location = new System.Drawing.Point(4, 22);
             this.htmlTabPage.Margin = new System.Windows.Forms.Padding(2);
             this.htmlTabPage.Name = "htmlTabPage";
-            this.htmlTabPage.Size = new System.Drawing.Size(618, 462);
+            this.htmlTabPage.Size = new System.Drawing.Size(707, 462);
             this.htmlTabPage.TabIndex = 3;
             this.htmlTabPage.Text = "HTML options";
             this.htmlTabPage.UseVisualStyleBackColor = true;
@@ -1049,7 +1038,7 @@
             // 
             // copyFromTemplateButton
             // 
-            this.copyFromTemplateButton.Location = new System.Drawing.Point(469, 6);
+            this.copyFromTemplateButton.Location = new System.Drawing.Point(565, 6);
             this.copyFromTemplateButton.Name = "copyFromTemplateButton";
             this.copyFromTemplateButton.Size = new System.Drawing.Size(136, 24);
             this.copyFromTemplateButton.TabIndex = 52;
@@ -1080,7 +1069,7 @@
             // 
             this.goTextTextBox.Location = new System.Drawing.Point(170, 79);
             this.goTextTextBox.Name = "goTextTextBox";
-            this.goTextTextBox.Size = new System.Drawing.Size(435, 20);
+            this.goTextTextBox.Size = new System.Drawing.Size(531, 20);
             this.goTextTextBox.TabIndex = 46;
             this.goTextTextBox.Text = "Go!";
             // 
@@ -1103,7 +1092,7 @@
             this.licenseTextBox.Multiline = true;
             this.licenseTextBox.Name = "licenseTextBox";
             this.licenseTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.licenseTextBox.Size = new System.Drawing.Size(605, 162);
+            this.licenseTextBox.Size = new System.Drawing.Size(701, 162);
             this.licenseTextBox.TabIndex = 49;
             // 
             // label4
@@ -1131,7 +1120,7 @@
             this.indexPageTextBox.Multiline = true;
             this.indexPageTextBox.Name = "indexPageTextBox";
             this.indexPageTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.indexPageTextBox.Size = new System.Drawing.Size(605, 66);
+            this.indexPageTextBox.Size = new System.Drawing.Size(701, 66);
             this.indexPageTextBox.TabIndex = 48;
             // 
             // footerHtmlTextBox
@@ -1142,7 +1131,7 @@
             this.footerHtmlTextBox.Multiline = true;
             this.footerHtmlTextBox.Name = "footerHtmlTextBox";
             this.footerHtmlTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.footerHtmlTextBox.Size = new System.Drawing.Size(602, 38);
+            this.footerHtmlTextBox.Size = new System.Drawing.Size(698, 38);
             this.footerHtmlTextBox.TabIndex = 47;
             // 
             // homeLinkTextBox
@@ -1150,7 +1139,7 @@
             this.homeLinkTextBox.Location = new System.Drawing.Point(160, 32);
             this.homeLinkTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.homeLinkTextBox.Name = "homeLinkTextBox";
-            this.homeLinkTextBox.Size = new System.Drawing.Size(445, 20);
+            this.homeLinkTextBox.Size = new System.Drawing.Size(541, 20);
             this.homeLinkTextBox.TabIndex = 44;
             // 
             // copyrightLinkTextBox
@@ -1158,7 +1147,7 @@
             this.copyrightLinkTextBox.Location = new System.Drawing.Point(169, 56);
             this.copyrightLinkTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.copyrightLinkTextBox.Name = "copyrightLinkTextBox";
-            this.copyrightLinkTextBox.Size = new System.Drawing.Size(436, 20);
+            this.copyrightLinkTextBox.Size = new System.Drawing.Size(532, 20);
             this.copyrightLinkTextBox.TabIndex = 45;
             this.copyrightLinkTextBox.Text = "<a href=\"copyright.htm\">%c</a>:";
             // 
@@ -1194,7 +1183,7 @@
             this.advancedTabPage.Location = new System.Drawing.Point(4, 22);
             this.advancedTabPage.Margin = new System.Windows.Forms.Padding(2);
             this.advancedTabPage.Name = "advancedTabPage";
-            this.advancedTabPage.Size = new System.Drawing.Size(618, 462);
+            this.advancedTabPage.Size = new System.Drawing.Size(707, 462);
             this.advancedTabPage.TabIndex = 6;
             this.advancedTabPage.Text = "Advanced";
             this.advancedTabPage.UseVisualStyleBackColor = true;
@@ -1337,7 +1326,7 @@
             this.concordanceTabPage.Controls.Add(this.generateConcordanceCheckBox);
             this.concordanceTabPage.Location = new System.Drawing.Point(4, 22);
             this.concordanceTabPage.Name = "concordanceTabPage";
-            this.concordanceTabPage.Size = new System.Drawing.Size(618, 462);
+            this.concordanceTabPage.Size = new System.Drawing.Size(707, 462);
             this.concordanceTabPage.TabIndex = 7;
             this.concordanceTabPage.Text = "Concordance";
             this.concordanceTabPage.UseVisualStyleBackColor = true;
@@ -1394,7 +1383,7 @@
             // tbxMaxFreq
             // 
             this.tbxMaxFreq.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxMaxFreq.Location = new System.Drawing.Point(497, 186);
+            this.tbxMaxFreq.Location = new System.Drawing.Point(586, 186);
             this.tbxMaxFreq.Name = "tbxMaxFreq";
             this.tbxMaxFreq.Size = new System.Drawing.Size(96, 20);
             this.tbxMaxFreq.TabIndex = 20;
@@ -1412,7 +1401,7 @@
             // tbxMinContext
             // 
             this.tbxMinContext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxMinContext.Location = new System.Drawing.Point(497, 157);
+            this.tbxMinContext.Location = new System.Drawing.Point(586, 157);
             this.tbxMinContext.Name = "tbxMinContext";
             this.tbxMinContext.Size = new System.Drawing.Size(96, 20);
             this.tbxMinContext.TabIndex = 18;
@@ -1430,7 +1419,7 @@
             // tbxMaxContext
             // 
             this.tbxMaxContext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxMaxContext.Location = new System.Drawing.Point(497, 119);
+            this.tbxMaxContext.Location = new System.Drawing.Point(586, 119);
             this.tbxMaxContext.Name = "tbxMaxContext";
             this.tbxMaxContext.Size = new System.Drawing.Size(96, 20);
             this.tbxMaxContext.TabIndex = 16;
@@ -1452,7 +1441,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbxWordformingChars.Location = new System.Drawing.Point(12, 87);
             this.tbxWordformingChars.Name = "tbxWordformingChars";
-            this.tbxWordformingChars.Size = new System.Drawing.Size(586, 20);
+            this.tbxWordformingChars.Size = new System.Drawing.Size(675, 20);
             this.tbxWordformingChars.TabIndex = 14;
             this.tbxWordformingChars.Text = "\'-";
             // 
@@ -1486,7 +1475,7 @@
             this.booksPage.Controls.Add(this.listBooks);
             this.booksPage.Location = new System.Drawing.Point(4, 22);
             this.booksPage.Name = "booksPage";
-            this.booksPage.Size = new System.Drawing.Size(618, 462);
+            this.booksPage.Size = new System.Drawing.Size(707, 462);
             this.booksPage.TabIndex = 8;
             this.booksPage.Text = "Books";
             this.booksPage.UseVisualStyleBackColor = true;
@@ -1517,7 +1506,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label32.Location = new System.Drawing.Point(8, 11);
             this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(587, 58);
+            this.label32.Size = new System.Drawing.Size(676, 58);
             this.label32.TabIndex = 4;
             this.label32.Text = resources.GetString("label32.Text");
             this.label32.UseCompatibleTextRendering = true;
@@ -1530,7 +1519,7 @@
             this.colFilesXrefs});
             this.listBooks.Location = new System.Drawing.Point(8, 72);
             this.listBooks.Name = "listBooks";
-            this.listBooks.Size = new System.Drawing.Size(604, 333);
+            this.listBooks.Size = new System.Drawing.Size(696, 333);
             this.listBooks.TabIndex = 3;
             this.listBooks.UseCompatibleStateImageBehavior = false;
             this.listBooks.View = System.Windows.Forms.View.Details;
@@ -1570,7 +1559,7 @@
             this.framesPage.Controls.Add(this.useFramesCheckBox);
             this.framesPage.Location = new System.Drawing.Point(4, 22);
             this.framesPage.Name = "framesPage";
-            this.framesPage.Size = new System.Drawing.Size(618, 462);
+            this.framesPage.Size = new System.Drawing.Size(707, 462);
             this.framesPage.TabIndex = 9;
             this.framesPage.Text = "Frames";
             this.framesPage.UseVisualStyleBackColor = true;
@@ -1710,7 +1699,7 @@
             this.messagesTabPage.Location = new System.Drawing.Point(4, 22);
             this.messagesTabPage.Name = "messagesTabPage";
             this.messagesTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.messagesTabPage.Size = new System.Drawing.Size(618, 462);
+            this.messagesTabPage.Size = new System.Drawing.Size(707, 462);
             this.messagesTabPage.TabIndex = 10;
             this.messagesTabPage.Text = "Messages";
             this.messagesTabPage.UseVisualStyleBackColor = true;
@@ -1722,7 +1711,7 @@
             this.messagesListBox.Location = new System.Drawing.Point(0, 6);
             this.messagesListBox.Name = "messagesListBox";
             this.messagesListBox.ScrollAlwaysVisible = true;
-            this.messagesListBox.Size = new System.Drawing.Size(617, 446);
+            this.messagesListBox.Size = new System.Drawing.Size(701, 446);
             this.messagesListBox.TabIndex = 0;
             // 
             // statsLabel
@@ -1743,7 +1732,7 @@
             // helpButton
             // 
             this.helpButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.helpButton.Location = new System.Drawing.Point(191, 1);
+            this.helpButton.Location = new System.Drawing.Point(128, 0);
             this.helpButton.Name = "helpButton";
             this.helpButton.Size = new System.Drawing.Size(38, 23);
             this.helpButton.TabIndex = 2;
@@ -1753,29 +1742,40 @@
             // 
             // runHighlightedButton
             // 
-            this.runHighlightedButton.Location = new System.Drawing.Point(484, 1);
+            this.runHighlightedButton.Location = new System.Drawing.Point(569, 1);
             this.runHighlightedButton.Name = "runHighlightedButton";
             this.runHighlightedButton.Size = new System.Drawing.Size(96, 23);
-            this.runHighlightedButton.TabIndex = 53;
+            this.runHighlightedButton.TabIndex = 7;
             this.runHighlightedButton.Text = "Ru&n Highlighted";
             this.runHighlightedButton.UseVisualStyleBackColor = true;
             this.runHighlightedButton.Click += new System.EventHandler(this.runHighlightedButton_Click);
             // 
             // statsButton
             // 
-            this.statsButton.Location = new System.Drawing.Point(586, 1);
+            this.statsButton.Location = new System.Drawing.Point(671, 1);
             this.statsButton.Name = "statsButton";
             this.statsButton.Size = new System.Drawing.Size(39, 23);
-            this.statsButton.TabIndex = 54;
+            this.statsButton.TabIndex = 8;
             this.statsButton.Text = "&Stats";
             this.statsButton.UseVisualStyleBackColor = true;
             this.statsButton.Click += new System.EventHandler(this.statsButton_Click);
+            // 
+            // markRetryButton
+            // 
+            this.markRetryButton.Location = new System.Drawing.Point(273, 3);
+            this.markRetryButton.Name = "markRetryButton";
+            this.markRetryButton.Size = new System.Drawing.Size(92, 21);
+            this.markRetryButton.TabIndex = 4;
+            this.markRetryButton.Text = "Mark &failed";
+            this.markRetryButton.UseVisualStyleBackColor = true;
+            this.markRetryButton.Click += new System.EventHandler(this.markRetryButton_Click);
             // 
             // haiolaForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(893, 562);
+            this.ClientSize = new System.Drawing.Size(984, 562);
+            this.Controls.Add(this.markRetryButton);
             this.Controls.Add(this.statsButton);
             this.Controls.Add(this.runHighlightedButton);
             this.Controls.Add(this.helpButton);
@@ -1783,7 +1783,6 @@
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.batchLabel);
             this.Controls.Add(this.unmarkAllButton);
-            this.Controls.Add(this.checkAllButton);
             this.Controls.Add(this.workDirLabel);
             this.Controls.Add(this.reloadButton);
             this.Controls.Add(this.WorkOnAllButton);
@@ -1824,7 +1823,6 @@
         private System.Windows.Forms.CheckedListBox m_projectsList;
         private System.Windows.Forms.Label batchLabel;
         private System.Windows.Forms.Button unmarkAllButton;
-        private System.Windows.Forms.Button checkAllButton;
         private System.Windows.Forms.Label workDirLabel;
         private System.Windows.Forms.Button reloadButton;
         private System.Windows.Forms.Button WorkOnAllButton;
@@ -1969,6 +1967,7 @@
         private System.Windows.Forms.ComboBox numberSystemComboBox;
         private System.Windows.Forms.TabPage messagesTabPage;
         private System.Windows.Forms.ListBox messagesListBox;
+        private System.Windows.Forms.Button markRetryButton;
 	}
 }
 

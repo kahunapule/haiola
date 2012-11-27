@@ -2751,6 +2751,8 @@ namespace WordSend
                     currentVerse = attribute;
                     if (currentParagraph == String.Empty)
                         Logit.WriteError("USFM error: no paragraph started at " + currentBook + " " + currentChapter + ":" + currentVerse);
+                    else if ((currentParagraph == "b") && (text.Trim().Length > 0))
+                        Logit.WriteError("USFM error: \\b contains text at " + currentBook + " " + currentChapter + ":" + currentVerse);
                 }
             }
             if ((info.kind.CompareTo("paragraph") == 0) || (tag == "nb"))
@@ -4594,8 +4596,11 @@ namespace WordSend
                 }
                 else
                 {
-                    Logit.WriteLine("Warning: Started new character style " + sfm + " without terminating " +
-                        activeCharacterStyle + " at " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                    if (!(inFootnote || inXref))
+                    {
+                        Logit.WriteLine("Warning: Started new character style " + sfm + " without terminating " +
+                            activeCharacterStyle + " at " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                    }
                     if (activeCharacterStyle != sfm)
                     {
                         EndUSFXStyle();
@@ -5565,6 +5570,7 @@ namespace WordSend
 								        StartUSFXParagraph(sf.tag, sf.level, sf.info.paragraphStyle, sf.text);
 								        break;
 							        case "id":
+                                        verseMark = chapterMark = String.Empty;
                                         if (inUSFXNote)
                                         {
                                             EndUSFXNote();
