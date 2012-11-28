@@ -2132,7 +2132,7 @@ namespace WordSend
 				if (xr != null)
 					xr.Close();
 			}
-			Logit.WriteLine(numbks.ToString()+" book name translations and "+xref.Count.ToString()+" crossreference notes read.");
+			// Logit.WriteLine(numbks.ToString()+" book name translations and "+xref.Count.ToString()+" crossreference notes read.");
 		}
 
 		public string find(string place)
@@ -2713,9 +2713,14 @@ namespace WordSend
 
             if (tag.Length < 1)
                 return;  // Nothing to do.
+            if (info.kind == null)
+            {
+                Logit.WriteError("Unknown tag \\" + tag + " at " + currentBook + " " + currentChapter + ":" + currentVerse);
+                return;
+            }
 
             // Track where we are.
-            if ((info.kind != null) && (info.kind.CompareTo("meta") == 0))
+            if (info.kind.CompareTo("meta") == 0)
             {
                 if (tag.CompareTo("id") == 0)
                 {
@@ -4596,7 +4601,7 @@ namespace WordSend
                 }
                 else
                 {
-                    if (!(inFootnote || inXref))
+                    if (!(inUSFXNote))
                     {
                         Logit.WriteLine("Warning: Started new character style " + sfm + " without terminating " +
                             activeCharacterStyle + " at " + book.bookCode + " " + chapterMark + ":" + verseMark);
