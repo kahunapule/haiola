@@ -6697,6 +6697,12 @@ namespace WordSend
                                 if (usfxFile.NodeType == XmlNodeType.Text)
                                     languageCode = usfxFile.Value;
                                 break;
+                            case "f":
+                            case "x":
+                                if (id == String.Empty)
+                                    id = "+";
+                                usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag());
+                                break;
                             default:
                                 usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag());
                                 break;
@@ -7240,7 +7246,7 @@ namespace WordSend
         bool ignoreIntros = false;
         bool ignoreNotes = false;
         bool chopChapter;
-        private bool hasContentsPage;
+        protected bool hasContentsPage;
         //bool containsDC;
         bool newChapterFound;
         public BibleBookInfo bookInfo = new BibleBookInfo();
@@ -8486,6 +8492,8 @@ namespace WordSend
                                     case "toc":
                                         if (!usfx.IsEmptyElement)
                                         {
+                                            if (level == String.Empty)
+                                                level = "1";
                                             usfx.Read();
                                             if (usfx.NodeType == XmlNodeType.Text)
                                             {
@@ -9056,6 +9064,8 @@ namespace WordSend
                             case "toc":
                                 if (!usfx.IsEmptyElement)
                                 {
+                                    if (level == String.Empty)
+                                        level = "1";
                                     usfx.Read();
                                     if (usfx.NodeType == XmlNodeType.Text)
                                     {
@@ -9407,6 +9417,8 @@ namespace WordSend
                                     case "toc":
                                         if (!usfx.IsEmptyElement)
                                         {
+                                            if (level == String.Empty)
+                                                level = "1";
                                             usfx.Read();
                                             if (usfx.NodeType == XmlNodeType.Text)
                                             {
