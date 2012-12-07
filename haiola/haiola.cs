@@ -1373,9 +1373,9 @@ In addition, you have permission to convert the text to different file formats, 
             tabControl1.SelectedTab = messagesTabPage;
             BackColor = Color.LightGreen;
             startTime = DateTime.UtcNow;
+            fAllRunning = true;
             Application.DoEvents();
             timer1.Enabled = true;
-            fAllRunning = true;
             WorkOnAllButton.Text = "Stop";
             SaveOptions();
             foreach (object o in m_projectsList.CheckedItems)
@@ -1948,9 +1948,9 @@ In addition, you have permission to convert the text to different file formats, 
             SaveOptions();
             ProcessOneProject(SelectedProject);
 
-            fAllRunning = false;
             currentConversion = String.Empty;
             timer1.Enabled = false;
+            fAllRunning = false;
             batchLabel.Text = (DateTime.UtcNow - startTime).ToString() + " " + "Done.";
             m_projectsList_SelectedIndexChanged(null, null);
             WorkOnAllButton.Enabled = true;
