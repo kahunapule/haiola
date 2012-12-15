@@ -517,6 +517,16 @@ namespace WordSend
     {
         protected static readonly int CHUNK_SIZE = 1048576;
 
+        public static string GetNamedAttribute(XmlTextReader usfx, string attributeName)
+        {
+            string result = usfx.GetAttribute(attributeName);
+            if (result == null)
+                result = String.Empty;
+            return result;
+        }
+
+
+
         /// <summary>
         /// Returns the Unicode file encoding if there are proper byte order marks;
         /// otherwise guesses if this is a UTF-8 (no BOM) file or ANSI file.
@@ -2378,13 +2388,16 @@ namespace WordSend
 		public int sortOrder;
 		public int numChapters;
 		public int[] verseCount;
-        public string tla;
+        public string tla;  // Standard three letter abbreviation of book
 		public string osisName;
-		public string name;
-		public string shortName;
-		public string vernacularHeader;
-		public string vernacularName;
-        public string vernacularAbbreviation;
+		public string name; // Constant English long name
+		public string shortName;    // Constant English short name
+        public int actualChapters;
+		public string vernacularHeader; // From \h
+		public string vernacularName;   // From \mt
+        public string vernacularLongName; // from \toc1
+        public string vernacularShortName;  // from \toc2
+        public string vernacularAbbreviation;   // From \toc3
 		public string testament;
         public StringBuilder toc;
         public int publicationOrder;
@@ -2394,6 +2407,7 @@ namespace WordSend
 		{
             sortOrder = publicationOrder = 0;
             numChapters = 151;
+            actualChapters = 0;
             isPresent = false;
 			tla = osisName = name = shortName = testament = vernacularAbbreviation = vernacularHeader = vernacularName = "";
             toc = new StringBuilder();
@@ -2470,13 +2484,31 @@ namespace WordSend
         }
     }
 
+
 	public class BibleBookInfo
 	{
 		public const int MAXNUMBOOKS=110;	// Includes Apocrypha + extrabiblical helps, front & back matter, etc.
 		public Hashtable books;
 		public BibleBookRecord[] bookArray = new BibleBookRecord[MAXNUMBOOKS];
         public BibleBookRecord[] publishArray = new BibleBookRecord[MAXNUMBOOKS];
+        public Hashtable altNames;
 		protected bool apocryphaFound;
+
+        protected string PrepareToCompare(string s)
+        {
+            string result = s.Trim().ToUpperInvariant();
+            result = s.Replace(" ", "");
+            result = s.Replace(".", "");
+            return result;
+        }
+
+        public string getTla(string book)
+        {
+            string tla = (string)altNames[PrepareToCompare(book)];
+            if (tla == null)
+                tla = String.Empty;
+            return tla;
+        }
 
         public bool isApocrypha(string abbrev)
         {
@@ -2666,6 +2698,221 @@ namespace WordSend
 		{
 			ReadBookInfoFile(SFConverter.FindAuxFile("BibleBookInfo.xml"));
 		}
+
+        private string languageCode = string.Empty;
+
+        public string ethnologueCode { get { return languageCode; } }
+
+        /// <summary>
+        /// Reads vernacular book name and versification information from USFX file
+        /// </summary>
+        /// <param name="usfxName">Name of the USFX file to parse</param>
+        public void readUsfxVernacularNames(string usfxName)
+        {
+            string level = String.Empty;
+            string style = String.Empty;
+            string sfm = String.Empty;
+            string caller = String.Empty;
+            string id = String.Empty;
+            string currentBookAbbrev = String.Empty;
+            BibleBookRecord bookRecord = (BibleBookRecord)books["MAT"];
+            string chapterString = String.Empty;
+            int chapterNumber = 0;
+            string verseString = String.Empty;
+            string verseRangeEnd = String.Empty;
+            int verseNumber = 0;
+            int verseRangeEndNumber = 0;
+
+            foreach (BibleBookRecord br in bookArray)
+            {
+                if (br != null)
+                {
+                    br.vernacularAbbreviation = String.Empty;   // toc3
+                    br.vernacularHeader = String.Empty; // h
+                    br.vernacularLongName = String.Empty;   // toc1
+                    br.vernacularName = String.Empty;   // mt
+                    br.vernacularShortName = String.Empty;  // toc2
+                }
+            }
+            XmlTextReader usfx = new XmlTextReader(usfxName);
+            usfx.WhitespaceHandling = WhitespaceHandling.Significant;
+            altNames = new Hashtable(997);
+            while (usfx.Read())
+            {
+                if (usfx.NodeType == XmlNodeType.Element)
+                {
+                    level = fileHelper.GetNamedAttribute(usfx, "level");
+                    style = fileHelper.GetNamedAttribute(usfx, "style");
+                    sfm = fileHelper.GetNamedAttribute(usfx, "sfm");
+                    caller = fileHelper.GetNamedAttribute(usfx, "caller");
+                    id = fileHelper.GetNamedAttribute(usfx, "id");
+
+                    switch (usfx.Name)
+                    {
+                        case "languageCode":
+                            usfx.Read();
+                            if (usfx.NodeType == XmlNodeType.Text)
+                                languageCode = usfx.Value;
+                            break;
+                        case "book":
+                            if (id.Length > 2)
+                            {
+                                currentBookAbbrev = PrepareToCompare(id);
+                                bookRecord = (BibleBookRecord)books[currentBookAbbrev];
+
+                                if (bookRecord == null)
+                                {
+                                    Logit.WriteError("Cannot process unknown book \"" + currentBookAbbrev + "\" in " + usfxName);
+                                    return;
+                                }
+                                altNames[currentBookAbbrev] = currentBookAbbrev;
+                            }
+                            chapterString = verseString = String.Empty;
+                            chapterNumber = 0;
+                            verseNumber = 0;
+                            break;
+                        case "id":
+                            if (PrepareToCompare(id) != currentBookAbbrev)
+                            {
+                                Logit.WriteError("ERROR: id element " + id + " <> " + " book id " + currentBookAbbrev + " in " + usfxName);
+                            }
+                            break;
+                        case "p":
+                            if (sfm.CompareTo("mt") == 0)
+                            {
+                                usfx.Read();
+                                if (usfx.NodeType == XmlNodeType.Text)
+                                {
+                                    if (bookRecord.vernacularName.Length > 0)
+                                        bookRecord.vernacularName = bookRecord.vernacularName + " " + usfx.Value.Trim();
+                                    else
+                                        bookRecord.vernacularName = usfx.Value.Trim();
+                                }
+                                altNames[PrepareToCompare(bookRecord.vernacularName)] = currentBookAbbrev;
+                            }
+                            break;
+                        case "h":
+                            if (level != String.Empty)
+                                Logit.WriteLine("Warning: level not supported on h element.");
+                            usfx.Read();
+                            if (usfx.NodeType == XmlNodeType.Text)
+                            {
+                                bookRecord.vernacularHeader = usfx.Value.Trim();
+                                altNames[PrepareToCompare(bookRecord.vernacularHeader)] = currentBookAbbrev;
+                            }
+
+                            break;
+                        case "c":
+                            chapterString = id.Trim();
+                            verseString = verseRangeEnd =  String.Empty;
+                            verseNumber = verseRangeEndNumber = 0;
+                            int chNum;
+                            if (Int32.TryParse(chapterString, out chNum))
+                            {
+                                chapterNumber = chNum;
+                            }
+                            else
+                            {
+                                chapterNumber++;
+                                Logit.WriteError("Bad chapter number at " + currentBookAbbrev + " " + chapterString + " in " + usfxName);
+                            }
+                            bookRecord.actualChapters = Math.Max(bookRecord.numChapters, chapterNumber);
+                            break;
+                        case "toc":
+                            if (!usfx.IsEmptyElement)
+                            {
+                                if (level == String.Empty)
+                                    level = "1";
+                                usfx.Read();
+                                if (usfx.NodeType == XmlNodeType.Text)
+                                {
+                                    switch (level)
+                                    {
+                                        case "1":
+                                            bookRecord.vernacularLongName = usfx.Value.Trim();
+                                            altNames[PrepareToCompare(bookRecord.vernacularLongName)] = currentBookAbbrev;
+                                            break;
+                                        case "2":
+                                            bookRecord.vernacularShortName = usfx.Value.Trim();
+                                            altNames[PrepareToCompare(bookRecord.vernacularShortName)] = currentBookAbbrev;
+                                            break;
+                                        case "3":
+                                            bookRecord.vernacularAbbreviation = usfx.Value.Trim();
+                                            altNames[PrepareToCompare(bookRecord.vernacularAbbreviation)] = currentBookAbbrev;
+                                            break;
+                                    }
+                                }
+                            }
+                            break;
+                        case "v":
+                            verseString = id.Trim();
+                            int dashPlace = verseString.IndexOf('-');
+                            if (dashPlace > 0)
+                            {
+                                verseRangeEnd = verseString.Substring(dashPlace + 1);
+                                verseString = verseString.Substring(0, dashPlace);
+                            }
+                            else
+                            {
+                                verseRangeEnd = verseString;
+                            }
+                            int vnum;
+                            if (Int32.TryParse(verseString, out vnum))
+                            {
+                                verseNumber = vnum;
+                            }
+                            else
+                            {
+                                verseNumber++;
+                            }
+                            if (Int32.TryParse(verseRangeEnd, out vnum))
+                            {
+                                verseRangeEndNumber = vnum;
+                            }
+                            else
+                            {
+                                verseRangeEndNumber = verseNumber;
+                            }
+                            bookRecord.verseCount[chapterNumber] = verseRangeEndNumber;
+                            break;
+                        case "x":
+
+                            break;
+                    }
+                }
+                else if (usfx.NodeType == XmlNodeType.EndElement)
+                {
+                    switch (usfx.Name)
+                    {
+                        case "book":
+                            if (bookRecord.vernacularName == String.Empty)
+                            {
+                                bookRecord.vernacularName = currentBookAbbrev;
+                                Logit.WriteError("Missing main title in " + currentBookAbbrev + " in " + usfxName);
+                            }
+                            if (bookRecord.vernacularHeader == String.Empty)
+                            {
+                                bookRecord.vernacularHeader = bookRecord.vernacularName;
+                                Logit.WriteLine("Missing h (header short title) element in " + currentBookAbbrev + " in " + usfxName);
+                            }
+                            if (bookRecord.vernacularLongName == String.Empty)
+                                bookRecord.vernacularLongName = bookRecord.vernacularName;
+                            if (bookRecord.vernacularShortName == String.Empty)
+                                bookRecord.vernacularShortName = bookRecord.vernacularHeader;
+                            if (bookRecord.vernacularAbbreviation == String.Empty)
+                                bookRecord.vernacularAbbreviation = bookRecord.vernacularHeader;
+                            break;
+                    }
+                }
+                else if ((usfx.NodeType == XmlNodeType.Text) && (bookRecord != null) && (bookRecord.tla == currentBookAbbrev) && (usfx.Value.Trim().Length > 2))
+                {   // We don't count a book as present unless there is some text in it.
+                    bookRecord.isPresent = true;
+                }
+                //conversionProgress = "navigation " + currentBookAbbrev + " " + currentChapter + ":" + currentVerse;
+                //System.Windows.Forms.Application.DoEvents();
+            }
+            usfx.Close();
+        }
 	}
 
 	public enum sfmType
@@ -3924,7 +4171,12 @@ namespace WordSend
 					}
 					else if (sfm.tag == "v")
 					{
-
+                        string highVerse = sfm.attribute;
+                        int dashplace = highVerse.IndexOf('-');
+                        if (dashplace > 0)
+                        {
+                            highVerse = highVerse.Substring(dashplace + 1);
+                        }
                         vs = Math.Max(vs, Int32.Parse(sfm.attribute));
 						if ((currentChapter > 0) && (currentChapter <= bkInfo.bookArray[bookIndex].numChapters))
 						{
@@ -4166,30 +4418,42 @@ namespace WordSend
             int lineBreakPlace;
 			if ((contents != null) && (contents != ""))
 			{
-                lineBreakPlace = contents.IndexOf("//");
+                lineBreakPlace = contents.IndexOf("http://");
                 if (lineBreakPlace >= 0)
                 {
                     if (lineBreakPlace > 0)
                     {
-                        xw.WriteString(contents.Substring(0, lineBreakPlace));
+                        WriteUSFXText(contents.Substring(0, lineBreakPlace));
                     }
-                    xw.WriteElementString("optionalLineBreak", "");
-                    if (contents.Length > (lineBreakPlace + 2))
-                    {   // Recursive call in case there is more than one // in contents.
-                        WriteUSFXText(contents.Substring(lineBreakPlace + 2));
-                    }
+                    xw.WriteString("http://");
+                    WriteUSFXText(contents.Substring(lineBreakPlace + 7));
                 }
                 else
                 {
-                    if (contents.EndsWith(" "))
+                    lineBreakPlace = contents.IndexOf("//");
+                    if (lineBreakPlace >= 0)
                     {
-                        xw.WriteString(contents.TrimEnd() + "\r\n");
+                        if (lineBreakPlace > 0)
+                        {
+                            xw.WriteString(contents.Substring(0, lineBreakPlace));
+                        }
+                        xw.WriteElementString("optionalLineBreak", "");
+                        if (contents.Length > (lineBreakPlace + 2))
+                        {   // Recursive call in case there is more than one // in contents.
+                            WriteUSFXText(contents.Substring(lineBreakPlace + 2));
+                        }
                     }
                     else
                     {
-                        xw.WriteString(contents);
+                        if (contents.EndsWith(" "))
+                        {
+                            xw.WriteString(contents.TrimEnd() + "\r\n");
+                        }
+                        else
+                        {
+                            xw.WriteString(contents);
+                        }
                     }
-                    
                 }
 			}
 		}
@@ -6089,7 +6353,7 @@ namespace WordSend
 								if (xr.Name != "xmlns:ns0")
 									xw.WriteAttributeString(xr.Name, xr.Value);
 							}
-							xw.WriteAttributeString("xmlns:ns0", "http://ebible.org/usfx/usfx-2012-11-09.xsd");
+							xw.WriteAttributeString("xmlns:ns0", "http://ebible.org/usfx/usfx-2012-12-12.xsd");
 							xr.MoveToElement();
 						}
 						else if (xr.Name == "w:ftr")
@@ -6251,9 +6515,9 @@ namespace WordSend
 				usfxStyleCount = 0;
                 activeCharacterStyle = String.Empty;
 				xw.WriteStartElement(ns+"usfx");
-				xw.WriteAttributeString("xmlns:ns0", @"http://eBible.org/usfx/usfx-2012-11-09.xsd");
+				xw.WriteAttributeString("xmlns:ns0", @"http://eBible.org/usfx/usfx-2012-12-12.xsd");
 				xw.WriteAttributeString("xmlns:xsi", @"http://www.w3.org/2001/XMLSchema-instance");
-				xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", @"usfx-2012-11-09.xsd");
+				xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", @"usfx-2012-12-12.xsd");
                 if (languageCode.Length == 3)
                     xw.WriteElementString("languageCode", languageCode);
 				for (j = 0; j < BibleBookInfo.MAXNUMBOOKS; j++)
@@ -6270,7 +6534,7 @@ namespace WordSend
                 validationLocation = "header";
                 currentElement = "";
                 XmlReaderSettings settings = new XmlReaderSettings();
-                settings.Schemas.Add("http://ebible.org/usfx-2012-11-18.xsd", SFConverter.FindAuxFile("usfx-2012-11-18.xsd"));
+                settings.Schemas.Add("http://ebible.org/usfx-2012-12-12.xsd", SFConverter.FindAuxFile("usfx-2012-12-12.xsd"));
                 settings.ValidationType = ValidationType.Schema;
                 settings.ValidationFlags = XmlSchemaValidationFlags.ReportValidationWarnings;
                 settings.ValidationEventHandler += new ValidationEventHandler(UsfxValidationCallBack);
@@ -6357,7 +6621,7 @@ namespace WordSend
 						{
 							xw.WriteStartElement("usfx");
 							xw.WriteAttributeString("xmlns:xsi", @"http://www.w3.org/2001/XMLSchema-instance");
-							xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", @"usfx-2012-11-09.xsd");
+							xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", @"usfx-2012-12-12.xsd");
 							inBody = true;
 						}
 						else if (xr.Name.StartsWith(ns))
@@ -8182,7 +8446,7 @@ namespace WordSend
                                     chapterNumber = chNum;
                                 else
                                     chapterNumber++;
-                                bookRecord.numChapters = Math.Max(bookRecord.numChapters, chapterNumber);
+                                bookRecord.actualChapters = Math.Max(bookRecord.actualChapters, chapterNumber);
                                 break;
                             case "v":
                                 currentVerse = id;
@@ -9040,7 +9304,7 @@ namespace WordSend
                                     chapterNumber = chNum;
                                 else
                                     chapterNumber++;
-                                bookRecord.numChapters = Math.Max(bookRecord.numChapters, chapterNumber);
+                                bookRecord.actualChapters = Math.Max(bookRecord.actualChapters, chapterNumber);
                                 LeaveHeader();
                                 inPreverse = true;
                                 chopChapter = true;
