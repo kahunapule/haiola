@@ -31,7 +31,7 @@ function RemoveNavButton(id) {
 // Slightly more concise and improved version based on http://www.jquery4u.com/snippets/url-parameters-jquery/
 function getUrlVar(key) {
     var result = new RegExp(key + "=([^&]*)", "i").exec(window.location.search);
-    return result && unescape(result[1]) || "";
+    return result && decodeURI(result[1]) || "";
 }
 
 function onLoadBook(bookName)
