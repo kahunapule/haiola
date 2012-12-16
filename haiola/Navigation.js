@@ -19,12 +19,13 @@ function SetBookName(bookName)
 function gotoStartOfBook() {
     if (parent.body.main) {
         pathToBook = parent.location.pathname.substring(0, parent.location.pathname.length - 6); // strip off NN.htm
-        chapNum = "00";
+        // TODO: replace "01" and "001" with the actual first chapter present in this book. Or throw this out. The top frame doesn't do anything you can't do by clicking on the active book name in the contents.
+        chapNum = "01"; // Chapter 00 does not exist if no subtitles are added to the translation. Chapter 1 might not exist, either, in a partial translation.
         lastChar = pathToBook[pathToBook.length - 1];
         if (lastChar == '0' || lastChar == '1') // Psalms
         {
             pathToBook = pathToBook.substring(0, pathToBook.length - 1);
-            chapNum = "000";
+            chapNum = "001";
         }
         parent.location.assign(parent.location.protocol + parent.location.host + pathToBook + chapNum + ".htm");
     }

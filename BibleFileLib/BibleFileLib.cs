@@ -2132,7 +2132,7 @@ namespace WordSend
 				if (xr != null)
 					xr.Close();
 			}
-			Logit.WriteLine(numbks.ToString()+" book name translations and "+xref.Count.ToString()+" crossreference notes read.");
+			// Logit.WriteLine(numbks.ToString()+" book name translations and "+xref.Count.ToString()+" crossreference notes read.");
 		}
 
 		public string find(string place)
@@ -2713,9 +2713,14 @@ namespace WordSend
 
             if (tag.Length < 1)
                 return;  // Nothing to do.
+            if (info.kind == null)
+            {
+                Logit.WriteError("Unknown tag \\" + tag + " at " + currentBook + " " + currentChapter + ":" + currentVerse);
+                return;
+            }
 
             // Track where we are.
-            if ((info.kind != null) && (info.kind.CompareTo("meta") == 0))
+            if (info.kind.CompareTo("meta") == 0)
             {
                 if (tag.CompareTo("id") == 0)
                 {
@@ -2751,6 +2756,8 @@ namespace WordSend
                     currentVerse = attribute;
                     if (currentParagraph == String.Empty)
                         Logit.WriteError("USFM error: no paragraph started at " + currentBook + " " + currentChapter + ":" + currentVerse);
+                    else if ((currentParagraph == "b") && (text.Trim().Length > 0))
+                        Logit.WriteError("USFM error: \\b contains text at " + currentBook + " " + currentChapter + ":" + currentVerse);
                 }
             }
             if ((info.kind.CompareTo("paragraph") == 0) || (tag == "nb"))
@@ -4594,8 +4601,11 @@ namespace WordSend
                 }
                 else
                 {
-                    Logit.WriteLine("Warning: Started new character style " + sfm + " without terminating " +
-                        activeCharacterStyle + " at " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                    if (!(inUSFXNote))
+                    {
+                        Logit.WriteLine("Warning: Started new character style " + sfm + " without terminating " +
+                            activeCharacterStyle + " at " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                    }
                     if (activeCharacterStyle != sfm)
                     {
                         EndUSFXStyle();
@@ -5565,6 +5575,7 @@ namespace WordSend
 								        StartUSFXParagraph(sf.tag, sf.level, sf.info.paragraphStyle, sf.text);
 								        break;
 							        case "id":
+                                        verseMark = chapterMark = String.Empty;
                                         if (inUSFXNote)
                                         {
                                             EndUSFXNote();
@@ -6686,6 +6697,12 @@ namespace WordSend
                                 if (usfxFile.NodeType == XmlNodeType.Text)
                                     languageCode = usfxFile.Value;
                                 break;
+                            case "f":
+                            case "x":
+                                if (id == String.Empty)
+                                    id = "+";
+                                usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag());
+                                break;
                             default:
                                 usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag());
                                 break;
@@ -7229,7 +7246,7 @@ namespace WordSend
         bool ignoreIntros = false;
         bool ignoreNotes = false;
         bool chopChapter;
-        private bool hasContentsPage;
+        protected bool hasContentsPage;
         //bool containsDC;
         bool newChapterFound;
         public BibleBookInfo bookInfo = new BibleBookInfo();
@@ -8475,6 +8492,8 @@ namespace WordSend
                                     case "toc":
                                         if (!usfx.IsEmptyElement)
                                         {
+                                            if (level == String.Empty)
+                                                level = "1";
                                             usfx.Read();
                                             if (usfx.NodeType == XmlNodeType.Text)
                                             {
@@ -9045,6 +9064,8 @@ namespace WordSend
                             case "toc":
                                 if (!usfx.IsEmptyElement)
                                 {
+                                    if (level == String.Empty)
+                                        level = "1";
                                     usfx.Read();
                                     if (usfx.NodeType == XmlNodeType.Text)
                                     {
@@ -9396,6 +9417,8 @@ namespace WordSend
                                     case "toc":
                                         if (!usfx.IsEmptyElement)
                                         {
+                                            if (level == String.Empty)
+                                                level = "1";
                                             usfx.Read();
                                             if (usfx.NodeType == XmlNodeType.Text)
                                             {
