@@ -35,8 +35,8 @@ namespace BibleFileLib
 
 		public UsfxToFramedHtmlConverter()
 		{
-			PreviousChapterLinkText = "Previous Chapter";
-			NextChapterLinkText = "Next Chapter";
+			PreviousChapterLinkText = "<<";
+			NextChapterLinkText = ">>";
 			HideNavigationButtonText = "Hide Navigation Panes";
 			ShowNavigationButtonText = "Show Navigation Panes";
 		}
@@ -107,7 +107,7 @@ namespace BibleFileLib
 			string indexFilePath = Path.Combine(htmDir, IndexFileName);
 			string rootFileName = "root.htm";
 			string rootFilePath = Path.Combine(htmDir, rootFileName);
-			WriteFrameFile(indexFilePath, "rows=\"35, *\"", true, "navigation", NavigationFileName, "body", rootFileName, null);
+			WriteFrameFile(indexFilePath, "rows=\"0, *\"", true, "navigation", NavigationFileName, "body", rootFileName, null);
 		    var firstFrameContents = "Introduction.htm";
             if (!File.Exists(Path.Combine(htmDir, firstFrameContents)))
 		    {
@@ -123,7 +123,7 @@ namespace BibleFileLib
                         firstFrameContents = tocFile;
                     else
                     {
-                        firstFrameContents = tocFile.Substring(0, tocFile.Length - 1) + "1"; // Review: what if no chapter 1??
+                        firstFrameContents = tocFile.Substring(0, tocFile.Length - 1) + "1"; // Review: what if no chapter 1?? A: This happens!
                     }
                 }
 		    }
@@ -146,12 +146,14 @@ namespace BibleFileLib
 			htmNav.WriteLine("      <script src=\"Navigation.js\" type=\"text/javascript\"></script>");
 			htmNav.WriteLine("</head>");
 			htmNav.WriteLine("<body>");
+            /*
 			htmNav.WriteLine(
 				"      <input type=\"button\" value=\"Go to start of Book\" title=\"Go to start of book\"");
 			htmNav.WriteLine(
 				"         onclick=\"gotoStartOfBook()\"/>");
 			htmNav.WriteLine(
 				"		<span id=\"book\" class=\"NavBookName\" style=\"background: lightgreen; padding-left:3pt; padding-right:3pt\" > </span>");
+            */
 			htmNav.WriteLine("</body>");
 			htmNav.WriteLine("</html>");
 			htmNav.Close();
@@ -166,76 +168,97 @@ namespace BibleFileLib
 			var topFramePath = Path.Combine(directory, topFrameName);
 			var interiorFrameName = InteriorFramePrefix + htmName;
 			var interiorFramePath = Path.Combine(directory, interiorFrameName);
-			WriteFrameFile(topFramePath, "rows=\"35, *\" onload=\"onLoad()\"", true, "navigation", NavigationFileName, "body", interiorFrameName, "frameFuncs.js");
+			WriteFrameFile(topFramePath, "rows=\"0, *\" onload=\"onLoad()\"", true, "navigation", NavigationFileName, "body", interiorFrameName, "frameFuncs.js");
 			// We put the bookId as the hash of the URL for the chapter index so that the current book is always visible.
 			WriteFrameFile(interiorFramePath, "cols=\"20%,80%\"", false, "index", UsfxToChapterIndex.ChapIndexFileName + "#" + bookId, "main", htmName, null);
 		}
 
-		protected override void WriteNavButtons()
-		{
-			WriteNavButtons(true);
-		}
+        private string repeatedNavButtons;
+		
 		/// <summary>
 		/// These files are displayed (typically) in a frame that supplies most navigation. We therefore generate a much simplified set.
 		/// </summary>
-		protected void WriteNavButtons(bool atStart)
+		protected override void WriteNavButtons()
 		{
+            StringBuilder sb = new StringBuilder();
 			int chapNumSize;
-			FormatString(out chapNumSize);
+			var formatString = FormatString(out chapNumSize);
 			string previousFileLink = null;
-			bool lastFileWasCurrent = false;
 			string nextFileLink = null;
-			string previousFile = null;
 			string thisFile = null;
+            string firstChapterFile = FirstChapterFile(formatString);
+
 			for (int i = 0; i < chapterFileList.Count; i++)
 			{
 				string chFile = (string)chapterFileList[i];
 				int cn;
 				if (chFile.StartsWith(currentBookAbbrev))
 				{
-					if (int.TryParse(chFile.Substring(chFile.Length - chapNumSize), out cn) && cn == chapterNumber)
-					{
-						// This file is the one we are generating.
-						thisFile = chFile + ".htm";
-						previousFileLink = previousFile;
-						lastFileWasCurrent = true;
+					if (int.TryParse(chFile.Substring(chFile.Length - chapNumSize), out cn))
+                    {
+                        if (cn == chapterNumber)
+                        {
+                            // This file is the one we are generating.
+                            thisFile = chFile + ".htm";
+                            if (hasContentsPage && (chapterNumber == 1))
+                            {
+                                int j = 0;
+                                previousFileLink = currentBookAbbrev + j.ToString(formatString) + ".htm";
+                            }
+                            else if (i > 0)
+                            {
+                                previousFileLink = (string)chapterFileList[i - 1] + ".htm";
+                            }
+                            if (i < (chapterFileList.Count - 1))
+                            {
+                                nextFileLink = (string)chapterFileList[i + 1] + ".htm";
+                                break;
+                            }
+                        }
+                        else if (chapterNumber == 0)
+                        {
+                            thisFile = firstChapterFile;
+                            nextFileLink = chFile + ".htm";
+                            if (i > 0)
+                            {
+                                previousFileLink = (string)chapterFileList[i - 1] + ".htm";
+                            }
+                            break;
+                        }
 					}
-					else if (lastFileWasCurrent)
-					{
-						nextFileLink = chFile;
-						break;
-					}
-					previousFile = chFile;
 				}
 			}
-			htm.WriteLine("<div class=\"navButtons\">");
+            sb.Append("<div class=\"navButtons\">\r\n");
 			if (!string.IsNullOrEmpty(previousFileLink))
 			{
-				previousFileLink += ".htm";
-				htm.WriteLine(
+				sb.Append(
 					"<input type=\"button\" value=\"" + PreviousChapterLinkText + "\" title=\"" + PreviousChapterLinkText +
-					"\" onclick=\"top.location.href='" + TopFrameName(previousFileLink) + "'\"/>");
+					"\" onclick=\"top.location.href='" + TopFrameName(previousFileLink) + "'\"/>\r\n");
 			}
+            if (!string.IsNullOrEmpty(firstChapterFile))
+            {
+                sb.Append("<input type=\"button\" value=\"" + currentBookHeader + "\" title=\"" + currentBookHeader +
+					"\" onclick=\"top.location.href='" + TopFrameName(firstChapterFile) + "'\"/>\r\n");
+            }
 			if (!string.IsNullOrEmpty(nextFileLink))
 			{
-				nextFileLink += ".htm";
-				htm.WriteLine(
+				sb.Append(
 					"<input type=\"button\" value=\"" + NextChapterLinkText + "\" title=\"" + NextChapterLinkText +
 					"\" onclick=\"top.location.href='" + TopFrameName(nextFileLink) + "'\"/>");
 			}
-			if (atStart)
-			{
-				htm.WriteLine("<input id='showNav' type=\"button\" value='" + ShowNavigationButtonText + "' title='" +
-				              ShowNavigationButtonText + "' onclick=\"top.location.href='" + TopFrameName(thisFile) + "'\"/>");
-				htm.WriteLine("<input id='hideNav' type=\"button\" value='" + HideNavigationButtonText + "' title='" +
-							  HideNavigationButtonText + "' onclick=\"top.location.href='" + thisFile + "'\"/>");
-			}
-			htm.WriteLine("</div >");
+			htm.WriteLine(sb.ToString());
+			htm.WriteLine("<input id='showNav' type=\"button\" value='" + ShowNavigationButtonText + "' title='" +
+				            ShowNavigationButtonText + "' onclick=\"top.location.href='" + TopFrameName(thisFile) + "'\"/>");
+			htm.WriteLine("<input id='hideNav' type=\"button\" value='" + HideNavigationButtonText + "' title='" +
+							HideNavigationButtonText + "' onclick=\"top.location.href='" + thisFile + "'\"/>");		
+            sb.Append("</div>");
+            repeatedNavButtons = sb.ToString();
+			htm.WriteLine("</div>");
 		}
 
 		protected override void RepeatNavButtons()
-		{
-			WriteNavButtons(false);
+		{   // We use the stored string instead of computing the chapter links all over again, because the chapter number at this point is one higher.
+            htm.WriteLine(repeatedNavButtons);
 		}
 
 		/// <summary>
