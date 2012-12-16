@@ -2618,7 +2618,7 @@ namespace WordSend
 						case "numChapters":
 							xr.Read();
 							bkRecord.numChapters = Convert.ToInt32(xr.Value);
-							bkRecord.verseCount = new int[bkRecord.numChapters + 1];
+							bkRecord.verseCount = new int[152];
                             if ((bkRecord.sortOrder < 0) || (bkRecord.sortOrder >= BibleBookInfo.MAXNUMBOOKS))
 							{
 								Logit.WriteError("ERROR: bad sort order number:"+bkRecord.sortOrder.ToString());
@@ -2715,13 +2715,16 @@ namespace WordSend
             string caller = String.Empty;
             string id = String.Empty;
             string currentBookAbbrev = String.Empty;
-            BibleBookRecord bookRecord = (BibleBookRecord)books["MAT"];
+            BibleBookRecord bookRecord = (BibleBookRecord)bookArray[0];
             string chapterString = String.Empty;
             int chapterNumber = 0;
             string verseString = String.Empty;
             string verseRangeEnd = String.Empty;
             int verseNumber = 0;
             int verseRangeEndNumber = 0;
+
+            try
+            {
 
             foreach (BibleBookRecord br in bookArray)
             {
@@ -2912,6 +2915,11 @@ namespace WordSend
                 //System.Windows.Forms.Application.DoEvents();
             }
             usfx.Close();
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError(ex.Message + "\r\n" + ex.StackTrace);
+            }
         }
 	}
 
