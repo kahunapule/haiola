@@ -836,7 +836,7 @@ namespace BibleFileLib
 				// We use this rather than the old strategy of encoding the selected word in a variable of the occurrences pane
 				// because (a) we are no longer showing both panes at once; and (b) they are now in different directories, which
 				// leads to security errors, at least when using the files offline.
-				writer.Write("<a href=\"../{0}?w={5}&f={3}#{1}\">{4}</a>", // FixMe: nestConc: ../
+				writer.Write("<a href=\"../{0}?w={5}&amp;f={3}#{1}\">{4}</a>", // FixMe: nestConc: ../
 					new object[] { item.FileName, item.Anchor, fixQuoteForm, flags, form, infoForm});
 				//writer.Write(item.Context.Substring(item.Offset + key.Length, item.Context.Length - item.Offset - key.Length));
 				WriteFollowingContext(writer, item.Context.Substring(item.Offset + info.Form.Length, item.Context.Length - item.Offset - info.Form.Length));
