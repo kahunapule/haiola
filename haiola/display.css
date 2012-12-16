@@ -1,0 +1,22 @@
+/* stylesheet for use with osis2html.xsl */
+/* Dave van Grootheest, Netherlands Bible Society */
+/* last updated: 2007-07-12 */
+
+/* JohnT: global defaults */
+body				{ font-family: Charis SIL, Times New Roman, Serif; font-size: 12pt}
+body.mainDoc	{
+	background-image: url(watermark.jpg);
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-position:center bottom}
+
+/* JohnT, for chapter index */
+body.ConcIndex	{background: #ff8}
+
+
+/* JohnT, for word occurrence files */
+span.OccRef			{color:Maroon}
+span.special		{color:Gray}
+
+
+
