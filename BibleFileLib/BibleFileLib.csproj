@@ -107,6 +107,7 @@
     <Compile Include="usfxToXhtmlConverter.cs" />
     <Compile Include="WordformInfo.cs" />
     <Compile Include="WordOccurrence.cs" />
+    <Compile Include="xmlini.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -1156,6 +1156,7 @@ In addition, you have permission to convert the text to different file formats, 
             string logFile;
             try
             {
+                
                 string UsfmDir = Path.Combine(m_outputProjectDirectory, "usfm");
                 if (!Directory.Exists(SourceDir))
                 {

@@ -501,6 +501,7 @@ namespace WordSend
             int i;
             try
             {
+                bookInfo.readUsfxVernacularNames(usfxFileName);
                 osisFileName = mosisFileName;
                 lastNoteVerse = String.Empty;
                 noteNumber = serialNumber = 0;
@@ -713,7 +714,7 @@ namespace WordSend
                                     chapterNumber = chNum;
                                 else
                                     chapterNumber++;
-                                bookRecord.numChapters = Math.Max(bookRecord.numChapters, chapterNumber);
+                                bookRecord.actualChapters = Math.Max(bookRecord.actualChapters, chapterNumber);
                                 osisVersesId = osisVerseId = osisBook + "." + currentChapter;
                                 chaptereID = StartId();
                                 StartMosisElement("chapter");
