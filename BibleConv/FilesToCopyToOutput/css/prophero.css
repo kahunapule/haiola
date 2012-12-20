@@ -136,6 +136,8 @@ div.copyright, div.fine { display: block; text-align: center;  font-size: 6pt; c
 div.toc {display: block;  font-size: 13pt; text-align: left; text-indent: -1em; margin-left: 1em }
 div.toc1 {display: block;  font-size: 13pt; text-align: left; text-indent: -1em; margin-left: 2em }
 div.toc2 {display: block;  font-size: 11pt; text-align: left; text-indent: -1em; margin-left: 3em }
+div.toc3 {display: block;  font-size: 11pt; text-align: left; text-indent: -1em; margin-left: 4em }
+div.toc4 {display: block;  font-size: 11pt; text-align: left; text-indent: -1em; margin-left: 5em }
 
 div.sectionheading, div.chapterlabel   { display: block; text-align: center;  font-size: 13pt; font-weight: bold; margin-top: 12pt }
 div.sectionsubheading   { display: block; text-align: center;  font-weight: bold; font-style: italic; margin-top: 6pt; margin-left: 12pt } /* JohnT */
