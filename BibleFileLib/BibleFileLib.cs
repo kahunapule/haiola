@@ -8992,7 +8992,12 @@ namespace WordSend
                                 usfx.Read();
                                 if (usfx.NodeType == XmlNodeType.Text)
                                 {
-									bookRecord.toc.Append(String.Format("<div class=\"toc2\"><a target=\"_top\" href=\"{0}#V{1}\">{2}</a></div>\r\n",
+                                    string levelSuffix = "2";
+                                    if (level == "2")
+                                        levelSuffix = "3"; // use toc3 for level 2 subheadings
+                                    else if (!string.IsNullOrEmpty(level) && level != "1") // anything specified but "2" or "1"
+                                        levelSuffix = "4"; // could try to generalize, but not useful to have more than stylesheet, anyway.
+									bookRecord.toc.Append(String.Format("<div class=\"toc" + levelSuffix + "\"><a target=\"_top\" href=\"{0}#V{1}\">{2}</a></div>\r\n",
 										MainFileLinkTarget(currentBookAbbrev, Math.Max(1, chapterNumber).ToString(chapFormat)),
                                         verseNumber.ToString(), usfx.Value.Trim()));
                                 }
