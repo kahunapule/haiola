@@ -37,293 +37,6 @@ namespace WordSend
 {
 
 	/// <summary>
-	/// The purpose of this class is to provide very simple persistence of variables
-	/// in the manner of old .ini files, but without sections. Files are persisted in
-	/// XML files based on ini.dtd. All variables are keyed based on a case-sensitive
-	/// string. If this class gets heavily used, it should be refactored as a database
-	/// rather than a simple XML file.
-	/// </summary>
-	public class XMLini
-	{
-		private string fileName;
-		private Hashtable hashTbl;
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="XMLini"/> class.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		public XMLini(string iniName)
-		{
-			XmlTextReader xml = null;
-			hashTbl = new Hashtable();
-
-			string k = null;
-			string v = null;
-			string elementName = null;
-			
-			string dirName = Path.GetDirectoryName(iniName);
-            if (!Directory.Exists(dirName))
-                Directory.CreateDirectory(dirName);
-
-            /****
-			string dtdname = Path.Combine(Path.GetDirectoryName(iniName),"ini.dtd");
-			if (!File.Exists(dtdname))
-			{
-				try
-				{
-					StreamWriter sw = new StreamWriter(dtdname, false, System.Text.Encoding.UTF8);
-					sw.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"+
-						"<!--.ini file replacement-->\n"+
-						"<!ELEMENT ini (entry*)>\n"+
-						"<!ELEMENT entry (key, value)>\n"+
-						"<!ELEMENT key (#PCDATA)>\n"+
-						"<!ELEMENT value (#PCDATA)>");
-					sw.Flush();
-					sw.Close();
-				}
-				catch
-				{
-					// Probably a path to removed or read-only media
-				}
-			}
-            ****/
-
-			// Open the named XML file and read in all entries into keys and values
-			// arrays.
-			fileName = iniName;
-			// debugLog.WriteLine(fileName);
-			// debugLog.Close();
-			
-			if (File.Exists(fileName))
-			{
-				try
-				{
-					xml = new XmlTextReader(fileName);
-					xml.WhitespaceHandling = WhitespaceHandling.None;
-					xml.MoveToContent();
-                    try
-                    {
-                        while (xml.Read())
-                        {
-                            switch (xml.NodeType)
-                            {
-                                case XmlNodeType.Element:
-                                    elementName = xml.Name;
-                                    if (elementName == "entry")
-                                    {
-                                        k = v = "";
-                                    }
-                                    break;
-                                case XmlNodeType.Text:
-                                    if (elementName == "key")
-                                        k += xml.Value;
-                                    else if (elementName == "value")
-                                        v += xml.Value;
-                                    break;
-                                case XmlNodeType.EntityReference:
-                                    if (elementName == "key")
-                                        k += xml.Value;
-                                    else if (elementName == "value")
-                                        v += xml.Value;
-                                    break;
-                                case XmlNodeType.EndElement:
-                                    if (xml.Name == "entry")
-                                        hashTbl[k] = v;
-                                    break;
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        Logit.WriteError("Bad input format in file " + fileName + "; using defaults.");
-                    }
-				}
-				finally
-				{
-					if (xml != null)
-						xml.Close();
-				}
-			}
-		}
-
-        /// <summary>
-        /// Using ~ as an escape character, ensure the output string has no <, >, or & characters
-        /// in a reversible way. Expands the string when any of those 4 characters are in it.
-        /// </summary>
-        /// <param name="s">unencoded string</param>
-        /// <returns>encoded string</returns>
-        public static string encodeStringForXml(string s)
-        {
-            if ((s == null) || (s == String.Empty))
-                return s;
-            string result = s.Replace("~", "~~");
-            result = result.Replace("<", "~l");
-            result = result.Replace(">", "~g");
-            result = result.Replace("&", "~a");
-            return result;
-        }
-
-        /// <summary>
-        /// Undoes what encodeStringForXml does.
-        /// </summary>
-        /// <param name="s">encoded string</param>
-        /// <returns>unencoded (plain, original) string</returns>
-        public static string unencodeStringForXml(string s)
-        {
-            if ((s == null) || (s == String.Empty))
-                return s;
-            string result = s.Replace("~a", "&");
-            result = result.Replace("~g", ">");
-            result = result.Replace("~l", "<");
-            result = result.Replace("~~", "~");
-            return result;
-        }
-
-		public void WriteString(string key, string val)
-		{
-			hashTbl[key] = encodeStringForXml(val);
-		}
-
-		public void WriteInt(string key, int i)
-		{
-			hashTbl[key] = i.ToString();
-		}
-
-		public void WriteBool(string key, bool b)
-		{
-			hashTbl[key] = b.ToString();
-		}
-
-		public string ReadString(string key, string deflt)
-		{
-			string result = unencodeStringForXml((string) hashTbl[key]);
-			if (result == null)
-			{
-				result = deflt;
-			}
-			return result;
-		}
-
-		public int ReadInt(string key, int deflt)
-		{
-			int result = deflt;
-			try
-			{
-				string s = (string) hashTbl[key];
-				if ((s == null) || (s == ""))
-				{
-					return deflt;
-				}
-				result = int.Parse(s);
-			}
-			catch
-			{
-			}
-			return result;
-		}
-
-		public bool ReadBool(string key, bool deflt)
-		{
-			bool result = deflt;
-			try
-			{
-				string s = (string) hashTbl[key];
-				if ((s == null) || (s == ""))
-					return deflt;
-				result = bool.Parse(s);
-			}
-			catch
-			{
-			}
-			return result;
-		}
-
-        public void WriteDateTime(string key, DateTime dt)
-        {
-            hashTbl[key] = dt.ToString("o");
-        }
-
-        public DateTime ReadDateTime(string key, DateTime deflt)
-        {
-            DateTime result = deflt;
-            try
-            {
-                string s = (string)hashTbl[key];
-                if ((s == null) || (s == ""))
-                    return deflt;
-                result = DateTime.Parse(s, null, System.Globalization.DateTimeStyles.RoundtripKind);
-            }
-            catch
-            {
-            }
-            return result;
-        }
-
-		// Flush the hash table to an XML file ("save").
-		public bool Write()
-		{
-			XmlTextWriter xml = null;
-			bool result = false;
-			try
-			{
-				try
-				{
-					xml = new XmlTextWriter(fileName, System.Text.Encoding.UTF8);
-					xml.WriteStartDocument();
-					xml.Formatting = Formatting.Indented;
-					xml.WriteDocType("ini", null, null/* "ini.dtd" */, null);
-					xml.WriteStartElement("ini");
-
-					IDictionaryEnumerator enu = hashTbl.GetEnumerator();
-					while (enu.MoveNext())
-					{
-						xml.WriteStartElement("entry");
-						xml.WriteElementString("key", (string) enu.Key);
-						xml.WriteElementString("value", (string) enu.Value);
-						xml.WriteEndElement();	// entry
-					}
-					xml.WriteEndElement();	// ini
-					xml.WriteEndDocument();
-					result = true;
-				}
-				finally
-				{
-					if (xml != null)
-						xml.Close();
-				}
-			}
-			catch
-			{
-				Logit.WriteError("Can't write to "+fileName);
-			}
-			return result;
-		}
-
-		// Flush the hash table to fName as an XML file ("save as").
-		public bool Write(string fName)
-		{
-			fileName = fName;
-			return Write();
-		}
-
-		public static string ExecutableName()
-		{
-			return (System.IO.Path.GetFullPath(Environment.GetCommandLineArgs()[0]));
-		}
-
-        public static string MyDocsDir()
-        {
-            return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        }
-
-        public static string AppDataDir()
-        {
-            return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        }
-	}
-
-	/// <summary>
 	/// This class extends XmlTextReader to keep track of some the current node
 	/// path as the file is read. It also adds a copynode method to make XML
 	/// copy with modification operations easier.
@@ -516,6 +229,16 @@ namespace WordSend
     public class fileHelper
     {
         protected static readonly int CHUNK_SIZE = 1048576;
+
+        public static string GetNamedAttribute(XmlTextReader usfx, string attributeName)
+        {
+            string result = usfx.GetAttribute(attributeName);
+            if (result == null)
+                result = String.Empty;
+            return result;
+        }
+
+
 
         /// <summary>
         /// Returns the Unicode file encoding if there are proper byte order marks;
@@ -2378,13 +2101,16 @@ namespace WordSend
 		public int sortOrder;
 		public int numChapters;
 		public int[] verseCount;
-        public string tla;
+        public string tla;  // Standard three letter abbreviation of book
 		public string osisName;
-		public string name;
-		public string shortName;
-		public string vernacularHeader;
-		public string vernacularName;
-        public string vernacularAbbreviation;
+		public string name; // Constant English long name
+		public string shortName;    // Constant English short name
+        public int actualChapters;
+		public string vernacularHeader; // From \h
+		public string vernacularName;   // From \mt
+        public string vernacularLongName; // from \toc1
+        public string vernacularShortName;  // from \toc2
+        public string vernacularAbbreviation;   // From \toc3
 		public string testament;
         public StringBuilder toc;
         public int publicationOrder;
@@ -2394,6 +2120,7 @@ namespace WordSend
 		{
             sortOrder = publicationOrder = 0;
             numChapters = 151;
+            actualChapters = 0;
             isPresent = false;
 			tla = osisName = name = shortName = testament = vernacularAbbreviation = vernacularHeader = vernacularName = "";
             toc = new StringBuilder();
@@ -2470,13 +2197,31 @@ namespace WordSend
         }
     }
 
+
 	public class BibleBookInfo
 	{
 		public const int MAXNUMBOOKS=110;	// Includes Apocrypha + extrabiblical helps, front & back matter, etc.
 		public Hashtable books;
 		public BibleBookRecord[] bookArray = new BibleBookRecord[MAXNUMBOOKS];
         public BibleBookRecord[] publishArray = new BibleBookRecord[MAXNUMBOOKS];
+        public Hashtable altNames;
 		protected bool apocryphaFound;
+
+        protected string PrepareToCompare(string s)
+        {
+            string result = s.Trim().ToUpperInvariant();
+            result = s.Replace(" ", "");
+            result = s.Replace(".", "");
+            return result;
+        }
+
+        public string getTla(string book)
+        {
+            string tla = (string)altNames[PrepareToCompare(book)];
+            if (tla == null)
+                tla = String.Empty;
+            return tla;
+        }
 
         public bool isApocrypha(string abbrev)
         {
@@ -2586,7 +2331,7 @@ namespace WordSend
 						case "numChapters":
 							xr.Read();
 							bkRecord.numChapters = Convert.ToInt32(xr.Value);
-							bkRecord.verseCount = new int[bkRecord.numChapters + 1];
+							bkRecord.verseCount = new int[152];
                             if ((bkRecord.sortOrder < 0) || (bkRecord.sortOrder >= BibleBookInfo.MAXNUMBOOKS))
 							{
 								Logit.WriteError("ERROR: bad sort order number:"+bkRecord.sortOrder.ToString());
@@ -2666,6 +2411,229 @@ namespace WordSend
 		{
 			ReadBookInfoFile(SFConverter.FindAuxFile("BibleBookInfo.xml"));
 		}
+
+        private string languageCode = string.Empty;
+
+        public string ethnologueCode { get { return languageCode; } }
+
+        /// <summary>
+        /// Reads vernacular book name and versification information from USFX file
+        /// </summary>
+        /// <param name="usfxName">Name of the USFX file to parse</param>
+        public void readUsfxVernacularNames(string usfxName)
+        {
+            string level = String.Empty;
+            string style = String.Empty;
+            string sfm = String.Empty;
+            string caller = String.Empty;
+            string id = String.Empty;
+            string currentBookAbbrev = String.Empty;
+            BibleBookRecord bookRecord = (BibleBookRecord)bookArray[0];
+            string chapterString = String.Empty;
+            int chapterNumber = 0;
+            string verseString = String.Empty;
+            string verseRangeEnd = String.Empty;
+            int verseNumber = 0;
+            int verseRangeEndNumber = 0;
+
+            try
+            {
+
+            foreach (BibleBookRecord br in bookArray)
+            {
+                if (br != null)
+                {
+                    br.vernacularAbbreviation = String.Empty;   // toc3
+                    br.vernacularHeader = String.Empty; // h
+                    br.vernacularLongName = String.Empty;   // toc1
+                    br.vernacularName = String.Empty;   // mt
+                    br.vernacularShortName = String.Empty;  // toc2
+                }
+            }
+            XmlTextReader usfx = new XmlTextReader(usfxName);
+            usfx.WhitespaceHandling = WhitespaceHandling.Significant;
+            altNames = new Hashtable(997);
+            while (usfx.Read())
+            {
+                if (usfx.NodeType == XmlNodeType.Element)
+                {
+                    level = fileHelper.GetNamedAttribute(usfx, "level");
+                    style = fileHelper.GetNamedAttribute(usfx, "style");
+                    sfm = fileHelper.GetNamedAttribute(usfx, "sfm");
+                    caller = fileHelper.GetNamedAttribute(usfx, "caller");
+                    id = fileHelper.GetNamedAttribute(usfx, "id");
+
+                    switch (usfx.Name)
+                    {
+                        case "languageCode":
+                            usfx.Read();
+                            if (usfx.NodeType == XmlNodeType.Text)
+                                languageCode = usfx.Value;
+                            break;
+                        case "book":
+                            if (id.Length > 2)
+                            {
+                                currentBookAbbrev = PrepareToCompare(id);
+                                bookRecord = (BibleBookRecord)books[currentBookAbbrev];
+
+                                if (bookRecord == null)
+                                {
+                                    Logit.WriteError("Cannot process unknown book \"" + currentBookAbbrev + "\" in " + usfxName);
+                                    return;
+                                }
+                                altNames[currentBookAbbrev] = currentBookAbbrev;
+                            }
+                            chapterString = verseString = String.Empty;
+                            chapterNumber = 0;
+                            verseNumber = 0;
+                            break;
+                        case "id":
+                            if (PrepareToCompare(id) != currentBookAbbrev)
+                            {
+                                Logit.WriteError("ERROR: id element " + id + " <> " + " book id " + currentBookAbbrev + " in " + usfxName);
+                            }
+                            break;
+                        case "p":
+                            if (sfm.CompareTo("mt") == 0)
+                            {
+                                usfx.Read();
+                                if (usfx.NodeType == XmlNodeType.Text)
+                                {
+                                    if (bookRecord.vernacularName.Length > 0)
+                                        bookRecord.vernacularName = bookRecord.vernacularName + " " + usfx.Value.Trim();
+                                    else
+                                        bookRecord.vernacularName = usfx.Value.Trim();
+                                }
+                                altNames[PrepareToCompare(bookRecord.vernacularName)] = currentBookAbbrev;
+                            }
+                            break;
+                        case "h":
+                            if (level != String.Empty)
+                                Logit.WriteLine("Warning: level not supported on h element.");
+                            usfx.Read();
+                            if (usfx.NodeType == XmlNodeType.Text)
+                            {
+                                bookRecord.vernacularHeader = usfx.Value.Trim();
+                                altNames[PrepareToCompare(bookRecord.vernacularHeader)] = currentBookAbbrev;
+                            }
+
+                            break;
+                        case "c":
+                            chapterString = id.Trim();
+                            verseString = verseRangeEnd =  String.Empty;
+                            verseNumber = verseRangeEndNumber = 0;
+                            int chNum;
+                            if (Int32.TryParse(chapterString, out chNum))
+                            {
+                                chapterNumber = chNum;
+                            }
+                            else
+                            {
+                                chapterNumber++;
+                                Logit.WriteError("Bad chapter number at " + currentBookAbbrev + " " + chapterString + " in " + usfxName);
+                            }
+                            bookRecord.actualChapters = Math.Max(bookRecord.numChapters, chapterNumber);
+                            break;
+                        case "toc":
+                            if (!usfx.IsEmptyElement)
+                            {
+                                if (level == String.Empty)
+                                    level = "1";
+                                usfx.Read();
+                                if (usfx.NodeType == XmlNodeType.Text)
+                                {
+                                    switch (level)
+                                    {
+                                        case "1":
+                                            bookRecord.vernacularLongName = usfx.Value.Trim();
+                                            altNames[PrepareToCompare(bookRecord.vernacularLongName)] = currentBookAbbrev;
+                                            break;
+                                        case "2":
+                                            bookRecord.vernacularShortName = usfx.Value.Trim();
+                                            altNames[PrepareToCompare(bookRecord.vernacularShortName)] = currentBookAbbrev;
+                                            break;
+                                        case "3":
+                                            bookRecord.vernacularAbbreviation = usfx.Value.Trim();
+                                            altNames[PrepareToCompare(bookRecord.vernacularAbbreviation)] = currentBookAbbrev;
+                                            break;
+                                    }
+                                }
+                            }
+                            break;
+                        case "v":
+                            verseString = id.Trim();
+                            int dashPlace = verseString.IndexOf('-');
+                            if (dashPlace > 0)
+                            {
+                                verseRangeEnd = verseString.Substring(dashPlace + 1);
+                                verseString = verseString.Substring(0, dashPlace);
+                            }
+                            else
+                            {
+                                verseRangeEnd = verseString;
+                            }
+                            int vnum;
+                            if (Int32.TryParse(verseString, out vnum))
+                            {
+                                verseNumber = vnum;
+                            }
+                            else
+                            {
+                                verseNumber++;
+                            }
+                            if (Int32.TryParse(verseRangeEnd, out vnum))
+                            {
+                                verseRangeEndNumber = vnum;
+                            }
+                            else
+                            {
+                                verseRangeEndNumber = verseNumber;
+                            }
+                            bookRecord.verseCount[chapterNumber] = verseRangeEndNumber;
+                            break;
+                        case "x":
+
+                            break;
+                    }
+                }
+                else if (usfx.NodeType == XmlNodeType.EndElement)
+                {
+                    switch (usfx.Name)
+                    {
+                        case "book":
+                            if (bookRecord.vernacularName == String.Empty)
+                            {
+                                bookRecord.vernacularName = currentBookAbbrev;
+                                Logit.WriteError("Missing main title in " + currentBookAbbrev + " in " + usfxName);
+                            }
+                            if (bookRecord.vernacularHeader == String.Empty)
+                            {
+                                bookRecord.vernacularHeader = bookRecord.vernacularName;
+                                Logit.WriteLine("Missing h (header short title) element in " + currentBookAbbrev + " in " + usfxName);
+                            }
+                            if (bookRecord.vernacularLongName == String.Empty)
+                                bookRecord.vernacularLongName = bookRecord.vernacularName;
+                            if (bookRecord.vernacularShortName == String.Empty)
+                                bookRecord.vernacularShortName = bookRecord.vernacularHeader;
+                            if (bookRecord.vernacularAbbreviation == String.Empty)
+                                bookRecord.vernacularAbbreviation = bookRecord.vernacularHeader;
+                            break;
+                    }
+                }
+                else if ((usfx.NodeType == XmlNodeType.Text) && (bookRecord != null) && (bookRecord.tla == currentBookAbbrev) && (usfx.Value.Trim().Length > 2))
+                {   // We don't count a book as present unless there is some text in it.
+                    bookRecord.isPresent = true;
+                }
+                //conversionProgress = "navigation " + currentBookAbbrev + " " + currentChapter + ":" + currentVerse;
+                //System.Windows.Forms.Application.DoEvents();
+            }
+            usfx.Close();
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError(ex.Message + "\r\n" + ex.StackTrace);
+            }
+        }
 	}
 
 	public enum sfmType
@@ -3924,7 +3892,12 @@ namespace WordSend
 					}
 					else if (sfm.tag == "v")
 					{
-
+                        string highVerse = sfm.attribute;
+                        int dashplace = highVerse.IndexOf('-');
+                        if (dashplace > 0)
+                        {
+                            highVerse = highVerse.Substring(dashplace + 1);
+                        }
                         vs = Math.Max(vs, Int32.Parse(sfm.attribute));
 						if ((currentChapter > 0) && (currentChapter <= bkInfo.bookArray[bookIndex].numChapters))
 						{
@@ -4166,30 +4139,42 @@ namespace WordSend
             int lineBreakPlace;
 			if ((contents != null) && (contents != ""))
 			{
-                lineBreakPlace = contents.IndexOf("//");
+                lineBreakPlace = contents.IndexOf("http://");
                 if (lineBreakPlace >= 0)
                 {
                     if (lineBreakPlace > 0)
                     {
-                        xw.WriteString(contents.Substring(0, lineBreakPlace));
+                        WriteUSFXText(contents.Substring(0, lineBreakPlace));
                     }
-                    xw.WriteElementString("optionalLineBreak", "");
-                    if (contents.Length > (lineBreakPlace + 2))
-                    {   // Recursive call in case there is more than one // in contents.
-                        WriteUSFXText(contents.Substring(lineBreakPlace + 2));
-                    }
+                    xw.WriteString("http://");
+                    WriteUSFXText(contents.Substring(lineBreakPlace + 7));
                 }
                 else
                 {
-                    if (contents.EndsWith(" "))
+                    lineBreakPlace = contents.IndexOf("//");
+                    if (lineBreakPlace >= 0)
                     {
-                        xw.WriteString(contents.TrimEnd() + "\r\n");
+                        if (lineBreakPlace > 0)
+                        {
+                            xw.WriteString(contents.Substring(0, lineBreakPlace));
+                        }
+                        xw.WriteElementString("optionalLineBreak", "");
+                        if (contents.Length > (lineBreakPlace + 2))
+                        {   // Recursive call in case there is more than one // in contents.
+                            WriteUSFXText(contents.Substring(lineBreakPlace + 2));
+                        }
                     }
                     else
                     {
-                        xw.WriteString(contents);
+                        if (contents.EndsWith(" "))
+                        {
+                            xw.WriteString(contents.TrimEnd() + "\r\n");
+                        }
+                        else
+                        {
+                            xw.WriteString(contents);
+                        }
                     }
-                    
                 }
 			}
 		}
@@ -6089,7 +6074,7 @@ namespace WordSend
 								if (xr.Name != "xmlns:ns0")
 									xw.WriteAttributeString(xr.Name, xr.Value);
 							}
-							xw.WriteAttributeString("xmlns:ns0", "http://ebible.org/usfx/usfx-2012-11-09.xsd");
+							xw.WriteAttributeString("xmlns:ns0", "http://ebible.org/usfx/usfx-2012-12-12.xsd");
 							xr.MoveToElement();
 						}
 						else if (xr.Name == "w:ftr")
@@ -6251,9 +6236,9 @@ namespace WordSend
 				usfxStyleCount = 0;
                 activeCharacterStyle = String.Empty;
 				xw.WriteStartElement(ns+"usfx");
-				xw.WriteAttributeString("xmlns:ns0", @"http://eBible.org/usfx/usfx-2012-11-09.xsd");
+				xw.WriteAttributeString("xmlns:ns0", @"http://eBible.org/usfx/usfx-2012-12-12.xsd");
 				xw.WriteAttributeString("xmlns:xsi", @"http://www.w3.org/2001/XMLSchema-instance");
-				xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", @"usfx-2012-11-09.xsd");
+				xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", @"usfx-2012-12-12.xsd");
                 if (languageCode.Length == 3)
                     xw.WriteElementString("languageCode", languageCode);
 				for (j = 0; j < BibleBookInfo.MAXNUMBOOKS; j++)
@@ -6270,7 +6255,7 @@ namespace WordSend
                 validationLocation = "header";
                 currentElement = "";
                 XmlReaderSettings settings = new XmlReaderSettings();
-                settings.Schemas.Add("http://ebible.org/usfx-2012-11-18.xsd", SFConverter.FindAuxFile("usfx-2012-11-18.xsd"));
+                settings.Schemas.Add("http://ebible.org/usfx-2012-12-12.xsd", SFConverter.FindAuxFile("usfx-2012-12-12.xsd"));
                 settings.ValidationType = ValidationType.Schema;
                 settings.ValidationFlags = XmlSchemaValidationFlags.ReportValidationWarnings;
                 settings.ValidationEventHandler += new ValidationEventHandler(UsfxValidationCallBack);
@@ -6357,7 +6342,7 @@ namespace WordSend
 						{
 							xw.WriteStartElement("usfx");
 							xw.WriteAttributeString("xmlns:xsi", @"http://www.w3.org/2001/XMLSchema-instance");
-							xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", @"usfx-2012-11-09.xsd");
+							xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", @"usfx-2012-12-12.xsd");
 							inBody = true;
 						}
 						else if (xr.Name.StartsWith(ns))
@@ -8182,7 +8167,7 @@ namespace WordSend
                                     chapterNumber = chNum;
                                 else
                                     chapterNumber++;
-                                bookRecord.numChapters = Math.Max(bookRecord.numChapters, chapterNumber);
+                                bookRecord.actualChapters = Math.Max(bookRecord.actualChapters, chapterNumber);
                                 break;
                             case "v":
                                 currentVerse = id;
@@ -9040,7 +9025,7 @@ namespace WordSend
                                     chapterNumber = chNum;
                                 else
                                     chapterNumber++;
-                                bookRecord.numChapters = Math.Max(bookRecord.numChapters, chapterNumber);
+                                bookRecord.actualChapters = Math.Max(bookRecord.actualChapters, chapterNumber);
                                 LeaveHeader();
                                 inPreverse = true;
                                 chopChapter = true;
