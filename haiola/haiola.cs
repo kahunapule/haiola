@@ -1054,7 +1054,8 @@ In addition, you have permission to convert the text to different file formats, 
 				                    	};
 				// concGenerator.Run(new List<string>(Directory.GetFiles(xhtmlPath)));
                 statusNow("Generating concordance.");
-                concGenerator.Run(usfxFilePath);
+                
+                concGenerator.Run(Path.Combine(Path.Combine(m_outputProjectDirectory, "search"), "verseText.xml"));
 
 				var concFrameGenerator = new ConcFrameGenerator()
 				                         	{ConcDirectory = concordanceDirectory, LangName = m_options.vernacularTitle};
@@ -1293,6 +1294,20 @@ In addition, you have permission to convert the text to different file formats, 
             }
         }
 
+        private void PrepareSearchText()
+        {
+            ExtractSearchText est = new ExtractSearchText();
+            string UsfxPath = Path.Combine(m_outputProjectDirectory, "usfx");
+            string auxPath = Path.Combine(m_outputProjectDirectory, "search");
+            Utils.EnsureDirectory(auxPath);
+            est.Filter(Path.Combine(UsfxPath, "usfx.xml"), Path.Combine(auxPath, "verseText.xml"));
+        }
+
+        /// <summary>
+        /// Take the project input (exactly one of USFM, USFX, or USX) and create
+        /// the distribution formats we need.
+        /// </summary>
+        /// <param name="projDirName">full path to project input directory</param>
         private void ProcessOneProject(string projDirName)
         {
             SetCurrentProject(projDirName);
@@ -1302,14 +1317,22 @@ In addition, you have permission to convert the text to different file formats, 
             Application.DoEvents();
             if (!fAllRunning)
                 return;
+            // Find out what kind of input we have (USFX, USFM, or USX)
+            // and produce USFX, USFM, (and in the future) USX outputs.
             GetUsfx(projDirName);
         	Application.DoEvents();
+            // Create verseText.xml with unformatted canonical text only in verse containers.
+            if (fAllRunning)
+                PrepareSearchText();
+            // Create HTML output for posting on web sites.
             if (fAllRunning)
                 ConvertUsfxToPortableHtml();
             Application.DoEvents();
+            // Create Modified OSIS output for conversion to Sword format.
             if (fAllRunning)
                 ConvertUsfxToMosis();
             Application.DoEvents();
+            // Run custom per project scripts.
             if (fAllRunning)
                 DoPostprocess();
             Application.DoEvents();
@@ -1363,6 +1386,7 @@ In addition, you have permission to convert the text to different file formats, 
                 Application.DoEvents();
                 return;
             }
+            fAllRunning = true;
             btnSetRootDirectory.Enabled = false;
             reloadButton.Enabled = false;
             m_projectsList.Enabled = false;
@@ -1374,7 +1398,6 @@ In addition, you have permission to convert the text to different file formats, 
             tabControl1.SelectedTab = messagesTabPage;
             BackColor = Color.LightGreen;
             startTime = DateTime.UtcNow;
-            fAllRunning = true;
             Application.DoEvents();
             timer1.Enabled = true;
             WorkOnAllButton.Text = "Stop";
@@ -1382,38 +1405,13 @@ In addition, you have permission to convert the text to different file formats, 
             foreach (object o in m_projectsList.CheckedItems)
             {
                 ProcessOneProject((string)o);
-                /*
-                m_project = (string)o;
-                m_inputProjectDirectory = Path.Combine(m_inputDirectory, m_project);
-                m_outputProjectDirectory = Path.Combine(m_outputDirectory, m_project);
-                fileHelper.EnsureDirectory(m_outputProjectDirectory);
-                m_xiniPath = Path.Combine(m_inputProjectDirectory, "options.xini");
-                displayOptions();
-
-                Application.DoEvents();
-                if (!fAllRunning)
-                    break;
-                PreprocessUsfmFiles();
-                Application.DoEvents();
-                if (!fAllRunning)
-                    break;
-                ConvertUsfmToUsfx();
-                Application.DoEvents();
-                if (!fAllRunning)
-                    break;
-                ConvertUsfxToPortableHtml();
-                Application.DoEvents();
-                if (!fAllRunning)
-                    break;
-                DoPostprocess();
-                 */
                 Application.DoEvents();
                 if (!fAllRunning)
                     break;
             }
-            fAllRunning = false;
             currentConversion = String.Empty;
             timer1.Enabled = false;
+            fAllRunning = false;
             batchLabel.Text = (DateTime.UtcNow - startTime).ToString() + " " + "Done.";
             m_projectsList_SelectedIndexChanged(null, null);
             WorkOnAllButton.Enabled = true;
@@ -1931,6 +1929,7 @@ In addition, you have permission to convert the text to different file formats, 
                 Application.DoEvents();
                 return;
             }
+            fAllRunning = true;
             btnSetRootDirectory.Enabled = false;
             reloadButton.Enabled = false;
             m_projectsList.Enabled = false;
@@ -1944,7 +1943,6 @@ In addition, you have permission to convert the text to different file formats, 
             BackColor = Color.LightGreen;
             Application.DoEvents();
             timer1.Enabled = true;
-            fAllRunning = true;
             WorkOnAllButton.Text = "Stop";
             SaveOptions();
             ProcessOneProject(SelectedProject);
@@ -2254,6 +2252,7 @@ In addition, you have permission to convert the text to different file formats, 
             {
                 MessageBox.Show(ex.Message, "Book list may only be updated after USFX file is generated.");
             }
+            fAllRunning = false;
     	}
 
     	ListViewItem MakeBookListItem(string abbr, string vernAbbr, string xrefName)
