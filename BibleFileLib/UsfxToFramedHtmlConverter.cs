@@ -110,6 +110,8 @@ namespace BibleFileLib
 			WriteFrameFile(indexFilePath, "rows=\"0, *\"", true, "navigation", NavigationFileName, "body", rootFileName, null);
 		    var firstFrameContents = "Introduction.htm";
             if (!File.Exists(Path.Combine(htmDir, firstFrameContents)))
+                firstFrameContents = "Introduction.pdf"; // another option
+            if (!File.Exists(Path.Combine(htmDir, firstFrameContents)))
 		    {
 		        // We want to point the first frame instead at the first thing we have.
 		        var firstBook = (from br in bookInfo.publishArray where br != null && br.HasContent select br).FirstOrDefault();
@@ -126,9 +128,10 @@ namespace BibleFileLib
                         firstFrameContents = tocFile.Substring(0, tocFile.Length - 1) + "1"; // Review: what if no chapter 1?? A: This happens!
                     }
                 }
+		        firstFrameContents = Path.ChangeExtension(firstFrameContents, "htm");
 		    }
 			WriteFrameFile(rootFilePath, "cols=\"20%,80%\"", false, "index", UsfxToChapterIndex.ChapIndexFileName, "main",
-                           Path.ChangeExtension(firstFrameContents, "htm"), null);
+                           firstFrameContents, null);
 
 			// Also generate navigation file.
 			var navPath = Path.Combine(htmDir, NavigationFileName);
