@@ -623,14 +623,12 @@ namespace haiola
 		{
 			get
 			{
-				StringBuilder bldr = new StringBuilder();
-				foreach (string phrase in Phrases)
-					bldr.AppendLine(phrase);
-				return bldr.ToString();
+			    return ini.ReadString("concPhrases", "");
 			}
 
 			set
 			{
+                ini.WriteString("concPhrases", value);
 				Phrases.Clear();
 				foreach (string phrase in value.Split(new string[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries))
 					Phrases.Add(phrase);
