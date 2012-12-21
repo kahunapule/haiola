@@ -9314,7 +9314,7 @@ namespace WordSend
                                             {
                                                 currentChapterPublished = "0";
                                                 OpenHtmlFile();
-                                                htm.WriteLine("<div class=\"toc\"><a href=\"index.htm\">^</a></div>\r\n{0}",
+                                                htm.WriteLine("<div class=\"toc\"><a href=\"index.htm\" target=\"_top\">^</a></div>\r\n{0}",
                                                     bookRecord.toc.ToString());
                                                 CloseHtmlFile();
                                             }
