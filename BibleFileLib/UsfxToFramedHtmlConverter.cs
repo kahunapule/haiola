@@ -164,19 +164,36 @@ namespace BibleFileLib
 
 		public override void MakeFramesFor(string htmPath)
 		{
-			string htmName = Path.GetFileName(htmPath);
-			string bookId = htmName.Substring(0, 3);
-			string directory = Path.GetDirectoryName(htmPath);
-			var topFrameName = MainFramePrefix + htmName;
-			var topFramePath = Path.Combine(directory, topFrameName);
-			var interiorFrameName = InteriorFramePrefix + htmName;
-			var interiorFramePath = Path.Combine(directory, interiorFrameName);
-			WriteFrameFile(topFramePath, "rows=\"0, *\" onload=\"onLoad()\"", true, "navigation", NavigationFileName, "body", interiorFrameName, "frameFuncs.js");
-			// We put the bookId as the hash of the URL for the chapter index so that the current book is always visible.
-			WriteFrameFile(interiorFramePath, "cols=\"20%,80%\"", false, "index", UsfxToChapterIndex.ChapIndexFileName + "#" + bookId, "main", htmName, null);
+           string htmName = Path.GetFileName(htmPath);
+           string bookId = htmName.Substring(0, 3);
+           MakeFramesForAuxFile(htmPath, "#" + bookId);
 		}
 
-        private string repeatedNavButtons;
+        /// <summary>
+        /// Make the two frame files for the input HTML file.
+        /// Reloading the top frame tends to scroll the chapter index file to the top. This can disconcertingly make the
+        /// thing you just clicked vanish. To minimize this, where possible we add a "#XXX" to the chapter index
+        /// to make at least the relevant book visible. Callers not needing this behavior can just pass an empty urlHash.
+        /// </summary>
+        /// <param name="htmPath"></param>
+        /// <param name="urlHash"></param>
+        /// <returns></returns>
+        public static string MakeFramesForAuxFile(string htmPath, string urlHash)
+        {
+            string htmName = Path.GetFileName(htmPath);
+            string directory = Path.GetDirectoryName(htmPath);
+            var topFrameName = MainFramePrefix + htmName;
+            var topFramePath = Path.Combine(directory, topFrameName);
+            var interiorFrameName = InteriorFramePrefix + htmName;
+            var interiorFramePath = Path.Combine(directory, interiorFrameName);
+            WriteFrameFile(topFramePath, "rows=\"0, *\" onload=\"onLoad()\"", true, "navigation", NavigationFileName,
+                           "body", interiorFrameName, "frameFuncs.js");
+            WriteFrameFile(interiorFramePath, "cols=\"20%,80%\"", false, "index",
+                           UsfxToChapterIndex.ChapIndexFileName + urlHash, "main", htmName, null);
+            return topFrameName;
+        }
+
+	    private string repeatedNavButtons;
 		
 		/// <summary>
 		/// These files are displayed (typically) in a frame that supplies most navigation. We therefore generate a much simplified set.
@@ -274,7 +291,7 @@ namespace BibleFileLib
 		/// <param name="firstFile">to put in the first frame</param>
 		/// <param name="secondFrameName"></param>
 		/// <param name="secondFile">to put in the second one.</param>
-		private void WriteFrameFile(string framePath, string frameSetParams, bool suppressFirstFrameScroll, string firstFrameName, string firstFile, string secondFrameName, string secondFile, string javaScriptFile)
+		private static void WriteFrameFile(string framePath, string frameSetParams, bool suppressFirstFrameScroll, string firstFrameName, string firstFile, string secondFrameName, string secondFile, string javaScriptFile)
 		{
 			var htmFrame = new StreamWriter(framePath, false, Encoding.UTF8);
 			htmFrame.WriteLine(

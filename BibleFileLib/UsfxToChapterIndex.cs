@@ -47,6 +47,8 @@ namespace BibleFileLib
 		/// </summary>
 		public string IntroductionDirectory { get; set; }
 
+        public string InputProjectDirectory { get; set; }
+
 		/// <summary>
 		/// The string we append to a book ID to get the introduction file name for that book, if any.
 		/// </summary>
@@ -64,7 +66,25 @@ namespace BibleFileLib
 				htm.WriteLine("</div>");
 			}
 
-		    string htmDirectory = Path.GetDirectoryName(chapterIndexPath);
+            string htmDirectory = Path.GetDirectoryName(chapterIndexPath);
+
+		    string frontLinksPath = Path.Combine(InputProjectDirectory, "FrontLinks.txt");
+            if (File.Exists(frontLinksPath))
+            {
+                foreach (var line in File.ReadAllLines(frontLinksPath, Encoding.UTF8))
+                {
+                    var parts = line.Split(';');
+                    if (parts.Length != 2)
+                        continue;
+                    var linkText = parts[0];
+                    var linkFile = parts[1];
+                    var frameFile = UsfxToFramedHtmlConverter.MakeFramesForAuxFile(Path.Combine(htmDirectory, linkFile), "");
+                    htm.WriteLine("<div class=\"BookChapIndex\">");
+                    htm.WriteLine("<p class=\"IndexBookName\"><a target=\"_top\" href=\"" + frameFile + "\">" + linkText + "</a></p>");
+                    htm.WriteLine("</div>");
+                }
+            }
+
 
 			if (chapterNumber > 1)
 			{

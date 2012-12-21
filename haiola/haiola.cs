@@ -980,6 +980,7 @@ In addition, you have permission to convert the text to different file formats, 
 				if (m_options.GenerateConcordance)
 					ciMaker.ConcordanceLinkText = m_options.ConcordanceLinkText;
 				string chapIndexPath = Path.Combine(htmlPath, UsfxToChapterIndex.ChapIndexFileName);
+			    ciMaker.InputProjectDirectory = m_inputProjectDirectory;
 				ciMaker.Generate(usfxFilePath, chapIndexPath);
 				EnsureTemplateFile("chapIndex.css", htmlPath);
 				EnsureTemplateFile("frameFuncs.js", htmlPath);
