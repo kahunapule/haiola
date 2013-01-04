@@ -60,7 +60,7 @@ namespace BibleFileLib
 			if (!string.IsNullOrEmpty(ConcordanceLinkText))
 			{
 				htm.WriteLine("<div class=\"BookChapIndex\">");
-				htm.WriteLine("<p class=\"IndexBookName\"><a target=\"_top\" href=\"conc\\treeMaster.htm\">" + ConcordanceLinkText + "</a></p>");
+				htm.WriteLine("<p class=\"IndexBookName\"><a target=\"_top\" href=\"conc/treeMaster.htm\">" + ConcordanceLinkText + "</a></p>");
 				htm.WriteLine("</div>");
 			}
 

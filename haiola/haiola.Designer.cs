@@ -147,8 +147,6 @@
             this.chkMergeCase = new System.Windows.Forms.CheckBox();
             this.generateConcordanceCheckBox = new System.Windows.Forms.CheckBox();
             this.booksPage = new System.Windows.Forms.TabPage();
-            this.restoreDefaultsButton = new System.Windows.Forms.Button();
-            this.updateButton = new System.Windows.Forms.Button();
             this.label32 = new System.Windows.Forms.Label();
             this.listBooks = new System.Windows.Forms.ListView();
             this.colFilesStdAbbr = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -1469,8 +1467,6 @@
             // 
             // booksPage
             // 
-            this.booksPage.Controls.Add(this.restoreDefaultsButton);
-            this.booksPage.Controls.Add(this.updateButton);
             this.booksPage.Controls.Add(this.label32);
             this.booksPage.Controls.Add(this.listBooks);
             this.booksPage.Location = new System.Drawing.Point(4, 22);
@@ -1479,26 +1475,6 @@
             this.booksPage.TabIndex = 8;
             this.booksPage.Text = "Books";
             this.booksPage.UseVisualStyleBackColor = true;
-            // 
-            // restoreDefaultsButton
-            // 
-            this.restoreDefaultsButton.Location = new System.Drawing.Point(107, 421);
-            this.restoreDefaultsButton.Name = "restoreDefaultsButton";
-            this.restoreDefaultsButton.Size = new System.Drawing.Size(128, 23);
-            this.restoreDefaultsButton.TabIndex = 6;
-            this.restoreDefaultsButton.Text = "Restore Defaults";
-            this.restoreDefaultsButton.UseVisualStyleBackColor = true;
-            this.restoreDefaultsButton.Click += new System.EventHandler(this.restoreDefaultsButton_Click);
-            // 
-            // updateButton
-            // 
-            this.updateButton.Location = new System.Drawing.Point(8, 421);
-            this.updateButton.Name = "updateButton";
-            this.updateButton.Size = new System.Drawing.Size(75, 23);
-            this.updateButton.TabIndex = 5;
-            this.updateButton.Text = "Update";
-            this.updateButton.UseVisualStyleBackColor = true;
-            this.updateButton.Click += new System.EventHandler(this.updateButton_Click);
             // 
             // label32
             // 
@@ -1932,9 +1908,7 @@
 		private System.Windows.Forms.ListView listBooks;
 		private System.Windows.Forms.ColumnHeader colFilesStdAbbr;
 		private System.Windows.Forms.ColumnHeader colFilesVernAbbr;
-		private System.Windows.Forms.ColumnHeader colFilesXrefs;
-		private System.Windows.Forms.Button updateButton;
-		private System.Windows.Forms.Button restoreDefaultsButton;
+        private System.Windows.Forms.ColumnHeader colFilesXrefs;
 		private System.Windows.Forms.TabPage framesPage;
 		private System.Windows.Forms.CheckBox useFramesCheckBox;
 		private System.Windows.Forms.TextBox nextChapterLinkTextBox;

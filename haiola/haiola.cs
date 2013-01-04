@@ -877,7 +877,7 @@ namespace haiola
                 xml.WriteStartElement("scriptureBook");
                 xml.WriteAttributeString("ubsAbbreviation", br.tla);
                 xml.WriteAttributeString("parm", "vernacularAbbreviatedName");
-                xml.WriteString(br.vernacularHeader);
+                xml.WriteString(br.vernacularAbbreviation);
                 xml.WriteEndElement();  // scriptureBook
             }
             // Dublin Core library card data
@@ -1320,6 +1320,7 @@ In addition, you have permission to convert the text to different file formats, 
             // Find out what kind of input we have (USFX, USFM, or USX)
             // and produce USFX, USFM, (and in the future) USX outputs.
             GetUsfx(projDirName);
+            UpdateBooksList();
         	Application.DoEvents();
             // Create verseText.xml with unformatted canonical text only in verse containers.
             if (fAllRunning)
@@ -2202,24 +2203,24 @@ In addition, you have permission to convert the text to different file formats, 
 		/// <param name="e"></param>
 		private void updateButton_Click(object sender, EventArgs e)
 		{
-			UpdateBooksList(false);
+			UpdateBooksList();
 		}
 
 		private void restoreDefaultsButton_Click(object sender, EventArgs e)
 		{
-			UpdateBooksList(true);
+			UpdateBooksList();
 		}
 
-    	private void UpdateBooksList(bool restoreDefaults)
+    	private void UpdateBooksList()
     	{
             try
             {
-                fAllRunning = true;
-                GetUsfx(SelectedProject);
+                // GetUsfx(SelectedProject);
                 var analyzer = new UsfxToBookAndAbbr();
                 analyzer.Parse(GetUsfxFilePath());
                 Dictionary<string, string> oldNames = new Dictionary<string, string>();
                 Dictionary<string, string> oldAbbreviations = new Dictionary<string, string>();
+                /****** Always restore defaults automatically.
                 if (!restoreDefaults)
                 {
                     foreach (ListViewItem item in listBooks.Items)
@@ -2231,6 +2232,7 @@ In addition, you have permission to convert the text to different file formats, 
                         oldAbbreviations[key] = oldAbbr;
                     }
                 }
+                *************/
                 listBooks.BeginUpdate();
                 listBooks.Items.Clear();
                 foreach (var key in analyzer.BookIds)
@@ -2247,12 +2249,12 @@ In addition, you have permission to convert the text to different file formats, 
                     listBooks.Items.Add(MakeBookListItem(key, vernacularAbbreviation, vernacularName));
                 }
                 listBooks.EndUpdate();
+                SaveBooksTab();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Book list may only be updated after USFX file is generated.");
             }
-            fAllRunning = false;
     	}
 
     	ListViewItem MakeBookListItem(string abbr, string vernAbbr, string xrefName)
@@ -2276,6 +2278,8 @@ In addition, you have permission to convert the text to different file formats, 
 		{
 			ListViewHitTestInfo hti = listBooks.HitTest(e.Location);
 			ListViewItem.ListViewSubItem si = hti.SubItem;
+            return;
+            /********** disable editing
 			if (si == null || si.Name != "Edit")
 				return;
 			// Make a text box to edit the subitem contents.
@@ -2287,7 +2291,7 @@ In addition, you have permission to convert the text to different file formats, 
 			listBooks.Controls.Add(tb);
 			tb.SelectAll();
 			tb.Focus();
-
+            *************/
 		}
 		void tb_LostFocus(object sender, EventArgs e)
 		{

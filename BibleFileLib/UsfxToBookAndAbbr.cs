@@ -28,10 +28,10 @@ namespace BibleFileLib
 		public List<string> BookIds { get; private set; }
 
 		private XmlTextReader usfx;
-		private string vernacularName = ""; // from toc level 1 if found
+//		private string vernacularName = ""; // from toc level 1 if found
 		private string mtName = ""; // from p sfm = mt level = 1
-		private string bookId = ""; // ID of current book
-		private string vernacularAbbreviation = "";
+//		private string bookId = ""; // ID of current book
+//		private string vernacularAbbreviation = "";
 		protected string sfm; // sfm attribute of current element
 		protected string id; // id attribute of current element
 		protected string level; // level attribute of current element
@@ -43,8 +43,21 @@ namespace BibleFileLib
 			BookIds = new List<string>();
 		}
 
-		public void Parse(string usfxPath)
-		{
+        public void Parse(string usfxPath)
+        {
+            BibleBookInfo bookInfo = new BibleBookInfo();
+            bookInfo.ReadUsfxVernacularNames(usfxPath);
+            foreach (BibleBookRecord br in bookInfo.bookArray)
+            {
+                if ((br != null) && (!String.IsNullOrEmpty(br.tla)) && (!String.IsNullOrEmpty(br.vernacularAbbreviation) && (!String.IsNullOrEmpty(br.vernacularShortName))))
+                {
+                    BookIds.Add(br.tla);
+                    VernacularNames[br.tla] = br.vernacularShortName;
+                    ReferenceAbbreviations[br.tla] = br.vernacularAbbreviation;
+                }
+            }
+        }
+/************************************************************************
 			usfx = new XmlTextReader(usfxPath);
 			usfx.WhitespaceHandling = WhitespaceHandling.Significant;
 			while (usfx.Read())
@@ -125,6 +138,7 @@ namespace BibleFileLib
 				}
 			}
 		}
+
 		protected string GetNamedAttribute(string attributeName)
 		{
 			string result = usfx.GetAttribute(attributeName);
@@ -132,6 +146,6 @@ namespace BibleFileLib
 				result = String.Empty;
 			return result;
 		}
-
+        ************************************************************************/
 	}
 }
