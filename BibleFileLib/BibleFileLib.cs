@@ -1,7 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2003-2011, SIL International, EBT, and Youth With A Mission
-// <copyright from='2003' to='2011' company='SIL International, EBT, and Youth With A Mission'>
-//		Copyright © 2004, SIL International. All Rights Reserved.   
+#region // Copyright (c) 2003-2013, SIL International, EBT, and Youth With A Mission
+// <copyright from='2003' to='2013' company='SIL International, EBT, and Youth With A Mission'>
 //    
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -35,195 +34,6 @@ using System.Diagnostics;
 
 namespace WordSend
 {
-
-	/// <summary>
-	/// This class extends XmlTextReader to keep track of some the current node
-	/// path as the file is read. It also adds a copynode method to make XML
-	/// copy with modification operations easier.
-	/// 
-	/// Only the constructor that takes a file name as a parameter is supported.
-	/// (But you could easily extend it if you need to read from something other
-	/// than a named text file.)
-	/// </summary>
-	public class XmlFileReader: XmlTextReader
-	{
-		protected ArrayList nodePathList;
-		protected string nodePathCache;
-		protected bool atEmptyElement;
-		public string currentElement;
-
-		public XmlFileReader(string fileName): base(fileName)
-		{
-			nodePathList = new ArrayList(64);
-			currentElement = "";
-		}
-
-		public override bool Read()
-		{
-			bool result = base.Read();
-			nodePathCache = null;
-			if (result)
-			{
-				if (NodeType == XmlNodeType.Element)
-				{
-					currentElement = Name;
-					atEmptyElement = IsEmptyElement;
-					if (!IsEmptyElement)
-						nodePathList.Add(Name);
-				}
-				else if (NodeType == XmlNodeType.EndElement)
-				{
-					if (nodePathList.Count > 0)
-                        nodePathList.RemoveAt(nodePathList.Count-1);
-					atEmptyElement = false;
-				}
-
-			}
-			return result;
-		}
-
-		public string NodePath()
-		{
-			if (nodePathCache != null)
-				return nodePathCache;
-			int i;
-			StringBuilder sb = new StringBuilder(128);
-
-			for (i = 0; i < nodePathList.Count; i++)
-			{
-				sb.Append("/");
-				sb.Append((string) nodePathList[i]);
-			}
-			if (atEmptyElement)
-			{
-				sb.Append("/");
-				sb.Append(currentElement);
-			}
-			sb.Append("/");
-			nodePathCache = sb.ToString();
-			return nodePathCache;
-		}
-
-		public bool NodePathContains(string s)
-		{
-			string np = NodePath();
-			return np.IndexOf(s) != -1;
-		}
-
-		public void CopyNode(XmlTextWriter xw)
-		{
-			switch (NodeType)
-			{
-				case XmlNodeType.Element:
-					xw.WriteStartElement(Name);
-					xw.WriteAttributes(this, true);
-					if (IsEmptyElement)
-						xw.WriteEndElement();
-					break;
-				case XmlNodeType.EndElement:
-					xw.WriteEndElement();
-					break;
-				case XmlNodeType.Text:
-					xw.WriteString(Value);
-					break;
-				case XmlNodeType.SignificantWhitespace:
-					xw.WriteWhitespace(Value);
-					break;
-				case XmlNodeType.Whitespace:
-					// You could insert xw.WriteWhitespace(Value); to preserve
-					// insignificant white space, but it either adds bloat or
-					// messes up formatting.
-					break;
-				case XmlNodeType.Attribute:
-					xw.WriteAttributeString(Name, Value);
-					break;
-				case XmlNodeType.ProcessingInstruction:
-					xw.WriteProcessingInstruction(Name, Value);
-					break;
-				case XmlNodeType.XmlDeclaration:
-					xw.WriteStartDocument(true);
-					break;
-				default:
-					Logit.WriteLine("Doing NOTHING with type="+NodeType.ToString()+" Name="+Name+" Value="+Value); // DEBUG
-					break;
-			}
-		}
-
-	}
-
-	public delegate void StringDelegate(string s);
-
-	/// <summary>
-	/// This class provides a way to display results from the command console,
-	/// a scrolling list box, or a log file (or any combination of those.
-	/// </summary>
-	public class Logit
-	{
-		public static StringDelegate GUIWriteString;
-        public static StringDelegate UpdateStatus;
-		public static bool useConsole;
-//		public static System.Windows.Forms.ListBox lstBox;
-		protected static System.IO.StreamWriter sw;
-        public static bool loggedError = false;
-        public static string logFileName = String.Empty;
-
-        public static void ShowStatus(string s)
-        {
-            if (UpdateStatus != null)
-                UpdateStatus(s);
-        }
-
-        public static void WriteError(string s)
-        {
-            WriteLine(s);
-            loggedError = true;
-        }
-
-		public static void WriteLine(string s)
-		{
-			if (useConsole)
-				Console.WriteLine(s);
-			if (GUIWriteString != null)
-                GUIWriteString(s);
-            if ((!useConsole) && (GUIWriteString == null) && (sw == null))
-                System.Windows.Forms.MessageBox.Show(s);
-			if (sw != null)
-				sw.WriteLine(s);
-		}
-
-		public static void OpenFile(string fName)
-		{
-            loggedError = false;
-			try
-			{
-				CloseFile();
-				sw = new StreamWriter(fName, false);
-				if (useConsole)
-					Console.WriteLine("Log file opened: "+fName);
-                logFileName = fName;
-			}
-			catch
-			{
-				WriteLine("Unable to open log file "+fName);
-			}
-		}
-
-		public static void CloseFile()
-		{
-			try
-			{
-				if (sw != null)
-					sw.Close();
-				sw = null;
-			}
-			catch
-			{
-				sw = null;
-			}
-		}
-	}
-
-
 	/// <summary>
 	/// This class provides a consistent way to write USFM files.
 	/// </summary>
@@ -827,41 +637,6 @@ namespace WordSend
 		}
 	}
 
-	public class BibleBookRecord
-	{
-		public int sortOrder;
-		public int numChapters;
-		public int[] verseCount;
-        public string tla;  // Standard three letter abbreviation of book
-		public string osisName;
-		public string name; // Constant English long name
-		public string shortName;    // Constant English short name
-        public int actualChapters;
-		public string vernacularHeader; // From \h
-		public string vernacularName;   // From \mt
-        public string vernacularLongName; // from \toc1
-        public string vernacularShortName;  // from \toc2
-        public string vernacularAbbreviation;   // From \toc3
-		public string testament;
-        public StringBuilder toc;
-        public int publicationOrder;
-        public ArrayList chapterFiles;
-        public bool isPresent;
-		public BibleBookRecord()
-		{
-            sortOrder = publicationOrder = 0;
-            numChapters = 151;
-            actualChapters = 0;
-            isPresent = false;
-			tla = osisName = name = shortName = testament = vernacularAbbreviation = vernacularHeader = vernacularName = "";
-            toc = new StringBuilder();
-		}
-
-        public bool HasContent
-        {
-            get { return isPresent && chapterFiles != null && chapterFiles.Count > 0; }
-        }
-	}
 
     public class LanguageCodeInfo
     {
@@ -927,445 +702,6 @@ namespace WordSend
             }
         }
     }
-
-
-	public class BibleBookInfo
-	{
-		public const int MAXNUMBOOKS=110;	// Includes Apocrypha + extrabiblical helps, front & back matter, etc.
-		public Hashtable books;
-		public BibleBookRecord[] bookArray = new BibleBookRecord[MAXNUMBOOKS];
-        public BibleBookRecord[] publishArray = new BibleBookRecord[MAXNUMBOOKS];
-        public Hashtable altNames;
-		protected bool apocryphaFound;
-
-        protected string PrepareToCompare(string s)
-        {
-            string result = s.Trim().ToUpperInvariant();
-            result = s.Replace(" ", "");
-            result = s.Replace(".", "");
-            return result;
-        }
-
-        public string getTla(string book)
-        {
-            string tla = (string)altNames[PrepareToCompare(book)];
-            if (tla == null)
-                tla = String.Empty;
-            return tla;
-        }
-
-        public bool isApocrypha(string abbrev)
-        {
-            BibleBookRecord br = (BibleBookRecord)books[abbrev];
-            if (br == null)
-                return false;
-            return br.testament == "a";
-        }
-
-        public bool isPeripheral(string abbrev)
-        {
-            BibleBookRecord br = (BibleBookRecord)books[abbrev];
-            if (br == null)
-                return false;
-            return br.testament == "x";
-        }
-
-        public int Order(string abbrev)
-		{
-			BibleBookRecord br = (BibleBookRecord)books[abbrev];
-			if (br == null)
-				return 0;
-			return br.sortOrder;
-		}
-
-		public string FilePrefix(string abbrev)
-		{
-			BibleBookRecord br = (BibleBookRecord)books[abbrev];
-			if (br == null)
-				return "00-"+abbrev;
-			int num = br.sortOrder;
-			if (num < 40)
-			{
-				apocryphaFound = false;
-				return num.ToString("d2")+"-"+abbrev;
-			}
-			if (num < 64)
-			{
-				apocryphaFound = true;
-			}
-			else
-			{
-				if (!apocryphaFound)
-					num -= 24;
-			}
-			return num.ToString("d2")+"-"+abbrev;
-		}
-
-		public string OsisID(string abbrev)
-		{
-			BibleBookRecord br = (BibleBookRecord)books[abbrev];
-			if (br == null)
-				return "";
-			return br.osisName;
-		}
-
-		public BibleBookRecord BkRec(string abbrev)
-		{
-			return (BibleBookRecord)books[abbrev];
-		}
-
-		public void ReadBookInfoFile(string fileName)
-		{
-			int i;
-			books = new Hashtable(197);
-			BibleBookRecord bkRecord = null; 
-			XmlTextReader xr = new XmlTextReader(fileName);
-			xr.WhitespaceHandling = WhitespaceHandling.Significant;
-			while (xr.Read())
-			{
-				if (xr.NodeType == XmlNodeType.Element)
-				{
-					switch (xr.Name)
-					{
-						case "Book":
-							bkRecord = new BibleBookRecord();
-							for (i = 0; i < xr.AttributeCount; i++)
-							{
-								xr.MoveToAttribute(i);
-								if (xr.Name == "testament")
-								{
-									bkRecord.testament = xr.Value;
-								}
-							}
-							xr.MoveToElement();
-							break;
-						case "sfmTla":
-							xr.Read();
-							bkRecord.tla = xr.Value;
-							break;
-						case "osisName":
-							xr.Read();
-							bkRecord.osisName = xr.Value;
-							break;
-						case "name":
-							xr.Read();
-							bkRecord.name = xr.Value;
-							break;
-						case "shortName":
-							xr.Read();
-							bkRecord.shortName = xr.Value;
-							break;
-						case "sortOrder":
-							xr.Read();
-							bkRecord.sortOrder = Convert.ToInt32(xr.Value);
-							break;
-						case "numChapters":
-							xr.Read();
-							bkRecord.numChapters = Convert.ToInt32(xr.Value);
-							bkRecord.verseCount = new int[152];
-                            if ((bkRecord.sortOrder < 0) || (bkRecord.sortOrder >= BibleBookInfo.MAXNUMBOOKS))
-							{
-								Logit.WriteError("ERROR: bad sort order number:"+bkRecord.sortOrder.ToString());
-								bkRecord.sortOrder = 0;
-							}
-							break;
-					}
-				}
-				else if (xr.NodeType == XmlNodeType.EndElement)
-				{
-					if (xr.Name == "Book")
-					{
-						books[bkRecord.tla] = bkRecord;
-						bookArray[bkRecord.sortOrder] = bkRecord;
-                        publishArray[bkRecord.sortOrder] = bkRecord;    // Default book publication order
-					}
-				}
-			}
-			xr.Close();
-		}
-		
-		public BibleBookInfo(string fileName)
-		{
-			ReadBookInfoFile(fileName);
-		}
-
-        /// <summary>
-        /// Reads a file indicating the proper publication order for this translation instance.
-        /// The file should be a plain text file, one line per book, with the standard 3-letter
-        /// book abbreviation being the first 3 characters on the line, in the order that this
-        /// Bible translation should be presented to the reader. All-blank lines or lines starting
-        /// with anything other than a letter or digit are comments and are ignored. Anything
-        /// after the first 3 nonblank characters of a line are ignored.
-        /// </summary>
-        /// <param name="fileName">text file to read</param>
-        public void ReadPublicationOrder(string fileName)
-        {
-            int i = 0;
-            BibleBookRecord br;
-
-            string line;
-            try
-            {
-                StreamReader sr = new StreamReader(fileName);
-                while (sr.Peek() >= 0)
-                {
-                    line = sr.ReadLine().Trim().ToUpperInvariant();
-                    if (line.Length > 3)
-                        line = line.Substring(0, 3);
-                    if ((line.Length == 3) && Char.IsLetterOrDigit(line[0]) && (i < MAXNUMBOOKS))
-                    {
-                        br = (BibleBookRecord)books[line];
-                        if (br == null)
-                        {
-                            Logit.WriteError("Bad abbreviation " + line + " in " + fileName);
-                        }
-                        else
-                        {
-                            br.publicationOrder = i;
-                            br.isPresent = false;
-                            publishArray[i] = br;
-                            i++;
-                        }
-                    }
-                }
-                if (i < MAXNUMBOOKS)
-                    publishArray[i] = null;
-                sr.Close();
-            }
-            catch (Exception ex)
-            {
-                Logit.WriteError("Error reading " + fileName + ex.Message);
-            }
-        }
-
-		public BibleBookInfo()
-		{
-			ReadBookInfoFile(SFConverter.FindAuxFile("BibleBookInfo.xml"));
-		}
-
-        private string languageCode = string.Empty;
-
-        public string ethnologueCode { get { return languageCode; } }
-
-        /// <summary>
-        /// Reads vernacular book name and versification information from USFX file
-        /// </summary>
-        /// <param name="usfxName">Name of the USFX file to parse</param>
-        public void readUsfxVernacularNames(string usfxName)
-        {
-            string level = String.Empty;
-            string style = String.Empty;
-            string sfm = String.Empty;
-            string caller = String.Empty;
-            string id = String.Empty;
-            string currentBookAbbrev = String.Empty;
-            BibleBookRecord bookRecord = (BibleBookRecord)bookArray[0];
-            string chapterString = String.Empty;
-            int chapterNumber = 0;
-            string verseString = String.Empty;
-            string verseRangeEnd = String.Empty;
-            int verseNumber = 0;
-            int verseRangeEndNumber = 0;
-
-            try
-            {
-
-            foreach (BibleBookRecord br in bookArray)
-            {
-                if (br != null)
-                {
-                    br.vernacularAbbreviation = String.Empty;   // toc3
-                    br.vernacularHeader = String.Empty; // h
-                    br.vernacularLongName = String.Empty;   // toc1
-                    br.vernacularName = String.Empty;   // mt
-                    br.vernacularShortName = String.Empty;  // toc2
-                }
-            }
-            XmlTextReader usfx = new XmlTextReader(usfxName);
-            usfx.WhitespaceHandling = WhitespaceHandling.Significant;
-            altNames = new Hashtable(997);
-            while (usfx.Read())
-            {
-                if (usfx.NodeType == XmlNodeType.Element)
-                {
-                    level = fileHelper.GetNamedAttribute(usfx, "level");
-                    style = fileHelper.GetNamedAttribute(usfx, "style");
-                    sfm = fileHelper.GetNamedAttribute(usfx, "sfm");
-                    caller = fileHelper.GetNamedAttribute(usfx, "caller");
-                    id = fileHelper.GetNamedAttribute(usfx, "id");
-
-                    switch (usfx.Name)
-                    {
-                        case "languageCode":
-                            usfx.Read();
-                            if (usfx.NodeType == XmlNodeType.Text)
-                                languageCode = usfx.Value;
-                            break;
-                        case "book":
-                            if (id.Length > 2)
-                            {
-                                currentBookAbbrev = PrepareToCompare(id);
-                                bookRecord = (BibleBookRecord)books[currentBookAbbrev];
-
-                                if (bookRecord == null)
-                                {
-                                    Logit.WriteError("Cannot process unknown book \"" + currentBookAbbrev + "\" in " + usfxName);
-                                    return;
-                                }
-                                altNames[currentBookAbbrev] = currentBookAbbrev;
-                            }
-                            chapterString = verseString = String.Empty;
-                            chapterNumber = 0;
-                            verseNumber = 0;
-                            break;
-                        case "id":
-                            if (PrepareToCompare(id) != currentBookAbbrev)
-                            {
-                                Logit.WriteError("ERROR: id element " + id + " <> " + " book id " + currentBookAbbrev + " in " + usfxName);
-                            }
-                            break;
-                        case "p":
-                            if (sfm.CompareTo("mt") == 0)
-                            {
-                                usfx.Read();
-                                if (usfx.NodeType == XmlNodeType.Text)
-                                {
-                                    if (bookRecord.vernacularName.Length > 0)
-                                        bookRecord.vernacularName = bookRecord.vernacularName + " " + usfx.Value.Trim();
-                                    else
-                                        bookRecord.vernacularName = usfx.Value.Trim();
-                                }
-                                altNames[PrepareToCompare(bookRecord.vernacularName)] = currentBookAbbrev;
-                            }
-                            break;
-                        case "h":
-                            if (level != String.Empty)
-                                Logit.WriteLine("Warning: level not supported on h element.");
-                            usfx.Read();
-                            if (usfx.NodeType == XmlNodeType.Text)
-                            {
-                                bookRecord.vernacularHeader = usfx.Value.Trim();
-                                altNames[PrepareToCompare(bookRecord.vernacularHeader)] = currentBookAbbrev;
-                            }
-
-                            break;
-                        case "c":
-                            chapterString = id.Trim();
-                            verseString = verseRangeEnd =  String.Empty;
-                            verseNumber = verseRangeEndNumber = 0;
-                            int chNum;
-                            if (Int32.TryParse(chapterString, out chNum))
-                            {
-                                chapterNumber = chNum;
-                            }
-                            else
-                            {
-                                chapterNumber++;
-                                Logit.WriteError("Bad chapter number at " + currentBookAbbrev + " " + chapterString + " in " + usfxName);
-                            }
-                            bookRecord.actualChapters = Math.Max(bookRecord.numChapters, chapterNumber);
-                            break;
-                        case "toc":
-                            if (!usfx.IsEmptyElement)
-                            {
-                                if (level == String.Empty)
-                                    level = "1";
-                                usfx.Read();
-                                if (usfx.NodeType == XmlNodeType.Text)
-                                {
-                                    switch (level)
-                                    {
-                                        case "1":
-                                            bookRecord.vernacularLongName = usfx.Value.Trim();
-                                            altNames[PrepareToCompare(bookRecord.vernacularLongName)] = currentBookAbbrev;
-                                            break;
-                                        case "2":
-                                            bookRecord.vernacularShortName = usfx.Value.Trim();
-                                            altNames[PrepareToCompare(bookRecord.vernacularShortName)] = currentBookAbbrev;
-                                            break;
-                                        case "3":
-                                            bookRecord.vernacularAbbreviation = usfx.Value.Trim();
-                                            altNames[PrepareToCompare(bookRecord.vernacularAbbreviation)] = currentBookAbbrev;
-                                            break;
-                                    }
-                                }
-                            }
-                            break;
-                        case "v":
-                            verseString = id.Trim();
-                            int dashPlace = verseString.IndexOf('-');
-                            if (dashPlace > 0)
-                            {
-                                verseRangeEnd = verseString.Substring(dashPlace + 1);
-                                verseString = verseString.Substring(0, dashPlace);
-                            }
-                            else
-                            {
-                                verseRangeEnd = verseString;
-                            }
-                            int vnum;
-                            if (Int32.TryParse(verseString, out vnum))
-                            {
-                                verseNumber = vnum;
-                            }
-                            else
-                            {
-                                verseNumber++;
-                            }
-                            if (Int32.TryParse(verseRangeEnd, out vnum))
-                            {
-                                verseRangeEndNumber = vnum;
-                            }
-                            else
-                            {
-                                verseRangeEndNumber = verseNumber;
-                            }
-                            bookRecord.verseCount[chapterNumber] = verseRangeEndNumber;
-                            break;
-                        case "x":
-
-                            break;
-                    }
-                }
-                else if (usfx.NodeType == XmlNodeType.EndElement)
-                {
-                    switch (usfx.Name)
-                    {
-                        case "book":
-                            if (bookRecord.vernacularName == String.Empty)
-                            {
-                                bookRecord.vernacularName = currentBookAbbrev;
-                                Logit.WriteError("Missing main title in " + currentBookAbbrev + " in " + usfxName);
-                            }
-                            if (bookRecord.vernacularHeader == String.Empty)
-                            {
-                                bookRecord.vernacularHeader = bookRecord.vernacularName;
-                                Logit.WriteLine("Missing h (header short title) element in " + currentBookAbbrev + " in " + usfxName);
-                            }
-                            if (bookRecord.vernacularLongName == String.Empty)
-                                bookRecord.vernacularLongName = bookRecord.vernacularName;
-                            if (bookRecord.vernacularShortName == String.Empty)
-                                bookRecord.vernacularShortName = bookRecord.vernacularHeader;
-                            if (bookRecord.vernacularAbbreviation == String.Empty)
-                                bookRecord.vernacularAbbreviation = bookRecord.vernacularHeader;
-                            break;
-                    }
-                }
-                else if ((usfx.NodeType == XmlNodeType.Text) && (bookRecord != null) && (bookRecord.tla == currentBookAbbrev) && (usfx.Value.Trim().Length > 2))
-                {   // We don't count a book as present unless there is some text in it.
-                    bookRecord.isPresent = true;
-                }
-                //conversionProgress = "navigation " + currentBookAbbrev + " " + currentChapter + ":" + currentVerse;
-                //System.Windows.Forms.Application.DoEvents();
-            }
-            usfx.Close();
-            }
-            catch (Exception ex)
-            {
-                Logit.WriteError(ex.Message + "\r\n" + ex.StackTrace);
-            }
-        }
-	}
 
 	public enum sfmType
 	{
@@ -2974,27 +2310,29 @@ namespace WordSend
 
         private bool inVerse;
 
+        /// <summary>
+        /// Check to see if this is the end of the canonical text in a Bible verse. If so,
+        /// mark it with verse end marker &lt;ve/&gt;. This forms a break point that people
+        /// can use to start the display of the next verse with associated headers.
+        /// </summary>
         protected void EndUsfxVerse()
         {
             SfmObject peek;
             const string stopTags = "v c id";
-            const string canonicalParagraphs = "p q m pmo pm pmc pi mi nb cls li pc pr ph";
+            const string canonicalParagraphs = "p q b m pmo pm pmc pi mi nb cls li pc pr ph";
             bool moreCanonicalText = false;
             bool inCanonicalParagraph = false;
             if (inVerse && (usfxStyleCount == 0))
             {
-                if ((!(sf == null)) && !stopTags.Contains(sf.tag))
+                peek = sf;
+                while ((peek != null) && (!stopTags.Contains(peek.tag)) && (!moreCanonicalText))
                 {
+                    if (peek.info.kind == "paragraph")
+                        inCanonicalParagraph = canonicalParagraphs.Contains(peek.tag);
+                    if (inCanonicalParagraph)
+                        if (peek.text.Trim().Length > 0)
+                            moreCanonicalText = true;
                     peek = book.PeekSfm();
-                    while ((peek != null) && (!stopTags.Contains(peek.tag)) && (!moreCanonicalText))
-                    {
-                        if (peek.info.kind == "paragraph")
-                            inCanonicalParagraph = canonicalParagraphs.Contains(peek.tag);
-                        if (inCanonicalParagraph)
-                            if (peek.text.Trim().Length > 0)
-                                moreCanonicalText = true;
-                        peek = book.PeekSfm();
-                    }
                 }
                 if (!moreCanonicalText)
                 {
@@ -4940,10 +4278,12 @@ namespace WordSend
             if (error.Severity == XmlSeverityType.Error)
                 Logit.WriteError("ERROR in " + UsfxFileName + " at " + validationLocation + " after " + currentElement + "\r\n" + error.Message);
             else
-                Logit.WriteError("Warning in " + UsfxFileName + " at " + validationLocation + "after " + currentElement + "\r\n" + error.Message);
+                Logit.WriteError("Warning in " + UsfxFileName + " at " + validationLocation + " after " + currentElement + "\r\n" + error.Message);
         }
 
 
+        protected const string UsfxSchema = "usfx-2012-12-12.xsd";  // File name only for speed; expected to be on the aux file path
+        protected const string UsfxNamespace = "http://eBible.org/usfx.xsd";    // This alias will point to the latest USFX schema, starting 1 January 2013.
 
 		public void WriteUSFX(string fileName)
 		{
@@ -4967,41 +4307,47 @@ namespace WordSend
 				usfxStyleCount = 0;
                 activeCharacterStyle = String.Empty;
 				xw.WriteStartElement(ns+"usfx");
-				xw.WriteAttributeString("xmlns:ns0", @"http://eBible.org/usfx/usfx-2012-12-12.xsd");
-				xw.WriteAttributeString("xmlns:xsi", @"http://www.w3.org/2001/XMLSchema-instance");
-				xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", @"usfx-2012-12-12.xsd");
+				// xw.WriteAttributeString("xmlns", "");
+				xw.WriteAttributeString("xmlns:xsi", UsfxNamespace);
+                xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", UsfxSchema);
+
                 if (languageCode.Length == 3)
                     xw.WriteElementString("languageCode", languageCode);
 				for (j = 0; j < BibleBookInfo.MAXNUMBOOKS; j++)
 				{
 					WriteUSFXBook(j);
 				}
-				xw.WriteEndElement();	// ns+usfx
+                xw.WriteEndElement();	// ns+usfx
+
 				xw.WriteEndDocument();
 				xw.Close();
 //				Logit.WriteLine(fileName+" written.");
 
                 // Validate this file against the Schema
-                /*
                 validationLocation = "header";
                 currentElement = "";
-                XmlReaderSettings settings = new XmlReaderSettings();
-                settings.Schemas.Add("http://ebible.org/usfx-2012-12-12.xsd", SFConverter.FindAuxFile("usfx-2012-12-12.xsd"));
-                settings.ValidationType = ValidationType.Schema;
-                settings.ValidationFlags = XmlSchemaValidationFlags.ReportValidationWarnings;
-                settings.ValidationEventHandler += new ValidationEventHandler(UsfxValidationCallBack);
-                XmlReader ur = XmlTextReader.Create(UsfxFileName, settings);
+                Directory.SetCurrentDirectory(Path.GetDirectoryName(SFConverter.FindAuxFile(UsfxSchema)));
+                XmlTextReader ur = new XmlTextReader(UsfxFileName);
+                // XmlValidatingReader is used for compatibility with Mono, in spite of the warning message.
+                XmlValidatingReader reader = new XmlValidatingReader(ur);
+                // Hopefully Mono will support Microsoft's new way of doing XML validation before Microsoft
+                // chooses to break the "obsolete" XmlValidatingReader. Not safe to move on as of 1 Jan 2013.
+
+                // Set the validation event handle
+
+                reader.ValidationEventHandler += new ValidationEventHandler(UsfxValidationCallBack);
 
                 // Read XML data
-                while (ur.Read())
+
+                while (reader.Read())
                 {
-                    if (ur.NodeType == XmlNodeType.Element)
+                    if (reader.NodeType == XmlNodeType.Element)
                     {
-                        currentElement = ur.Name;
-                        string id = ur.GetAttribute("id");
+                        currentElement = reader.Name;
+                        string id = reader.GetAttribute("id");
                         if (id != null)
                         {
-                            switch (ur.Name)
+                            switch (reader.Name)
                             {
                                 case "book":
                                     validationBook = validationLocation = id;
@@ -5018,9 +4364,7 @@ namespace WordSend
                         }
                     }
                 }
-                ur.Close();
-                */
-
+                reader.Close();
 			}
 			catch (System.Exception ex)
 			{
@@ -6075,7 +5419,7 @@ namespace WordSend
             {
 
                 htm.WriteLine("<div class=\"navButtons\"><a href=\"index.htm\">{0}</a> <a href=\"{1}\">{2}</a> {3}</div>",
-                                langName, firstChapterFile, bookRecord.vernacularHeader, currentChapterPublished);
+                                langName, firstChapterFile, bookRecord.vernacularShortName, currentChapterPublished);
                 bsb.Append("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" align=\"center\"><tbody><tr><td>");
                 bsb.Append("<form name=\"bkch1\"><div class=\"navChapters\">");
                 bsb.Append("<select name=\"bksch1\" onChange=\"location=document.bkch1.bksch1.options[document.bkch1.bksch1.selectedIndex].value;\">");
@@ -6085,13 +5429,13 @@ namespace WordSend
                     br = (BibleBookRecord)bookInfo.publishArray[i];
                     if (br.tla == bookRecord.tla)
                     {
-                        bsb.Append(OptionSelectedOpeningElement + br.vernacularHeader + "</option>\r\n");
+                        bsb.Append(OptionSelectedOpeningElement + br.vernacularShortName + "</option>\r\n");
                     }
                     else
                     {
                         if (br.HasContent)
                         {
-                            bsb.Append("<option value=\"" + br.chapterFiles[0] + ".htm\">" + br.vernacularHeader + "</option>\r\n");
+                            bsb.Append("<option value=\"" + br.chapterFiles[0] + ".htm\">" + br.vernacularShortName + "</option>\r\n");
                         }
                     }
                     i++;
@@ -6183,7 +5527,7 @@ namespace WordSend
                     bookRec = (BibleBookRecord)bookInfo.publishArray[i];
                     if (bookRec.isPresent && (bookRec.chapterFiles != null) && (bookRec.chapterFiles.Count > 0))
                     {
-                         bsb.Append("<option value=\"" + bookRec.chapterFiles[0] + ".htm\">" + bookRec.vernacularHeader + "</option>\r\n");
+                         bsb.Append("<option value=\"" + bookRec.chapterFiles[0] + ".htm\">" + bookRec.vernacularShortName + "</option>\r\n");
                     }
                     i++;
                 }
@@ -6694,22 +6038,6 @@ namespace WordSend
             {
                 inHeader = false;
                 lastChapterNumber = chapterNumber;
-                if (currentBookHeader.Length < 1)
-                {
-                    if (vernacularLongTitle.Length > 0)
-                        currentBookHeader = vernacularLongTitle;
-                    else if (bookRecord.vernacularAbbreviation.Length > 0)
-                        currentBookHeader = bookRecord.vernacularAbbreviation;
-                    else
-                        currentBookHeader = currentBookAbbrev;  // If you get here, the SFM input is pretty bad.
-                                                    bookRecord.vernacularHeader = currentBookHeader;
-                                if (bookRecord.vernacularName.Length < 1)
-                                    bookRecord.vernacularName = vernacularLongTitle;
-
-                }
-                bookRecord.vernacularHeader = currentBookHeader;
-                if (bookRecord.vernacularName.Length < 1)
-                    bookRecord.vernacularName = vernacularLongTitle;
                 string chap;
                 if (currentBookAbbrev == "PSA")
                     chap = String.Format("{0}{1}", currentBookAbbrev, chapterNumber.ToString("000"));
@@ -7030,6 +6358,7 @@ namespace WordSend
             
             try
             {
+                bookInfo.ReadUsfxVernacularNames(usfxName);
                 StreamWriter sw = new StreamWriter(sqlFileName, false);
                 usfxFileName = usfxName;
                 if (usfx != null)
@@ -7599,6 +6928,7 @@ namespace WordSend
             try
             {
                 usfxFileName = usfxName;
+                bookInfo.ReadUsfxVernacularNames(usfxFileName);
                 if (usfx != null)
                     usfx.Close();
                 if ((htmlDir == null) || (htmlDir.Length < 1))
@@ -7714,7 +7044,6 @@ namespace WordSend
                                     currentBookHeader = EscapeHtml(usfx.Value.Trim());
 									bookRecord.toc.Append(String.Format("<div class=\"toc1\"><a target=\"_top\" href=\"{0}\">{1}</a></div>\r\n",
                                         MainFileLinkTarget(currentBookAbbrev, chapFormat.Substring(1) + "1"), currentBookHeader));
-                                    bookRecord.vernacularHeader = currentBookHeader;
                                 }
 
                                 break;
@@ -7845,10 +7174,6 @@ namespace WordSend
                                     }
                                     verseNumber++;
                                 }
-                                break;
-                            case "mt":
-                            case "h":
-                                bookRecord.vernacularHeader = currentBookHeader;
                                 break;
                         }
                     }
@@ -8480,7 +7805,7 @@ namespace WordSend
     			contentsName = br.tla + chapFormat + ".htm";
     			if (File.Exists(Path.Combine(htmDir, contentsName)))
     			{
-    				htm.WriteLine("<div class=\"{0}\"><a href=\"{1}\">{2}</a></div>", buttonClass, contentsName, br.vernacularHeader);
+    				htm.WriteLine("<div class=\"{0}\"><a href=\"{1}\">{2}</a></div>", buttonClass, contentsName, br.vernacularShortName);
     			}
     			else
     			{
@@ -8488,7 +7813,7 @@ namespace WordSend
     				{
     					if (chapFile.StartsWith(br.tla))
     					{
-    						htm.WriteLine("<div class=\"{0}\"><a href=\"{1}.htm\">{2}</a></div>", buttonClass, chapFile, br.vernacularHeader);
+    						htm.WriteLine("<div class=\"{0}\"><a href=\"{1}.htm\">{2}</a></div>", buttonClass, chapFile, br.vernacularShortName);
     						break;
     					}
     				}

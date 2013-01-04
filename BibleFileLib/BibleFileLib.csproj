@@ -95,6 +95,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="BibleBookInfo.cs" />
     <Compile Include="BibleFileLib.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -102,6 +103,7 @@
     <Compile Include="ConcGenerator.cs" />
     <Compile Include="ExtractSearchText.cs" />
     <Compile Include="FileHelper.cs" />
+    <Compile Include="Logit.cs" />
     <Compile Include="SFConverter.cs" />
     <Compile Include="UsfxToBookAndAbbr.cs" />
     <Compile Include="UsfxToChapterIndex.cs" />
@@ -111,6 +113,7 @@
     <Compile Include="WordformInfo.cs" />
     <Compile Include="WordOccurrence.cs" />
     <Compile Include="xmlini.cs" />
+    <Compile Include="XmlTextReader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

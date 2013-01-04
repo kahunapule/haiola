@@ -501,7 +501,7 @@ namespace WordSend
             int i;
             try
             {
-                bookInfo.readUsfxVernacularNames(usfxFileName);
+                bookInfo.ReadUsfxVernacularNames(usfxFileName);
                 osisFileName = mosisFileName;
                 lastNoteVerse = String.Empty;
                 noteNumber = serialNumber = 0;
