@@ -24,27 +24,26 @@ namespace haiola
         private XMLini xini;    // Main program XML initialization file
         private string m_currentTemplate;   // Current template project
         public string dataRootDir; // Default is BibleConv in the user's Documents folder
-        string m_inputDirectory; // Always under dataRootDir, defaults to Documents/BibleConv/input
+        public string m_inputDirectory; // Always under dataRootDir, defaults to Documents/BibleConv/input
         public string m_outputDirectory; // curently Site, always under dataRootDir
-        string m_inputProjectDirectory; //e.g., full path to BibleConv\input\Kupang
-        string m_outputProjectDirectory; // e.g., full path to BibleConv\output\Kupang
-        string m_project = String.Empty; // e.g., Kupang
-        string currentConversion;   // e.g., "Preprocessing" or "Portable HTML"
-        static bool fAllRunning = false;
+        public string m_inputProjectDirectory; //e.g., full path to BibleConv\input\Kupang
+        public string m_outputProjectDirectory; // e.g., full path to BibleConv\output\Kupang
+        public string m_project = String.Empty; // e.g., Kupang
+        public string currentConversion;   // e.g., "Preprocessing" or "Portable HTML"
+        public static bool fAllRunning = false;
         public string m_xiniPath;  // e.g., BibleConv\input\Kupang\options.xini
         public XMLini projectXini;
         public Options m_options;
-        BibleBookInfo bkInfo;
+        public BibleBookInfo bkInfo;
         public DateTime sourceDate = new DateTime(1611, 1, 1);
 
+        PluginManager plugin;
 
 
         public haiolaForm()
         {
             InitializeComponent();
             MasterInstance = this;
-            batchLabel.Text = String.Format("Haiola version {0}.{1} ©2003-{2} SIL, EBT, && YWAM. Released under Gnu LGPL 3 or later.", Version.date, Version.time, Version.year);
-
             if (Directory.GetCurrentDirectory().EndsWith(@"Debug"))
             {
                 DateTime today = DateTime.UtcNow;
@@ -69,6 +68,10 @@ namespace haiola
 }");
                 sw.Close();
             }
+            plugin = new PluginManager();
+            batchLabel.Text = String.Format("Haiola version {0}.{1} ©2003-{2} SIL, EBT, && eBible.org. Released under Gnu LGPL 3 or later.",
+                Version.date, Version.time, Version.year);
+            extensionLabel.Text = plugin.PluginMessage();
         }
 
         bool GetRootDirectory()
@@ -108,6 +111,7 @@ namespace haiola
                 if (!GetRootDirectory())
                     Application.Exit();
             LoadWorkingDirectory(true);
+            
             Application.DoEvents();
             triggerautorun = Program.autorun;
             if (triggerautorun)
@@ -200,7 +204,6 @@ namespace haiola
             }
         }
 
-
         /// <summary>
         /// Reads the \id line to get the standard abbreviation of this file to figure out what
         /// a good name for its standardized file name might be.
@@ -214,30 +217,36 @@ namespace haiola
                 bkInfo = new WordSend.BibleBookInfo();
             // Use the ID line.
             string result = "";
-            string chap = "";
             string line;
+            string chap = "";
             StreamReader sr = new StreamReader(pathName);
-            while ((!sr.EndOfStream) && (chap.Length < 1))
+            while ((!sr.EndOfStream) && (result.Length < 1))
             {
                 line = sr.ReadLine();
                 if (line.StartsWith(@"\id ") && (line.Length > 6))
                 {
                     result = line.Substring(4, 3).ToUpper(System.Globalization.CultureInfo.InvariantCulture);
                 }
-                else if (line.StartsWith(@"\c ") && (line.Length > 3))
+                else if ((line.StartsWith(@"\c ")) && (line.Length > 3))
                 {
                     chap = line.Substring(3).Trim();
+                    int pos = chap.IndexOf(' ');
+                    if (pos >= 0)
+                    {
+                        chap = chap.Substring(0, pos);
+                    }
                 }
             }
-            while (chap.Length < 3)
-                chap = "0" + chap;
             sr.Close();
+            if (chap == "1")
+                chap = "";
             if (result.Length > 0)
             {
                 result = bkInfo.Order(result).ToString("D2") + "-" + result + chap;
             }
             return result;
         }
+        
 
         private void PreprocessOneFile(string inputPath, List<string> tablePaths, string outputPath)
 		{
@@ -636,7 +645,7 @@ namespace haiola
 
         private int loggedLineCount = 0;
 
-        private void showMessageString(string s)
+        public void showMessageString(string s)
         {
             loggedLineCount++;
             if (loggedLineCount < 9)
@@ -725,7 +734,7 @@ namespace haiola
     		return Path.Combine(m_outputProjectDirectory, "usfx");
     	}
 
-        protected string expandPercentEscapes(string s)
+        public string expandPercentEscapes(string s)
         {
             s = s.Replace("%d", m_project);
             s = s.Replace("%e", m_options.languageId);
@@ -831,6 +840,7 @@ namespace haiola
                 orderFile = SFConverter.FindAuxFile("bookorder.txt");
             toHtm.bookInfo.ReadPublicationOrder(orderFile);
             toHtm.MergeXref(Path.Combine(m_inputProjectDirectory, "xref.xml"));
+            toHtm.sourceLink = expandPercentEscapes("<a href=\"http://%h/%t\">%v</a>");
     		toHtm.ConvertUsfxToHtml(usfxFilePath, htmlPath,
                 m_options.vernacularTitle,
                 m_options.languageId,
@@ -862,23 +872,35 @@ namespace haiola
             xml.Formatting = Formatting.Indented;
             xml.WriteStartDocument();
             xml.WriteStartElement("vernacularParms");
-            // List vernacular full book titles
+            // List vernacular full book titles from \toc1 (or \mt)
             foreach (WordSend.BibleBookRecord br in WordSend.usfxToHtmlConverter.bookList)
             {
                 xml.WriteStartElement("scriptureBook");
                 xml.WriteAttributeString("ubsAbbreviation", br.tla);
                 xml.WriteAttributeString("parm", "vernacularFullName");
-                xml.WriteString(br.vernacularName);
+                xml.WriteString(br.vernacularLongName);
                 xml.WriteEndElement();  // scriptureBook
             }
-            // List vernacular short names for running headers and links
+            // List vernacular short names for running headers and links from \toc2 (or \h)
             foreach (WordSend.BibleBookRecord br in WordSend.usfxToHtmlConverter.bookList)
             {
                 xml.WriteStartElement("scriptureBook");
                 xml.WriteAttributeString("ubsAbbreviation", br.tla);
                 xml.WriteAttributeString("parm", "vernacularAbbreviatedName");
-                xml.WriteString(br.vernacularAbbreviation);
+                xml.WriteString(br.vernacularShortName);
                 xml.WriteEndElement();  // scriptureBook
+            }
+            // List vernacular abbreviations from \toc3
+            foreach (WordSend.BibleBookRecord br in WordSend.usfxToHtmlConverter.bookList)
+            {
+                if (!String.IsNullOrEmpty(br.vernacularAbbreviation))
+                {
+                    xml.WriteStartElement("scriptureBook");
+                    xml.WriteAttributeString("ubsAbbreviation", br.tla);
+                    xml.WriteAttributeString("parm", "vernacularBookAbbreviation");
+                    xml.WriteString(br.vernacularAbbreviation);
+                    xml.WriteEndElement();  // scriptureBook
+                }
             }
             // Dublin Core library card data
             xml.WriteStartElement("dcMeta");
@@ -1303,6 +1325,9 @@ In addition, you have permission to convert the text to different file formats, 
             est.Filter(Path.Combine(UsfxPath, "usfx.xml"), Path.Combine(auxPath, "verseText.xml"));
         }
 
+
+        
+
         /// <summary>
         /// Take the project input (exactly one of USFM, USFX, or USX) and create
         /// the distribution formats we need.
@@ -1332,6 +1357,10 @@ In addition, you have permission to convert the text to different file formats, 
             // Create Modified OSIS output for conversion to Sword format.
             if (fAllRunning)
                 ConvertUsfxToMosis();
+            Application.DoEvents();
+            // Run proprietary extension conversions, if any.
+            if (fAllRunning)
+                plugin.DoProprietaryConversions();
             Application.DoEvents();
             // Run custom per project scripts.
             if (fAllRunning)
@@ -1823,7 +1852,7 @@ In addition, you have permission to convert the text to different file formats, 
             SaveOptions();
         }
 
-        private void updateConversionProgress(string progressMessage)
+        public void updateConversionProgress(string progressMessage)
         {
             if (currentConversion != progressMessage)
             {
@@ -1845,6 +1874,7 @@ In addition, you have permission to convert the text to different file formats, 
                 progress = currentConversion + " " + WordSend.usfxToHtmlConverter.conversionProgress;
             batchLabel.Text = (DateTime.UtcNow - startTime).ToString().Substring(0,8) + " " + m_project + " " +
                 progress;
+            extensionLabel.Text = plugin.PluginMessage();
             if (triggerautorun)
             {
                 triggerautorun = false;
@@ -1996,10 +2026,10 @@ In addition, you have permission to convert the text to different file formats, 
             startTime = DateTime.UtcNow;
             timer1.Enabled = true;
             SaveOptions();
-            StreamWriter sw = new StreamWriter(Path.Combine(m_outputDirectory, "translations.csv"));
-            StreamWriter sqlFile = new StreamWriter(Path.Combine(m_outputDirectory, "Bible_list.sql"));
-            StreamWriter altUrlFile = new StreamWriter(Path.Combine(m_outputDirectory, "urllist.sql"));
-            StreamWriter scorecard = new StreamWriter(Path.Combine(m_outputDirectory, "scorecard.txt"));
+            StreamWriter sw = new StreamWriter(Path.Combine(m_outputDirectory, "translations.csv"), false, System.Text.Encoding.UTF8);
+            StreamWriter sqlFile = new StreamWriter(Path.Combine(m_outputDirectory, "Bible_list.sql"), false, System.Text.Encoding.UTF8);
+            StreamWriter altUrlFile = new StreamWriter(Path.Combine(m_outputDirectory, "urllist.sql"), false, System.Text.Encoding.UTF8);
+            StreamWriter scorecard = new StreamWriter(Path.Combine(m_outputDirectory, "scorecard.txt"), false, System.Text.Encoding.UTF8);
             sqlFile.WriteLine("USE Prophero;");
             sqlFile.WriteLine("DROP TABLE IF EXISTS 'bible_list';");
             sqlFile.WriteLine(@"CREATE TABLE 'bible_list' ('translationid' VARCHAR(64) NOT NULL,

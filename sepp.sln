@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{379DE09A-FC61-4336-A1D2-702EB546E2B2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sepp", "sepp\sepp.csproj", "{67AA8D95-5A06-48AC-8DE6-6EC9582D8BA4}"
@@ -16,14 +16,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "phrasetrans", "phrasetrans\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "haiola", "haiola\haiola.csproj", "{D520CCD6-B7A4-4D7E-BDFE-1DF89111383A}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "HaiolaSetup", "HaiolaSetup\HaiolaSetup.vdproj", "{D0D2998D-26D2-4B24-9652-01F4AF997A2C}"
-	ProjectSection(ProjectDependencies) = postProject
-		{F8AAB011-442B-46E6-91D4-B130C74F081B} = {F8AAB011-442B-46E6-91D4-B130C74F081B}
-		{67AA8D95-5A06-48AC-8DE6-6EC9582D8BA4} = {67AA8D95-5A06-48AC-8DE6-6EC9582D8BA4}
-		{705FEBE4-212B-4CD5-81B5-33C2E72F3EDC} = {705FEBE4-212B-4CD5-81B5-33C2E72F3EDC}
-		{497B21F7-99DB-4C3C-9BAF-2475511622EF} = {497B21F7-99DB-4C3C-9BAF-2475511622EF}
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "massregex", "massregex\massregex.csproj", "{20E590DE-DDF6-46DA-9348-D06F8F238A25}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "usfm2usfx", "usfm2usfx\usfm2usfx.csproj", "{1F0208DB-F643-4698-B353-3A40DB441AC9}"
@@ -35,6 +27,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestOwToUsfm", "TestOwToUsfm\TestOwToUsfm.csproj", "{D96E5D60-F346-4A57-93FB-D578CC50BCA4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CountChars", "CountChars\CountChars.csproj", "{363C2778-6DDA-45C1-9DAE-D862B52DB636}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "proprietary", "proprietary\proprietary.csproj", "{FAFBF5B9-9C4A-4DAE-AF20-30CCB23285BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -102,15 +96,6 @@ Global
 		{D520CCD6-B7A4-4D7E-BDFE-1DF89111383A}.Release|Mixed Platforms.Build.0 = Release|x86
 		{D520CCD6-B7A4-4D7E-BDFE-1DF89111383A}.Release|x86.ActiveCfg = Release|x86
 		{D520CCD6-B7A4-4D7E-BDFE-1DF89111383A}.Release|x86.Build.0 = Release|x86
-		{D0D2998D-26D2-4B24-9652-01F4AF997A2C}.Debug|Any CPU.ActiveCfg = Debug
-		{D0D2998D-26D2-4B24-9652-01F4AF997A2C}.Debug|Any CPU.Build.0 = Debug
-		{D0D2998D-26D2-4B24-9652-01F4AF997A2C}.Debug|Mixed Platforms.ActiveCfg = Debug
-		{D0D2998D-26D2-4B24-9652-01F4AF997A2C}.Debug|x86.ActiveCfg = Debug
-		{D0D2998D-26D2-4B24-9652-01F4AF997A2C}.Release|Any CPU.ActiveCfg = Release
-		{D0D2998D-26D2-4B24-9652-01F4AF997A2C}.Release|Any CPU.Build.0 = Release
-		{D0D2998D-26D2-4B24-9652-01F4AF997A2C}.Release|Mixed Platforms.ActiveCfg = Release
-		{D0D2998D-26D2-4B24-9652-01F4AF997A2C}.Release|Mixed Platforms.Build.0 = Release
-		{D0D2998D-26D2-4B24-9652-01F4AF997A2C}.Release|x86.ActiveCfg = Release
 		{20E590DE-DDF6-46DA-9348-D06F8F238A25}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{20E590DE-DDF6-46DA-9348-D06F8F238A25}.Debug|Any CPU.Build.0 = Debug|x86
 		{20E590DE-DDF6-46DA-9348-D06F8F238A25}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
@@ -177,6 +162,16 @@ Global
 		{363C2778-6DDA-45C1-9DAE-D862B52DB636}.Release|Mixed Platforms.Build.0 = Release|x86
 		{363C2778-6DDA-45C1-9DAE-D862B52DB636}.Release|x86.ActiveCfg = Release|x86
 		{363C2778-6DDA-45C1-9DAE-D862B52DB636}.Release|x86.Build.0 = Release|x86
+		{FAFBF5B9-9C4A-4DAE-AF20-30CCB23285BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAFBF5B9-9C4A-4DAE-AF20-30CCB23285BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAFBF5B9-9C4A-4DAE-AF20-30CCB23285BD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FAFBF5B9-9C4A-4DAE-AF20-30CCB23285BD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FAFBF5B9-9C4A-4DAE-AF20-30CCB23285BD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FAFBF5B9-9C4A-4DAE-AF20-30CCB23285BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAFBF5B9-9C4A-4DAE-AF20-30CCB23285BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAFBF5B9-9C4A-4DAE-AF20-30CCB23285BD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FAFBF5B9-9C4A-4DAE-AF20-30CCB23285BD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FAFBF5B9-9C4A-4DAE-AF20-30CCB23285BD}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

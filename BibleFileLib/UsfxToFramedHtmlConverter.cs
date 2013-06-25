@@ -88,7 +88,7 @@ namespace BibleFileLib
         /// Override to make the hot link affect the whole page, so we don't just update one pane, but put the right URL for the target
         /// chapter into the main URL box.
         /// </summary>
-        internal override string HotlinkLeadIn
+        protected override string HotlinkLeadIn
         {
             get
             {

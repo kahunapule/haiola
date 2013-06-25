@@ -176,6 +176,7 @@
             this.runHighlightedButton = new System.Windows.Forms.Button();
             this.statsButton = new System.Windows.Forms.Button();
             this.markRetryButton = new System.Windows.Forms.Button();
+            this.extensionLabel = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.idTabPage.SuspendLayout();
             this.copyrightTabPage.SuspendLayout();
@@ -197,7 +198,7 @@
             this.m_projectsList.Location = new System.Drawing.Point(720, 0);
             this.m_projectsList.Name = "m_projectsList";
             this.m_projectsList.ScrollAlwaysVisible = true;
-            this.m_projectsList.Size = new System.Drawing.Size(265, 559);
+            this.m_projectsList.Size = new System.Drawing.Size(265, 649);
             this.m_projectsList.TabIndex = 10;
             this.m_projectsList.SelectedIndexChanged += new System.EventHandler(this.m_projectsList_SelectedIndexChanged);
             // 
@@ -276,12 +277,12 @@
             this.tabControl1.Controls.Add(this.booksPage);
             this.tabControl1.Controls.Add(this.framesPage);
             this.tabControl1.Controls.Add(this.messagesTabPage);
-            this.tabControl1.Location = new System.Drawing.Point(0, 75);
+            this.tabControl1.Location = new System.Drawing.Point(0, 85);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.ShowToolTips = true;
-            this.tabControl1.Size = new System.Drawing.Size(715, 488);
+            this.tabControl1.Size = new System.Drawing.Size(715, 573);
             this.tabControl1.TabIndex = 9;
             this.tabControl1.Leave += new System.EventHandler(this.tabControl1_Leave);
             // 
@@ -316,7 +317,7 @@
             this.idTabPage.Margin = new System.Windows.Forms.Padding(2);
             this.idTabPage.Name = "idTabPage";
             this.idTabPage.Padding = new System.Windows.Forms.Padding(2);
-            this.idTabPage.Size = new System.Drawing.Size(707, 462);
+            this.idTabPage.Size = new System.Drawing.Size(707, 547);
             this.idTabPage.TabIndex = 0;
             this.idTabPage.Text = "Identification";
             this.idTabPage.UseVisualStyleBackColor = true;
@@ -577,7 +578,7 @@
             this.copyrightTabPage.Location = new System.Drawing.Point(4, 22);
             this.copyrightTabPage.Margin = new System.Windows.Forms.Padding(2);
             this.copyrightTabPage.Name = "copyrightTabPage";
-            this.copyrightTabPage.Size = new System.Drawing.Size(707, 462);
+            this.copyrightTabPage.Size = new System.Drawing.Size(707, 547);
             this.copyrightTabPage.TabIndex = 2;
             this.copyrightTabPage.Text = "Copyright";
             this.copyrightTabPage.UseVisualStyleBackColor = true;
@@ -814,7 +815,7 @@
             this.processTabPage.Margin = new System.Windows.Forms.Padding(2);
             this.processTabPage.Name = "processTabPage";
             this.processTabPage.Padding = new System.Windows.Forms.Padding(2);
-            this.processTabPage.Size = new System.Drawing.Size(707, 462);
+            this.processTabPage.Size = new System.Drawing.Size(707, 547);
             this.processTabPage.TabIndex = 1;
             this.processTabPage.Text = "Processes";
             this.processTabPage.UseVisualStyleBackColor = true;
@@ -891,7 +892,7 @@
             this.postprocessListBox.FormattingEnabled = true;
             this.postprocessListBox.Location = new System.Drawing.Point(7, 324);
             this.postprocessListBox.Name = "postprocessListBox";
-            this.postprocessListBox.Size = new System.Drawing.Size(695, 134);
+            this.postprocessListBox.Size = new System.Drawing.Size(695, 212);
             this.postprocessListBox.TabIndex = 39;
             // 
             // moveDownButton
@@ -980,7 +981,7 @@
             this.htmlTabPage.Location = new System.Drawing.Point(4, 22);
             this.htmlTabPage.Margin = new System.Windows.Forms.Padding(2);
             this.htmlTabPage.Name = "htmlTabPage";
-            this.htmlTabPage.Size = new System.Drawing.Size(707, 462);
+            this.htmlTabPage.Size = new System.Drawing.Size(707, 547);
             this.htmlTabPage.TabIndex = 3;
             this.htmlTabPage.Text = "HTML options";
             this.htmlTabPage.UseVisualStyleBackColor = true;
@@ -988,7 +989,7 @@
             // label45
             // 
             this.label45.AutoSize = true;
-            this.label45.Location = new System.Drawing.Point(8, 401);
+            this.label45.Location = new System.Drawing.Point(6, 488);
             this.label45.Name = "label45";
             this.label45.Size = new System.Drawing.Size(385, 13);
             this.label45.TabIndex = 57;
@@ -997,7 +998,7 @@
             // label44
             // 
             this.label44.AutoSize = true;
-            this.label44.Location = new System.Drawing.Point(8, 440);
+            this.label44.Location = new System.Drawing.Point(6, 527);
             this.label44.Name = "label44";
             this.label44.Size = new System.Drawing.Size(487, 13);
             this.label44.TabIndex = 56;
@@ -1007,7 +1008,7 @@
             // label43
             // 
             this.label43.AutoSize = true;
-            this.label43.Location = new System.Drawing.Point(6, 427);
+            this.label43.Location = new System.Drawing.Point(4, 514);
             this.label43.Name = "label43";
             this.label43.Size = new System.Drawing.Size(506, 13);
             this.label43.TabIndex = 55;
@@ -1018,7 +1019,7 @@
             // label42
             // 
             this.label42.AutoSize = true;
-            this.label42.Location = new System.Drawing.Point(8, 414);
+            this.label42.Location = new System.Drawing.Point(6, 501);
             this.label42.Name = "label42";
             this.label42.Size = new System.Drawing.Size(565, 13);
             this.label42.TabIndex = 54;
@@ -1085,18 +1086,18 @@
             // 
             this.licenseTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.licenseTextBox.Location = new System.Drawing.Point(0, 238);
+            this.licenseTextBox.Location = new System.Drawing.Point(0, 272);
             this.licenseTextBox.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.licenseTextBox.Multiline = true;
             this.licenseTextBox.Name = "licenseTextBox";
             this.licenseTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.licenseTextBox.Size = new System.Drawing.Size(701, 162);
+            this.licenseTextBox.Size = new System.Drawing.Size(701, 201);
             this.licenseTextBox.TabIndex = 49;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 219);
+            this.label4.Location = new System.Drawing.Point(3, 257);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(275, 13);
             this.label4.TabIndex = 27;
@@ -1118,7 +1119,7 @@
             this.indexPageTextBox.Multiline = true;
             this.indexPageTextBox.Name = "indexPageTextBox";
             this.indexPageTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.indexPageTextBox.Size = new System.Drawing.Size(701, 66);
+            this.indexPageTextBox.Size = new System.Drawing.Size(701, 103);
             this.indexPageTextBox.TabIndex = 48;
             // 
             // footerHtmlTextBox
@@ -1181,7 +1182,7 @@
             this.advancedTabPage.Location = new System.Drawing.Point(4, 22);
             this.advancedTabPage.Margin = new System.Windows.Forms.Padding(2);
             this.advancedTabPage.Name = "advancedTabPage";
-            this.advancedTabPage.Size = new System.Drawing.Size(707, 462);
+            this.advancedTabPage.Size = new System.Drawing.Size(707, 547);
             this.advancedTabPage.TabIndex = 6;
             this.advancedTabPage.Text = "Advanced";
             this.advancedTabPage.UseVisualStyleBackColor = true;
@@ -1324,7 +1325,7 @@
             this.concordanceTabPage.Controls.Add(this.generateConcordanceCheckBox);
             this.concordanceTabPage.Location = new System.Drawing.Point(4, 22);
             this.concordanceTabPage.Name = "concordanceTabPage";
-            this.concordanceTabPage.Size = new System.Drawing.Size(707, 462);
+            this.concordanceTabPage.Size = new System.Drawing.Size(707, 547);
             this.concordanceTabPage.TabIndex = 7;
             this.concordanceTabPage.Text = "Concordance";
             this.concordanceTabPage.UseVisualStyleBackColor = true;
@@ -1471,7 +1472,7 @@
             this.booksPage.Controls.Add(this.listBooks);
             this.booksPage.Location = new System.Drawing.Point(4, 22);
             this.booksPage.Name = "booksPage";
-            this.booksPage.Size = new System.Drawing.Size(707, 462);
+            this.booksPage.Size = new System.Drawing.Size(707, 547);
             this.booksPage.TabIndex = 8;
             this.booksPage.Text = "Books";
             this.booksPage.UseVisualStyleBackColor = true;
@@ -1535,7 +1536,7 @@
             this.framesPage.Controls.Add(this.useFramesCheckBox);
             this.framesPage.Location = new System.Drawing.Point(4, 22);
             this.framesPage.Name = "framesPage";
-            this.framesPage.Size = new System.Drawing.Size(707, 462);
+            this.framesPage.Size = new System.Drawing.Size(707, 547);
             this.framesPage.TabIndex = 9;
             this.framesPage.Text = "Frames";
             this.framesPage.UseVisualStyleBackColor = true;
@@ -1675,7 +1676,7 @@
             this.messagesTabPage.Location = new System.Drawing.Point(4, 22);
             this.messagesTabPage.Name = "messagesTabPage";
             this.messagesTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.messagesTabPage.Size = new System.Drawing.Size(707, 462);
+            this.messagesTabPage.Size = new System.Drawing.Size(707, 547);
             this.messagesTabPage.TabIndex = 10;
             this.messagesTabPage.Text = "Messages";
             this.messagesTabPage.UseVisualStyleBackColor = true;
@@ -1746,11 +1747,21 @@
             this.markRetryButton.UseVisualStyleBackColor = true;
             this.markRetryButton.Click += new System.EventHandler(this.markRetryButton_Click);
             // 
+            // extensionLabel
+            // 
+            this.extensionLabel.AutoSize = true;
+            this.extensionLabel.Location = new System.Drawing.Point(4, 64);
+            this.extensionLabel.Name = "extensionLabel";
+            this.extensionLabel.Size = new System.Drawing.Size(13, 13);
+            this.extensionLabel.TabIndex = 30;
+            this.extensionLabel.Text = "--";
+            // 
             // haiolaForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(984, 562);
+            this.ClientSize = new System.Drawing.Size(984, 661);
+            this.Controls.Add(this.extensionLabel);
             this.Controls.Add(this.markRetryButton);
             this.Controls.Add(this.statsButton);
             this.Controls.Add(this.runHighlightedButton);
@@ -1942,6 +1953,7 @@
         private System.Windows.Forms.TabPage messagesTabPage;
         private System.Windows.Forms.ListBox messagesListBox;
         private System.Windows.Forms.Button markRetryButton;
+        private System.Windows.Forms.Label extensionLabel;
 	}
 }
 

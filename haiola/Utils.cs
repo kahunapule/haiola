@@ -82,7 +82,7 @@ namespace sepp
 		/// </summary>
 		/// <param name="destinationPath"></param>
 		/// <returns></returns>
-		internal static bool EnsureDirectory(string destinationPath)
+		public static bool EnsureDirectory(string destinationPath)
 		{
 			if (!Directory.Exists(destinationPath))
 			{
@@ -126,7 +126,7 @@ namespace sepp
 			return defVal;
 		}
 
-		public static int IntAttVal(XmlNode node, string name, int defVal)
+        public static int IntAttVal(XmlNode node, string name, int defVal)
 		{
 			XmlAttribute att = node.Attributes[name];
 			if (att != null)

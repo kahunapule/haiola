@@ -280,14 +280,15 @@ namespace WordSend
             }
         }
 
-        protected const string osisSchema = "osisCore.2.1.1.xsd";
+        protected const string localOsisSchema = "osisCore.2.1.1.xsd";
+        protected const string osisSchema = "http://www.bibletechnologies.net/osisCore.2.1.1.xsd";
         protected const string osisNamespace = "http://www.bibletechnologies.net/2003/OSIS/namespace";
 
         protected void OpenMosisFile(string mosisFileName)
         {
-            string schemaPath = Path.Combine(Path.GetDirectoryName(mosisFileName), osisSchema);
+            string schemaPath = Path.Combine(Path.GetDirectoryName(mosisFileName), localOsisSchema);
             if (!File.Exists(schemaPath))
-                File.Copy(SFConverter.FindAuxFile(osisSchema), schemaPath);
+                File.Copy(SFConverter.FindAuxFile(localOsisSchema), schemaPath);
             
             mosis = new XmlTextWriter(mosisFileName, Encoding.UTF8);
             mosis.Formatting = Formatting.Indented;
@@ -319,10 +320,7 @@ namespace WordSend
  in the text of the Scriptures. This is why the n attribute of <q> is always the empty string. Because of these limitations, this
  file may be good to include in archives, BUT not to the exclusion of the source USFM, USFX, or USX file(s) from which this Modified
  OSIS file was generated.
-
- The schema location given in the headers is local in the current directory for performance and access reasons, but it is not
- necessarily packaged with this file. The schema can be found at its home at http://www.bibletechnologies.net/osisCore.2.1.1.xsd
- or mirrored at http://ebible.org/" + osisSchema + " .");
+");
             WriteMosisEndElement();
             StartMosisElement("revisionDesc");
             WriteMosisElementString("date", OsisDateTime(revisionDateTime));
@@ -374,6 +372,7 @@ namespace WordSend
             mosis.WriteEndDocument();
             mosis.Close();
             mosis = null;
+            fileHelper.NormalizeLineEnds(OsisFileName);
         }
 
         protected string currentTestament;
@@ -493,8 +492,11 @@ namespace WordSend
             }
         }
 
+        string OsisFileName;
+
         public bool ConvertUsfxToMosis(string usfxFileName, string mosisFileName)
         {
+            OsisFileName = mosisFileName;
             mosisNestLevel = 0;
             indentLevel = 0;
             inNote = false;
@@ -1213,7 +1215,7 @@ namespace WordSend
                 Logit.ShowStatus("reading OSIS Schema and " + mosisFileName);
                 lastElementWritten = "validating MOSIS file";
                 currentElement = "";
-                Directory.SetCurrentDirectory(Path.GetDirectoryName(SFConverter.FindAuxFile(osisSchema)));
+                Directory.SetCurrentDirectory(Path.GetDirectoryName(SFConverter.FindAuxFile(localOsisSchema)));
                 XmlTextReader txtreader = new XmlTextReader(mosisFileName);
                 // XmlValidatingReader is used for compatibility with Mono, in spite of the warning message.
                 XmlValidatingReader reader = new XmlValidatingReader(txtreader);

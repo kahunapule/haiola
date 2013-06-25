@@ -546,6 +546,58 @@ namespace WordSend
             return sb.ToString();
         }
 
+        static Random Rnd;
+
+        /// <summary>
+        /// Normalizes both Windows and Linux line ends to all Windows line ends.
+        /// Replaces the given file with a normalized file.
+        /// </summary>
+        /// <param name="FileName">Name of text file to normalize</param>
+        public static void NormalizeLineEnds(string FileName)
+        {
+            int ch;
+            char u;
+            try
+            {
+                if (Rnd == null)
+                    Rnd = new Random();
+                string tempFileName = FileName + "." + Rnd.Next().ToString() + ".tmp";
+                StreamReader sr = new StreamReader(FileName);
+                StreamWriter sw = new StreamWriter(tempFileName);
+                ch = sr.Read();
+                while (ch != -1)
+                {
+                    u = (char)ch;
+                    if (u == '\r')
+                    {
+                        sw.Write("\r\n");
+                    }
+                    else if (u == '\n')
+                    {
+                        // Discard input \n: we don't want \r\n\n.
+                    }
+                    else
+                    {
+                        sw.Write(u);
+                    }
+                    ch = sr.Read();
+                }
+                sw.Close();
+                sr.Close();
+                // Replace the source file, but don't delete it until the new file is in place.
+                string bakFileName = FileName + "." + Rnd.Next().ToString() + ".bak";
+                File.Move(FileName, bakFileName);
+                File.Move(tempFileName, FileName);
+                File.Delete(bakFileName);
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError(ex.Message);
+            }
+        }
+
+
+
 
         /// <summary>
         /// Property that returns the full path to the running executable program.

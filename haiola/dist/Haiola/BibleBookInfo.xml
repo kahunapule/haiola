@@ -339,10 +339,18 @@
 	</Book>
 	<Book testament="a">
 		<sfmTla>ESG</sfmTla>
-		<osisName>AddEsth</osisName>
+		<osisName>EsthGr</osisName>
 		<name>Esther (Greek)</name>
 		<shortName>Esther (Greek)</shortName>
 		<sortOrder>42</sortOrder>
+		<numChapters>16</numChapters>
+	</Book>
+	<Book testament="a">
+		<sfmTla>ADE</sfmTla>
+		<osisName>AddEsth</osisName>
+		<name>Additions to Esther</name>
+		<shortName>Additions to Esther</shortName>
+		<sortOrder>43</sortOrder>
 		<numChapters>16</numChapters>
 	</Book>
 	<Book testament="a">
@@ -350,7 +358,7 @@
 		<osisName>Wis</osisName>
 		<name>Wisdom of Solomon</name>
 		<shortName>Wisdom</shortName>
-		<sortOrder>43</sortOrder>
+		<sortOrder>44</sortOrder>
 		<numChapters>19</numChapters>
 	</Book>
 	<Book testament="a">
@@ -358,7 +366,7 @@
 		<osisName>Sir</osisName>
 		<name>Sirach</name>
 		<shortName>Sirach</shortName>
-		<sortOrder>44</sortOrder>
+		<sortOrder>45</sortOrder>
 		<numChapters>51</numChapters>
 	</Book>
 	<Book testament="a">
@@ -366,7 +374,7 @@
 		<osisName>Bar</osisName>
 		<name>Baruch</name>
 		<shortName>Baruch</shortName>
-		<sortOrder>45</sortOrder>
+		<sortOrder>46</sortOrder>
 		<numChapters>5</numChapters>
 	</Book>
 	<Book testament="a">
@@ -374,7 +382,7 @@
 		<osisName>EpJer</osisName>
 		<name>Letter of Jeremiah</name>
 		<shortName>Letter of Jeremiah</shortName>
-		<sortOrder>46</sortOrder>
+		<sortOrder>47</sortOrder>
 		<numChapters>1</numChapters>
 	</Book>
 	<Book testament="a">
@@ -382,7 +390,7 @@
 		<osisName>PrAzar</osisName>
 		<name>Song of the Three Children</name>
 		<shortName>Prayer of Azariah</shortName>
-		<sortOrder>47</sortOrder>
+		<sortOrder>48</sortOrder>
 		<numChapters>1</numChapters>
 	</Book>
 	<Book testament="a">
@@ -390,7 +398,7 @@
 		<osisName>Sus</osisName>
 		<name>Susanna</name>
 		<shortName>Susanna</shortName>
-		<sortOrder>48</sortOrder>
+		<sortOrder>49</sortOrder>
 		<numChapters>1</numChapters>
 	</Book>
 	<Book testament="a">
@@ -398,7 +406,7 @@
 		<osisName>Bel</osisName>
 		<name>Bel and the Dragon</name>
 		<shortName>Bel and the Dragon</shortName>
-		<sortOrder>49</sortOrder>
+		<sortOrder>50</sortOrder>
 		<numChapters>1</numChapters>
 	</Book>
 	<Book testament="a">
@@ -406,7 +414,7 @@
 		<osisName>1Macc</osisName>
 		<name>1 Maccabees</name>
 		<shortName>1 Maccabees</shortName>
-		<sortOrder>50</sortOrder>
+		<sortOrder>51</sortOrder>
 		<numChapters>16</numChapters>
 	</Book>
 	<Book testament="a">
@@ -414,7 +422,7 @@
 		<osisName>2Macc</osisName>
 		<name>2 Maccabees</name>
 		<shortName>2 Maccabees</shortName>
-		<sortOrder>51</sortOrder>
+		<sortOrder>52</sortOrder>
 		<numChapters>15</numChapters>
 	</Book>
 	<Book testament="a">
@@ -422,7 +430,7 @@
 		<osisName>1Esd</osisName>
 		<name>1 Esdras</name>
 		<shortName>1 Esdras</shortName>
-		<sortOrder>52</sortOrder>
+		<sortOrder>53</sortOrder>
 		<numChapters>9</numChapters>
 	</Book>
 	<Book testament="a">
@@ -430,15 +438,15 @@
 		<osisName>PrMan</osisName>
 		<name>Prayer of Manasses</name>
 		<shortName>Prayer of Manasses</shortName>
-		<sortOrder>53</sortOrder>
+		<sortOrder>54</sortOrder>
 		<numChapters>1</numChapters>
 	</Book>
 	<Book testament="a">
 		<sfmTla>PS2</sfmTla>
-		<osisName>Ps151</osisName>
+		<osisName>AddPs</osisName>
 		<name>Psalm 151</name>
 		<shortName>Psalm 151</shortName>
-		<sortOrder>54</sortOrder>
+		<sortOrder>55</sortOrder>
 		<numChapters>1</numChapters>
 	</Book>
 	<Book testament="a">
@@ -446,7 +454,7 @@
 		<osisName>3Macc</osisName>
 		<name>3 Maccabees</name>
 		<shortName>3 Maccabees</shortName>
-		<sortOrder>55</sortOrder>
+		<sortOrder>56</sortOrder>
 		<numChapters>7</numChapters>
 	</Book>
 	<Book testament="a">
@@ -454,7 +462,7 @@
 		<osisName>2Esd</osisName>
 		<name>2 Esdras</name>
 		<shortName>4 Esdras</shortName>
-		<sortOrder>56</sortOrder>
+		<sortOrder>57</sortOrder>
 		<numChapters>16</numChapters>
 	</Book>
 	<Book testament="a">
@@ -462,7 +470,7 @@
 		<osisName>4Macc</osisName>
 		<name>4 Maccabees</name>
 		<shortName>4 Maccabees</shortName>
-		<sortOrder>57</sortOrder>
+		<sortOrder>58</sortOrder>
 		<numChapters>18</numChapters>
 	</Book>
 	<Book testament="Septuagint">
@@ -470,7 +478,7 @@
 		<osisName>OdesSol</osisName>
 		<name>Odes of Solomon</name>
 		<shortName>Odes of Solomon</shortName>
-		<sortOrder>58</sortOrder>
+		<sortOrder>59</sortOrder>
 		<numChapters>0</numChapters>
 	</Book>
 	<Book testament="Septuagint">
@@ -478,7 +486,7 @@
 		<osisName>PssSol</osisName>
 		<name>Psalms of Solomon</name>
 		<shortName>Psalms of Solomon</shortName>
-		<sortOrder>59</sortOrder>
+		<sortOrder>60</sortOrder>
 		<numChapters>0</numChapters>
 	</Book>
 	<Book testament="Vulgate">
@@ -486,7 +494,7 @@
 		<osisName>EpLao</osisName>
 		<name>Epistle to the Laodiceans</name>
 		<shortName>Epistle to the Laodiceans</shortName>
-		<sortOrder>60</sortOrder>
+		<sortOrder>61</sortOrder>
 		<numChapters>0</numChapters>
 	</Book>
 	<Book testament="Orthodox Canon">
@@ -494,7 +502,7 @@
 		<osisName>1En</osisName>
 		<name>Ethiopic Apocalypse of Enoch</name>
 		<shortName>1 Enoch</shortName>
-		<sortOrder>61</sortOrder>
+		<sortOrder>62</sortOrder>
 		<numChapters>0</numChapters>
 	</Book>
 	<Book testament="Orthodox Canon">
@@ -502,7 +510,7 @@
 		<osisName>Jub</osisName>
 		<name>Jubilees</name>
 		<shortName>Jubilees</shortName>
-		<sortOrder>62</sortOrder>
+		<sortOrder>63</sortOrder>
 		<numChapters>0</numChapters>
 	</Book>
 	<Book testament="a">
@@ -510,7 +518,7 @@
 		<osisName>AddDan</osisName>
 		<name>Daniel (Greek)</name>
 		<shortName>Daniel (Greek)</shortName>
-		<sortOrder>63</sortOrder>
+		<sortOrder>64</sortOrder>
 		<numChapters>14</numChapters>
 	</Book>
 	<Book testament="a">
@@ -518,7 +526,7 @@
 		<osisName>AddDan</osisName>
 		<name>Daniel (Greek)</name>
 		<shortName>Daniel (Greek)</shortName>
-		<sortOrder>101</sortOrder>
+		<sortOrder>65</sortOrder>
 		<numChapters>12</numChapters>
 	</Book>
 	<Book testament="n">
@@ -526,7 +534,7 @@
 		<osisName>Matt</osisName>
 		<name>The Gospel According to Matthew</name>
 		<shortName>Matthew</shortName>
-		<sortOrder>64</sortOrder>
+		<sortOrder>70</sortOrder>
 		<numChapters>28</numChapters>
 	</Book>
 	<Book testament="n">
@@ -534,7 +542,7 @@
 		<osisName>Mark</osisName>
 		<name>The Gospel According to Mark</name>
 		<shortName>Mark</shortName>
-		<sortOrder>65</sortOrder>
+		<sortOrder>71</sortOrder>
 		<numChapters>16</numChapters>
 	</Book>
 	<Book testament="n">
@@ -542,7 +550,7 @@
 		<osisName>Luke</osisName>
 		<name>The Gospel According to Luke</name>
 		<shortName>Luke</shortName>
-		<sortOrder>66</sortOrder>
+		<sortOrder>72</sortOrder>
 		<numChapters>24</numChapters>
 	</Book>
 	<Book testament="n">
@@ -550,7 +558,7 @@
 		<osisName>John</osisName>
 		<name>The Gospel According to John</name>
 		<shortName>John</shortName>
-		<sortOrder>67</sortOrder>
+		<sortOrder>73</sortOrder>
 		<numChapters>21</numChapters>
 	</Book>
 	<Book testament="n">
@@ -558,7 +566,7 @@
 		<osisName>Acts</osisName>
 		<name>The Acts of the Apostles</name>
 		<shortName>Acts</shortName>
-		<sortOrder>68</sortOrder>
+		<sortOrder>74</sortOrder>
 		<numChapters>28</numChapters>
 	</Book>
 	<Book testament="n">
@@ -566,7 +574,7 @@
 		<osisName>Rom</osisName>
 		<name>Paul's Letter to the Romans</name>
 		<shortName>Romans</shortName>
-		<sortOrder>69</sortOrder>
+		<sortOrder>75</sortOrder>
 		<numChapters>16</numChapters>
 	</Book>
 	<Book testament="n">
@@ -574,7 +582,7 @@
 		<osisName>1Cor</osisName>
 		<name>Paul's First Letter to the Corinthians</name>
 		<shortName>1 Corinthians</shortName>
-		<sortOrder>70</sortOrder>
+		<sortOrder>76</sortOrder>
 		<numChapters>16</numChapters>
 	</Book>
 	<Book testament="n">
@@ -582,7 +590,7 @@
 		<osisName>2Cor</osisName>
 		<name>Paul's Second Lettor to the  Corinthians</name>
 		<shortName>2 Corinthians</shortName>
-		<sortOrder>71</sortOrder>
+		<sortOrder>77</sortOrder>
 		<numChapters>13</numChapters>
 	</Book>
 	<Book testament="n">
@@ -590,7 +598,7 @@
 		<osisName>Gal</osisName>
 		<name>Paul's Letter to the Galatians</name>
 		<shortName>Galatians</shortName>
-		<sortOrder>72</sortOrder>
+		<sortOrder>78</sortOrder>
 		<numChapters>6</numChapters>
 	</Book>
 	<Book testament="n">
@@ -598,7 +606,7 @@
 		<osisName>Eph</osisName>
 		<name>Paul's Letter to the Ephesians</name>
 		<shortName>Ephesians</shortName>
-		<sortOrder>73</sortOrder>
+		<sortOrder>79</sortOrder>
 		<numChapters>6</numChapters>
 	</Book>
 	<Book testament="n">
@@ -606,7 +614,7 @@
 		<osisName>Phil</osisName>
 		<name>Paul's Letter to the Philippians</name>
 		<shortName>Philippians</shortName>
-		<sortOrder>74</sortOrder>
+		<sortOrder>80</sortOrder>
 		<numChapters>4</numChapters>
 	</Book>
 	<Book testament="n">
@@ -614,7 +622,7 @@
 		<osisName>Col</osisName>
 		<name>Paul's Letter to the Colossians</name>
 		<shortName>Colossians</shortName>
-		<sortOrder>75</sortOrder>
+		<sortOrder>81</sortOrder>
 		<numChapters>4</numChapters>
 	</Book>
 	<Book testament="n">
@@ -622,7 +630,7 @@
 		<osisName>1Thess</osisName>
 		<name>Paul's First Letter to the Thessalonians</name>
 		<shortName>1 Thessalonians</shortName>
-		<sortOrder>76</sortOrder>
+		<sortOrder>82</sortOrder>
 		<numChapters>5</numChapters>
 	</Book>
 	<Book testament="n">
@@ -630,7 +638,7 @@
 		<osisName>2Thes</osisName>
 		<name>Paul's Second Letter to the Thessalonians</name>
 		<shortName>2 Thessalonians</shortName>
-		<sortOrder>77</sortOrder>
+		<sortOrder>83</sortOrder>
 		<numChapters>3</numChapters>
 	</Book>
 	<Book testament="n">
@@ -638,7 +646,7 @@
 		<osisName>1Tim</osisName>
 		<name>Paul's First Letter to Timothy</name>
 		<shortName>1 Timothy</shortName>
-		<sortOrder>78</sortOrder>
+		<sortOrder>84</sortOrder>
 		<numChapters>6</numChapters>
 	</Book>
 	<Book testament="n">
@@ -646,7 +654,7 @@
 		<osisName>2Tim</osisName>
 		<name>Paul's Second Letter to Timothy</name>
 		<shortName>2 Timothy</shortName>
-		<sortOrder>79</sortOrder>
+		<sortOrder>85</sortOrder>
 		<numChapters>4</numChapters>
 	</Book>
 	<Book testament="n">
@@ -654,7 +662,7 @@
 		<osisName>Titus</osisName>
 		<name>Paul's Letter to Titus</name>
 		<shortName>Titus</shortName>
-		<sortOrder>80</sortOrder>
+		<sortOrder>86</sortOrder>
 		<numChapters>3</numChapters>
 	</Book>
 	<Book testament="n">
@@ -662,7 +670,7 @@
 		<osisName>Phlm</osisName>
 		<name>Paul's Letter to Philemon</name>
 		<shortName>Philemon</shortName>
-		<sortOrder>81</sortOrder>
+		<sortOrder>87</sortOrder>
 		<numChapters>1</numChapters>
 	</Book>
 	<Book testament="n">
@@ -670,7 +678,7 @@
 		<osisName>Heb</osisName>
 		<name>The Letter to the Hebrews</name>
 		<shortName>Hebrews</shortName>
-		<sortOrder>82</sortOrder>
+		<sortOrder>88</sortOrder>
 		<numChapters>13</numChapters>
 	</Book>
 	<Book testament="n">
@@ -678,7 +686,7 @@
 		<osisName>Jas</osisName>
 		<name>The Letter from James</name>
 		<shortName>James</shortName>
-		<sortOrder>83</sortOrder>
+		<sortOrder>89</sortOrder>
 		<numChapters>5</numChapters>
 	</Book>
 	<Book testament="n">
@@ -686,7 +694,7 @@
 		<osisName>1Pet</osisName>
 		<name>The First Letter from Peter</name>
 		<shortName>1 Peter</shortName>
-		<sortOrder>84</sortOrder>
+		<sortOrder>90</sortOrder>
 		<numChapters>5</numChapters>
 	</Book>
 	<Book testament="n">
@@ -694,7 +702,7 @@
 		<osisName>2Pet</osisName>
 		<name>The Second Letter from Peter</name>
 		<shortName>2 Peter</shortName>
-		<sortOrder>85</sortOrder>
+		<sortOrder>91</sortOrder>
 		<numChapters>3</numChapters>
 	</Book>
 	<Book testament="n">
@@ -702,7 +710,7 @@
 		<osisName>1John</osisName>
 		<name>John's First John</name>
 		<shortName>1 Letter</shortName>
-		<sortOrder>86</sortOrder>
+		<sortOrder>92</sortOrder>
 		<numChapters>5</numChapters>
 	</Book>
 	<Book testament="n">
@@ -710,7 +718,7 @@
 		<osisName>2John</osisName>
 		<name>John's Second John</name>
 		<shortName>2 Letter</shortName>
-		<sortOrder>87</sortOrder>
+		<sortOrder>93</sortOrder>
 		<numChapters>1</numChapters>
 	</Book>
 	<Book testament="n">
@@ -718,7 +726,7 @@
 		<osisName>3John</osisName>
 		<name>John's Third John</name>
 		<shortName>3 Letter</shortName>
-		<sortOrder>88</sortOrder>
+		<sortOrder>94</sortOrder>
 		<numChapters>1</numChapters>
 	</Book>
 	<Book testament="n">
@@ -726,7 +734,7 @@
 		<osisName>Jude</osisName>
 		<name>Jude's Letter</name>
 		<shortName>Jude</shortName>
-		<sortOrder>89</sortOrder>
+		<sortOrder>95</sortOrder>
 		<numChapters>1</numChapters>
 	</Book>
 	<Book testament="n">
@@ -734,7 +742,7 @@
 		<osisName>Rev</osisName>
 		<name>The Revelation to John</name>
 		<shortName>Revelation</shortName>
-		<sortOrder>90</sortOrder>
+		<sortOrder>96</sortOrder>
 		<numChapters>22</numChapters>
 	</Book>
 	<Book testament="x">
@@ -742,7 +750,7 @@
 		<osisName>Back</osisName>
 		<name>Back matter</name>
 		<shortName>Back</shortName>
-		<sortOrder>91</sortOrder>
+		<sortOrder>97</sortOrder>
 		<numChapters>1</numChapters>
 	</Book>
 	<Book testament="x">
@@ -750,7 +758,7 @@
 		<osisName>Other</osisName>
 		<name>Other</name>
 		<shortName>Other</shortName>
-		<sortOrder>92</sortOrder>
+		<sortOrder>98</sortOrder>
 		<numChapters>1</numChapters>
 	</Book>
 	<Book testament="x">
@@ -758,7 +766,7 @@
 		<osisName>XXA</osisName>
 		<name>XXA</name>
 		<shortName>XXA</shortName>
-		<sortOrder>93</sortOrder>
+		<sortOrder>99</sortOrder>
 		<numChapters>151</numChapters>
 	</Book>
 	<Book testament="x">
@@ -766,7 +774,7 @@
 		<osisName>XXB</osisName>
 		<name>XXB</name>
 		<shortName>XXB</shortName>
-		<sortOrder>94</sortOrder>
+		<sortOrder>100</sortOrder>
 		<numChapters>151</numChapters>
 	</Book>
 	<Book testament="x">
@@ -774,7 +782,7 @@
 		<osisName>XXC</osisName>
 		<name>XXC</name>
 		<shortName>XXC</shortName>
-		<sortOrder>95</sortOrder>
+		<sortOrder>101</sortOrder>
 		<numChapters>151</numChapters>
 	</Book>
 	<Book testament="x">
@@ -782,7 +790,7 @@
 		<osisName>XXD</osisName>
 		<name>XXD</name>
 		<shortName>XXD</shortName>
-		<sortOrder>96</sortOrder>
+		<sortOrder>102</sortOrder>
 		<numChapters>151</numChapters>
 	</Book>
 	<Book testament="x">
@@ -790,7 +798,7 @@
 		<osisName>XXE</osisName>
 		<name>XXE</name>
 		<shortName>XXE</shortName>
-		<sortOrder>97</sortOrder>
+		<sortOrder>103</sortOrder>
 		<numChapters>151</numChapters>
 	</Book>
 	<Book testament="x">
@@ -798,7 +806,7 @@
 		<osisName>XXF</osisName>
 		<name>XXF</name>
 		<shortName>XXF</shortName>
-		<sortOrder>98</sortOrder>
+		<sortOrder>104</sortOrder>
 		<numChapters>151</numChapters>
 	</Book>
 	<Book testament="x">
@@ -806,7 +814,7 @@
 		<osisName>XXG</osisName>
 		<name>XXG</name>
 		<shortName>XXG</shortName>
-		<sortOrder>99</sortOrder>
+		<sortOrder>105</sortOrder>
 		<numChapters>151</numChapters>
 	</Book>
 	<Book testament="x">
@@ -814,7 +822,7 @@
 		<osisName>Glossary</osisName>
 		<name>Glossary</name>
 		<shortName>Glossary</shortName>
-		<sortOrder>100</sortOrder>
+		<sortOrder>106</sortOrder>
 		<numChapters>1</numChapters>
 	</Book>
 </BibleBookInfo>
