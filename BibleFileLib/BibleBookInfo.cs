@@ -80,7 +80,10 @@ namespace WordSend
 
     /// <summary>
     /// Information about books of the Bible in general and the current translation in particular, including
-    /// names, versification, etc.
+    /// names, versification, etc. It tracks the vernacular names and abbreviations of books, the versification
+    /// and structure of the current project based on what is actually there for navigational purposes, and
+    /// gathers a few statistics. Book order is assumed to be that which is given in BibleBookInfo.xml unless
+    /// overridden by a bookorder.txt file in the project directory.
     /// </summary>
     public class BibleBookInfo
     {
@@ -90,6 +93,8 @@ namespace WordSend
         public BibleBookRecord[] publishArray = new BibleBookRecord[MAXNUMBOOKS];
         public Hashtable altNames;
         protected bool apocryphaFound;
+
+        // protected HashSet<string> presentVerses;
 
         /// <summary>
         /// Normalize strings for comparison by removing spaces and periods and converting
@@ -365,7 +370,8 @@ namespace WordSend
         public string ethnologueCode { get { return languageCode; } }
 
         /// <summary>
-        /// Reads vernacular book name and versification information from USFX file
+        /// Reads vernacular book name and versification information from USFX file.
+        /// Also tracks which verses are present.
         /// </summary>
         /// <param name="usfxName">Name of the USFX file to parse</param>
         public void ReadUsfxVernacularNames(string usfxName)
@@ -376,6 +382,7 @@ namespace WordSend
             string caller = String.Empty;
             string id = String.Empty;
             string currentBookAbbrev = String.Empty;
+            string currentLocation = String.Empty;
             BibleBookRecord bookRecord = (BibleBookRecord)bookArray[0];
             string chapterString = String.Empty;
             int chapterNumber = 0;
@@ -383,6 +390,8 @@ namespace WordSend
             string verseRangeEnd = String.Empty;
             int verseNumber = 0;
             int verseRangeEndNumber = 0;
+
+            // presentVerses = new HashSet<string>;
 
             try
             {
@@ -422,6 +431,7 @@ namespace WordSend
                                 if (id.Length > 2)
                                 {
                                     currentBookAbbrev = PrepareToCompare(id);
+                                    currentLocation = currentBookAbbrev;
                                     bookRecord = (BibleBookRecord)books[currentBookAbbrev];
 
                                     if (bookRecord == null)
@@ -468,6 +478,7 @@ namespace WordSend
                                 break;
                             case "c":
                                 chapterString = id.Trim();
+                                currentLocation = currentBookAbbrev + "." + chapterString;
                                 verseString = verseRangeEnd = String.Empty;
                                 verseNumber = verseRangeEndNumber = 0;
                                 int chNum;
@@ -538,6 +549,7 @@ namespace WordSend
                                     verseRangeEndNumber = verseNumber;
                                 }
                                 bookRecord.verseCount[chapterNumber] = verseRangeEndNumber;
+                                currentLocation = currentBookAbbrev + "." + chapterString + "." + verseNumber.ToString();
                                 break;
                             case "x":
 

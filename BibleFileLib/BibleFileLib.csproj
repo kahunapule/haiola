@@ -99,12 +99,14 @@
     <Compile Include="BibleFileLib.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Usfx2XeTeX.cs" />
     <Compile Include="ConcFrameGenerator.cs" />
     <Compile Include="ConcGenerator.cs" />
     <Compile Include="ExtractSearchText.cs" />
     <Compile Include="FileHelper.cs" />
     <Compile Include="Logit.cs" />
     <Compile Include="SFConverter.cs" />
+    <Compile Include="Usfx2HtmlConverter.cs" />
     <Compile Include="UsfxToBookAndAbbr.cs" />
     <Compile Include="UsfxToChapterIndex.cs" />
     <Compile Include="UsfxToFramedHtmlConverter.cs" />

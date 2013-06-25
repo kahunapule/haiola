@@ -105,9 +105,9 @@ div.pm, div.pmo, div.pmc, div.psi { text-indent: 2em; margin-top: 6pt; margin-le
 div.pmr, div.pr { text-indent: 2em; margin-top: 6pt; margin-left: 2em; margin-right: 2em; text-align: right; text-align: justify }
 span.pn { color: rgb(0,0,8) }
 span.pro { color: rgb(32,8,8) }
-div.q, div.q1 { text-align:left; margin-top: 0pt; text-indent: -4em; margin-left: 4em }
-div.q2 { text-align:left; margin-top: 0pt; text-indent: -2em; margin-left: 4em }
-div.q3 { text-align:left; margin-top: 0pt; text-indent: -2em; margin-left: 6em }
+div.q, div.q1 { text-align:left; margin-top: 0pt; text-indent: -4em; margin-left: 6em }
+div.q2 { text-align:left; margin-top: 0pt; text-indent: -2em; margin-left: 6em }
+div.q3 { text-align:left; margin-top: 0pt; text-indent: -2em; margin-left: 8em }
 div.qa {  font-weight: bold; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align: center; margin-top: 6pt; text-indent: 0em }
 span.qac { font-weight: bold }
 div.qc { text-align: center; margin-top: 0pt; text-indent: 0em; margin-left: 0em }

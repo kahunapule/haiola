@@ -13,6 +13,7 @@ sepp/obj/*
 BibleFileLib/bin/*
 BibleFileLib/obj/*
 dist/*
+proprietary
 .DS_Store
 _ReSharper.sepp/*
 *~
