@@ -1,0 +1,115 @@
+#. Button caption, aborts current operation
+msgid "Cancel"
+msgstr "Batal"
+
+#.  Button caption, exits the program
+msgid "Exit"
+msgstr "Keluar (Exit)"
+
+#. Caption for the main window of the whole startup application
+msgid "Electronic Bible"
+msgstr "e-Alkitab Bahasa Kupang"
+
+#. Button caption, launches (whatever is the user's default) browser to display the CD contents, without installing it.
+msgid "Display Bible (from CD)"
+msgstr "Jalankan program e-Alkitab dari CD"
+
+#. Button caption, installs the preferred browser onto the user's computer.
+msgid "Install Browser"
+msgstr "Install Firefox browser (tidak wajib)"
+
+#. Button caption, installs the preferred fonts onto the user's machine.
+msgid "Install Fonts"
+msgstr "Install font-font agar ditampil lebih manis (tidak wajib)"
+
+#. Button caption, launches a dialog allowing the main data to be installed onto the user's machine.
+msgid "Install data files"
+msgstr "Jalankan program e-Alkitab dari hard drive (file-file akan di-copy dari CD ke HDD di komputer anda)"
+
+#. Dialog window caption for the dialog that manages the options for installing the data (appears in response to the "install data files" button).
+msgid "Install Data"
+msgstr "Ciri-ciri untuk instalasi"
+
+#. Introductory message, appears at the top of the install data dialog.
+msgid "Use this dialog to install the data files onto your computer so you can run without needing the CD"
+msgstr "Untuk jalankan program e-Alkitab langsung dari komputer dengan tidak lagi perlu menggunakan CD, maka klik di “Install” di bawah agar file-file dicopy ke komputer anda."
+
+#. Label for the text box where the user can type a pathname (relative to Program Files) where the data will be installed.
+#. Default is currently TSC\e-Bibles\Kupang (or just TSC\e-Bibles for multi-language).
+msgid "Where do you want to install the Files?"
+msgstr "File-file e-Alkitab dari CD ingin ditempatkan di mana di komputer anda?"
+
+#. Button which launches a directory chooser so the user can select an existing directory to install into.
+msgid "Browse..."
+msgstr "Cari arsip (browse)…"
+
+#. Caption for a checkbox, controlling whether a desktop shortcut to the e-Bible should be created.
+msgid "Create a Desktop shortcut?"
+msgstr "Apakah anda ingin shortcut ditempatkan di desktop anda?"
+
+#. Caption for a checkbox, controlling whether an entry for the e-Bible should be created in the Start menu.
+msgid "Create a Start Menu item in this folder:"
+msgstr "e-Alkitab dikelompokkan dengan Program Group yang mana?"
+
+#. Button caption causing the program to proceed with the installation.
+msgid "Install"
+msgstr "Install"
+
+#. Generic caption used on all error message windows.
+msgid "Sorry!"
+msgstr "Sorry!"
+
+#. Displayed when installing the browser fais. {0} will be replaced by some additional information (probably cryptic and useful mainly to support staff).
+msgid "Unable to install the browser. Details: {0}"
+msgstr "Masalah ditemukan waktu Firefox sementara diinstalasi. Keterangan: {0}"
+
+#. Displayed when some expected directory (typically on the install CD) is not found. This is essentially an internal error, and should never be seen,
+#. unless someone creates a badly organized install CD. {0} is the full pathname of the directory we expected would be present.
+msgid "Directory {0} not found"
+msgstr "Directory (arsip): {0} tidak ditemukan."
+
+#. Likewise, some expected file was not found. Again, probably indicates a badly-organized CD. {0} is the pathname.
+msgid "File {0} not found"
+msgstr "File {0} tidak ditemukan."
+
+#. Displayed when copying a file fails. {0} is the full pathname of the file we wanted to copy, {1} is the one we tried to create, and {2} is the system error message.
+msgid "Cannot copy {0} to {1}. Make sure you have sufficient disk space and write permission on the destination directory. Details: {2}"
+msgstr "File {0} tidak bisa dicopy ke arsip {1}. Harap cek agar tempat kosong di HDD anda cukup. Harap pula mengecek agar User Account anda mempunyai izin untuk merobah file-file di arsip tersebut. Keterangan: {2}"
+
+#. Displayed when creating a directory fails. {0} is the directory we wanted to create, and {1} the system error message.
+msgid "Unable to create directory {0}. Details: {1}"
+msgstr "Arsip (directory) {0} tidak bisa diciptakan. Keterangan: {1}"
+
+#. Specifically unable to copy a file (pathanme {0}) to the fonts folder. {1} is the system error message.
+msgid "Unable to copy {0} to fonts folder. Possibly you do not have the necessary permissions. Details: {1}\nTry copying the file by hand from the Fonts folder on the CD.\nDo you want to keep trying other Font files?"
+msgstr "Font {0} tidak bisa dicopy ke arsip font-font. to fonts folder. Harap pula mengecek agar User Account anda mempunyai izin untuk menambah file-file ke arsip tersebut.  Keterangan: {1}\nUsulan: coba copy font-font dari CD \\Fonts, ke arsip \\Fonts di HDD di komputer anda. \nApakah anda masih ingin coba mengcopy font-font yang lain?"
+
+#. Message displayed when font installation succeeds.
+msgid "Fonts have been successfully installed"
+msgstr "Font-font telah diinstalasi"
+
+#. Displayed when launching index.html fails. {0}, typically d:\index.html, is the file we couldn't 'launch'. The most likely reason is that the
+#. user has recently uninstalled a browser and has no current association for html files. Conceivably some security settings could be interfering, too.
+msgid "Can't launch {0} automatically. Try double-clicking on it manually. You may need to install the browser before this will work."
+msgstr "File {0} tidak bisa dijalankan secara otomatis. Coba klik x2 di file tersebut dalam Windows Explorer. Jika masalah tersebut tidak diatasi dengan cara demikian, harap instalasi browser Firefox dari CD"
+
+#. Caption for the progress dialog displayed while copying data files to the user's computer.
+msgid "Installing"
+msgstr "Instalasi"
+
+#. Longer explanatory text displayed inside the progress dialog.
+msgid "The files are being copied to your computer. Please wait…"
+msgstr "File-file sementara di-copy ke komputer anda. Harap tunggu…"
+
+#. Caption for dialog that comes up when the Install button is clicked if the CD contains multiple languages. It allows the user to select one or more to install.
+msgid "Select Languages"
+msgstr "ISelect Languages"
+
+#. Longer message that appears within the Select Languages dialog. It may be helpful to remind beginners of how to make multiple selections, certainly should
+#. hint that it is possible to do so. Note that all are initially selected.
+msgid "Select the languages you want to install (click to select or unselect)."
+msgstr "ISelect the languages you want to install (click to select or unselect)."
+
+#. Button caption for 'go ahead' button (at least in the Select Languages dialog).
+msgid "OK"
+msgstr "IOK"
