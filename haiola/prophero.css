@@ -4,33 +4,19 @@
 
 /* JohnT: global defaults */
 
-
-@font-face {
-    font-family: 'andika_apacregular';
-    src: url('../css/andikaapac-r-webfont.eot');
-    src: url('../css/andikaapac-r-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../css/andikaapac-r-webfont.woff') format('woff'),
-         url('../css/andikaapac-r-webfont.ttf') format('truetype'),
-         url('../css/andikaapac-r-webfont.svg#andika_apacregular') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-
-
-body	{ font-family: 'Andika', 'AndikaRegular', 'Tahoma', 'Liberation Sans', 'andika_apacregular', 'sans-serif'; font-size: 13pt; line-height: 1.4em }
+body	{ font-family:'Gentium Basic', 'Gentium', 'Liberation Serif', 'Times New Roman', 'serif'; font-size: 13pt; line-height: 1.4em }
 body.mainDoc	{
-	background-color: rgb(239,255,255);
+	background-color: rgb(255,255,255);
 	min-width: 120px
 	}
-select { font-family:  'Andika', 'AndikaRegular', 'Tahoma', 'Liberation Sans', 'andika_apacregular', 'sans-serif'; font-size: 13pt; line-height: 1.4em }
+select { font-family: 'Gentium Basic', 'Gentium', 'Liberation Serif', 'Times New Roman', 'serif'; font-size: 13pt; line-height: 1.4em }
 
 /* Styles for USFM elements -- div for paragraph and span for character styles */
-span.add { color: rgb(16,16,16); font-style: italic }
+span.add { font-style: italic }
 div.b { display: block; margin-left: 12em; text-indent: -2em; line-height: 1.4em }
 span.bd, span.em { font-weight: bold }
 span.bdit, span.bk {font-weight: bold; font-style: italic }
-div.cd, div.conc {  font-size: 11pt; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:justify; margin-top: 6pt}
+div.cd, div.conc {  font-size: 11pt; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:justify; margin-top: 6pt; color: rgb(0,0,128) }
 div.cls { display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:right; margin-top: 6pt}
 div.cov {  font-size: 11pt; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:center; margin-top: 6pt}
 div.d {  font-weight: bold; display: block; line-height: 1.4em; margin-top: 1.4em}
@@ -42,7 +28,7 @@ div.ebq3 {  font-size: 11pt; display: block; margin-bottom: 6pt; line-height: 1.
 div.ebs, div.ebs1 {  font-size: 13pt; font-weight: bold; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; text-indent: 2em}
 div.ebs2 {  font-size: 13pt; font-weight: bold; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; text-indent: 2em}
 div.ebs3 {  font-size: 11pt; font-weight: bold; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; text-indent: 2em}
-span.fm, span.notemark {  font-size: 11pt; vertical-align: super; margin-left: 2pt; line-height: 0}
+span.fm, span.notemark {  font-size: 7pt; vertical-align: super; margin-left: 2pt; line-height: 0}
 div.fp {  font-size: 11pt; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; margin-left: 12em}
 span.fq {  font-style: italic; color: rgb(0,0,128) }
 span.fqa {  font-style: italic; color: rgb(0,0,128) }
@@ -93,7 +79,7 @@ div.mt2, div.mte2, h2 { font-weight: bold; font-size: 13pt; text-align: center; 
 div.mt3, div.mte3, h3 { font-weight: bold; font-size: 13pt; text-align: center; line-height: 1.7em }
 div.nb, div.ps { text-indent: 0em; margin-top: 0em }
 div.k1 { text-indent: 0em; text-align: left; font-weight: bold }
-span.nd, span.sc { font-weight: bold;  /*font-variant: small-caps*/ }
+span.nd, span.sc { font-weight: bold;  font-variant: small-caps }
 span.ndx, span.no { font-style: normal }
 span.ord { vertical-align: super; font-size: 11pt; text-decoration: underline }
 div.p, div.p1, div.pb, div.pde, div.pdi {  text-indent: 2em; margin-top: 6pt; text-align: left; margin-left: 0em }
@@ -105,9 +91,9 @@ div.pm, div.pmo, div.pmc, div.psi { text-indent: 2em; margin-top: 6pt; margin-le
 div.pmr, div.pr { text-indent: 2em; margin-top: 6pt; margin-left: 2em; margin-right: 2em; text-align: right; text-align: justify }
 span.pn { color: rgb(0,0,8) }
 span.pro { color: rgb(32,8,8) }
-div.q, div.q1 { text-align:left; margin-top: 0pt; text-indent: -4em; margin-left: 6em }
-div.q2 { text-align:left; margin-top: 0pt; text-indent: -2em; margin-left: 6em }
-div.q3 { text-align:left; margin-top: 0pt; text-indent: -2em; margin-left: 8em }
+div.q, div.q1 { text-align:left; margin-top: 0pt; text-indent: -4em; margin-left: 4em }
+div.q2 { text-align:left; margin-top: 0pt; text-indent: -2em; margin-left: 4em }
+div.q3 { text-align:left; margin-top: 0pt; text-indent: -2em; margin-left: 6em }
 div.qa {  font-weight: bold; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align: center; margin-top: 6pt; text-indent: 0em }
 span.qac { font-weight: bold }
 div.qc { text-align: center; margin-top: 0pt; text-indent: 0em; margin-left: 0em }
@@ -116,13 +102,13 @@ div.qm2 { text-align:left; margin-top: 0pt; text-indent: -12em; margin-left: 12e
 div.qm3 { text-align:left; margin-top: 0pt; text-indent: -4em; margin-left: 12em }
 div.qr { text-align:right; margin-top: 0pt; text-indent: 0em }
 div.qs { text-align:right; }
-span.qt { font-style: oblique }
+span.qt { font-variant: small-caps }
 div.r, div.sr {  font-size: 13pt; font-style: italic; text-align: center; margin-bottom: 6pt; color: rgb(0,0,128) }
 div.rr, div.rq, span.rq {  font-size: 11pt; font-style: italic; color: rgb(0,0,128); text-align: right }
 div.s, div.s1 {  font-style: bold; color: rgb(0,0,128); text-align: center; margin-top: 8pt }
 div.s2 {  font-size: 13pt; color: rgb(0,0,128); font-style: bold; text-align: center }
 div.s3 {  font-size: 13pt; color: rgb(0,0,128); text-align: center }
-span.sig { color: rgb(0,0,16) }
+span.sig { font-style: italic }
 span.sls { font-style: italic }
 div.sp { text-align: left;  font-size: 13pt; font-style: italic }
 span.w, span.wg, span.wh, span.wr, span.zc { font-style: normal }
@@ -172,8 +158,8 @@ div.pageFooter       { display: block; margin-bottom: 6pt; text-align: left; mar
 div.text            {margin-left: 0;margin-right:0}
 div {margin-left: 5px; margin-right:5px}
 div.bookList {  font-size: 11pt; line-height: 8pt; float: left; margin: 0px; padding: 3px; width: 120px; background: rgb(223,255,255) }
-div.main { /* margin-left: 132px; padding: 4px;*/ background: rgb(246,256,246) }
-div.mainindex { margin-left: 132px; padding: 4px; background: rgb(240,256,244) }
+div.main { /* margin-left: 132px; padding: 4px;*/ background: rgb(255,255,255) }
+div.mainindex { margin-left: 132px; padding: 4px; background: rgb(240,255,244) }
 div.bookLine  {  font-size: 11pt; line-height: 12pt; display: block; text-align:left; width: 120px; border-radius: 5px; }
 div.bookLine a { display: block; padding: 3px; background-color: #036; border-bottom: 1px solid #eee; border-radius: 5px; }
 div.bookLine a:visited { color: #ffff66; text-decoration: none; border-radius: 5px; }
@@ -189,7 +175,7 @@ p.footnote, p.crossRefNote { display: block;   margin-top: 3pt; font-size: 13pt;
 
 span.chapter         {  font-size: 18pt; font-weight: bold; float:left; margin-right: 4pt; line-height: 30pt; padding-top: 1pt; vertical-align:top }
 div.p span.chapter, div.q span.chapter, div.q1 span.chapter div.q2 span.chapter, div.q3 span.chapter, div.poetry span.chapter         {margin-right: 20pt }
-span.verse           { white-space:nowrap;  vertical-align: super; font-size: 11pt; margin-left: 0pt; margin-right: 0pt; color: rgb(0,128,0); line-height:  0 }
+span.verse           { white-space:nowrap;  vertical-align: super; font-size: 8pt; margin-left: 0pt; margin-right: 0pt; color: rgb(0,128,0); line-height:  0 }
 span.smallcaps       { font-size: smaller }
 span.crmark			 {  font-size: 11pt; vertical-align: super; margin-left: 2pt; line-height: 0}
 span.overlap        {} /* Where chapter number splits paragraph, used for part of paragraph in a different chapter. */

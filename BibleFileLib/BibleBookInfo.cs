@@ -52,7 +52,8 @@ namespace WordSend
         public string testament;
         public StringBuilder toc;
         public int publicationOrder;
-        public ArrayList chapterFiles;
+        public ArrayList chapterFiles;  // Chapter file names only, i.e. PSA119.htm
+        public ArrayList chaptersFound; // Contains ChapterInfo records of chapters in this book
         public bool isPresent;
 
         /// <summary>
@@ -577,7 +578,9 @@ namespace WordSend
                             if (bookRecord.vernacularShortName == String.Empty)
                             {
                                 bookRecord.vernacularShortName = bookRecord.vernacularLongName;
-                                Logit.WriteError("Missing vernacular short name toc2 or h in " + currentBookAbbrev + " in " + usfxName);
+                                if ((bookRecord.vernacularShortName == String.Empty) ||
+                                    ((bookRecord.testament != "o") && (bookRecord.testament != "n") && (bookRecord.testament != "a")))
+                                    Logit.WriteError("Missing vernacular short name toc2 or h in " + currentBookAbbrev + " in " + usfxName);
                             }
                             if (bookRecord.vernacularAbbreviation == String.Empty)
                             {

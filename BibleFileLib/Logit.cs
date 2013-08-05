@@ -31,6 +31,7 @@ using System.Diagnostics;
 namespace WordSend
 {
     public delegate void StringDelegate(string s);
+    public delegate bool BoolStringDelegate(string s);
 
     /// <summary>
     /// This class provides a way to display results from the command console,
@@ -38,18 +39,19 @@ namespace WordSend
     /// </summary>
     public class Logit
     {
-        public static StringDelegate GUIWriteString;
-        public static StringDelegate UpdateStatus;
+        public static BoolStringDelegate GUIWriteString;
+        public static BoolStringDelegate UpdateStatus;
         public static bool useConsole;
         //		public static System.Windows.Forms.ListBox lstBox;
         protected static System.IO.StreamWriter sw;
         public static bool loggedError = false;
         public static string logFileName = String.Empty;
 
-        public static void ShowStatus(string s)
+        public static bool ShowStatus(string s)
         {
             if (UpdateStatus != null)
-                UpdateStatus(s);
+                return UpdateStatus(s);
+            return true;
         }
 
         public static void WriteError(string s)

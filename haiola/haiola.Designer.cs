@@ -122,6 +122,9 @@
             this.label27 = new System.Windows.Forms.Label();
             this.label26 = new System.Windows.Forms.Label();
             this.advancedTabPage = new System.Windows.Forms.TabPage();
+            this.label47 = new System.Windows.Forms.Label();
+            this.textDirectionComboBox = new System.Windows.Forms.ComboBox();
+            this.relaxNestingSyntaxCheckBox = new System.Windows.Forms.CheckBox();
             this.label46 = new System.Windows.Forms.Label();
             this.numberSystemComboBox = new System.Windows.Forms.ComboBox();
             this.deleteLinkButton = new System.Windows.Forms.Button();
@@ -1170,6 +1173,9 @@
             // 
             // advancedTabPage
             // 
+            this.advancedTabPage.Controls.Add(this.label47);
+            this.advancedTabPage.Controls.Add(this.textDirectionComboBox);
+            this.advancedTabPage.Controls.Add(this.relaxNestingSyntaxCheckBox);
             this.advancedTabPage.Controls.Add(this.label46);
             this.advancedTabPage.Controls.Add(this.numberSystemComboBox);
             this.advancedTabPage.Controls.Add(this.deleteLinkButton);
@@ -1186,6 +1192,37 @@
             this.advancedTabPage.TabIndex = 6;
             this.advancedTabPage.Text = "Advanced";
             this.advancedTabPage.UseVisualStyleBackColor = true;
+            // 
+            // label47
+            // 
+            this.label47.AutoSize = true;
+            this.label47.Location = new System.Drawing.Point(21, 102);
+            this.label47.Name = "label47";
+            this.label47.Size = new System.Drawing.Size(74, 13);
+            this.label47.TabIndex = 59;
+            this.label47.Text = "Text direction:";
+            // 
+            // textDirectionComboBox
+            // 
+            this.textDirectionComboBox.FormattingEnabled = true;
+            this.textDirectionComboBox.Items.AddRange(new object[] {
+            "ltr",
+            "rtl",
+            "tb-rl"});
+            this.textDirectionComboBox.Location = new System.Drawing.Point(102, 99);
+            this.textDirectionComboBox.Name = "textDirectionComboBox";
+            this.textDirectionComboBox.Size = new System.Drawing.Size(162, 21);
+            this.textDirectionComboBox.TabIndex = 58;
+            // 
+            // relaxNestingSyntaxCheckBox
+            // 
+            this.relaxNestingSyntaxCheckBox.AutoSize = true;
+            this.relaxNestingSyntaxCheckBox.Location = new System.Drawing.Point(24, 65);
+            this.relaxNestingSyntaxCheckBox.Name = "relaxNestingSyntaxCheckBox";
+            this.relaxNestingSyntaxCheckBox.Size = new System.Drawing.Size(293, 17);
+            this.relaxNestingSyntaxCheckBox.TabIndex = 57;
+            this.relaxNestingSyntaxCheckBox.Text = "Relax USFM nesting syntax (assume \\+ outside of notes)";
+            this.relaxNestingSyntaxCheckBox.UseVisualStyleBackColor = true;
             // 
             // label46
             // 
@@ -1228,7 +1265,7 @@
             // 
             // deleteLinkButton
             // 
-            this.deleteLinkButton.Location = new System.Drawing.Point(20, 173);
+            this.deleteLinkButton.Location = new System.Drawing.Point(20, 237);
             this.deleteLinkButton.Name = "deleteLinkButton";
             this.deleteLinkButton.Size = new System.Drawing.Size(68, 23);
             this.deleteLinkButton.TabIndex = 54;
@@ -1238,7 +1275,7 @@
             // 
             // addLinkButton
             // 
-            this.addLinkButton.Location = new System.Drawing.Point(18, 129);
+            this.addLinkButton.Location = new System.Drawing.Point(18, 193);
             this.addLinkButton.Name = "addLinkButton";
             this.addLinkButton.Size = new System.Drawing.Size(70, 26);
             this.addLinkButton.TabIndex = 53;
@@ -1249,14 +1286,14 @@
             // altLinkListBox
             // 
             this.altLinkListBox.FormattingEnabled = true;
-            this.altLinkListBox.Location = new System.Drawing.Point(101, 129);
+            this.altLinkListBox.Location = new System.Drawing.Point(101, 193);
             this.altLinkListBox.Name = "altLinkListBox";
             this.altLinkListBox.Size = new System.Drawing.Size(494, 95);
             this.altLinkListBox.TabIndex = 52;
             // 
             // altLinkTextBox
             // 
-            this.altLinkTextBox.Location = new System.Drawing.Point(102, 97);
+            this.altLinkTextBox.Location = new System.Drawing.Point(102, 161);
             this.altLinkTextBox.Name = "altLinkTextBox";
             this.altLinkTextBox.Size = new System.Drawing.Size(494, 20);
             this.altLinkTextBox.TabIndex = 51;
@@ -1264,7 +1301,7 @@
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(17, 100);
+            this.label21.Location = new System.Drawing.Point(17, 164);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(76, 13);
             this.label21.TabIndex = 50;
@@ -1954,6 +1991,9 @@
         private System.Windows.Forms.ListBox messagesListBox;
         private System.Windows.Forms.Button markRetryButton;
         private System.Windows.Forms.Label extensionLabel;
+        private System.Windows.Forms.CheckBox relaxNestingSyntaxCheckBox;
+        private System.Windows.Forms.Label label47;
+        private System.Windows.Forms.ComboBox textDirectionComboBox;
 	}
 }
 

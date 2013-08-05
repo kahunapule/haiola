@@ -226,7 +226,7 @@
 					</xs:simpleContent>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="ve" type="xs:string">
+			<xs:element name="ve" type="xs:string" maxOccurs="unbounded" minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>ve is used as a milestone element marking the end of a verse. Content, if any, is treated as a comment. It should be placed just after the last of the canonical text of a verse, but before any subtitles or headers associated with the next verse.</xs:documentation>
 				</xs:annotation>
@@ -350,7 +350,8 @@
 				</xs:annotation>
 				<xs:complexType mixed="true">
 					<xs:choice minOccurs="0" maxOccurs="unbounded">
-						<xs:element name="fr" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="fr" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
 							<xs:annotation>
 								<xs:documentation>Footnote reference: the chapter and verse that this note refers to, to be printed (normally at the beginning of the note).</xs:documentation>
 							</xs:annotation>
@@ -375,7 +376,8 @@
 								<xs:documentation>Footnote verse number; a verse number in the text of the footnote.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="ft" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="ft" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
 							<xs:annotation>
 								<xs:documentation>The actual text of the footnote. This is equivalent to text not enclosed in an element within f.</xs:documentation>
 							</xs:annotation>
@@ -387,6 +389,7 @@
 						</xs:element>
 						<xs:element name="generated" type="xs:string" minOccurs="0"
 							maxOccurs="unbounded"/>
+						<xs:element name="ref" type="refType"/>
 					</xs:choice>
 					<xs:attribute name="caller" type="xs:string" use="optional" default="+"/>
 					<xs:attribute name="sfm" type="xs:string" use="optional"/>
@@ -403,7 +406,8 @@
 				</xs:annotation>
 				<xs:complexType mixed="true">
 					<xs:choice minOccurs="0" maxOccurs="unbounded">
-						<xs:element name="xo" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="xo" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
 							<xs:annotation>
 								<xs:documentation>Cross reference origin; the chapter and verse location the target references refer to.</xs:documentation>
 							</xs:annotation>
@@ -418,7 +422,8 @@
 								<xs:documentation>Quotation from the Scripture text.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="xt" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="xt" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
 							<xs:annotation>
 								<xs:documentation>Target references; a list of the target cross references for the origin reference.</xs:documentation>
 							</xs:annotation>
@@ -647,6 +652,25 @@
 </xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="ref" type="refType" maxOccurs="unbounded" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Scripture reference in the format TLA.c.v, where TLA is the SIL/UBS three letter abbreviation for the book, c is the chapter number, and v is the verse number.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="zw">
+				<xs:annotation>
+					<xs:documentation>Attributes give Strong's numbers or grammatical attributes for the enclosed text.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="pType">
+							<xs:attribute name="g" type="xs:integer"/>
+							<xs:attribute name="h" type="xs:integer"/>
+							<xs:attribute name="plural" type="xs:boolean"/>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
 		</xs:choice>
 		<xs:attribute name="level" type="xs:unsignedByte" use="optional"/>
 		<xs:attribute name="sfm" type="xs:string" use="optional"/>
@@ -655,4 +679,29 @@
 	<xs:attribute name="level" type="xs:unsignedByte"/>
 	<xs:attribute name="sfm" type="xs:string"/>
 	<xs:attribute name="style" type="xs:string"/>
+	<xs:complexType name="refType">
+		<xs:annotation>
+			<xs:documentation>Bible passage reference specification. Attributes are src for source (i. e. the verse this reference is in, like "MAT.1.23"), and tgt for the target (i. e. the verse or range of verses this reference is pointing to, like "ISA.7.14" or "ISA.7.14-ISA.7.15"), and web for an Internet URL, like "http://eBible.org/web/webfaq.htm". Only one of tgt or web should be specified. An least one of these three attributes should be specified. Text string content of the element is the human-readable vernacular reference to be displayed, like "Mt. 1:23" or "Matthew 1:23".
+</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute form="qualified" name="src" type="verseID"/>
+				<xs:attribute name="tgt" type="verseID"/>
+				<xs:attribute name="web" type="xs:anyURI"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:complexType mixed="true" name="linkableType">
+		<xs:choice>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="ref" type="refType"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:simpleType name="verseID">
+		<xs:restriction base="xs:string">
+			<xs:pattern
+				value="[\p{Lu}\d]\p{Lu}[\p{Lu}\d]\.\d+\.\d+(\-[\p{Lu}\d]\p{Lu}[\p{Lu}\d]\.\d+\.\d+)?"
+			/>
+		</xs:restriction>
+	</xs:simpleType>
 </xs:schema>

@@ -146,8 +146,6 @@ namespace haiola
 			set { ini.WriteString("lwcDescription", value.Trim()); }
 		}
 
-
-
 		public DateTime contentUpdateDate
 		{
 			get { return ini.ReadDateTime("contentUpdateDate", DateTime.Today); }
@@ -159,6 +157,12 @@ namespace haiola
 			get { return ini.ReadBool("ignoreExtras", false); }
 			set { ini.WriteBool("ignoreExtras", value); }
 		}
+
+        public bool relaxUsfmNesting
+        {
+            get { return ini.ReadBool("relaxUsfmNesting", false); }
+            set { ini.WriteBool("relaxUsfmNesting", value); }
+        }
 
  /*
         public bool stripPictures

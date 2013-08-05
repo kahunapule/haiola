@@ -598,7 +598,7 @@ namespace haiola
         public void PreprocessUsfmFiles()
         {
             string SourceDir = Path.Combine(m_inputProjectDirectory, "Source");
-            string UsfmDir = Path.Combine(m_outputProjectDirectory, "usfm");
+            string UsfmDir = Path.Combine(m_outputProjectDirectory, "usfm1");
             if (!Directory.Exists(SourceDir))
             {
                 MessageBox.Show(this, SourceDir + " not found!", "ERROR");
@@ -645,7 +645,7 @@ namespace haiola
 
         private int loggedLineCount = 0;
 
-        public void showMessageString(string s)
+        public bool showMessageString(string s)
         {
             loggedLineCount++;
             if (loggedLineCount < 9)
@@ -665,6 +665,7 @@ namespace haiola
                 m_options.lastRunResult = false;
             }
             Application.DoEvents();
+            return fAllRunning;
         }
 
         private void logProjectStart(string s)
@@ -677,8 +678,12 @@ namespace haiola
 
         private void ConvertUsfmToUsfx()
         {
-            string UsfmDir = Path.Combine(m_outputProjectDirectory, "usfm");
+            string UsfmDir = Path.Combine(m_outputProjectDirectory, "usfm1");
             string UsfxPath = GetUsfxDirectoryPath();
+            if (!Directory.Exists(UsfmDir))
+            {
+                UsfmDir = Path.Combine(m_outputProjectDirectory, "usfm");
+            }
             if (!Directory.Exists(UsfmDir))
             {
                 MessageBox.Show(this, UsfmDir + " not found!", "ERROR");
@@ -706,7 +711,7 @@ namespace haiola
             Logit.GUIWriteString = showMessageString;
             SFConverter.scripture = new Scriptures();
             Logit.loggedError = false;
-
+            SFConverter.scripture.assumeAllNested = m_options.relaxUsfmNesting;
             // Read the input USFM files into internal data structures.
             SFConverter.ProcessFilespec(Path.Combine(UsfmDir, "*.usfm"), Encoding.UTF8);
             currentConversion = "converting from USFM to USFX; writing USFX";
@@ -841,6 +846,7 @@ namespace haiola
             toHtm.bookInfo.ReadPublicationOrder(orderFile);
             toHtm.MergeXref(Path.Combine(m_inputProjectDirectory, "xref.xml"));
             toHtm.sourceLink = expandPercentEscapes("<a href=\"http://%h/%t\">%v</a>");
+            toHtm.textDirection = m_options.textDir;
     		toHtm.ConvertUsfxToHtml(usfxFilePath, htmlPath,
                 m_options.vernacularTitle,
                 m_options.languageId,
@@ -1174,6 +1180,46 @@ In addition, you have permission to convert the text to different file formats, 
 
         }
 
+        private void NormalizeUsfm()
+        {
+            string logFile;
+            try
+            {
+                
+                string UsfmDir = Path.Combine(m_outputProjectDirectory, "usfm");
+                string UsfxName = Path.Combine(Path.Combine(m_outputProjectDirectory, "usfx"), "usfx.xml");
+                if (!File.Exists(UsfxName))
+                {
+                    MessageBox.Show(this, UsfxName + " not found!", "ERROR normalizing USFM from USFX");
+                    return;
+                }
+                // Start with an EMPTY USFM directory to avoid problems with old files 
+                Utils.DeleteDirectory(UsfmDir);
+                fileHelper.EnsureDirectory(UsfmDir);
+                currentConversion = "Normalizing USFM from USFX. ";
+                Application.DoEvents();
+                if (!fAllRunning)
+                    return;
+                logFile = Path.Combine(m_outputProjectDirectory, "usfx2usfm2_log.txt");
+                Logit.OpenFile(logFile);
+                Logit.GUIWriteString = showMessageString;
+                Logit.UpdateStatus = updateConversionProgress;
+                SFConverter.scripture = new Scriptures();
+                Logit.loggedError = false;
+                SFConverter.scripture.USFXtoUSFM(UsfxName, UsfmDir, m_options.translationId + ".usfm");
+                Logit.CloseFile();
+                if (Logit.loggedError)
+                {
+                    m_options.lastRunResult = false;
+                }
+                currentConversion = "Converted USFX to USFM.";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error normalizing USFM from USFX");
+            }
+        }
+
         private void ImportUsfx(string SourceDir)
         {
             string logFile;
@@ -1345,6 +1391,7 @@ In addition, you have permission to convert the text to different file formats, 
             // Find out what kind of input we have (USFX, USFM, or USX)
             // and produce USFX, USFM, (and in the future) USX outputs.
             GetUsfx(projDirName);
+            NormalizeUsfm();
             UpdateBooksList();
         	Application.DoEvents();
             // Create verseText.xml with unformatted canonical text only in verse containers.
@@ -1440,9 +1487,9 @@ In addition, you have permission to convert the text to different file formats, 
                     break;
             }
             currentConversion = String.Empty;
-            timer1.Enabled = false;
             fAllRunning = false;
             batchLabel.Text = (DateTime.UtcNow - startTime).ToString() + " " + "Done.";
+            messagesListBox.Items.Add(batchLabel.Text);
             m_projectsList_SelectedIndexChanged(null, null);
             WorkOnAllButton.Enabled = true;
             WorkOnAllButton.Text = "Run marked";
@@ -1562,10 +1609,12 @@ In addition, you have permission to convert the text to different file formats, 
             licenseTextBox.Text = m_options.licenseHtml;
             versificationComboBox.Text = m_options.versificationScheme;
             numberSystemComboBox.Text = fileHelper.SetDigitLocale(m_options.numberSystem);
+            textDirectionComboBox.Text = m_options.textDir;
             //arabicNumeralsRadioButton.Checked = m_options.useArabicDigits;
             //khmerNumeralsRadioButton.Checked = m_options.useKhmerDigits;
             privateCheckBox.Checked = m_options.privateProject;
             homeDomainTextBox.Text = m_options.homeDomain;
+            relaxNestingSyntaxCheckBox.Checked = m_options.relaxUsfmNesting;
 
         	LoadConcTab();
 			LoadBooksTab();
@@ -1713,6 +1762,7 @@ In addition, you have permission to convert the text to different file formats, 
             m_options.printPublisher = printPublisherTextBox.Text.Trim();
             m_options.electronicPublisher = electronicPublisherTextBox.Text.Trim();
             m_options.ignoreExtras = stripExtrasCheckBox.Checked;
+            m_options.textDir = textDirectionComboBox.Text;
 
             List<string> tableNames = new List<string>();
             foreach (string filename in listInputProcesses.Items)
@@ -1739,6 +1789,8 @@ In addition, you have permission to convert the text to different file formats, 
             m_options.versificationScheme = versificationComboBox.Text;
             m_options.numberSystem = fileHelper.SetDigitLocale(numberSystemComboBox.Text.Trim());
             m_options.privateProject = privateCheckBox.Checked;
+            m_options.relaxUsfmNesting = relaxNestingSyntaxCheckBox.Checked;
+
             m_options.homeDomain = homeDomainTextBox.Text.Trim();
 
 			SaveConcTab();
@@ -1852,7 +1904,7 @@ In addition, you have permission to convert the text to different file formats, 
             SaveOptions();
         }
 
-        public void updateConversionProgress(string progressMessage)
+        public bool updateConversionProgress(string progressMessage)
         {
             if (currentConversion != progressMessage)
             {
@@ -1860,6 +1912,7 @@ In addition, you have permission to convert the text to different file formats, 
                 // batchLabel.Text = (DateTime.UtcNow - startTime).ToString().Substring(0, 8) + " " + m_project + " " + currentConversion;
                 Application.DoEvents();
             }
+            return fAllRunning;
         }
 
         private DateTime startTime = new DateTime(1, 1, 1);
@@ -1868,12 +1921,14 @@ In addition, you have permission to convert the text to different file formats, 
         private void timer1_Tick(object sender, EventArgs e)
         {
             string progress;
+            string runtime = String.Empty;
             if (currentConversion == "Concordance")
                 progress = ConcGenerator.Stage + " " + ConcGenerator.Progress;
             else
                 progress = currentConversion + " " + WordSend.usfxToHtmlConverter.conversionProgress;
-            batchLabel.Text = (DateTime.UtcNow - startTime).ToString().Substring(0,8) + " " + m_project + " " +
-                progress;
+            if (fAllRunning)
+                runtime = (DateTime.UtcNow - startTime).ToString().Substring(0, 8) + " " + m_project + " ";
+            batchLabel.Text = runtime + progress;
             extensionLabel.Text = plugin.PluginMessage();
             if (triggerautorun)
             {
@@ -1979,9 +2034,9 @@ In addition, you have permission to convert the text to different file formats, 
             ProcessOneProject(SelectedProject);
 
             currentConversion = String.Empty;
-            timer1.Enabled = false;
             fAllRunning = false;
             batchLabel.Text = (DateTime.UtcNow - startTime).ToString() + " " + "Done.";
+            messagesListBox.Items.Add(batchLabel.Text);
             m_projectsList_SelectedIndexChanged(null, null);
             WorkOnAllButton.Enabled = true;
             WorkOnAllButton.Text = "Run marked";
