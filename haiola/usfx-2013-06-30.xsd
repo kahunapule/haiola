@@ -356,22 +356,26 @@
 								<xs:documentation>Footnote reference: the chapter and verse that this note refers to, to be printed (normally at the beginning of the note).</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="fk" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="fk" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
 							<xs:annotation>
 								<xs:documentation>Footnote keyword; the specified word(s) for which the footnote is being provided.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="fq" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="fq" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
 							<xs:annotation>
 								<xs:documentation>Quotation from the Scripture text; the current and/or alternative translation of a portion of the Scripture.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="fqa" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="fqa" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
 							<xs:annotation>
 								<xs:documentation>Alternative translation (may be rendered differently than fq to distinguish between current and alternative readings, if desired).</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="fv" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="fv" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
 							<xs:annotation>
 								<xs:documentation>Footnote verse number; a verse number in the text of the footnote.</xs:documentation>
 							</xs:annotation>
@@ -382,12 +386,69 @@
 								<xs:documentation>The actual text of the footnote. This is equivalent to text not enclosed in an element within f.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="fdc" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="fdc" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
 							<xs:annotation>
 								<xs:documentation>The text within this element is to be omitted in editions not containing the Deuterocanon.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="generated" type="xs:string" minOccurs="0"
+						<xs:element name="generated" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded"/>
+						<xs:element name="ref" type="refType"/>
+					</xs:choice>
+					<xs:attribute name="caller" type="xs:string" use="optional" default="+"/>
+					<xs:attribute name="sfm" type="xs:string" use="optional"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ef" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Extended Footnote</xs:documentation>
+				</xs:annotation>
+				<xs:complexType mixed="true">
+					<xs:choice minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="fr" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Footnote reference: the chapter and verse that this note refers to, to be printed (normally at the beginning of the note).</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="fk" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Footnote keyword; the specified word(s) for which the footnote is being provided.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="fq" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Quotation from the Scripture text; the current and/or alternative translation of a portion of the Scripture.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="fqa" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Alternative translation (may be rendered differently than fq to distinguish between current and alternative readings, if desired).</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="fv" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Footnote verse number; a verse number in the text of the footnote.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="ft" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>The actual text of the footnote. This is equivalent to text not enclosed in an element within f.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="fdc" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>The text within this element is to be omitted in editions not containing the Deuterocanon.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="generated" type="linkableType" minOccurs="0"
 							maxOccurs="unbounded"/>
 						<xs:element name="ref" type="refType"/>
 					</xs:choice>
@@ -412,12 +473,14 @@
 								<xs:documentation>Cross reference origin; the chapter and verse location the target references refer to.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="xk" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="xk" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
 							<xs:annotation>
 								<xs:documentation>Cross reference keyword</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="xq" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="xq" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
 							<xs:annotation>
 								<xs:documentation>Quotation from the Scripture text.</xs:documentation>
 							</xs:annotation>
@@ -428,12 +491,56 @@
 								<xs:documentation>Target references; a list of the target cross references for the origin reference.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="xdc" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="xdc" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
 							<xs:annotation>
 								<xs:documentation>Omit for editions not containing the Deuterocanon.</xs:documentation>
 							</xs:annotation>
 						</xs:element>
-						<xs:element name="generated" type="xs:string" minOccurs="0"
+						<xs:element name="generated" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded"/>
+					</xs:choice>
+					<xs:attribute name="caller" type="xs:string" use="optional" default="+"/>
+					<xs:attribute name="sfm" type="xs:string" use="optional"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ex" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Extended crossreference: a footnote used just to indicate a crossreference. It may be positioned differently than footnotes designated with f, and it may use different calling sequences than f does.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType mixed="true">
+					<xs:choice minOccurs="0" maxOccurs="unbounded">
+						<xs:element name="xo" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Cross reference origin; the chapter and verse location the target references refer to.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="xk" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Cross reference keyword</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="xq" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Quotation from the Scripture text.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="xt" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Target references; a list of the target cross references for the origin reference.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="xdc" type="linkableType" minOccurs="0"
+							maxOccurs="unbounded">
+							<xs:annotation>
+								<xs:documentation>Omit for editions not containing the Deuterocanon.</xs:documentation>
+							</xs:annotation>
+						</xs:element>
+						<xs:element name="generated" type="linkableType" minOccurs="0"
 							maxOccurs="unbounded"/>
 					</xs:choice>
 					<xs:attribute name="caller" type="xs:string" use="optional" default="+"/>
@@ -695,6 +802,9 @@
 	<xs:complexType mixed="true" name="linkableType">
 		<xs:choice>
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="ref" type="refType"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="nd" type="linkableType"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="c" type="linkableType"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="tl" type="linkableType"/>
 		</xs:choice>
 	</xs:complexType>
 	<xs:simpleType name="verseID">

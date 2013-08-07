@@ -36,7 +36,6 @@ namespace haiola
         public Options m_options;
         public BibleBookInfo bkInfo;
         public DateTime sourceDate = new DateTime(1611, 1, 1);
-
         PluginManager plugin;
 
 
@@ -847,6 +846,9 @@ namespace haiola
             toHtm.MergeXref(Path.Combine(m_inputProjectDirectory, "xref.xml"));
             toHtm.sourceLink = expandPercentEscapes("<a href=\"http://%h/%t\">%v</a>");
             toHtm.textDirection = m_options.textDir;
+            toHtm.customCssName = m_options.customCssFileName;
+            toHtm.stripManualNoteOrigins = m_options.stripNoteOrigin;
+            toHtm.noteOriginFormat = m_options.xoFormat;
     		toHtm.ConvertUsfxToHtml(usfxFilePath, htmlPath,
                 m_options.vernacularTitle,
                 m_options.languageId,
@@ -1569,6 +1571,10 @@ In addition, you have permission to convert the text to different file formats, 
             printPublisherTextBox.Text = m_options.printPublisher;
             electronicPublisherTextBox.Text = m_options.electronicPublisher;
             stripExtrasCheckBox.Checked = m_options.ignoreExtras;
+            xoTextBox.Text = m_options.xoFormat;
+            customCssTextBox.Text = m_options.customCssFileName;
+            stripOriginCheckBox.Checked = m_options.stripNoteOrigin;
+            
             m_currentTemplate = xini.ReadString("currentTemplate", String.Empty);
             templateLabel.Text = "Current template: " + m_currentTemplate;
             copyFromTemplateButton.Enabled = (m_currentTemplate.Length > 0) && (m_currentTemplate != m_project);
@@ -1763,7 +1769,9 @@ In addition, you have permission to convert the text to different file formats, 
             m_options.electronicPublisher = electronicPublisherTextBox.Text.Trim();
             m_options.ignoreExtras = stripExtrasCheckBox.Checked;
             m_options.textDir = textDirectionComboBox.Text;
-
+            m_options.xoFormat = xoTextBox.Text;
+            m_options.customCssFileName = customCssTextBox.Text;
+Di
             List<string> tableNames = new List<string>();
             foreach (string filename in listInputProcesses.Items)
                 tableNames.Add(filename);

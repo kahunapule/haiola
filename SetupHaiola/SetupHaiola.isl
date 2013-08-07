@@ -1941,8 +1941,7 @@
 		<row><td>twocolumnserif.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>TWOCOL~1.XML|TwoColumnSerif.xml</td><td>0</td><td/><td/><td/><td>1</td><td>C:\Users\MICHAEL\Documents\source\prophero\haiola\TwoColumnSerif.xml</td><td>1</td><td/></row>
 		<row><td>usfm2usfx.primary_output</td><td>usfm2usfx.Primary_output</td><td>usfm2usfx.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;usfm2usfx1&gt;|Built</td><td>3</td><td/></row>
 		<row><td>usfx2usfm.primary_output</td><td>usfx2usfm.Primary_output</td><td>usfx2usfm.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;usfx2usfm1&gt;|Built</td><td>3</td><td/></row>
-		<row><td>usfx_2012_12_12.xsd</td><td>ISX_DEFAULTCOMPONENT</td><td>USFX-2~1.XSD|usfx-2012-12-12.xsd</td><td>0</td><td/><td/><td/><td>1</td><td>C:\Users\MICHAEL\Documents\source\prophero\haiola\usfx-2012-12-12.xsd</td><td>1</td><td/></row>
-		<row><td>usfx_2013_06_30.xsd</td><td>ISX_DEFAULTCOMPONENT</td><td>USFX-2~1.XSD|usfx-2013-06-30.xsd</td><td>0</td><td/><td/><td/><td>1</td><td>C:\Users\MICHAEL\Documents\source\prophero\haiola\usfx-2013-06-30.xsd</td><td>1</td><td/></row>
+		<row><td>usfx_2013_08_05.xsd</td><td>ISX_DEFAULTCOMPONENT</td><td>USFX-2~1.XSD|usfx-2013-08-05.xsd</td><td>0</td><td/><td/><td/><td>1</td><td>C:\Users\MICHAEL\Documents\source\prophero\haiola\usfx-2013-08-05.xsd</td><td>1</td><td/></row>
 		<row><td>xlat.primary_output</td><td>xlat.Primary_output</td><td>xlat.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;xlat1&gt;|Built</td><td>3</td><td/></row>
 	</table>
 

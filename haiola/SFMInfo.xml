@@ -162,6 +162,16 @@
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>true</levelExpected>
 	</sfm>
+	<sfm kind="note">
+		<tag>ef</tag>
+		<endTag>ef*</endTag>
+		<characterStyle>Footnote</characterStyle>
+		<parameterName>footnoteCaller</parameterName>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<usfx>ef</usfx>
+		<usfxAttribute>caller</usfxAttribute>
+	</sfm>
 	<sfm kind="character">
 		<tag>em</tag>
 		<endTag>em*</endTag>
@@ -170,6 +180,13 @@
 		<levelExpected>false</levelExpected>
 		<comment>Emphasis, maybe bold</comment>
 	</sfm>
+	<sfm kind="note">
+		<tag>ex</tag>
+		<endTag>ex*</endTag>
+		<characterStyle>Note Xref</characterStyle>
+		<parameterName>footnoteCaller</parameterName><nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<usfx>ex</usfx><usfxAttribute>caller</usfxAttribute></sfm>
 	<sfm kind="note">
 		<tag>f</tag>
 		<endTag>f*</endTag>

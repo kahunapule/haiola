@@ -4264,7 +4264,7 @@ namespace WordSend
 								if (xr.Name != "xmlns:ns0")
 									xw.WriteAttributeString(xr.Name, xr.Value);
 							}
-							xw.WriteAttributeString("xmlns:ns0", "http://ebible.org/usfx/usfx-2012-12-12.xsd");
+							xw.WriteAttributeString("xmlns:ns0", "http://ebible.org/" + UsfxSchema);
 							xr.MoveToElement();
 						}
 						else if (xr.Name == "w:ftr")
@@ -4403,7 +4403,7 @@ namespace WordSend
         }
 
 
-        protected const string UsfxSchema = "usfx-2013-06-30.xsd";  // File name only for speed; expected to be on the aux file path
+        protected const string UsfxSchema = "usfx-2013-08-05.xsd";  // File name only for speed; expected to be on the aux file path
         protected const string UsfxNamespace = "http://eBible.org/usfx.xsd";    // This alias will point to the latest USFX schema, starting 1 January 2013.
 
 		public void WriteUSFX(string fileName)
@@ -4539,7 +4539,7 @@ namespace WordSend
 						{
 							xw.WriteStartElement("usfx");
 							xw.WriteAttributeString("xmlns:xsi", @"http://www.w3.org/2001/XMLSchema-instance");
-							xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", @"usfx-2012-12-12.xsd");
+							xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", UsfxSchema);
 							inBody = true;
 						}
 						else if (xr.Name.StartsWith(ns))

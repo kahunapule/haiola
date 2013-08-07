@@ -115,6 +115,23 @@ namespace haiola
 			set { ini.WriteString("dialect", value.Trim()); }
 		}
 
+        public string xoFormat
+        {
+            get { return ini.ReadString("xoFormat", "%c:%v:"); }
+            set { ini.WriteString("xoFormat", value); }
+        }
+
+        public string customCssFileName
+        {
+            get { return ini.ReadString("customCssFileName", "prophero.css"); }
+            set { ini.WriteString("customCssFileName", value); }
+        }
+
+        public bool stripNoteOrigin
+        {
+            get { return ini.ReadBool("stripNoteOrigin", true); }
+            set { ini.WriteBool("stripNoteOrigin", value); }
+        }
 
 		public string contentCreator
 		{
