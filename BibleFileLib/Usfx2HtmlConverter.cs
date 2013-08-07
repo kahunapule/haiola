@@ -458,7 +458,7 @@ namespace WordSend
             htm.WriteLine("<head>");
             htm.WriteLine("<meta charset=\"utf-8\" />");
             htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />");
-            htm.WriteLine("<link rel=\"stylesheet\" href=\"prophero.css\" type=\"text/css\" />");
+            htm.WriteLine("<link rel=\"stylesheet\" href=\"{0}\" type=\"text/css\" />", customCssName);
             htm.WriteLine("<meta name=\"viewport\" content=\"user-scalable=no, initial-scale=1, minimum-scale=1, width=device-width, height=device-height\"/>");
             // htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width\" />");
             if (mainScriptureFile)
@@ -793,10 +793,12 @@ namespace WordSend
         /// <summary>
         /// Start an HTML note with both pop-up and page-bottom notes.
         /// </summary>
-        /// <param name="style">"f" for footnote and "x" for cross reference</param>
+        /// <param name="style">"ef" for extended footnote, "f" for footnote, "x" for cross reference, or "ex" for extended cross reference</param>
         /// <param name="marker">"+" for automatic caller, "-" for no caller (useless for a popup), or a verbatim note caller</param>
         protected virtual void StartHtmlNote(string style, string marker)
         {
+            string automaticOrigin = String.Empty;
+
             EndHtmlNote();
             if (ignoreNotes)
             {
@@ -808,7 +810,7 @@ namespace WordSend
             string noteId = noteName();
             if (string.Compare(marker, "+") == 0)
             {
-                if (style == "f")
+                if ((style == "f") || (style == "ef"))
                     marker = footNoteCall.Marker();
                 else
                 {
@@ -823,12 +825,16 @@ namespace WordSend
                 noteId, marker));
             // Numeric chapter and verse numbers are used in internal references instead of the text versions, which may
             // include dashes in verse bridges.
+            if (!String.IsNullOrEmpty(noteOriginFormat))
+            {
+                automaticOrigin = noteOriginFormat.Replace("%c", currentChapterPublished).Replace("%v", currentVersePublished);
+            }
             if ((chapterNumber >= 1) && (verseNumber >= 1))
-                footnotesToWrite.Append(String.Format("<p class=\"{0}\" id=\"{1}\"><span class=\"notemark\">{2}</span><a class=\"notebackref\" href=\"#V{3}\">{4}:{5}:</a>\r\n",
-                    style, noteId, marker, verseNumber.ToString(), currentChapterPublished, currentVersePublished));
+                footnotesToWrite.Append(String.Format("<p class=\"{0}\" id=\"{1}\"><span class=\"notemark\">{2}</span><a class=\"notebackref\" href=\"#V{3}\">{4}</a>\r\n",
+                    style, noteId, marker, verseNumber.ToString(), automaticOrigin));
             else
                 footnotesToWrite.Append(String.Format("<p class=\"{0}\" id=\"{1}\"><span class=\"notemark\">{2}</span><a class=\"notebackref\" href=\"#V1\">^</a>\r\n",
-                    style, noteId, marker, verseNumber.ToString(), currentChapterPublished, currentVersePublished));
+                    style, noteId, marker));
 
         }
 
@@ -1401,6 +1407,11 @@ namespace WordSend
 
         public string sourceLink = String.Empty;
         public string textDirection = "ltr";
+        public string noteOriginFormat = "%c:%v:";  // Automatic note origin format
+        public bool stripManualNoteOrigins = true;  // These are normally totally redundant with the automatic note origins.
+        public string customCssName = "prophero.css";   // Name of the css file to use for this project.
+        protected bool inOrigin = false;
+
 
         /// <summary>
         /// Converts the USFX file usfxName to a set of HTML files, one file per chapter, in the
@@ -2119,6 +2130,8 @@ namespace WordSend
                                         inTableCol = true;
                                         break;
 
+                                    case "ef":
+                                    case "ex":
                                     case "f":
                                     case "x":
                                         if (ignoreNotes)
@@ -2130,10 +2143,23 @@ namespace WordSend
                                     case "fqa":
                                     case "fv":
                                     case "ft":
-                                    case "xo":
                                     case "xk":
                                     case "xt":
                                         StartHtmlNoteStyle(usfx.Name);
+                                        break;
+                                    case "fr":
+                                    case "xo":
+                                        if (stripManualNoteOrigins)
+                                        {
+                                            if (!usfx.IsEmptyElement)
+                                            {
+                                                usfx.Read();    // Send manual cross reference origin to bit bucket
+                                            }
+                                        }
+                                        else
+                                        {
+                                            StartHtmlNoteStyle(usfx.Name);
+                                        }
                                         break;
                                     case "xdc":
                                     case "fdc":
@@ -2293,6 +2319,8 @@ namespace WordSend
                                     case "tcr":
                                         EndHtmlTableCol();
                                         break;
+                                    case "ef":
+                                    case "ex":
                                     case "f":
                                     case "x":
                                         EndHtmlNote();
@@ -2304,9 +2332,11 @@ namespace WordSend
                                     case "fqa":
                                     case "fv":
                                     case "ft":
-                                    case "xo":
                                     case "xk":
                                     case "xt":
+                                        break;
+                                    case "fr":
+                                    case "xo":
                                         EndHtmlNoteStyle();
                                         break;
                                     case "xdc":
