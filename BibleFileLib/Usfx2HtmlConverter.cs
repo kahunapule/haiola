@@ -86,10 +86,9 @@ namespace WordSend
         protected StringBuilder footnotesToWrite;
         protected StreamWriter htm;
         //int one = 1;
-        protected bool inPreverse;
         protected bool inFootnote;
         protected bool inFootnoteStyle;
-        protected bool inTextStyle;
+        protected int inTextStyle;
         protected bool inParagraph;
         protected bool ignore;
         protected bool ignoreIntros = false;
@@ -397,7 +396,7 @@ namespace WordSend
         /// </summary>
         protected virtual string OptionSelectedOpeningElement
         {
-            get { return "<option selected>"; }
+            get { return "<option selected=\"selected\">"; }
         }
 
         /// <summary>
@@ -453,20 +452,22 @@ namespace WordSend
             htm = new StreamWriter(currentFileName, false, Encoding.UTF8);
             // It is important that the DOCTYPE declaration should be a single line, and that the <html> element starts the second line.
             // This is because the concordance parser uses a ReadLine to skip the DOCTYPE declaration in order to read the rest of the file as XML.
+            // Note: switching to HTML5 syntax, with XHTML-compatible lower case element names and XML-style empty elements (like <br />).
             htm.WriteLine(
-                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
-            htm.WriteLine("<html xmlns:msxsl=\"urn:schemas-microsoft-com:xslt\" xmlns:user=\"urn:nowhere\">");
+                "<!DOCTYPE html>");
             htm.WriteLine("<head>");
-            WriteCompleteElement("<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"");
-            htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width\" />");
-            WriteCompleteElement("<link rel=\"stylesheet\" href=\"prophero.css\" type=\"text/css\"");
+            htm.WriteLine("<meta charset=\"utf-8\" />");
+            htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />");
+            htm.WriteLine("<link rel=\"stylesheet\" href=\"{0}\" type=\"text/css\" />", customCssName);
+            htm.WriteLine("<meta name=\"viewport\" content=\"user-scalable=no, initial-scale=1, minimum-scale=1, width=device-width, height=device-height\"/>");
+            // htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width\" />");
             if (mainScriptureFile)
             {
                 htm.WriteLine("<script src=\"TextFuncs.js\" type=\"text/javascript\"></script>");
             }
             htm.WriteLine("<title>{0} {1} {2}</title>",
                 langName, currentBookHeader, currentChapterPublished);
-            WriteCompleteElement(string.Format("<meta name=\"keywords\" content=\"{0}, {1}, Holy Bible, Scripture, Bible, Scriptures, New Testament, Old Testament, Gospel\"",
+            htm.WriteLine(string.Format("<meta name=\"keywords\" content=\"{0}, {1}, Holy Bible, Scripture, Bible, Scriptures, New Testament, Old Testament, Gospel\" />",
                 langName, langId));
             htm.WriteLine("</head>");
             if (skipNav)
@@ -476,7 +477,6 @@ namespace WordSend
             else
             {
                 htm.WriteLine("<body class=\"mainDoc\"{0}>", OnLoadArgument());
-
                 WriteNavButtons();
             }
         }
@@ -500,23 +500,31 @@ namespace WordSend
         }
 
         /// <summary>
-        /// Write out a line text that makes up a complete element except for the closing angle bracket. In HTML, we just add the closing bracket.
+        /// Note: there is no good reason to NOT include the final slash in HTML, just the same as XHTML. It is good HTML5, and all the browsers
+        /// we care about support it.
+        /// Write out a line text that makes up a complete element except for the closing angle bracket. In HTML, we COULD just add the closing bracket,
+        /// but closing with " />" is also allowed.
         /// In XHTML, we need a closing slash before that bracket.
         /// </summary>
         /// <param name="htm"></param>
         /// <param name="content"></param>
+        /* Deprecated:
         protected void WriteCompleteElement(string content)
         {
-            htm.WriteLine(content + CloseOfContentlessElement);
+            htm.WriteLine(content + " />");
+            // htm.WriteLine(content + CloseOfContentlessElement);
         }
+        */
 
         /// <summary>
         /// The way to close an element that is not going to have any content. In HTML, we can just put a closing bracket. In XHTML, we need a slash before it.
         /// </summary>
+        /* Deprecated
         protected virtual string CloseOfContentlessElement
         {
             get { return ">"; }
         }
+        */
 
         /// <summary>
         /// Write footnotes at the bottom of the chapter file, if any are queued up to be written.
@@ -535,11 +543,11 @@ namespace WordSend
         }
 
         /// <summary>
-        /// Write an HTML or XHTML horizontal rule, as appropriate.
+        /// Write an XHTML-compatible HTML horizontal rule.
         /// </summary>
         private void WriteHorizontalRule()
         {
-            WriteCompleteElement("<hr");
+            htm.WriteLine("<hr />");
         }
 
         /// <summary>
@@ -551,6 +559,7 @@ namespace WordSend
             {
                 EndHtmlNote();
                 EndHtmlTextStyle();
+                EndChapter();
                 EndHtmlParagraph();
                 htm.WriteLine("<div class=\"pageFooter\">");
                 WriteHtmlFootnotes();
@@ -574,8 +583,11 @@ namespace WordSend
             chopChapter = false;
         }
 
-        public int maxPreverseLength = 0;
         public int maxVerseLength = 0;
+        protected string bookOsisId;
+        protected string chapterOsisId;
+        protected string verseOsisId;
+
 
         /// <summary>
         /// Start a verse with the appropriate marker and anchor.
@@ -591,10 +603,7 @@ namespace WordSend
             if (preVerse.Length > 0)
             {
                 htm.WriteLine(preVerse.ToString());
-                if (preVerse.Length > maxPreverseLength)
-                    maxPreverseLength = preVerse.Length;
                 preVerse = new StringBuilder(String.Empty);
-                inPreverse = false;
             }
             htm.Write(string.Format(" <span class=\"verse\"> <a name=\"V{1}\">{0}&nbsp;</a></span>",
                 currentVersePublished, verseNumber.ToString()));
@@ -621,12 +630,10 @@ namespace WordSend
         /// <param name="text">Initial text of the paragraph, if any</param>
         /// <param name="isPreverse">true iff this paragraph style is non canonical,
         /// like section titles, book introductions, and such</param>
-        protected void StartHtmlParagraph(string style, bool isPreverse)
+        protected virtual void StartHtmlParagraph(string style, bool isPreverse)
         {
             EndHtmlParagraph();
             inParagraph = true;
-            //if (isPreverse)
-            //    inPreverse = true;
             if (newChapterFound)
             {
                 if (currentBookAbbrev.CompareTo("PSA") == 0)
@@ -664,8 +671,7 @@ namespace WordSend
         {
             if (!ignore)
             {
-                EndHtmlTextStyle();
-                inTextStyle = true;
+                inTextStyle++;
                 WriteHtml(String.Format("<span class=\"{0}\">", style));
             }
         }
@@ -675,10 +681,10 @@ namespace WordSend
         /// </summary>
         protected void EndHtmlTextStyle()
         {
-            if (inTextStyle)
+            if (inTextStyle > 0)
             {
                 WriteHtml("</span>");
-                inTextStyle = false;
+                inTextStyle--;
             }
         }
 
@@ -766,8 +772,6 @@ namespace WordSend
             if (!ignore)
             {
                 if (htm == null)
-                    inPreverse = true;
-                if (inPreverse)
                     preVerse.Append(s);
                 else
                     htm.Write(s);
@@ -789,10 +793,12 @@ namespace WordSend
         /// <summary>
         /// Start an HTML note with both pop-up and page-bottom notes.
         /// </summary>
-        /// <param name="style">"f" for footnote and "x" for cross reference</param>
+        /// <param name="style">"ef" for extended footnote, "f" for footnote, "x" for cross reference, or "ex" for extended cross reference</param>
         /// <param name="marker">"+" for automatic caller, "-" for no caller (useless for a popup), or a verbatim note caller</param>
         protected virtual void StartHtmlNote(string style, string marker)
         {
+            string automaticOrigin = String.Empty;
+
             EndHtmlNote();
             if (ignoreNotes)
             {
@@ -804,7 +810,7 @@ namespace WordSend
             string noteId = noteName();
             if (string.Compare(marker, "+") == 0)
             {
-                if (style == "f")
+                if ((style == "f") || (style == "ef"))
                     marker = footNoteCall.Marker();
                 else
                 {
@@ -819,12 +825,16 @@ namespace WordSend
                 noteId, marker));
             // Numeric chapter and verse numbers are used in internal references instead of the text versions, which may
             // include dashes in verse bridges.
+            if (!String.IsNullOrEmpty(noteOriginFormat))
+            {
+                automaticOrigin = noteOriginFormat.Replace("%c", currentChapterPublished).Replace("%v", currentVersePublished);
+            }
             if ((chapterNumber >= 1) && (verseNumber >= 1))
-                footnotesToWrite.Append(String.Format("<p class=\"{0}\" id=\"{1}\"><span class=\"notemark\">{2}</span><a class=\"notebackref\" href=\"#V{3}\">{4}:{5}:</a>\r\n",
-                    style, noteId, marker, verseNumber.ToString(), currentChapterPublished, currentVersePublished));
+                footnotesToWrite.Append(String.Format("<p class=\"{0}\" id=\"{1}\"><span class=\"notemark\">{2}</span><a class=\"notebackref\" href=\"#V{3}\">{4}</a>\r\n",
+                    style, noteId, marker, verseNumber.ToString(), automaticOrigin));
             else
                 footnotesToWrite.Append(String.Format("<p class=\"{0}\" id=\"{1}\"><span class=\"notemark\">{2}</span><a class=\"notebackref\" href=\"#V1\">^</a>\r\n",
-                    style, noteId, marker, verseNumber.ToString(), currentChapterPublished, currentVersePublished));
+                    style, noteId, marker));
 
         }
 
@@ -966,15 +976,26 @@ namespace WordSend
                     chap = String.Format("{0}{1}", currentBookAbbrev, chapterNumber.ToString("00"));
                 bookRecord.chapterFiles.Add(chap);
                 //chapterFileList.Add(chap);
-                CloseHtmlFile();
+                //CloseHtmlFile();
+            }
+        }
+
+        protected bool inChapter = false;
+
+        protected virtual void EndChapter()
+        {
+            if (inChapter)
+            {
+                inChapter = false;
             }
         }
 
         /// <summary>
         /// Process a chapter tag
         /// </summary>
-        protected void ProcessChapter()
+        protected virtual void ProcessChapter()
         {
+            EndChapter();
             currentChapter = id;
             currentChapterPublished = fileHelper.LocalizeDigits(currentChapter);
             currentChapterAlternate = String.Empty;
@@ -991,12 +1012,14 @@ namespace WordSend
                 chapterNumber = chNum;
             else
                 chapterNumber++;
+            chapterOsisId = bookOsisId + "." + chapterNumber.ToString();
+            verseOsisId = chapterOsisId + ".0";
             chopChapter = true;
             newChapterFound = true;
             CloseHtmlFile();
-            inPreverse = true;
             chapterFileIndex++;
             inHeader = false;
+            inChapter = true;
         }
 
         /// <summary>
@@ -1014,7 +1037,6 @@ namespace WordSend
             if (!bookInfo.isPeripheral(currentBookAbbrev))
                 newChapterFound = true;
             CloseHtmlFile();
-            inPreverse = true;
             chapterFileIndex++;
         }
 
@@ -1044,6 +1066,7 @@ namespace WordSend
             {
                 verseNumber++;
             }
+            verseOsisId = chapterOsisId + "." + verseNumber.ToString();
             StartVerse();
         }
 
@@ -1089,7 +1112,9 @@ namespace WordSend
             chapterNumber = verseNumber = 0;
             currentBookAbbrev = currentBookTitle = currentChapterPublished = String.Empty;
             currentChapter = currentFileName = currentVerse = languageCode = String.Empty;
-            inPreverse = inFootnote = inFootnoteStyle = inTextStyle = inParagraph = chopChapter = false;
+            inFootnote = inFootnoteStyle = false;
+            inTextStyle = 0;
+            inParagraph = chopChapter = false;
             bookRecord = (BibleBookRecord)bookInfo.books["FRT"];
             try
             {
@@ -1126,6 +1151,7 @@ namespace WordSend
                                 {
                                     currentBookAbbrev = id;
                                     bookRecord = (BibleBookRecord)bookInfo.books[currentBookAbbrev];
+                                    bookOsisId = bookRecord.osisName;
                                 }
                                 bookRecord.chapterFiles = new ArrayList();
                                 currentBookHeader = vernacularLongTitle = String.Empty;
@@ -1145,6 +1171,7 @@ namespace WordSend
                                     includeThis = true;
                                     // Console.WriteLine("Processing {0}", currentBookAbbrev);
                                 }
+
                                 break;
                             case "c":
                                 currentChapter = id;
@@ -1156,6 +1183,7 @@ namespace WordSend
                                 else
                                     chapterNumber++;
                                 bookRecord.actualChapters = Math.Max(bookRecord.actualChapters, chapterNumber);
+                                chapterOsisId = bookOsisId + "." + chapterNumber.ToString();
                                 break;
                             case "v":
                                 currentVerse = id;
@@ -1176,6 +1204,7 @@ namespace WordSend
                                 {
                                     verseNumber++;
                                 }
+                                verseOsisId = chapterOsisId + "." + verseNumber.ToString();
                                 break;
                             case "f":
                                 inFootnote = true;
@@ -1264,490 +1293,6 @@ namespace WordSend
         public string indexDateStamp = String.Empty;
         public static string conversionProgress = String.Empty;
 
-        /// <summary>
-        /// Writes a text file containing SQL code to populate a Scripture database with the verses in this
-        /// USFX Bible translation.
-        /// </summary>
-        /// <param name="usfxName">Name of the USFX source file to read</param>
-        /// <param name="sqlFileName">Name of the SQL file to write.</param>
-        /// <param name="translationId">Unique ID of this translation</param>
-        /// <param name="skipHelps">True iff you want to skip conversion of introductions and notes</param>
-        /// <returns>true iff the conversion was successful</returns>
-        public bool Usfx2Sql(string usfxName, string sqlFileName, string translationId, bool skipHelps = false)
-        {
-            bool result = false;
-            bool inUsfx = false;
-            bool containsDC = false;
-            string currentParagraph = string.Empty;
-            string activeStyles = string.Empty;
-            ignoreIntros = ignoreNotes = skipHelps;
-            StringBuilder sqlBookList = new StringBuilder();
-            StringBuilder sqlChapterList = new StringBuilder();
-            StringBuilder pending = new StringBuilder();
-            StringBuilder searchText = new StringBuilder();
-
-            try
-            {
-                bookInfo.ReadUsfxVernacularNames(usfxName);
-                StreamWriter sw = new StreamWriter(sqlFileName, false);
-                usfxFileName = usfxName;
-                if (usfx != null)
-                    usfx.Close();
-
-                sw.WriteLine("USE prophero;");
-                sw.WriteLine(@"CREATE TABLE IF NOT EXISTS 'bibleverses'
-('verseid' VARCHAR(64) NOT NULL PRIMARY KEY, // i. e. eng-web.PSA.119.105 or nop.GEN.1.1
-'redirect' VARCHAR(64), // for redirecting a query for a verse number that is part of a verse range to the first verse of the range
-'publishedChapter' VARCHAR(32),
-'publishedVerse' VARCHAR(32),
-'activePara' VARCHAR(8), // Active paragraph tag at beginning of a verse record
-'text' VARCHAR(2048), // marked-up text after the verse marker
-'searchtext' VARCHAR(2048) FULLTEXT INDEX);"); // plain text for searching, stripped of markup and notes
-
-                usfx = new XmlTextReader(usfxName);
-                usfx.WhitespaceHandling = WhitespaceHandling.Significant;
-                while (usfx.Read())
-                {
-                    conversionProgress = "Generating sql " + currentBookAbbrev + " " + currentChapter + ":" + currentVerse;
-                    System.Windows.Forms.Application.DoEvents();
-
-                    switch (usfx.NodeType)
-                    {
-                        case XmlNodeType.Element:
-                            if (inUsfx)
-                            {
-                                level = GetNamedAttribute("level");
-                                style = GetNamedAttribute("style");
-                                sfm = GetNamedAttribute("sfm");
-                                caller = GetNamedAttribute("caller");
-                                id = GetNamedAttribute("id");
-
-                                switch (usfx.Name)
-                                {
-                                    case "languageCode":
-                                        usfx.Read();
-                                        if (usfx.NodeType == XmlNodeType.Text)
-                                            languageCode = usfx.Value;
-                                        break;
-                                    case "sectionBoundary":
-                                    case "generated":
-                                    case "rem":
-                                    case "periph":
-                                    case "fig": // Illustrations not yet supported
-                                    case "ndx":
-                                    case "w":
-                                    case "wh":
-                                    case "wg":
-                                        if (!usfx.IsEmptyElement)
-                                            ignore = true;
-                                        break;
-                                    case "book":
-                                        currentBookAbbrev = id;
-                                        chapterNumber = 0;
-                                        verseNumber = 0;
-                                        currentBookHeader = vernacularLongTitle = String.Empty;
-                                        if (bookInfo.isApocrypha(id))
-                                            containsDC = true;
-                                        bookRecord = (BibleBookRecord)bookList[bookListIndex];
-                                        currentChapter = "";
-                                        break;
-                                    case "id":
-                                        if (id.Length > 2)
-                                            currentBookAbbrev = id;
-                                        if (bookRecord.tla != currentBookAbbrev)
-                                        {
-                                            Logit.WriteLine("Mismatch between id of book element and id element " + id);
-                                            bookRecord = (BibleBookRecord)bookList[bookListIndex];
-                                        }
-                                        if (!usfx.IsEmptyElement)
-                                            ignore = true;
-                                        inHeader = true;
-                                        newChapterFound = false;
-                                        footNoteCall.reset();
-                                        break;
-                                    case "ide":
-                                        // We could read attribute charset, here, if we would do anything with it.
-                                        // Ideally, this would be read on first pass, and used as the encoding to read
-                                        // the file on the second pass. However, we currently don't support anything
-                                        // but utf-8, so it is kind of redundant, except for round-trip conversion back
-                                        // to USFM.
-                                        if (!usfx.IsEmptyElement)
-                                            ignore = true;
-                                        break;
-                                    case "h":
-                                        usfx.Read();
-                                        if (usfx.NodeType == XmlNodeType.Text)
-                                            currentBookHeader = fileHelper.sqlString(usfx.Value.Trim());
-                                        break;
-                                    case "cl":
-                                        usfx.Read();
-                                        if (usfx.NodeType == XmlNodeType.Text)
-                                        {
-                                            if (chapterNumber == 0)
-                                                wordForChapter = usfx.Value.Trim();
-                                            else
-                                                currentChapterPublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
-                                        }
-                                        break;
-                                    case "p":
-                                        // EndHtmlTable();
-                                        if (sfm.CompareTo("mt") == 0)
-                                        {
-                                            usfx.Read();
-                                            if (usfx.NodeType == XmlNodeType.Text)
-                                            {
-                                                if (vernacularLongTitle.Length > 0)
-                                                    vernacularLongTitle = vernacularLongTitle + " " + fileHelper.sqlString(usfx.Value.Trim());
-                                                else
-                                                    vernacularLongTitle = fileHelper.sqlString(usfx.Value.Trim());
-                                            }
-                                        }
-
-                                        /****************
-                                                         else if (sfm.CompareTo("ms") == 0)
-                                                         {
-                                                             usfx.Read();
-                                                             if (usfx.NodeType == XmlNodeType.Text)
-                                                             {
-                                                                 bookRecord.toc.Append(String.Format("<div class=\"toc1\"><a href=\"{0}{1}.htm#V{2}\">{3}</a></div>\r\n",
-                                                                     currentBookAbbrev, Math.Max(1, chapterNumber).ToString(chapFormat),
-                                                                     verseNumber.ToString(), usfx.Value.Trim()));
-                                                             }
-                                                             hasContentsPage = true;
-                                                         }
-
-                                                         bool beforeVerse = true;
-                                                         if ((bookRecord.testament.CompareTo("x") == 0) ||
-                                                             (sfm.Length == 0) || (sfm == "p") || (sfm == "fp") ||
-                                                             (sfm == "nb") || (sfm == "cls") || (sfm == "li") ||
-                                                             (sfm == "lit") || (sfm == "m") || (sfm == "mi") ||
-                                                             (sfm == "pc") || (sfm == "pde") || (sfm == "pdi") ||
-                                                             (sfm == "ph") || (sfm == "phi") || (sfm == "pi") ||
-                                                             (sfm == "pm") || (sfm == "pmc") || (sfm == "pmo") ||
-                                                             (sfm == "pmr") || (sfm == "pr") || (sfm == "ps") ||
-                                                             (sfm == "psi") || (sfm == "qc") || (sfm == "qm") ||
-                                                             (sfm == "qr") || (sfm == "pr") || (sfm == "ps"))
-                                                             beforeVerse = false;
-                                                         if (ignoreIntros && ((sfm == "ip") || (sfm == "imt") || (sfm == "io") || (sfm == "is") || (sfm == "iot")))
-                                                             ignore = true;
-                                                         ProcessParagraphStart(beforeVerse);
-                                         */
-                                        break;
-                                    case "q":
-                                    case "qs":  // qs is really a text style with paragraph attributes, but HTML/CSS can't handle that.
-                                    case "b":
-                                        // EndHtmlTable();
-                                        //ProcessParagraphStart(false);
-                                        break;
-                                    case "mt":
-                                    case "d":
-                                    case "s":
-                                        //EndHtmlTable();
-                                        //ProcessParagraphStart(true);
-                                        break;
-                                    case "c":
-                                        //EndHtmlTable();
-                                        //ProcessChapter();
-                                        break;
-                                    case "cp":
-                                        if (!usfx.IsEmptyElement)
-                                        {
-                                            usfx.Read();
-                                            if (usfx.NodeType == XmlNodeType.Text)
-                                                currentChapterPublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
-                                        }
-                                        break;
-                                    case "ca":
-                                        if (!usfx.IsEmptyElement)
-                                        {
-                                            usfx.Read();
-                                            if (usfx.NodeType == XmlNodeType.Text)
-                                                currentChapterAlternate = usfx.Value.Trim();
-                                        }
-                                        break;
-                                    case "toc":
-                                        if (!usfx.IsEmptyElement)
-                                        {
-                                            if (level == String.Empty)
-                                                level = "1";
-                                            usfx.Read();
-                                            if (usfx.NodeType == XmlNodeType.Text)
-                                            {
-                                                switch (level)
-                                                {
-                                                    case "1":
-                                                        bookRecord.vernacularName = usfx.Value.Trim();
-                                                        break;
-                                                    case "2":
-                                                        bookRecord.shortName = usfx.Value.Trim();
-                                                        break;
-                                                    case "3":
-                                                        bookRecord.vernacularAbbreviation = usfx.Value.Trim();
-                                                        break;
-                                                }
-                                            }
-                                        }
-                                        break;
-                                    case "v":
-                                        if (chapterNumber == 0)
-                                            VirtualChapter();
-                                        ProcessVerse();
-                                        break;
-                                    case "va":
-                                        if (!usfx.IsEmptyElement)
-                                        {
-                                            usfx.Read();
-                                            if (usfx.NodeType == XmlNodeType.Text)
-                                                currentVerseAlternate = fileHelper.LocalizeDigits(usfx.Value.Trim());
-                                        }
-                                        break;
-                                    case "vp":
-                                        if (!usfx.IsEmptyElement)
-                                        {
-                                            usfx.Read();
-                                            if (usfx.NodeType == XmlNodeType.Text)
-                                                currentVersePublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
-                                        }
-                                        break;
-                                    case "qt":
-                                    case "nd":
-                                    case "tl":
-                                    case "qac":
-                                    case "fm":
-                                    case "sls":
-                                    case "bk":
-                                    case "pn":
-                                    case "k":
-                                    case "ord":
-                                    case "add":
-                                    case "sig":
-                                    case "bd":
-                                    case "it":
-                                    case "bdit":
-                                    case "sc":
-                                    case "no":
-                                    case "ior":
-                                    case "wj":
-                                    case "cs":
-                                    case "rq":
-                                        if (sfm.Length == 0)
-                                            sfm = usfx.Name;
-                                        StartHtmlTextStyle(sfm);
-                                        break;
-                                    case "table":
-                                        StartHtmlTable();
-                                        break;
-                                    case "th":
-                                        WriteHtml("<td><b>");
-                                        inTableCol = true;
-                                        inTableBold = true;
-                                        break;
-                                    case "tr":
-                                        WriteHtml("<tr>");
-                                        inTableRow = true;
-                                        break;
-                                    case "thr":
-                                        WriteHtml("<td align=\"right\"><b>");
-                                        inTableBold = true;
-                                        inTableCol = true;
-                                        break;
-                                    case "tc":
-                                        WriteHtml("<td>");
-                                        inTableCol = true;
-                                        break;
-                                    case "tcr":
-                                        WriteHtml("<td align=\"right\">");
-                                        inTableCol = true;
-                                        break;
-
-                                    case "f":
-                                    case "x":
-                                        if (ignoreNotes)
-                                            ignore = true;
-                                        StartHtmlNote(usfx.Name, caller);
-                                        break;
-                                    case "fk":
-                                    case "fq":
-                                    case "fqa":
-                                    case "fv":
-                                    case "ft":
-                                    case "xo":
-                                    case "xk":
-                                    case "xt":
-                                        StartHtmlNoteStyle(usfx.Name);
-                                        break;
-                                    case "xdc":
-                                    case "fdc":
-                                    case "dc":
-                                        if (!containsDC)
-                                            ignore = true;
-                                        break;
-                                    case "optionalLineBreak":
-                                        WriteHtmlOptionalLineBreak();
-                                        break;
-
-                                }
-                            }
-                            else
-                            {
-                                if (usfx.Name == "usfx")
-                                    inUsfx = true;
-                            }
-                            break; // End of element
-                        case XmlNodeType.Whitespace:
-                        case XmlNodeType.SignificantWhitespace:
-                        case XmlNodeType.Text:
-                            WriteHtmlText(usfx.Value);
-                            break;
-                        case XmlNodeType.EndElement:
-                            if (inUsfx)
-                            {
-                                switch (usfx.Name)
-                                {
-                                    case "usfx":
-                                        inUsfx = false;
-                                        break;
-                                    case "ide":
-                                    case "generated":
-                                    case "sectionBoundary":
-                                    case "rem":
-                                    case "periph":
-                                    case "fig": // Illustrations not yet supported
-                                    case "ndx":
-                                    case "w":
-                                    case "wh":
-                                    case "wg":
-                                    case "id":
-                                        ignore = false;
-                                        break;
-                                    case "book":
-                                        if (bookRecord.testament.CompareTo("x") == 0)
-                                        {
-                                            if (chapterNumber == 0)
-                                            {
-                                                chapterNumber++;
-                                                if (htm == null)
-                                                    OpenHtmlFile();
-                                                if (preVerse.Length > 0)
-                                                {
-                                                    htm.WriteLine(preVerse.ToString());
-                                                    //preVerse = new StringBuilder(String.Empty);
-                                                    inPreverse = false;
-                                                }
-                                            }
-                                        }
-                                        CloseHtmlFile();
-                                        bookListIndex++;
-                                        break;
-                                    case "p":
-                                    case "q":
-                                    case "qs":  // qs is really a text style with paragraph attributes, but HTML/CSS can't handle that.
-                                    case "b":
-                                    case "mt":
-                                        EndHtmlParagraph();
-                                        if (chopChapter)
-                                            CloseHtmlFile();
-                                        if (ignoreIntros)
-                                            ignore = false;
-                                        break;
-                                    case "ms":
-                                    case "d":
-                                    case "s":
-                                        if (bookRecord.testament.CompareTo("x") == 0)
-                                        {
-                                            if (chapterNumber == 0)
-                                            {
-                                                chapterNumber++;
-                                            }
-                                            if (htm == null)
-                                                OpenHtmlFile();
-                                            if (preVerse.Length > 0)
-                                            {
-                                                htm.WriteLine(preVerse.ToString());
-                                                //preVerse = new StringBuilder(String.Empty);
-                                                //inPreverse = false;
-                                            }
-                                            verseNumber++;
-                                            htm.Write("<a name=\"C{0}V{1}\"></a>",
-                                                chapterNumber.ToString(), verseNumber.ToString());
-                                        }
-                                        EndHtmlParagraph();
-                                        if (chopChapter)
-                                            CloseHtmlFile();
-                                        break;
-                                    case "qt":
-                                    case "nd":
-                                    case "tl":
-                                    case "qac":
-                                    case "fm":
-                                    case "sls":
-                                    case "bk":
-                                    case "pn":
-                                    case "k":
-                                    case "ord":
-                                    case "add":
-                                    case "sig":
-                                    case "bd":
-                                    case "it":
-                                    case "bdit":
-                                    case "sc":
-                                    case "no":
-                                    case "ior":
-                                    case "wj":
-                                    case "cs":
-                                    case "rq":
-                                        EndHtmlTextStyle();
-                                        break;
-                                    case "f":
-                                    case "x":
-                                        EndHtmlNote();
-                                        if (ignoreNotes)
-                                            ignore = false;
-                                        break;
-                                    case "fk":
-                                    case "fq":
-                                    case "fqa":
-                                    case "fv":
-                                    case "ft":
-                                    case "xo":
-                                    case "xk":
-                                    case "xt":
-                                        EndHtmlNoteStyle();
-                                        break;
-                                    case "xdc":
-                                    case "fdc":
-                                    case "dc":
-                                        ignore = false;
-                                        break;
-                                    case "table":
-                                        EndHtmlTable();
-                                        break;
-                                    case "tr":
-                                        EndHtmlTableRow();
-                                        break;
-                                    case "tc":
-                                    case "tcr":
-                                    case "th":
-                                    case "thr":
-                                        EndHtmlTableCol();
-                                        break;
-                                }
-                            }
-                            break;
-
-                    }   // End of massive case statement
-                }   // End of USFX reading while loop
-                usfx.Close();
-                sw.Close();
-                result = true;
-            }
-            catch (Exception ex)
-            {
-                Logit.WriteError(ex.Message);
-            }
-
-            return result;
-        }
 
         /// <summary>
         ///  (Localizable) string to display as the text of the link the Concordance.
@@ -1770,6 +1315,18 @@ namespace WordSend
             return MainFileLinkTarget(string.Format("{0}{1}.htm", bookAbbrev, chapter));
         }
 
+        protected bool inStrongs = false;
+
+        protected virtual void StartStrongs(string StrongsNumber, string plural)
+        {
+            inStrongs = true;
+        }
+
+        protected virtual void EndStrongs()
+        {
+            inStrongs = false;
+        }
+
         protected CrossReference xref;
         protected bool doXrefMerge = false;
         public void MergeXref(string xrefName)
@@ -1790,7 +1347,71 @@ namespace WordSend
             }
         }
 
+        protected virtual void WriteContentsPage()
+        {
+            hasContentsPage = bookRecord.toc.Length > 0;
+            currentChapter = "";
+            if (hasContentsPage)
+            {
+                currentChapterPublished = "0";
+                OpenHtmlFile();
+                htm.WriteLine("<div class=\"toc\"><a href=\"index.htm\">^</a></div>\r\n{0}",
+                    bookRecord.toc.ToString());
+                CloseHtmlFile();
+            }
+        }
+
+        protected virtual void EndVerse()
+        {
+            if ((preVerse.Length > 0) && (htm != null))
+            {
+                htm.WriteLine(preVerse.ToString());
+                preVerse = new StringBuilder(String.Empty);
+            }
+        }
+
+        protected virtual void WriteCopyrightPage(string chapFormat, string licenseHtml, string goText)
+        {
+            // Copyright page
+            currentBookAbbrev = "CPR";
+            bookListIndex = -1;
+            OpenHtmlFile("copyright.htm");
+            htm.WriteLine("<div class=\"main\">");
+            bookListIndex = 0;
+            bookRecord = (BibleBookRecord)bookList[0];
+            if (bookRecord.tla.CompareTo("PSA") == 0)
+                chapFormat = "000";
+            else
+                chapFormat = "00";
+            htm.WriteLine("<div class=\"toc\"><a href=\"{0}.htm\">{1}</a></div>",
+                chapterFileList[0], goText);
+            htm.WriteLine(licenseHtml);
+            htm.WriteLine("<p>&nbsp;<br/><br/></p>");
+            if (indexDateStamp != String.Empty)
+                htm.WriteLine("<div class=\"fine\">{0}</div>", indexDateStamp);
+            CloseHtmlFile();
+            indexDateStamp = String.Empty;
+
+            // Audio/download copyright page
+            OpenHtmlFile("copr.htm", false, true);
+            htm.WriteLine("<div class=\"main\">");
+            htm.WriteLine("<div class=\"toc\">{0}</div></br>", sourceLink);
+            htm.WriteLine(licenseHtml);
+            if (indexDateStamp != String.Empty)
+                htm.WriteLine("<div class=\"fine\">{0}</div>", indexDateStamp);
+            CloseHtmlFile();
+        }
+
+        public string translationIdentifier;
+        public string languageIdentifier;
+
         public string sourceLink = String.Empty;
+        public string textDirection = "ltr";
+        public string noteOriginFormat = "%c:%v:";  // Automatic note origin format
+        public bool stripManualNoteOrigins = true;  // These are normally totally redundant with the automatic note origins.
+        public string customCssName = "prophero.css";   // Name of the css file to use for this project.
+        protected bool inOrigin = false;
+
 
         /// <summary>
         /// Converts the USFX file usfxName to a set of HTML files, one file per chapter, in the
@@ -1821,6 +1442,8 @@ namespace WordSend
             string figCopyright = String.Empty;
             string figCaption = String.Empty;
             string figReference = String.Empty; // Figure parameters
+            translationIdentifier = translationId;
+            languageIdentifier = languageId;
             ignoreIntros = ignoreNotes = skipHelps;
             footerTextHTML = footerHtml;
             copyrightLinkHTML = copyrightLink;
@@ -1832,9 +1455,13 @@ namespace WordSend
             psalmLabel = psalmLabelName;
             chapterNumber = verseNumber = 0;
             bookList.Clear();
+            bookOsisId = chapterOsisId = verseOsisId = String.Empty;
             currentBookAbbrev = currentBookTitle = currentChapterPublished = wordForChapter = String.Empty;
             currentChapter = currentFileName = currentVerse = languageCode = String.Empty;
-            inPreverse = inFootnote = inFootnoteStyle = inTextStyle = inParagraph = chopChapter = false;
+            ChapterInfo ci = new ChapterInfo();
+            inFootnote = inFootnoteStyle = false;
+            inTextStyle = 0;
+            inParagraph = chopChapter = false;
             bookRecord = (BibleBookRecord)bookInfo.books["FRT"];
             // This flag is set true during the first pass through the USFX file (in preparation for generating navigation files)
             // if any apocryphal books are encountered. If this does not happen (that is, there is no apocryphal material), in the 
@@ -1899,6 +1526,10 @@ namespace WordSend
                                 {
                                     currentBookAbbrev = id;
                                     bookRecord = (BibleBookRecord)bookInfo.books[currentBookAbbrev];
+                                    bookRecord.chaptersFound = new ArrayList(151);
+                                    bookOsisId = bookRecord.osisName;
+                                    chapterOsisId = bookOsisId + ".0";
+                                    verseOsisId = chapterOsisId + ".0";
                                     if (bookRecord == null)
                                     {
                                         Logit.WriteError("Cannot process unknown book: " + currentBookAbbrev);
@@ -2026,9 +1657,16 @@ namespace WordSend
                                     chapterNumber = chNum;
                                 else
                                     chapterNumber++;
+                                chapterOsisId = bookOsisId + "." + chapterNumber.ToString();
+                                verseOsisId = chapterOsisId + ".0";
                                 bookRecord.actualChapters = Math.Max(bookRecord.actualChapters, chapterNumber);
+                                ci = new ChapterInfo();
+                                ci.chapterInteger = chapterNumber;
+                                ci.alternate = ci.actual = currentChapter;
+                                ci.published = currentChapterPublished;
+                                ci.osisChapter = chapterOsisId;
+                                bookRecord.chaptersFound.Add(ci);
                                 LeaveHeader();
-                                inPreverse = true;
                                 chopChapter = true;
                                 break;
                             case "cp":
@@ -2036,7 +1674,10 @@ namespace WordSend
                                 {
                                     usfx.Read();
                                     if (usfx.NodeType == XmlNodeType.Text)
+                                    {
                                         currentChapterPublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
+                                        ci.published = currentChapterPublished;
+                                    }
                                 }
                                 break;
                             case "ca":
@@ -2044,7 +1685,10 @@ namespace WordSend
                                 {
                                     usfx.Read();
                                     if (usfx.NodeType == XmlNodeType.Text)
+                                    {
                                         currentChapterAlternate = usfx.Value.Trim();
+                                        ci.alternate = currentChapterAlternate;
+                                    }
                                 }
                                 break;
                             case "toc":
@@ -2091,9 +1735,7 @@ namespace WordSend
                                 {
                                     verseNumber++;
                                 }
-                                break;
-                            case "ve":
-                                inPreverse = true;
+                                verseOsisId = chapterOsisId + "." + verseNumber.ToString();
                                 break;
                         }
                     }
@@ -2162,35 +1804,7 @@ namespace WordSend
                 // Index page
                 GenerateIndexFile(translationId, indexHtml, goText);
 
-                // Copyright page
-                currentBookAbbrev = "CPR";
-                bookListIndex = -1;
-                OpenHtmlFile("copyright.htm");
-                htm.WriteLine("<div class=\"main\">");
-                bookListIndex = 0;
-                bookRecord = (BibleBookRecord)bookList[0];
-                if (bookRecord.tla.CompareTo("PSA") == 0)
-                    chapFormat = "000";
-                else
-                    chapFormat = "00";
-                htm.WriteLine("<div class=\"toc\"><a href=\"{0}.htm\">{1}</a></div>",
-                    chapterFileList[0], goText);
-                htm.WriteLine(licenseHtml);
-                htm.WriteLine("<p>&nbsp;<br/><br/></p>");
-                if (indexDateStamp != String.Empty)
-                    htm.WriteLine("<div class=\"fine\">{0}</div>", indexDateStamp);
-                CloseHtmlFile();
-                indexDateStamp = String.Empty;
-
-                // Audio/download copyright page
-
-                OpenHtmlFile("copr.htm", false, true);
-                htm.WriteLine("<div class=\"main\">");
-                htm.WriteLine("<div class=\"toc\">{0}</div></br>", sourceLink);
-                htm.WriteLine(licenseHtml);
-                if (indexDateStamp != String.Empty)
-                    htm.WriteLine("<div class=\"fine\">{0}</div>", indexDateStamp);
-                CloseHtmlFile();
+                WriteCopyrightPage(chapFormat, licenseHtml, goText);
 
                 // Pass 2: content generation
 
@@ -2227,7 +1841,6 @@ namespace WordSend
                                     case "rem":
                                     case "periph":
                                     case "ndx":
-                                    case "w":
                                     case "wh":
                                     case "wg":
                                         if (!usfx.IsEmptyElement)
@@ -2303,6 +1916,9 @@ namespace WordSend
                                         chapterNumber = 0;
                                         verseNumber = 0;
                                         bookRecord = (BibleBookRecord)bookInfo.books[id];
+                                        bookOsisId = bookRecord.osisName;
+                                        chapterOsisId = bookOsisId + ".0";
+                                        verseOsisId = chapterOsisId + ".0";
                                         currentBookHeader = bookRecord.vernacularShortName;
                                         if (!bookRecord.isPresent)
                                         {   // Skip book not on publication list or containing no chapters.
@@ -2313,16 +1929,7 @@ namespace WordSend
                                         }
                                         else
                                         {
-                                            hasContentsPage = bookRecord.toc.Length > 0;
-                                            currentChapter = "";
-                                            if (hasContentsPage)
-                                            {
-                                                currentChapterPublished = "0";
-                                                OpenHtmlFile();
-                                                htm.WriteLine("<div class=\"toc\"><a href=\"index.htm\">^</a></div>\r\n{0}",
-                                                    bookRecord.toc.ToString());
-                                                CloseHtmlFile();
-                                            }
+                                            WriteContentsPage();
                                         }
                                         break;
                                     case "id":
@@ -2469,6 +2076,9 @@ namespace WordSend
                                                 currentVersePublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
                                         }
                                         break;
+                                    case "ve":
+                                        EndVerse();
+                                        break;
                                     case "qt":
                                     case "nd":
                                     case "tl":
@@ -2520,6 +2130,8 @@ namespace WordSend
                                         inTableCol = true;
                                         break;
 
+                                    case "ef":
+                                    case "ex":
                                     case "f":
                                     case "x":
                                         if (ignoreNotes)
@@ -2531,10 +2143,23 @@ namespace WordSend
                                     case "fqa":
                                     case "fv":
                                     case "ft":
-                                    case "xo":
                                     case "xk":
                                     case "xt":
                                         StartHtmlNoteStyle(usfx.Name);
+                                        break;
+                                    case "fr":
+                                    case "xo":
+                                        if (stripManualNoteOrigins)
+                                        {
+                                            if (!usfx.IsEmptyElement)
+                                            {
+                                                usfx.Read();    // Send manual cross reference origin to bit bucket
+                                            }
+                                        }
+                                        else
+                                        {
+                                            StartHtmlNoteStyle(usfx.Name);
+                                        }
                                         break;
                                     case "xdc":
                                     case "fdc":
@@ -2546,7 +2171,12 @@ namespace WordSend
                                     case "optionalLineBreak":
                                         WriteHtmlOptionalLineBreak();
                                         break;
-
+                                    case "w":
+                                    case "zw":
+                                        StartStrongs(GetNamedAttribute("s"), GetNamedAttribute("plural"));
+                                        if (usfx.IsEmptyElement)
+                                            EndStrongs();
+                                        break;
                                 }
                             }
                             else
@@ -2577,7 +2207,6 @@ namespace WordSend
                                     case "rem":
                                     case "periph":
                                     case "ndx":
-                                    case "w":
                                     case "wh":
                                     case "wg":
                                     case "id":
@@ -2605,7 +2234,6 @@ namespace WordSend
                                                 {
                                                     htm.WriteLine(preVerse.ToString());
                                                     preVerse = new StringBuilder(String.Empty);
-                                                    inPreverse = false;
                                                 }
                                             }
                                         }
@@ -2648,7 +2276,6 @@ namespace WordSend
                                             {
                                                 htm.WriteLine(preVerse.ToString());
                                                 preVerse = new StringBuilder(String.Empty);
-                                                //inPreverse = false;
                                             }
                                             verseNumber++;
                                             htm.Write("<a name=\"C{0}V{1}\"></a>",
@@ -2692,6 +2319,8 @@ namespace WordSend
                                     case "tcr":
                                         EndHtmlTableCol();
                                         break;
+                                    case "ef":
+                                    case "ex":
                                     case "f":
                                     case "x":
                                         EndHtmlNote();
@@ -2703,9 +2332,11 @@ namespace WordSend
                                     case "fqa":
                                     case "fv":
                                     case "ft":
-                                    case "xo":
                                     case "xk":
                                     case "xt":
+                                        break;
+                                    case "fr":
+                                    case "xo":
                                         EndHtmlNoteStyle();
                                         break;
                                     case "xdc":
@@ -2713,15 +2344,17 @@ namespace WordSend
                                     case "dc":
                                         ignore = false;
                                         break;
+                                    case "zw":
+                                    case "w":
+                                        EndStrongs();
+                                        break;
 
                                 }
                             }
                             break;
-
                     }
-
-                    result = true;
                 }
+                result = true;
             }
             catch (Exception ex)
             {

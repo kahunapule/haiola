@@ -162,6 +162,16 @@
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>true</levelExpected>
 	</sfm>
+	<sfm kind="note">
+		<tag>ef</tag>
+		<endTag>ef*</endTag>
+		<characterStyle>Footnote</characterStyle>
+		<parameterName>footnoteCaller</parameterName>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<usfx>ef</usfx>
+		<usfxAttribute>caller</usfxAttribute>
+	</sfm>
 	<sfm kind="character">
 		<tag>em</tag>
 		<endTag>em*</endTag>
@@ -170,6 +180,13 @@
 		<levelExpected>false</levelExpected>
 		<comment>Emphasis, maybe bold</comment>
 	</sfm>
+	<sfm kind="note">
+		<tag>ex</tag>
+		<endTag>ex*</endTag>
+		<characterStyle>Note Xref</characterStyle>
+		<parameterName>footnoteCaller</parameterName><nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<usfx>ex</usfx><usfxAttribute>caller</usfxAttribute></sfm>
 	<sfm kind="note">
 		<tag>f</tag>
 		<endTag>f*</endTag>
@@ -1017,5 +1034,19 @@
 		<nestingAllowed>true</nestingAllowed>
 		<levelExpected>false</levelExpected>
 		<comment>Indicates that the enclosed word is plural (used for "you" from "ye")</comment>
+	</sfm>
+	<sfm kind="meta">
+		<tag>zw</tag>
+		<endTag>zw*</endTag>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Contains a Hebrew or Greek lexicon numerical index (Strong's number) for the following word or phrase</comment>
+	</sfm>
+	<sfm kind="meta">
+		<tag>zx</tag>
+		<endTag>zx*</endTag>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Empty pair indicates end of the word or phrase that the previous \zw word number refers to.</comment>
 	</sfm>
 </SFMInfo>

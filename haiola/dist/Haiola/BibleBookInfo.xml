@@ -139,7 +139,7 @@
 	</Book>
 	<Book testament="o">
 		<sfmTla>EST</sfmTla>
-		<osisName>Esther</osisName>
+		<osisName>Esth</osisName>
 		<name>Esther</name>
 		<shortName>Esther</shortName>
 		<sortOrder>17</sortOrder>
@@ -155,7 +155,7 @@
 	</Book>
 	<Book testament="o">
 		<sfmTla>PSA</sfmTla>
-		<osisName>Pss</osisName>
+		<osisName>Ps</osisName>
 		<name>Psalms</name>
 		<shortName>Psalms</shortName>
 		<sortOrder>19</sortOrder>
@@ -523,7 +523,7 @@
 	</Book>
 	<Book testament="a">
 		<sfmTla>DAG</sfmTla>
-		<osisName>AddDan</osisName>
+		<osisName>DanGr</osisName>
 		<name>Daniel (Greek)</name>
 		<shortName>Daniel (Greek)</shortName>
 		<sortOrder>65</sortOrder>
@@ -635,7 +635,7 @@
 	</Book>
 	<Book testament="n">
 		<sfmTla>2TH</sfmTla>
-		<osisName>2Thes</osisName>
+		<osisName>2Thess</osisName>
 		<name>Paul's Second Letter to the Thessalonians</name>
 		<shortName>2 Thessalonians</shortName>
 		<sortOrder>83</sortOrder>

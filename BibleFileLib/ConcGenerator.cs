@@ -592,7 +592,7 @@ namespace BibleFileLib
 
                     if ((vt.NodeType == XmlNodeType.Element) && (vt.Name == "v"))
                     {
-                        currentBookId = nonull(vt.GetAttribute("b"));
+                        currentBookId =  nonull(vt.GetAttribute("b"));
                         currentChapter = nonull(vt.GetAttribute("c"));
                         m_verse = nonull(vt.GetAttribute("v"));
                         if (currentBookId.CompareTo("PSA") == 0)

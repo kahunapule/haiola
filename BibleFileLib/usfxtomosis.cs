@@ -98,6 +98,7 @@ namespace WordSend
         protected int indentLevel = 0;
         protected string osisFileName;
         protected string currentElement;
+        protected string strongs;
         protected string lastElementWritten = String.Empty;
         protected int mosisNestLevel = 0;
 
@@ -230,9 +231,13 @@ namespace WordSend
 
         protected void EndCurrentChapter()
         {
+            EndIntroduction();
             EndCurrentVerse();
             SetListLevel(0);
             EndLineGroup();
+            EndTitledPsalm();
+            if (currentBookAbbrev == "PSA")
+                EndSection();
             if (altChapterID.Length > 0)
             {
                 StartMosisElement("chapter");
@@ -291,7 +296,7 @@ namespace WordSend
                 File.Copy(SFConverter.FindAuxFile(localOsisSchema), schemaPath);
             
             mosis = new XmlTextWriter(mosisFileName, Encoding.UTF8);
-            mosis.Formatting = Formatting.Indented;
+            mosis.Formatting = Formatting.None;
             mosis.WriteStartDocument();
             StartMosisElement("osis");
             mosis.WriteAttributeString("xmlns", osisNamespace);
@@ -493,6 +498,134 @@ namespace WordSend
         }
 
         string OsisFileName;
+        protected bool inIntroduction;
+        protected bool inMajorSection;
+        protected bool inSection;
+        protected bool inSubSection;
+        protected bool inTitledPsalm;
+
+        protected void StartTitledPsalm()
+        {
+            if (!usfx.IsEmptyElement)
+            {
+                EndTitledPsalm();   // Here for the use of \d in acrostic headings
+                StartElementWithAttribute("div");
+                inTitledPsalm = true;
+            }
+        }
+
+        protected void EndTitledPsalm()
+        {
+            if (inTitledPsalm)
+            {
+                WriteMosisEndElement();
+                inTitledPsalm = false;
+            }
+        }
+
+        /// <summary>
+        /// Start a majorSection division
+        /// </summary>
+        protected void StartMajorSection()
+        {
+            if (!usfx.IsEmptyElement)
+            {
+                EndMajorSection();
+                StartElementWithAttribute("div", "type", "majorSection");
+                inMajorSection = true;
+            }
+        }
+
+        /// <summary>
+        /// End a majorSection division
+        /// </summary>
+        protected void EndMajorSection()
+        {
+            EndSubSection();
+            EndTitledPsalm();
+            EndSection();
+            if (inMajorSection)
+            {
+                WriteMosisEndElement();
+                inMajorSection = false;
+            }
+        }
+
+        protected void StartSection()
+        {
+            if (!usfx.IsEmptyElement)
+            {
+                EndSection();
+                StartElementWithAttribute("div", "type", "section");
+                inSection = true;
+            }
+        }
+
+        /// <summary>
+        /// End a section div
+        /// </summary>
+        protected void EndSection()
+        {
+            EndSubSection();
+            if (inSection)
+            {
+                WriteMosisEndElement();
+                inSection = false;
+            }
+        }
+
+        /// <summary>
+        /// Start a subSection div
+        /// </summary>
+        protected void StartSubSection()
+        {
+            if (!usfx.IsEmptyElement)
+            {
+                EndSubSection();
+                StartElementWithAttribute("div", "type", "subSection");
+                inSubSection = true;
+            }
+        }
+
+        /// <summary>
+        /// End a subsection div
+        /// </summary>
+        protected void EndSubSection()
+        {
+            if (inSubSection)
+            {
+                WriteMosisEndElement();
+                inSubSection = false;
+            }
+        }
+
+        /// <summary>
+        /// Start an introduction division
+        /// </summary>
+        protected void StartIntroduction()
+        {
+            EndMajorSection();
+            if (!usfx.IsEmptyElement)
+            {
+                if (!inIntroduction)
+                {
+                    StartElementWithAttribute("div", "type", "introduction", "canonical", "false");
+                    inIntroduction = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// End an introduction division
+        /// </summary>
+        protected void EndIntroduction()
+        {
+            if (inIntroduction)
+            {
+                WriteMosisEndElement(); // div type="introduction" canonical="false"
+                inIntroduction = false;
+            }
+        }
 
         public bool ConvertUsfxToMosis(string usfxFileName, string mosisFileName)
         {
@@ -500,6 +633,7 @@ namespace WordSend
             mosisNestLevel = 0;
             indentLevel = 0;
             inNote = false;
+            inIntroduction = inMajorSection = inSection = inSubSection = inTitledPsalm = false;
             int i;
             try
             {
@@ -534,6 +668,7 @@ namespace WordSend
                         sfm = GetNamedAttribute("sfm");
                         caller = GetNamedAttribute("caller");
                         id = GetNamedAttribute("id");
+                        strongs = GetNamedAttribute("s");
 
                         if (mtStarted && !((usfx.Name == "h") || ((usfx.Name == "p") && (sfm == "mt"))))
                         {
@@ -625,6 +760,7 @@ namespace WordSend
                             case "b":
                                 EndLineGroup();
                                 SetListLevel(0, true);
+                                EndIntroduction();
                                 WriteMosisElementString("lb", "");
                                 break;
                             case "bk":
@@ -652,8 +788,13 @@ namespace WordSend
                             case "fdc":
                             case "fm":  // Should not actually be in any field texts. Safe to skip.
                             case "idx": // Peripherals - Back Matter Index
+                                SkipElement();
+                                break;
                             case "ie":  // Introduction end
+                                EndIntroduction();
+                                break;
                             case "iex": // Introduction explanatory or bridge text
+                                StartIntroduction();
                                 SkipElement();
                                 break;
                             case "fp":
@@ -720,7 +861,7 @@ namespace WordSend
                                 osisVersesId = osisVerseId = osisBook + "." + currentChapter;
                                 chaptereID = StartId();
                                 StartMosisElement("chapter");
-                                mosis.WriteAttributeString("osisRef", osisVerseId);
+                                mosis.WriteAttributeString("osisID", osisVerseId);
                                 mosis.WriteAttributeString("sID", chaptereID);
                                 mosis.WriteAttributeString("n", currentChapterPublished);
                                 WriteMosisEndElement();
@@ -739,6 +880,7 @@ namespace WordSend
                                 }
                                 break;
                             case "ca":
+                                EndIntroduction();
                                 SkipElement();
                                 /* This feature is not supported by The Sword Project.
                                 altChapterID = StartId();
@@ -801,6 +943,7 @@ namespace WordSend
                                 */
                                 break;
                             case "v":
+                                EndIntroduction();
                                 EndCurrentVerse();
                                 currentVerse = id;
                                 currentVersePublished = fileHelper.LocalizeDigits(currentVerse);
@@ -852,6 +995,7 @@ namespace WordSend
                                 CheckMinimumLevel(5, "starting verse " + osisVersesId + " / " + osisVerseId);
                                 break;
                             case "vp":
+                                EndIntroduction();
                                 SkipElement();
                                 /* This feature is not supported by The Sword Project.
                                 if (!usfx.IsEmptyElement)
@@ -877,12 +1021,17 @@ namespace WordSend
                                 EndCurrentVerse();
                                 break;
                             case "w":
-                                // Discard marker.
+                            case "zw":
+                                StartElementWithAttribute("w", "gloss", "s:" + strongs);
                                 break;
                             case "d":
                                 EndLineGroup();
                                 SetListLevel(0, true);
-                                StartElementWithAttribute("title", "type", "psalm", "canonical", "true");
+                                if (!usfx.IsEmptyElement)
+                                {
+                                    StartTitledPsalm();
+                                    StartElementWithAttribute("title", "type", "psalm", "canonical", "true");
+                                }
                                 break;
                             case "dc":
                                 StartElementWithAttribute("transChange", "type", "added", "edition", "dc");
@@ -896,10 +1045,27 @@ namespace WordSend
                             case "s":
                                 SetListLevel(0, true);
                                 EndLineGroup();
-                                StartElementWithAttribute("title", "type", "sub", "canonical", "false");
+                                EndIntroduction();
+                                if (!usfx.IsEmptyElement)
+                                {
+                                    if ((level == "1") || (level == ""))
+                                    {
+                                        StartSection();
+                                    }
+                                    else // Collapsing levels 2 and 3 to subsection.
+                                    {
+                                        StartSubSection();
+                                    }
+                                    StartElementWithAttribute("title", "type", "sub", "canonical", "false");
+                                }
                                 break;
                             case "q":
                                 SetListLevel(0, true);
+                                EndIntroduction();
+                                if ((verseNumber == 0) && (chapterNumber == 1) && !inMajorSection && !inSection && !inSubSection && !inTitledPsalm)
+                                {
+                                    StartMajorSection();
+                                }
                                 if (level == String.Empty)
                                     level = "1";
                                 if ((level == "1") || !inLineGroup)
@@ -990,26 +1156,42 @@ namespace WordSend
                                     {
                                         case "cd":
                                         case "intro":
-                                            StartElementWithAttribute("div", "type", "introduction");
+                                            StartIntroduction();
+                                            StartElementWithAttribute("p", "canonical", "false");
                                             break;
                                         case "nb":
+                                            StartElementWithAttribute("p");
+                                            break;
                                         case "m":
                                         case "":
+                                            EndIntroduction();
+                                            if ((verseNumber == 0) && (chapterNumber == 1) && !inMajorSection && !inSection && !inSubSection && !inTitledPsalm)
+                                            {
+                                                StartMajorSection();
+                                            }
                                             StartElementWithAttribute("p");
                                             break;
                                         case "cls":
+                                            EndIntroduction();
                                             StartElementWithAttribute("closer");
                                             break;
                                         case "hr":  // Horizontal rule not supported. Try a line break.
+                                            EndIntroduction();
                                             StartElementWithAttribute("lb");
+                                            break;
+                                        case "ie":
+                                            SkipElement();
+                                            EndIntroduction();
                                             break;
                                         case "ib":
                                             EndLineGroup();
                                             SetListLevel(0, true);
+                                            StartIntroduction();
                                             StartElementWithAttribute("lb");
                                             break;
                                         case "im":
-                                            StartElementWithAttribute("p", "type", "x-" + sfm, "canonical", "false");
+                                            StartIntroduction();
+                                            StartElementWithAttribute("p", "canonical", "false");
                                             break;
                                         case "imq":
                                         case "imi":
@@ -1017,13 +1199,15 @@ namespace WordSend
                                         case "ipi":
                                         case "ipq":
                                         case "ipr":
-                                            StartElementWithAttribute("p", "type", "x-introduction", "canonical", "false");
+                                            StartIntroduction();
+                                            StartElementWithAttribute("p", "canonical", "false");
                                             break;
                                         case "keyword":
                                             StartElementWithAttribute("seg", "type", "keyword");
                                             break;
                                         case "iq":
                                             SetListLevel(0, true);
+                                            StartIntroduction();
                                             if (level == String.Empty)
                                                 level = "1";
                                             if ((level == "1") || !inLineGroup)
@@ -1036,17 +1220,21 @@ namespace WordSend
                                             break;
                                         case "imte":
                                         case "imt":
+                                            StartIntroduction();
                                             StartElementWithAttribute("title", "type", "main", "canonical", "false", "level", level);
                                             break;
                                         case "is":
+                                            StartIntroduction();
                                             StartElementWithAttribute("title", "type", "sub", "canonical", "false");
                                             break;
                                         case "iot":
                                         case "ior":
                                         case "io":  // TODO: implement levels with nested list/item/list/item...
+                                            StartIntroduction();
                                             StartElementWithAttribute("div", "type", "outline", "canonical", "false");
                                             break;
                                         case "ili":
+                                            StartIntroduction();
                                             if (level == String.Empty)
                                                 level = "1";
                                             indentLevel = int.Parse(level.Trim());
@@ -1054,15 +1242,38 @@ namespace WordSend
                                             break;
                                         case "pi":
                                         case "li":
+                                            EndIntroduction();
                                             if (level == String.Empty)
                                                 level = "1";
                                             indentLevel = int.Parse(level.Trim());
                                             SetListLevel(indentLevel, true);
                                             break;
                                         case "r":
+                                            EndIntroduction();
                                             StartElementWithAttribute("title", "type", "parallel");
                                             break;
+                                        case "sp":
+                                            SetListLevel(0, true);
+                                            EndLineGroup();
+                                            EndIntroduction();
+                                            if (!usfx.IsEmptyElement)
+                                            {
+                                                StartElementWithAttribute("title", "type", "sub", "canonical", "false");
+                                            }
+                                            break;
+                                        case "ms":
+                                            if (!usfx.IsEmptyElement)
+                                            {
+                                                StartMajorSection();
+                                                StartElementWithAttribute("title", "canonical", "false");
+                                            }
+                                            break;
+                                        case "mr":
+                                            StartElementWithAttribute("title", "canonical", "false", "type", "scope");
+                                            break;
                                         default:
+                                            if (!sfm.StartsWith("i"))
+                                                EndIntroduction();
                                             StartElementWithAttribute("p", "type", "x-" + sfm);
                                             break;
                                     }
@@ -1108,7 +1319,8 @@ namespace WordSend
                         switch (usfx.Name)
                         {
                             case "w":
-                                // discard marker.
+                            case "zw":
+                                WriteMosisEndElement();
                                 break;
                             case "wj":
                                 StartMosisElement("q");
@@ -1119,6 +1331,8 @@ namespace WordSend
                                 EndLineGroup();
                                 EndCurrentVerse();
                                 EndCurrentChapter();
+                                EndIntroduction();
+                                EndMajorSection();
                                 WriteMosisEndElement();  // div type="book"
                                 CheckElementLevel(3, "closed book");
                                 break;

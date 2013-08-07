@@ -26,6 +26,8 @@ namespace WordSend
         protected string currentChapter;
         protected string currentVerse;
         protected string currentPlace;
+        protected string osisBook;
+        protected string osisVerse;
         protected XmlTextReader usfx;
         protected XmlTextWriter verseFile;
         bool inVerse;
@@ -85,6 +87,11 @@ namespace WordSend
                 verseFile.WriteAttributeString("b", currentBook);
                 verseFile.WriteAttributeString("c", currentChapter);
                 verseFile.WriteAttributeString("v", currentVerse);
+                // Add an OSIS ID for the only verse or first verse of a verse bridge
+                int dashPos = currentVerse.IndexOf('-');
+                if (dashPos > 0)
+                    currentVerse = currentVerse.Substring(0, dashPos);
+                osisVerse = osisBook + "." + currentChapter + "." + currentVerse;
                 string s = verseText.ToString();
                 if (verseEndedWithSpace)
                     s = s.TrimStart(null);
@@ -127,7 +134,8 @@ namespace WordSend
                 verseFile.WriteStartElement("verseFile");
                 while (usfx.Read())
                 {
-                    Logit.ShowStatus("extracting search text " + currentPlace);
+                    if (!Logit.ShowStatus("extracting search text " + currentPlace))
+                        return false;
                     if (usfx.NodeType == XmlNodeType.Element)
                     {
                         level = fileHelper.GetNamedAttribute(usfx, "level");
@@ -145,6 +153,7 @@ namespace WordSend
                                 {
                                     currentBook = id;
                                     bookRecord = (BibleBookRecord)bookInfo.books[currentBook];
+                                    osisBook = bookRecord.osisName;
                                 }
                                 if ((bookRecord == null) || (id.Length != 3))
                                 {
