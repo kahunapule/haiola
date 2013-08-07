@@ -27,6 +27,7 @@ namespace WordSend
 				//    }
 				//}
 	/// </summary>
+    /* Deprecated:
 	public class usfxToXhtmlConverter : usfxToHtmlConverter
 	{
 		/// <summary>
@@ -39,10 +40,12 @@ namespace WordSend
 
 		/// <summary>
 		/// In html, option selected can start out with just the attribute nam, but xhtml requires the attribute to have a specific value.
+        /// NOTE: this is identical to the method it overrides, making this whole class redundant.
 		/// </summary>
 		protected override string OptionSelectedOpeningElement
 		{
 			get { return "<option selected=\"selected\">"; }
 		}
 	}
+        */
 }

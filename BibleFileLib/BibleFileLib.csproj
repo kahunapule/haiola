@@ -99,6 +99,7 @@
     <Compile Include="BibleFileLib.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ChapterInfo.cs" />
     <Compile Include="Usfx2XeTeX.cs" />
     <Compile Include="ConcFrameGenerator.cs" />
     <Compile Include="ConcGenerator.cs" />

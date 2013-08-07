@@ -61,7 +61,6 @@ namespace WordSend
         protected StringBuilder footnotesToWrite;
         protected StreamWriter htm;
         //int one = 1;
-        bool inPreverse;
         bool inFootnote;
         bool inFootnoteStyle;
         int textStyleLevel = 0;
@@ -240,7 +239,6 @@ namespace WordSend
             else
                 chapterNumber++;
             newChapterFound = true;
-            inPreverse = true;
             chapterFileIndex++;
             inHeader = false;
         }
@@ -258,7 +256,6 @@ namespace WordSend
             verseNumber = 0;
             if (!bookInfo.isPeripheral(currentBookAbbrev))
                 newChapterFound = true;
-            inPreverse = true;
             chapterFileIndex++;
         }
 

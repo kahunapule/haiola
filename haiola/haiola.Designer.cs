@@ -122,6 +122,15 @@
             this.label27 = new System.Windows.Forms.Label();
             this.label26 = new System.Windows.Forms.Label();
             this.advancedTabPage = new System.Windows.Forms.TabPage();
+            this.customCssTextBox = new System.Windows.Forms.TextBox();
+            this.label50 = new System.Windows.Forms.Label();
+            this.stripOriginCheckBox = new System.Windows.Forms.CheckBox();
+            this.label49 = new System.Windows.Forms.Label();
+            this.label48 = new System.Windows.Forms.Label();
+            this.xoTextBox = new System.Windows.Forms.TextBox();
+            this.label47 = new System.Windows.Forms.Label();
+            this.textDirectionComboBox = new System.Windows.Forms.ComboBox();
+            this.relaxNestingSyntaxCheckBox = new System.Windows.Forms.CheckBox();
             this.label46 = new System.Windows.Forms.Label();
             this.numberSystemComboBox = new System.Windows.Forms.ComboBox();
             this.deleteLinkButton = new System.Windows.Forms.Button();
@@ -1170,6 +1179,15 @@
             // 
             // advancedTabPage
             // 
+            this.advancedTabPage.Controls.Add(this.customCssTextBox);
+            this.advancedTabPage.Controls.Add(this.label50);
+            this.advancedTabPage.Controls.Add(this.stripOriginCheckBox);
+            this.advancedTabPage.Controls.Add(this.label49);
+            this.advancedTabPage.Controls.Add(this.label48);
+            this.advancedTabPage.Controls.Add(this.xoTextBox);
+            this.advancedTabPage.Controls.Add(this.label47);
+            this.advancedTabPage.Controls.Add(this.textDirectionComboBox);
+            this.advancedTabPage.Controls.Add(this.relaxNestingSyntaxCheckBox);
             this.advancedTabPage.Controls.Add(this.label46);
             this.advancedTabPage.Controls.Add(this.numberSystemComboBox);
             this.advancedTabPage.Controls.Add(this.deleteLinkButton);
@@ -1186,6 +1204,92 @@
             this.advancedTabPage.TabIndex = 6;
             this.advancedTabPage.Text = "Advanced";
             this.advancedTabPage.UseVisualStyleBackColor = true;
+            // 
+            // customCssTextBox
+            // 
+            this.customCssTextBox.Location = new System.Drawing.Point(408, 144);
+            this.customCssTextBox.Name = "customCssTextBox";
+            this.customCssTextBox.Size = new System.Drawing.Size(284, 20);
+            this.customCssTextBox.TabIndex = 65;
+            this.customCssTextBox.Text = "prophero.css";
+            // 
+            // label50
+            // 
+            this.label50.AutoSize = true;
+            this.label50.Location = new System.Drawing.Point(288, 145);
+            this.label50.Name = "label50";
+            this.label50.Size = new System.Drawing.Size(114, 13);
+            this.label50.TabIndex = 64;
+            this.label50.Text = "Custom CSS file name:";
+            // 
+            // stripOriginCheckBox
+            // 
+            this.stripOriginCheckBox.AutoSize = true;
+            this.stripOriginCheckBox.Checked = true;
+            this.stripOriginCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.stripOriginCheckBox.Location = new System.Drawing.Point(341, 65);
+            this.stripOriginCheckBox.Name = "stripOriginCheckBox";
+            this.stripOriginCheckBox.Size = new System.Drawing.Size(201, 17);
+            this.stripOriginCheckBox.TabIndex = 63;
+            this.stripOriginCheckBox.Text = "Strip manual note origins (\\fr and \\xo)";
+            this.stripOriginCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // label49
+            // 
+            this.label49.AutoSize = true;
+            this.label49.Location = new System.Drawing.Point(288, 116);
+            this.label49.Name = "label49";
+            this.label49.Size = new System.Drawing.Size(215, 13);
+            this.label49.TabIndex = 62;
+            this.label49.Text = "Leave blank to omit automatic origin marker.";
+            // 
+            // label48
+            // 
+            this.label48.AutoSize = true;
+            this.label48.Location = new System.Drawing.Point(288, 103);
+            this.label48.Name = "label48";
+            this.label48.Size = new System.Drawing.Size(258, 13);
+            this.label48.TabIndex = 61;
+            this.label48.Text = "Automatic note origin format (%c=chapter; %v=verse):";
+            // 
+            // xoTextBox
+            // 
+            this.xoTextBox.Location = new System.Drawing.Point(552, 99);
+            this.xoTextBox.Name = "xoTextBox";
+            this.xoTextBox.Size = new System.Drawing.Size(94, 20);
+            this.xoTextBox.TabIndex = 60;
+            this.xoTextBox.Text = "%c:%v:";
+            // 
+            // label47
+            // 
+            this.label47.AutoSize = true;
+            this.label47.Location = new System.Drawing.Point(21, 102);
+            this.label47.Name = "label47";
+            this.label47.Size = new System.Drawing.Size(74, 13);
+            this.label47.TabIndex = 59;
+            this.label47.Text = "Text direction:";
+            // 
+            // textDirectionComboBox
+            // 
+            this.textDirectionComboBox.FormattingEnabled = true;
+            this.textDirectionComboBox.Items.AddRange(new object[] {
+            "ltr",
+            "rtl",
+            "tb-rl"});
+            this.textDirectionComboBox.Location = new System.Drawing.Point(102, 99);
+            this.textDirectionComboBox.Name = "textDirectionComboBox";
+            this.textDirectionComboBox.Size = new System.Drawing.Size(162, 21);
+            this.textDirectionComboBox.TabIndex = 58;
+            // 
+            // relaxNestingSyntaxCheckBox
+            // 
+            this.relaxNestingSyntaxCheckBox.AutoSize = true;
+            this.relaxNestingSyntaxCheckBox.Location = new System.Drawing.Point(24, 65);
+            this.relaxNestingSyntaxCheckBox.Name = "relaxNestingSyntaxCheckBox";
+            this.relaxNestingSyntaxCheckBox.Size = new System.Drawing.Size(293, 17);
+            this.relaxNestingSyntaxCheckBox.TabIndex = 57;
+            this.relaxNestingSyntaxCheckBox.Text = "Relax USFM nesting syntax (assume \\+ outside of notes)";
+            this.relaxNestingSyntaxCheckBox.UseVisualStyleBackColor = true;
             // 
             // label46
             // 
@@ -1228,7 +1332,7 @@
             // 
             // deleteLinkButton
             // 
-            this.deleteLinkButton.Location = new System.Drawing.Point(20, 173);
+            this.deleteLinkButton.Location = new System.Drawing.Point(20, 266);
             this.deleteLinkButton.Name = "deleteLinkButton";
             this.deleteLinkButton.Size = new System.Drawing.Size(68, 23);
             this.deleteLinkButton.TabIndex = 54;
@@ -1238,7 +1342,7 @@
             // 
             // addLinkButton
             // 
-            this.addLinkButton.Location = new System.Drawing.Point(18, 129);
+            this.addLinkButton.Location = new System.Drawing.Point(18, 222);
             this.addLinkButton.Name = "addLinkButton";
             this.addLinkButton.Size = new System.Drawing.Size(70, 26);
             this.addLinkButton.TabIndex = 53;
@@ -1249,14 +1353,14 @@
             // altLinkListBox
             // 
             this.altLinkListBox.FormattingEnabled = true;
-            this.altLinkListBox.Location = new System.Drawing.Point(101, 129);
+            this.altLinkListBox.Location = new System.Drawing.Point(101, 222);
             this.altLinkListBox.Name = "altLinkListBox";
             this.altLinkListBox.Size = new System.Drawing.Size(494, 95);
             this.altLinkListBox.TabIndex = 52;
             // 
             // altLinkTextBox
             // 
-            this.altLinkTextBox.Location = new System.Drawing.Point(102, 97);
+            this.altLinkTextBox.Location = new System.Drawing.Point(102, 190);
             this.altLinkTextBox.Name = "altLinkTextBox";
             this.altLinkTextBox.Size = new System.Drawing.Size(494, 20);
             this.altLinkTextBox.TabIndex = 51;
@@ -1264,7 +1368,7 @@
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(17, 100);
+            this.label21.Location = new System.Drawing.Point(17, 193);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(76, 13);
             this.label21.TabIndex = 50;
@@ -1954,6 +2058,15 @@
         private System.Windows.Forms.ListBox messagesListBox;
         private System.Windows.Forms.Button markRetryButton;
         private System.Windows.Forms.Label extensionLabel;
+        private System.Windows.Forms.CheckBox relaxNestingSyntaxCheckBox;
+        private System.Windows.Forms.Label label47;
+        private System.Windows.Forms.ComboBox textDirectionComboBox;
+        private System.Windows.Forms.Label label48;
+        private System.Windows.Forms.TextBox xoTextBox;
+        private System.Windows.Forms.CheckBox stripOriginCheckBox;
+        private System.Windows.Forms.Label label49;
+        private System.Windows.Forms.Label label50;
+        private System.Windows.Forms.TextBox customCssTextBox;
 	}
 }
 

@@ -7,13 +7,14 @@ syntax: glob
 *.o
 bin/*
 obj/*
+Express/*
 .svn/*
 sepp/bin/*
 sepp/obj/*
 BibleFileLib/bin/*
 BibleFileLib/obj/*
 dist/*
-proprietary
+proprietary.*
 .DS_Store
 _ReSharper.sepp/*
 *~
