@@ -50,6 +50,8 @@ namespace BibleFileLib
 			CloseHtmlFile();
 		}
 
+        public string customCssName = "prophero.css";
+
 		protected void OpenHtmlFile(string fileName)
 		{
 			currentFileName = Path.Combine(ConcDirectory, fileName);
@@ -61,7 +63,7 @@ namespace BibleFileLib
 			htm.WriteLine("<head>");
 			htm.WriteLine("<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
 			htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width\" />");
-			htm.WriteLine("<link rel=\"stylesheet\" href=\"prophero.css\" type=\"text/css\">");
+			htm.WriteLine("<link rel=\"stylesheet\" href=\"" + customCssName + "\" type=\"text/css\">");
 			htm.WriteLine("<title>{0}</title></head>", string.Format(ConcordanceString, LangName));
 			// May want something like this; but goal is to prevent concordance being indexed, so keywords are not relevant.
 			//htm.WriteLine(string.Format("<meta name=\"keywords\" content=\"{0}, {1}, Holy Bible, Scripture, Bible, Scriptures, New Testament, Old Testament, Gospel\">",

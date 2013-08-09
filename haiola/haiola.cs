@@ -784,15 +784,15 @@ namespace haiola
             Utils.EnsureDirectory(m_outputDirectory);
             Utils.EnsureDirectory(m_outputProjectDirectory);
             Utils.EnsureDirectory(htmlPath);
-            string propherocss = Path.Combine(htmlPath, "prophero.css");
+            string propherocss = Path.Combine(htmlPath, m_options.customCssFileName);
             if (File.Exists(propherocss))
                 File.Delete(propherocss);
-            // Copy prophero.css from project directory, or if not there, BibleConv/input/prophero.css.
-            string specialCss = Path.Combine(m_inputProjectDirectory, "prophero.css");
+            // Copy cascading style sheet from project directory, or if not there, BibleConv/input/.
+            string specialCss = Path.Combine(m_inputProjectDirectory, m_options.customCssFileName);
             if (File.Exists(specialCss))
                 File.Copy(specialCss, propherocss);
             else
-                File.Copy(Path.Combine(m_inputDirectory, "prophero.css"), propherocss);
+                File.Copy(Path.Combine(m_inputDirectory, m_options.customCssFileName), propherocss);
 
             // Copy any extra files from the htmlextras directory in the project directory to the output.
             // This is for introduction files, pictures, etc.
@@ -1075,6 +1075,7 @@ In addition, you have permission to convert the text to different file formats, 
 
 				var concFrameGenerator = new ConcFrameGenerator()
 				                         	{ConcDirectory = concordanceDirectory, LangName = m_options.vernacularTitle};
+                concFrameGenerator.customCssName = m_options.customCssFileName;
 				concFrameGenerator.Run();
 				EnsureTemplateFile("mktree.css", concordanceDirectory);
 				EnsureTemplateFile("plus.gif", concordanceDirectory);

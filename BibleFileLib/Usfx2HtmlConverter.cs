@@ -459,7 +459,7 @@ namespace WordSend
             htm.WriteLine("<meta charset=\"utf-8\" />");
             htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />");
             htm.WriteLine("<link rel=\"stylesheet\" href=\"{0}\" type=\"text/css\" />", customCssName);
-            htm.WriteLine("<meta name=\"viewport\" content=\"user-scalable=no, initial-scale=1, minimum-scale=1, width=device-width, height=device-height\"/>");
+            htm.WriteLine("<meta name=\"viewport\" content=\"user-scalable=yes, initial-scale=1, minimum-scale=1, width=device-width, height=device-height\"/>");
             // htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width\" />");
             if (mainScriptureFile)
             {

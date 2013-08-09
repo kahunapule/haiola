@@ -39,6 +39,11 @@
             this.btnSetRootDirectory = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.idTabPage = new System.Windows.Forms.TabPage();
+            this.archivedCheckBox = new System.Windows.Forms.CheckBox();
+            this.e10dblCheckBox = new System.Windows.Forms.CheckBox();
+            this.webSiteReadyCheckBox = new System.Windows.Forms.CheckBox();
+            this.prepublicationChecksCheckBox = new System.Windows.Forms.CheckBox();
+            this.label51 = new System.Windows.Forms.Label();
             this.lwcDescriptionTextBox = new System.Windows.Forms.TextBox();
             this.label20 = new System.Windows.Forms.Label();
             this.privateCheckBox = new System.Windows.Forms.CheckBox();
@@ -186,11 +191,6 @@
             this.statsButton = new System.Windows.Forms.Button();
             this.markRetryButton = new System.Windows.Forms.Button();
             this.extensionLabel = new System.Windows.Forms.Label();
-            this.label51 = new System.Windows.Forms.Label();
-            this.prepublicationChecksCheckBox = new System.Windows.Forms.CheckBox();
-            this.webSiteReadyCheckBox = new System.Windows.Forms.CheckBox();
-            this.e10dblCheckBox = new System.Windows.Forms.CheckBox();
-            this.archivedCheckBox = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.idTabPage.SuspendLayout();
             this.copyrightTabPage.SuspendLayout();
@@ -340,6 +340,55 @@
             this.idTabPage.TabIndex = 0;
             this.idTabPage.Text = "Identification";
             this.idTabPage.UseVisualStyleBackColor = true;
+            // 
+            // archivedCheckBox
+            // 
+            this.archivedCheckBox.AutoSize = true;
+            this.archivedCheckBox.Location = new System.Drawing.Point(28, 504);
+            this.archivedCheckBox.Name = "archivedCheckBox";
+            this.archivedCheckBox.Size = new System.Drawing.Size(68, 17);
+            this.archivedCheckBox.TabIndex = 38;
+            this.archivedCheckBox.Text = "Archived";
+            this.archivedCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // e10dblCheckBox
+            // 
+            this.e10dblCheckBox.AutoSize = true;
+            this.e10dblCheckBox.Location = new System.Drawing.Point(28, 481);
+            this.e10dblCheckBox.Name = "e10dblCheckBox";
+            this.e10dblCheckBox.Size = new System.Drawing.Size(123, 17);
+            this.e10dblCheckBox.TabIndex = 37;
+            this.e10dblCheckBox.Text = "Shared with partners";
+            this.e10dblCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // webSiteReadyCheckBox
+            // 
+            this.webSiteReadyCheckBox.AutoSize = true;
+            this.webSiteReadyCheckBox.Location = new System.Drawing.Point(28, 458);
+            this.webSiteReadyCheckBox.Name = "webSiteReadyCheckBox";
+            this.webSiteReadyCheckBox.Size = new System.Drawing.Size(97, 17);
+            this.webSiteReadyCheckBox.TabIndex = 36;
+            this.webSiteReadyCheckBox.Text = "Web site ready";
+            this.webSiteReadyCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // prepublicationChecksCheckBox
+            // 
+            this.prepublicationChecksCheckBox.AutoSize = true;
+            this.prepublicationChecksCheckBox.Location = new System.Drawing.Point(28, 437);
+            this.prepublicationChecksCheckBox.Name = "prepublicationChecksCheckBox";
+            this.prepublicationChecksCheckBox.Size = new System.Drawing.Size(131, 17);
+            this.prepublicationChecksCheckBox.TabIndex = 35;
+            this.prepublicationChecksCheckBox.Text = "Prepublication checks";
+            this.prepublicationChecksCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // label51
+            // 
+            this.label51.AutoSize = true;
+            this.label51.Location = new System.Drawing.Point(30, 417);
+            this.label51.Name = "label51";
+            this.label51.Size = new System.Drawing.Size(81, 13);
+            this.label51.TabIndex = 34;
+            this.label51.Text = "Status tracking:";
             // 
             // lwcDescriptionTextBox
             // 
@@ -1226,7 +1275,7 @@
             // label50
             // 
             this.label50.AutoSize = true;
-            this.label50.Location = new System.Drawing.Point(288, 145);
+            this.label50.Location = new System.Drawing.Point(270, 141);
             this.label50.Name = "label50";
             this.label50.Size = new System.Drawing.Size(114, 13);
             this.label50.TabIndex = 64;
@@ -1247,7 +1296,7 @@
             // label49
             // 
             this.label49.AutoSize = true;
-            this.label49.Location = new System.Drawing.Point(288, 116);
+            this.label49.Location = new System.Drawing.Point(270, 112);
             this.label49.Name = "label49";
             this.label49.Size = new System.Drawing.Size(215, 13);
             this.label49.TabIndex = 62;
@@ -1256,7 +1305,7 @@
             // label48
             // 
             this.label48.AutoSize = true;
-            this.label48.Location = new System.Drawing.Point(288, 103);
+            this.label48.Location = new System.Drawing.Point(270, 99);
             this.label48.Name = "label48";
             this.label48.Size = new System.Drawing.Size(258, 13);
             this.label48.TabIndex = 61;
@@ -1264,7 +1313,7 @@
             // 
             // xoTextBox
             // 
-            this.xoTextBox.Location = new System.Drawing.Point(552, 99);
+            this.xoTextBox.Location = new System.Drawing.Point(565, 96);
             this.xoTextBox.Name = "xoTextBox";
             this.xoTextBox.Size = new System.Drawing.Size(94, 20);
             this.xoTextBox.TabIndex = 60;
@@ -1869,55 +1918,6 @@
             this.extensionLabel.Size = new System.Drawing.Size(13, 13);
             this.extensionLabel.TabIndex = 30;
             this.extensionLabel.Text = "--";
-            // 
-            // label51
-            // 
-            this.label51.AutoSize = true;
-            this.label51.Location = new System.Drawing.Point(30, 417);
-            this.label51.Name = "label51";
-            this.label51.Size = new System.Drawing.Size(81, 13);
-            this.label51.TabIndex = 34;
-            this.label51.Text = "Status tracking:";
-            // 
-            // prepublicationChecksCheckBox
-            // 
-            this.prepublicationChecksCheckBox.AutoSize = true;
-            this.prepublicationChecksCheckBox.Location = new System.Drawing.Point(28, 437);
-            this.prepublicationChecksCheckBox.Name = "prepublicationChecksCheckBox";
-            this.prepublicationChecksCheckBox.Size = new System.Drawing.Size(131, 17);
-            this.prepublicationChecksCheckBox.TabIndex = 35;
-            this.prepublicationChecksCheckBox.Text = "Prepublication checks";
-            this.prepublicationChecksCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // webSiteReadyCheckBox
-            // 
-            this.webSiteReadyCheckBox.AutoSize = true;
-            this.webSiteReadyCheckBox.Location = new System.Drawing.Point(28, 458);
-            this.webSiteReadyCheckBox.Name = "webSiteReadyCheckBox";
-            this.webSiteReadyCheckBox.Size = new System.Drawing.Size(97, 17);
-            this.webSiteReadyCheckBox.TabIndex = 36;
-            this.webSiteReadyCheckBox.Text = "Web site ready";
-            this.webSiteReadyCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // e10dblCheckBox
-            // 
-            this.e10dblCheckBox.AutoSize = true;
-            this.e10dblCheckBox.Location = new System.Drawing.Point(28, 481);
-            this.e10dblCheckBox.Name = "e10dblCheckBox";
-            this.e10dblCheckBox.Size = new System.Drawing.Size(123, 17);
-            this.e10dblCheckBox.TabIndex = 37;
-            this.e10dblCheckBox.Text = "Shared with partners";
-            this.e10dblCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // archivedCheckBox
-            // 
-            this.archivedCheckBox.AutoSize = true;
-            this.archivedCheckBox.Location = new System.Drawing.Point(28, 504);
-            this.archivedCheckBox.Name = "archivedCheckBox";
-            this.archivedCheckBox.Size = new System.Drawing.Size(68, 17);
-            this.archivedCheckBox.TabIndex = 38;
-            this.archivedCheckBox.Text = "Archived";
-            this.archivedCheckBox.UseVisualStyleBackColor = true;
             // 
             // haiolaForm
             // 
