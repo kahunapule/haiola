@@ -608,6 +608,9 @@ namespace BibleFileLib
                         // Verse numbers might be verse bridges, like "20-22" or simple numbers, like "20".
                         firstVerse = m_verse;
                         vnum = firstVerse.IndexOf('-');
+                        int rtlcharplace = firstVerse.IndexOf('\u200F');
+                        if ((rtlcharplace > 0) && (rtlcharplace < vnum))
+                            vnum = rtlcharplace;
                         if (vnum > 0)
                             firstVerse = firstVerse.Substring(0, vnum);
                         if (firstVerse.Length > 0)
