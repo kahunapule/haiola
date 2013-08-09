@@ -186,6 +186,11 @@
             this.statsButton = new System.Windows.Forms.Button();
             this.markRetryButton = new System.Windows.Forms.Button();
             this.extensionLabel = new System.Windows.Forms.Label();
+            this.label51 = new System.Windows.Forms.Label();
+            this.prepublicationChecksCheckBox = new System.Windows.Forms.CheckBox();
+            this.webSiteReadyCheckBox = new System.Windows.Forms.CheckBox();
+            this.e10dblCheckBox = new System.Windows.Forms.CheckBox();
+            this.archivedCheckBox = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.idTabPage.SuspendLayout();
             this.copyrightTabPage.SuspendLayout();
@@ -297,6 +302,11 @@
             // 
             // idTabPage
             // 
+            this.idTabPage.Controls.Add(this.archivedCheckBox);
+            this.idTabPage.Controls.Add(this.e10dblCheckBox);
+            this.idTabPage.Controls.Add(this.webSiteReadyCheckBox);
+            this.idTabPage.Controls.Add(this.prepublicationChecksCheckBox);
+            this.idTabPage.Controls.Add(this.label51);
             this.idTabPage.Controls.Add(this.lwcDescriptionTextBox);
             this.idTabPage.Controls.Add(this.label20);
             this.idTabPage.Controls.Add(this.privateCheckBox);
@@ -1860,6 +1870,55 @@
             this.extensionLabel.TabIndex = 30;
             this.extensionLabel.Text = "--";
             // 
+            // label51
+            // 
+            this.label51.AutoSize = true;
+            this.label51.Location = new System.Drawing.Point(30, 417);
+            this.label51.Name = "label51";
+            this.label51.Size = new System.Drawing.Size(81, 13);
+            this.label51.TabIndex = 34;
+            this.label51.Text = "Status tracking:";
+            // 
+            // prepublicationChecksCheckBox
+            // 
+            this.prepublicationChecksCheckBox.AutoSize = true;
+            this.prepublicationChecksCheckBox.Location = new System.Drawing.Point(28, 437);
+            this.prepublicationChecksCheckBox.Name = "prepublicationChecksCheckBox";
+            this.prepublicationChecksCheckBox.Size = new System.Drawing.Size(131, 17);
+            this.prepublicationChecksCheckBox.TabIndex = 35;
+            this.prepublicationChecksCheckBox.Text = "Prepublication checks";
+            this.prepublicationChecksCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // webSiteReadyCheckBox
+            // 
+            this.webSiteReadyCheckBox.AutoSize = true;
+            this.webSiteReadyCheckBox.Location = new System.Drawing.Point(28, 458);
+            this.webSiteReadyCheckBox.Name = "webSiteReadyCheckBox";
+            this.webSiteReadyCheckBox.Size = new System.Drawing.Size(97, 17);
+            this.webSiteReadyCheckBox.TabIndex = 36;
+            this.webSiteReadyCheckBox.Text = "Web site ready";
+            this.webSiteReadyCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // e10dblCheckBox
+            // 
+            this.e10dblCheckBox.AutoSize = true;
+            this.e10dblCheckBox.Location = new System.Drawing.Point(28, 481);
+            this.e10dblCheckBox.Name = "e10dblCheckBox";
+            this.e10dblCheckBox.Size = new System.Drawing.Size(123, 17);
+            this.e10dblCheckBox.TabIndex = 37;
+            this.e10dblCheckBox.Text = "Shared with partners";
+            this.e10dblCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // archivedCheckBox
+            // 
+            this.archivedCheckBox.AutoSize = true;
+            this.archivedCheckBox.Location = new System.Drawing.Point(28, 504);
+            this.archivedCheckBox.Name = "archivedCheckBox";
+            this.archivedCheckBox.Size = new System.Drawing.Size(68, 17);
+            this.archivedCheckBox.TabIndex = 38;
+            this.archivedCheckBox.Text = "Archived";
+            this.archivedCheckBox.UseVisualStyleBackColor = true;
+            // 
             // haiolaForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2067,6 +2126,11 @@
         private System.Windows.Forms.Label label49;
         private System.Windows.Forms.Label label50;
         private System.Windows.Forms.TextBox customCssTextBox;
+        private System.Windows.Forms.CheckBox archivedCheckBox;
+        private System.Windows.Forms.CheckBox e10dblCheckBox;
+        private System.Windows.Forms.CheckBox webSiteReadyCheckBox;
+        private System.Windows.Forms.CheckBox prepublicationChecksCheckBox;
+        private System.Windows.Forms.Label label51;
 	}
 }
 
