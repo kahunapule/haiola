@@ -22,18 +22,10 @@ namespace WordSend
     {
         void RunConversions();  // Write new output formats.
         string ShowStatus();    // Give the user feedback about what is going on.
+        int InterfaceVersion();
     }
 
-    /*
-    public partial class Extension : IConverterPlugin
-    {
-        public extern string ShowStatus();    // Give the user feedback about what is going on.
-        public extern Extension();
-        public extern void RunConversions();
-    }
-     */
-
-
+   
     /// <summary>
     /// Load the plugin if present.
     /// </summary>
@@ -72,7 +64,8 @@ namespace WordSend
                 {
                     Assembly a = System.Reflection.Assembly.LoadFile(proprietaryModule);
                     ThePlugin = (IConverterPlugin)a.CreateInstance("WordSend.Extension");
-                    pluginPresent = true;
+                    if (ThePlugin.InterfaceVersion() == 1)  // Magic number must match that in extension.
+                        pluginPresent = true;
                 }
             }
             catch (Exception ex)

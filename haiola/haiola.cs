@@ -43,30 +43,6 @@ namespace haiola
         {
             InitializeComponent();
             MasterInstance = this;
-            if (Directory.GetCurrentDirectory().EndsWith(@"Debug"))
-            {
-                DateTime today = DateTime.UtcNow;
-                StreamWriter sw = new StreamWriter(@"..\..\Version.cs", false, System.Text.Encoding.UTF8);
-                sw.Write(@"using System;
-namespace haiola
-{
-	/// <summary>
-	/// This is a generated file. You should not edit it directly, but edit haiola.cs instead.
-	/// </summary>
-	public class Version
-	{
-		public static string date = ");
-
-                sw.WriteLine("\"{0}\";", today.ToString("yyyy-MM-dd"));
-                sw.WriteLine("		public static string year = @\"{0}\";", today.ToString("yyyy"));
-                sw.WriteLine("		public static string time = @\"{0}\";", today.ToString("HH:mm:ss"));
-                sw.WriteLine(@"		public Version()
-		{
-		}
-	}
-}");
-                sw.Close();
-            }
             plugin = new PluginManager();
             batchLabel.Text = String.Format("Haiola version {0}.{1} ©2003-{2} SIL, EBT, && eBible.org. Released under Gnu LGPL 3 or later.",
                 Version.date, Version.time, Version.year);
@@ -119,12 +95,22 @@ namespace haiola
                 timer1.Enabled = true;
             }
         }
-        private void EnsureTemplateFile(string fileName)
+
+        /// <summary>
+        /// Ensure that a named template file exists in the input directory.
+        /// </summary>
+        /// <param name="fileName">Name of file to find.</param>
+        public void EnsureTemplateFile(string fileName)
         {
         	EnsureTemplateFile(fileName, m_inputDirectory);
         }
  
-        private void EnsureTemplateFile(string fileName, string destDirectory)
+        /// <summary>
+        /// Ensure that a named template file exists in the named directory.
+        /// </summary>
+        /// <param name="fileName">File to find in program files</param>
+        /// <param name="destDirectory">Proper template location.</param>
+        public void EnsureTemplateFile(string fileName, string destDirectory)
         {
             try
             {
@@ -1574,6 +1560,10 @@ In addition, you have permission to convert the text to different file formats, 
             xoTextBox.Text = m_options.xoFormat;
             customCssTextBox.Text = m_options.customCssFileName;
             stripOriginCheckBox.Checked = m_options.stripNoteOrigin;
+            prepublicationChecksCheckBox.Checked = m_options.PrepublicationChecks;
+            webSiteReadyCheckBox.Checked = m_options.WebSiteReady;
+            e10dblCheckBox.Checked = m_options.ETENDBL;
+            archivedCheckBox.Checked = m_options.Archived;
             
             m_currentTemplate = xini.ReadString("currentTemplate", String.Empty);
             templateLabel.Text = "Current template: " + m_currentTemplate;
@@ -1771,7 +1761,12 @@ In addition, you have permission to convert the text to different file formats, 
             m_options.textDir = textDirectionComboBox.Text;
             m_options.xoFormat = xoTextBox.Text;
             m_options.customCssFileName = customCssTextBox.Text;
-Di
+            m_options.stripNoteOrigin = stripOriginCheckBox.Checked;
+            m_options.PrepublicationChecks = prepublicationChecksCheckBox.Checked;
+            m_options.WebSiteReady = webSiteReadyCheckBox.Checked;
+            m_options.ETENDBL = e10dblCheckBox.Checked;
+            m_options.Archived = archivedCheckBox.Checked;
+
             List<string> tableNames = new List<string>();
             foreach (string filename in listInputProcesses.Items)
                 tableNames.Add(filename);

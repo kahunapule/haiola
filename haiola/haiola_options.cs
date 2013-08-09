@@ -133,7 +133,31 @@ namespace haiola
             set { ini.WriteBool("stripNoteOrigin", value); }
         }
 
-		public string contentCreator
+        public bool Archived
+        {
+            get { return ini.ReadBool("Archived", false); }
+            set { ini.WriteBool("Archived", value); }
+        }
+
+        public bool PrepublicationChecks
+        {
+            get { return ini.ReadBool("PrepublicationChecks", false); }
+            set { ini.WriteBool("PrepublicationChecks", value); }
+        }
+
+        public bool WebSiteReady
+        {
+            get { return ini.ReadBool("WebSiteReady", false); }
+            set { ini.WriteBool("WebSiteReady", value); }
+        }
+
+        public bool ETENDBL
+        {
+            get { return ini.ReadBool("ETENDBL", false); }
+            set { ini.WriteBool("ETENDBL", value); }
+        }
+
+        public string contentCreator
 		{
 			get { return ini.ReadString("contentCreator", "Wycliffe Bible Translators"); }
 			set { ini.WriteString("contentCreator", value.Trim()); }
