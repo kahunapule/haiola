@@ -108,6 +108,11 @@ namespace haiola
 			set { ini.WriteString("translationId", value.Trim()); }
 		}
 
+        public bool subsetProject
+        {
+            get { return ini.ReadBool("subsetProject", false); }
+            set { ini.WriteBool("subsetProject", value); }
+        }
 
 		public string dialect
 		{

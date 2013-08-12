@@ -457,10 +457,10 @@ namespace WordSend
                 "<!DOCTYPE html>");
             htm.WriteLine("<head>");
             htm.WriteLine("<meta charset=\"utf-8\" />");
-            htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />");
+//            htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />");
             htm.WriteLine("<link rel=\"stylesheet\" href=\"{0}\" type=\"text/css\" />", customCssName);
-            htm.WriteLine("<meta name=\"viewport\" content=\"user-scalable=yes, initial-scale=1, minimum-scale=1, width=device-width, height=device-height\"/>");
-            // htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width\" />");
+            htm.WriteLine("<meta name=\"viewport\" content=\"user-scalable=yes, initial-scale=1, minimum-scale=1, width=device-width\"/>");
+//            htm.WriteLine("<meta name=\"viewport\" content=\"user-scalable=yes, initial-scale=1, minimum-scale=1, width=device-width, height=device-height\"/>");
             if (mainScriptureFile)
             {
                 htm.WriteLine("<script src=\"TextFuncs.js\" type=\"text/javascript\"></script>");
@@ -1411,6 +1411,7 @@ namespace WordSend
         public bool stripManualNoteOrigins = true;  // These are normally totally redundant with the automatic note origins.
         public string customCssName = "prophero.css";   // Name of the css file to use for this project.
         protected bool inOrigin = false;
+        protected bool hasLemma = false;
 
 
         /// <summary>
@@ -1435,6 +1436,7 @@ namespace WordSend
         {
             bool result = false;
             bool inUsfx = false;
+            hasLemma = false;
             string figDescription = String.Empty;
             string figFileName = String.Empty;
             string figSize = String.Empty;
@@ -1736,6 +1738,10 @@ namespace WordSend
                                     verseNumber++;
                                 }
                                 verseOsisId = chapterOsisId + "." + verseNumber.ToString();
+                                break;
+                            case "w":
+                            case "zw":
+                                hasLemma = true;
                                 break;
                         }
                     }

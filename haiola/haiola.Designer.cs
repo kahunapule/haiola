@@ -191,6 +191,7 @@
             this.statsButton = new System.Windows.Forms.Button();
             this.markRetryButton = new System.Windows.Forms.Button();
             this.extensionLabel = new System.Windows.Forms.Label();
+            this.subsetCheckBox = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.idTabPage.SuspendLayout();
             this.copyrightTabPage.SuspendLayout();
@@ -302,6 +303,7 @@
             // 
             // idTabPage
             // 
+            this.idTabPage.Controls.Add(this.subsetCheckBox);
             this.idTabPage.Controls.Add(this.archivedCheckBox);
             this.idTabPage.Controls.Add(this.e10dblCheckBox);
             this.idTabPage.Controls.Add(this.webSiteReadyCheckBox);
@@ -1919,6 +1921,16 @@
             this.extensionLabel.TabIndex = 30;
             this.extensionLabel.Text = "--";
             // 
+            // subsetCheckBox
+            // 
+            this.subsetCheckBox.AutoSize = true;
+            this.subsetCheckBox.Location = new System.Drawing.Point(415, 418);
+            this.subsetCheckBox.Name = "subsetCheckBox";
+            this.subsetCheckBox.Size = new System.Drawing.Size(194, 17);
+            this.subsetCheckBox.TabIndex = 39;
+            this.subsetCheckBox.Text = "Subset project -- don\'t double count";
+            this.subsetCheckBox.UseVisualStyleBackColor = true;
+            // 
             // haiolaForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2131,6 +2143,7 @@
         private System.Windows.Forms.CheckBox webSiteReadyCheckBox;
         private System.Windows.Forms.CheckBox prepublicationChecksCheckBox;
         private System.Windows.Forms.Label label51;
+        private System.Windows.Forms.CheckBox subsetCheckBox;
 	}
 }
 
