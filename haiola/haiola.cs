@@ -1565,6 +1565,7 @@ In addition, you have permission to convert the text to different file formats, 
             webSiteReadyCheckBox.Checked = m_options.WebSiteReady;
             e10dblCheckBox.Checked = m_options.ETENDBL;
             archivedCheckBox.Checked = m_options.Archived;
+            subsetCheckBox.Checked = m_options.subsetProject;
             
             m_currentTemplate = xini.ReadString("currentTemplate", String.Empty);
             templateLabel.Text = "Current template: " + m_currentTemplate;
@@ -1767,6 +1768,7 @@ In addition, you have permission to convert the text to different file formats, 
             m_options.WebSiteReady = webSiteReadyCheckBox.Checked;
             m_options.ETENDBL = e10dblCheckBox.Checked;
             m_options.Archived = archivedCheckBox.Checked;
+            m_options.subsetProject = subsetCheckBox.Checked;
 
             List<string> tableNames = new List<string>();
             foreach (string filename in listInputProcesses.Items)
@@ -2066,6 +2068,7 @@ In addition, you have permission to convert the text to different file formats, 
             int numLanguages = 0;
             int numDialects = 0;
             int numSites = 0;
+            int numSubsets = 0;
             int c;
             int coprCount = 0;
             string dialect;
@@ -2115,7 +2118,10 @@ In addition, you have permission to convert the text to different file formats, 
                 numProjects++;
                 if ((!m_options.privateProject) && (m_options.languageId.Length > 1))
                 {
-                    numTranslations++;
+                    if (m_options.subsetProject)
+                        numSubsets++;
+                    else
+                        numTranslations++;
                     if (langTable[m_options.languageId] == null)
                     {
                         langTable[m_options.languageId] = 1;
@@ -2218,11 +2224,12 @@ In addition, you have permission to convert the text to different file formats, 
             currentConversion = numProjects.ToString() + " projects; " + numTranslations.ToString() + " public. " + urlid.ToString() + " URLs " + numSites.ToString() + " sites " + numLanguages.ToString() + " languages " + numDialects.ToString() + " dialects (including languages). ";
 
             scorecard.WriteLine("Haiola project statistics as of {0} UTC", DateTime.UtcNow.ToString("R"));
-            scorecard.WriteLine("{0} URLs", urlid.ToString());
-            scorecard.WriteLine("{0} sites", numSites.ToString());
+            scorecard.WriteLine("{0} primary distribution URLs", urlid.ToString());
+            scorecard.WriteLine("{0} master sites", numSites.ToString());
             scorecard.WriteLine("{0} languages", numLanguages.ToString());
             scorecard.WriteLine("{0} dialects", numDialects.ToString());
             scorecard.WriteLine("{0} public translations", numTranslations.ToString());
+            scorecard.WriteLine("{0} subset projects", numSubsets.ToString());
             scorecard.WriteLine("{0} projects", numProjects.ToString());
             scorecard.WriteLine("Translations by site:");
             foreach (DictionaryEntry de in siteTable)
