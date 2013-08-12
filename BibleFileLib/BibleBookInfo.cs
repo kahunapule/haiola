@@ -88,7 +88,7 @@ namespace WordSend
     /// </summary>
     public class BibleBookInfo
     {
-        public const int MAXNUMBOOKS = 110;	// Includes Apocrypha + extrabiblical helps, front & back matter, etc.
+        public const int MAXNUMBOOKS = 120;	// Includes Apocrypha + extrabiblical helps, front & back matter, etc.
         public Hashtable books;
         public BibleBookRecord[] bookArray = new BibleBookRecord[MAXNUMBOOKS];
         public BibleBookRecord[] publishArray = new BibleBookRecord[MAXNUMBOOKS];
