@@ -945,8 +945,8 @@ namespace WordSend
                             case "v":
                                 EndIntroduction();
                                 EndCurrentVerse();
-                                currentVerse = id;
-                                currentVersePublished = fileHelper.LocalizeDigits(currentVerse);
+                                currentVersePublished = fileHelper.LocalizeDigits(id);
+                                currentVerse = id.Replace("\u200F", "");    // Strip out RTL character
                                 currentVerseAlternate = "";
                                 if (!usfx.IsEmptyElement)
                                 {
