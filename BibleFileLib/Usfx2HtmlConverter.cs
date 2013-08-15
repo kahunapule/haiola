@@ -561,11 +561,13 @@ namespace WordSend
                 EndHtmlTextStyle();
                 EndChapter();
                 EndHtmlParagraph();
+                htm.WriteLine("<hr>");
                 htm.WriteLine("<div class=\"pageFooter\">");
+                RepeatNavButtons();
+                htm.WriteLine("</div><div class=\"pageFooter\">");
                 WriteHtmlFootnotes();
                 htm.WriteLine("</div></div>"); // end of div.pageFooter and div.main
                 htm.WriteLine("<div class=\"pageFooter\">");
-                RepeatNavButtons();
                 if ((footerTextHTML != null) && (footerTextHTML.Trim().Length > 0))
                 {
                     htm.WriteLine(footerTextHTML);
