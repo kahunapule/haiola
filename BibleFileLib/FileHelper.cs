@@ -548,6 +548,13 @@ namespace WordSend
 
         static Random Rnd;
 
+        public static string NoNull(string s)
+        {
+            if (String.IsNullOrEmpty(s))
+                return String.Empty;
+            return s;
+        }
+
         /// <summary>
         /// Normalizes both Windows and Linux line ends to all Windows line ends.
         /// Replaces the given file with a normalized file.

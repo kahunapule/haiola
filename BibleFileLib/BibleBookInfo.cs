@@ -69,13 +69,12 @@ namespace WordSend
             vernacularName = vernacularShortName = vernacularLongName = String.Empty;
             toc = new StringBuilder();
         }
-
         /// <summary>
         /// Read only property returns true iff this book is present and nonempty
         /// </summary>
         public bool HasContent
         {
-            get { return isPresent && chapterFiles != null && chapterFiles.Count > 0; }
+            get { return isPresent && ((chapterFiles != null && chapterFiles.Count > 0) || (testament == "x")); }
         }
     }
 
@@ -219,6 +218,95 @@ namespace WordSend
         {
             return (BibleBookRecord)books[abbrev];
         }
+
+        /// <summary>
+        /// Reads Bible book names from BookNames.xml, as exported by Paratext
+        /// </summary>
+        /// <param name="bookNamesFile">Full path and file name of BookNames.xml</param>
+        /// <returns>true iff the file was found and read</returns>
+        public bool ReadDefaultBookNames(string bookNamesFile)
+        {
+            XmlTextReader xr;
+            bool inBookNames = false;
+            string tla;
+            BibleBookRecord br;
+
+            if (!File.Exists(bookNamesFile))
+                return false;
+            try
+            {
+                xr = new XmlTextReader(bookNamesFile);
+                xr.WhitespaceHandling = WhitespaceHandling.Significant;
+                while (xr.Read())
+                {
+                    if (xr.Name == "BookNames")
+                    {
+                        inBookNames = xr.IsStartElement();
+                    }
+                    else if (inBookNames && xr.IsStartElement("book"))
+                    {
+                        tla = xr.GetAttribute("code");
+                        if (!String.IsNullOrEmpty(tla))
+                        {
+                            br = BkRec(tla);
+                            if (br != null)
+                            {
+                                br.vernacularAbbreviation = fileHelper.NoNull(xr.GetAttribute("abbr"));
+                                br.vernacularShortName = fileHelper.NoNull(xr.GetAttribute("short"));
+                                br.vernacularLongName = fileHelper.NoNull(xr.GetAttribute("long"));
+                            }
+                        }
+                    }
+                }
+                xr.Close();
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError("Error reading "+ bookNamesFile +"\r\n"+ ex.Message);
+                return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Writes a BookNames.xml file in the same format as used by Paratext.
+        /// </summary>
+        /// <param name="bookNamesFile">Full path and name of XML file to write</param>
+        public void WriteDefaultBookNames(string bookNamesFile)
+        {
+            XmlTextWriter xw;
+            try
+            {
+                xw = new XmlTextWriter(bookNamesFile, Encoding.UTF8);
+                xw.Formatting = Formatting.Indented;
+                xw.WriteStartDocument();
+                xw.WriteDocType("BookNames", null, null/* "ini.dtd" */, null);
+                xw.WriteStartElement("BookNames");
+                foreach (BibleBookRecord br in bookArray)
+                {
+                    if (br != null)
+                    {
+                        if (!(String.IsNullOrEmpty(br.tla) || (String.IsNullOrEmpty(br.vernacularShortName))))
+                        {
+                            xw.WriteStartElement("book");
+                            xw.WriteAttributeString("code", br.tla);
+                            xw.WriteAttributeString("abbr", fileHelper.NoNull(br.vernacularAbbreviation));
+                            xw.WriteAttributeString("short", fileHelper.NoNull(br.vernacularShortName));
+                            xw.WriteAttributeString("long", fileHelper.NoNull(br.vernacularLongName));
+                            xw.WriteEndElement();   // book
+                        }
+                    }
+                }
+                xw.WriteEndElement();   // BookNames
+                xw.Close();
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError("Error writing "+bookNamesFile+"\r\n"+ex.Message);
+            }
+        }
+
+
 
         /// <summary>
         /// Read Bible Book information from the indicated file assuming that it
@@ -389,6 +477,7 @@ namespace WordSend
             int chapterNumber = 0;
             string verseString = String.Empty;
             string verseRangeEnd = String.Empty;
+            string bookNamesFile = Path.Combine(Path.GetDirectoryName(usfxName), "BookNames.xml");
             int verseNumber = 0;
             int verseRangeEndNumber = 0;
 
@@ -408,6 +497,10 @@ namespace WordSend
                         br.vernacularShortName = String.Empty;  // toc2
                     }
                 }
+
+                // Look for default names for books not in the USFX file.
+                ReadDefaultBookNames(bookNamesFile);
+
                 XmlTextReader usfx = new XmlTextReader(usfxName);
                 usfx.WhitespaceHandling = WhitespaceHandling.Significant;
                 altNames = new Hashtable(997);
@@ -563,8 +656,15 @@ namespace WordSend
                         {
                             if (bookRecord.vernacularName == String.Empty)
                             {
-                                bookRecord.vernacularName = currentBookAbbrev;
-                                Logit.WriteError("Missing main title in " + currentBookAbbrev + " in " + usfxName);
+                                if ((bookRecord.testament == "o") || (bookRecord.testament == "n") || (bookRecord.testament == "a"))
+                                {
+                                    Logit.WriteError("Missing main title in " + currentBookAbbrev + " in " + usfxName);
+                                }
+                                bookRecord.vernacularName = bookRecord.vernacularLongName;
+                                if (bookRecord.vernacularName == String.Empty)
+                                {
+                                    bookRecord.vernacularName = bookRecord.vernacularShortName;
+                                }
                             }
                             if (bookRecord.vernacularLongName == String.Empty)
                             {
@@ -596,10 +696,11 @@ namespace WordSend
                     //System.Windows.Forms.Application.DoEvents();
                 }
                 usfx.Close();
+                WriteDefaultBookNames(bookNamesFile);   // Override book names with toc tags
             }
             catch (Exception ex)
             {
-                Logit.WriteError(ex.Message + "\r\n" + ex.StackTrace);
+                Logit.WriteError("Error reading vernacular file namse from USFX\r\n"+ex.Message + "\r\n" + ex.StackTrace);
             }
         }
     }

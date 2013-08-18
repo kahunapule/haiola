@@ -231,18 +231,21 @@ namespace WordSend
                 bsb.Append("<form name=\"bkch1\"><div class=\"navChapters\">");
                 bsb.Append("<select name=\"bksch1\" onChange=\"location=document.bkch1.bksch1.options[document.bkch1.bksch1.selectedIndex].value;\">");
                 i = 0;
-                while ((i < bookInfo.publishArray.Length) && (bookInfo.publishArray[i] != null))
+                while (i < bookInfo.publishArray.Length)
                 {
-                    br = (BibleBookRecord)bookInfo.publishArray[i];
-                    if (br.tla == bookRecord.tla)
+                    if (bookInfo.publishArray[i] != null)
                     {
-                        bsb.Append(OptionSelectedOpeningElement + br.vernacularShortName + "</option>\r\n");
-                    }
-                    else
-                    {
-                        if (br.HasContent)
+                        br = (BibleBookRecord)bookInfo.publishArray[i];
+                        if (br.tla == bookRecord.tla)
                         {
-                            bsb.Append("<option value=\"" + br.chapterFiles[0] + ".htm\">" + br.vernacularShortName + "</option>\r\n");
+                            bsb.Append(OptionSelectedOpeningElement + br.vernacularShortName + "</option>\r\n");
+                        }
+                        else
+                        {
+                            if (br.HasContent)
+                            {
+                                bsb.Append("<option value=\"" + br.chapterFiles[0] + ".htm\">" + br.vernacularShortName + "</option>\r\n");
+                            }
                         }
                     }
                     i++;
@@ -1542,8 +1545,10 @@ namespace WordSend
                                     foundThisBook = false;
                                     for (i = 0; (i < bookInfo.publishArray.Length) && (bookInfo.publishArray[i] != null) && !foundThisBook; i++)
                                     {
-                                        if (bookInfo.publishArray[i].tla == bookRecord.tla)
-                                            foundThisBook = true;
+                                        {
+                                            if (bookInfo.publishArray[i].tla == bookRecord.tla)
+                                                foundThisBook = true;
+                                        }
                                     }
                                     if (!foundThisBook)
                                     {
