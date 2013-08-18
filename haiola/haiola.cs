@@ -696,6 +696,10 @@ namespace haiola
             Logit.GUIWriteString = showMessageString;
             SFConverter.scripture = new Scriptures();
             Logit.loggedError = false;
+            if (!SFConverter.scripture.bkInfo.ReadDefaultBookNames(Path.Combine(Path.Combine(m_inputProjectDirectory, "Source"), "BookNames.xml")))
+            {
+                SFConverter.scripture.bkInfo.ReadDefaultBookNames(Path.Combine(m_inputProjectDirectory, "BookNames.xml"));
+            }
             SFConverter.scripture.assumeAllNested = m_options.relaxUsfmNesting;
             // Read the input USFM files into internal data structures.
             SFConverter.ProcessFilespec(Path.Combine(UsfmDir, "*.usfm"), Encoding.UTF8);
@@ -705,6 +709,9 @@ namespace haiola
             // Write out the USFX file.
             SFConverter.scripture.languageCode = m_options.languageId;
             SFConverter.scripture.WriteUSFX(GetUsfxFilePath());
+            string bookNames = Path.Combine(m_inputProjectDirectory, "BookNames.xml");
+            SFConverter.scripture.bkInfo.WriteDefaultBookNames(bookNames);
+            File.Copy(bookNames, Path.Combine(Path.Combine(m_outputProjectDirectory, "usfx"), "BookNames.xml"), true);
             Logit.CloseFile();
             if (Logit.loggedError)
             {
@@ -1393,6 +1400,13 @@ In addition, you have permission to convert the text to different file formats, 
             // Create Modified OSIS output for conversion to Sword format.
             if (fAllRunning)
                 ConvertUsfxToMosis();
+            Application.DoEvents();
+            if (fAllRunning)
+            {
+                // Get updated BookNames.xml file for input directory
+                File.Copy(Path.Combine(Path.Combine(m_outputProjectDirectory, "usfx"), "BookNames.xml"),
+                    Path.Combine(m_inputProjectDirectory, "BookNames.xml"), true);
+            }
             Application.DoEvents();
             // Run proprietary extension conversions, if any.
             if (fAllRunning)

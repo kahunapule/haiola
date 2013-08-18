@@ -627,6 +627,54 @@ namespace WordSend
             }
         }
 
+        /// <summary>
+        /// Writes a locale file for the Sword Project
+        /// </summary>
+        /// <param name="localeFileName">Name of the Locale file</param>
+        public void WriteLocaleFile(string localeFileName)
+        {
+            StreamWriter locale;
+            try
+            {
+                locale = new StreamWriter(localeFileName, false, Encoding.UTF8);
+                locale.WriteLine("[Meta]");
+                locale.WriteLine("Name={0}", languageCode);
+                locale.WriteLine("Description={0}", vernacularLanguageName);
+                locale.WriteLine();
+                locale.WriteLine("[Text]");
+                foreach (BibleBookRecord br in bookInfo.bookArray)
+                {
+                    if (br != null)
+                    {
+                        if (!String.IsNullOrEmpty(br.vernacularShortName))
+                            locale.WriteLine("{0}={1}", br.shortName, br.vernacularShortName);
+                    }
+                }
+                locale.WriteLine();
+                locale.WriteLine("[Book Abbrevs]");
+                foreach (BibleBookRecord br in bookInfo.bookArray)
+                {
+                    if (br != null)
+                    {
+                        if (!String.IsNullOrEmpty(br.vernacularAbbreviation))
+                            locale.WriteLine("{0}={1}", br.vernacularAbbreviation.ToUpper(CultureInfo.InvariantCulture), br.osisName);
+                    }
+                }
+                locale.WriteLine();
+                locale.Close();
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError("Error writing " + localeFileName + "\r\n" + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Convert USFX file to Modified OSIS for Sword Project import
+        /// </summary>
+        /// <param name="usfxFileName">Full path and file name of USFX file</param>
+        /// <param name="mosisFileName">Full path and file name of MOSIS file</param>
+        /// <returns></returns>
         public bool ConvertUsfxToMosis(string usfxFileName, string mosisFileName)
         {
             OsisFileName = mosisFileName;
@@ -1422,6 +1470,8 @@ namespace WordSend
                 }
                 Logit.ShowStatus("writing " + mosisFileName);
                 CloseMosisFile();
+
+                WriteLocaleFile(Path.Combine(Path.GetDirectoryName(mosisFileName), "locale-"+languageCode+".conf"));
 
                 // Validate this file against the Schema
 
