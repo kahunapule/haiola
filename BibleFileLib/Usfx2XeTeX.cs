@@ -12,81 +12,11 @@ using System.Diagnostics;
 
 namespace WordSend
 {
-    public class Usfx2XeTeX
+    public class Usfx2XeTeX : usfxToHtmlConverter
     {
-        public bool stripPictures = true;
-
         protected string texFileName;
         protected StreamWriter texFile;
-        protected XmlTextReader usfx;
-        protected string element;
-        protected string sfm;
-        protected string id;
-        protected string style;
-        protected string level;
-        protected string caller;
         protected string texDir;
-        protected string currentBookAbbrev;
-        protected string currentBookHeader;
-        protected string currentBookTitle;
-        protected string currentChapter;
-        protected string currentChapterAlternate;
-        public string wordForChapter;
-        protected string currentChapterPublished;
-        protected string currentBCV;
-        protected string vernacularLongTitle;
-        public string languageCode;
-        protected int chapterNumber; // of the file we are currently generating
-        int verseNumber;
-        protected string currentVerse;
-        protected string currentVersePublished;
-        protected string currentVerseAlternate;
-        protected string currentFileName = "";
-        protected string previousFileName = "";
-        protected string chapterLabel = "";
-        protected string psalmLabel = "";
-        protected string langName = "";
-        protected string langId = "";
-        protected string footerTextHTML = "";
-        protected string copyrightLinkHTML = "";
-        protected string homeLinkHTML = "";
-        protected StringBuilder preVerse = new StringBuilder(String.Empty);
-        protected string previousChapterText;
-        protected string nextChapterText;
-        protected ArrayList chapterFileList = new ArrayList();
-        protected int chapterFileIndex = 0;
-        public static ArrayList bookList = new ArrayList();
-
-        protected int bookListIndex = 0;
-        protected StringBuilder footnotesToWrite;
-        protected StreamWriter htm;
-        //int one = 1;
-        bool inFootnote;
-        bool inFootnoteStyle;
-        int textStyleLevel = 0;
-        bool inTextStyle;
-        bool inParagraph;
-        bool ignore;
-        bool ignoreIntros = false;
-        bool ignoreNotes = false;
-        protected bool hasContentsPage;
-        //bool containsDC;
-        bool newChapterFound;
-        public BibleBookInfo bookInfo = new BibleBookInfo();
-        BibleBookRecord bookRecord;
-
-        /// <summary>
-        /// Null except when we have seen an open element with name p and style "Parallel Passage Reference" but have not yet seen the corresponding end element.
-        /// Set to empty when we see the open element, any intermediate text is added to it.
-        /// The end element then generates the complete cross-ref.
-        /// </summary>
-        string parallelPassage;
-
-        /// <summary>
-        /// Null except when we have seen an "x" element and not yet seen the corresponding "/x". Then we accumulate here the material we will write to
-        /// the footnote, after attempting to convert relevant parts to cross-refs.
-        /// </summary>
-        private string xRef;
 
         /// <summary>
         /// Constructor
@@ -94,6 +24,87 @@ namespace WordSend
         public Usfx2XeTeX()
         {
         }
+
+        /// <summary>
+        /// Write navigational links to get to another chapter from here.
+        /// We don't really do this in XeLaTeX documents, so this does nothing but return.
+        /// </summary>
+        protected override void WriteNavButtons()
+        {
+        }
+
+        /// <summary>
+        /// Open a Scripture chapter HTML file and write its HTML header.
+        /// </summary>
+        protected override void OpenHtmlFile()
+        {
+            OpenHtmlFile("", true);
+        }
+
+        /// <summary>
+        /// In this overridden version, we actually open a TeX file for the whole book, not just a chapter.
+        /// </summary>
+        /// <param name="fileName">Name of file to open if other than a Bible book.</param>
+        /// <param name="mainScriptureFile">true iff TextFunc.js is to be included.</param>
+        protected override void OpenHtmlFile(string fileName, bool mainScriptureFile, bool skipNav = false)
+        {
+            CloseHtmlFile();
+            noteNumber = 0;
+            if ((fileName != null) && (fileName.Length > 0))
+            {
+                currentFileName = Path.Combine(htmDir, fileName);
+            }
+            else
+            {
+                currentFileName = Path.Combine(htmDir, currentBookAbbrev + ".tex");
+            }
+            htm = new StreamWriter(currentFileName, false, Encoding.UTF8);
+            htm.WriteLine("<!DOCTYPE html>");
+            htm.WriteLine("<html lang=\"{0}\" dir=\"{1}\">", languageIdentifier, textDirection);
+            htm.WriteLine("<head>");
+            htm.WriteLine("<meta charset=\"utf-8\" />");
+            htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />");
+            //htm.WriteLine("<meta name=\"viewport\" content=\"user-scalable=yes, initial-scale=1, minimum-scale=1, width=device-width\"/>");
+            //      htm.WriteLine("<meta name=\"viewport\" content=\"user-scalable=yes, initial-scale=1, minimum-scale=1, width=device-width, height=device-height\"/>");
+            htm.WriteLine("<script src=\"../../../js/mobile.js\"></script>");
+            htm.WriteLine("<link rel=\"stylesheet\" href=\"../../../css/is_" + customCssName + "\" type=\"text/css\" />");
+            if (mainScriptureFile)
+            {
+                htm.WriteLine("<script src=\"TextFuncs.js\" type=\"text/javascript\"></script>");
+            }
+            htm.WriteLine("<title>{0} {1} {2}</title>",
+                langName, currentBookHeader, currentChapterPublished);
+            htm.WriteLine(string.Format("<meta name=\"keywords\" content=\"{0}, {1}, Holy, Scripture, Bible, Scriptures\" />",
+                langName, langId));
+            htm.WriteLine("</head>");
+            htm.WriteLine("<body class=\"mainDoc\"{0}>", OnLoadArgument());
+            WriteNavButtons();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         /// <summary>
         /// Close the currently open XeTeX file, if one is open.
@@ -126,13 +137,10 @@ namespace WordSend
         /// </summary>
         protected void EndTextStyle()
         {
-            if (inTextStyle)
+            if (inTextStyle > 0)
             {
                 texFile.Write("}");
-                if (textStyleLevel > 0)
-                    textStyleLevel--;
-                if (textStyleLevel == 0)
-                    inTextStyle = false;
+                    inTextStyle--;
             }
         }
 
@@ -147,8 +155,7 @@ namespace WordSend
             if (exclusive)
                 EndTextStyle();
             texFile.Write("{\\tsfm{0} {1}", styleName, text);
-            textStyleLevel++;
-            inTextStyle = true;
+            inTextStyle++;
         }
 
         /// <summary>
@@ -298,7 +305,7 @@ namespace WordSend
             }
         }
 
-/********************************
+        /******
 
         /// <summary>
         /// Start a footnote
@@ -328,16 +335,18 @@ namespace WordSend
             }
             if (string.Compare(marker, "-") == 0)
                 marker = "";
-            WriteHtml(String.Format("<a href=\"#{0}\" onclick=\"hilite('{0}')\"><span class=\"notemark\">{1}</span><span class=\"popup\">",
-                noteId, marker));
             // Numeric chapter and verse numbers are used in internal references instead of the text versions, which may
             // include dashes in verse bridges.
+            if (!String.IsNullOrEmpty(noteOriginFormat))
+            {
+                automaticOrigin = noteOriginFormat.Replace("%c", currentChapterPublished).Replace("%v", currentVersePublished);
+            }
             if ((chapterNumber >= 1) && (verseNumber >= 1))
-                footnotesToWrite.Append(String.Format("<p class=\"{0}\" id=\"{1}\"><span class=\"notemark\">{2}</span><a class=\"notebackref\" href=\"#V{3}\">{4}:{5}:</a>\r\n",
-                    style, noteId, marker, verseNumber.ToString(), currentChapterPublished, currentVersePublished));
+                footnotesToWrite.Append(String.Format("<p class=\"{0}\" id=\"{1}\"><span class=\"notemark\">{2}</span><a class=\"notebackref\" href=\"#V{3}\">{4}</a>\r\n",
+                    style, noteId, marker, verseNumber.ToString(), automaticOrigin));
             else
                 footnotesToWrite.Append(String.Format("<p class=\"{0}\" id=\"{1}\"><span class=\"notemark\">{2}</span><a class=\"notebackref\" href=\"#V1\">^</a>\r\n",
-                    style, noteId, marker, verseNumber.ToString(), currentChapterPublished, currentVersePublished));
+                    style, noteId, marker));
 
         }
 
@@ -759,6 +768,7 @@ namespace WordSend
                                     case "fk":
                                     case "fq":
                                     case "fqa":
+                                    case "fl":
                                     case "fv":
                                     case "ft":
                                     case "xo":
@@ -927,6 +937,7 @@ namespace WordSend
                                     case "fk":
                                     case "fq":
                                     case "fqa":
+                                    case "fl":
                                     case "fv":
                                     case "ft":
                                     case "xo":
@@ -965,9 +976,8 @@ namespace WordSend
 
 
 
-
         }
+        ***************/
 
- ****************************************/
     }
 }

@@ -854,6 +854,9 @@ namespace WordSend
                             case "fqa":
                                 StartElementWithAttribute("rdg");
                                 break;
+                            case "fl":
+                                // Not supported.
+                                break;
                             case "fr":
                                 StartElementWithAttribute("reference", "type", "source", "osisRef", osisVerseId);
                                 break;
@@ -1460,6 +1463,9 @@ namespace WordSend
                             case "xo":
                             // case "xq": Not useful for Sword modules.
                                 WriteMosisEndElement();    // note, hi, reference, title, l, transChange, etc.
+                                break;
+                            case "fl":
+                                // not supported.
                                 break;
                         }
                     }
