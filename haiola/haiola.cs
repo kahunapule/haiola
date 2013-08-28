@@ -602,6 +602,7 @@ namespace haiola
             foreach (string inputFile in inputFileNames)
             {
                 string filename = Path.GetFileName(inputFile);
+                string lowerName = filename.ToLower();
                 string fileType = Path.GetExtension(filename).ToUpper();
                 if ((fileType != ".BAK") && (fileType != ".LDS") &&
                     (fileType != ".SSF") && (fileType != ".DBG") &&
@@ -609,8 +610,14 @@ namespace haiola
                     (fileType != ".XML") && (fileType != ".HTM") &&
                     (fileType != ".KB2") && (fileType != ".HTML") &&
                     (fileType != ".CSS") && (fileType != ".SWP") &&
+                    (fileType != ".ID") && 
                     (fileType != ".VRS") && (!inputFile.EndsWith("~")) &&
-                    (filename.ToLower() != "autocorrect.txt"))
+                    (lowerName != "autocorrect.txt") &&
+                    (lowerName != "tmp.txt") &&
+                    (lowerName != "changes.txt") &&
+                    (lowerName != "hyphenatedWords.txt") &&
+                    (lowerName != "wordBoundariesOutput.txt") &&
+                    (lowerName != "autocorrect.txt"))
                 {
                     currentConversion = "preprocessing " + filename;
                     Application.DoEvents();
@@ -619,7 +626,7 @@ namespace haiola
                     string outputFileName = MakeUpUsfmFileName(inputFile) + ".usfm";
                     if (outputFileName.Length < 8)
                     {
-                        MessageBox.Show(this, "No proper \\id line found in "+inputFile, "ERROR");
+                        Logit.WriteLine("No proper \\id line found in "+inputFile);
                         break;
                     }
                     string outputFilePath = Path.Combine(UsfmDir, outputFileName);

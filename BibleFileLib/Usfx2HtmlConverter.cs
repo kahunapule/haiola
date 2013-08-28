@@ -40,6 +40,7 @@ namespace WordSend
     {
         public bool stripPictures = false;
         public string htmlextrasDir = String.Empty;
+        public LanguageCodeInfo langCodes;
 
         protected const string IndexFileName = "index.htm";
         protected string usfxFileName;
@@ -72,6 +73,7 @@ namespace WordSend
         protected string psalmLabel = "";
         protected string langName = "";
         protected string langId = "";
+        protected string shortLangId = "";
         protected string footerTextHTML = "";
         protected string copyrightLinkHTML = "";
         protected string homeLinkHTML = "";
@@ -119,6 +121,7 @@ namespace WordSend
         public usfxToHtmlConverter()
         {
             ConcordanceLinkText = "Concordance";
+            langCodes = new LanguageCodeInfo();
         }
 
         /// <summary>
@@ -456,8 +459,8 @@ namespace WordSend
             // It is important that the DOCTYPE declaration should be a single line, and that the <html> element starts the second line.
             // This is because the concordance parser uses a ReadLine to skip the DOCTYPE declaration in order to read the rest of the file as XML.
             // Note: switching to HTML5 syntax, with XHTML-compatible lower case element names and XML-style empty elements (like <br />).
-            htm.WriteLine(
-                "<!DOCTYPE html>");
+            htm.WriteLine("<!DOCTYPE html>");
+            htm.WriteLine("<html lang=\"{0}\" dir=\"{1}\">", shortLangId, textDirection);
             htm.WriteLine("<head>");
             htm.WriteLine("<meta charset=\"utf-8\" />");
 //            htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />");
@@ -1457,6 +1460,7 @@ namespace WordSend
             homeLinkHTML = homeLink;
             htmDir = htmlDir;
             langId = languageId;
+            shortLangId = langCodes.ShortCode(langId);
             langName = languageName;
             chapterLabel = chapterLabelName;
             psalmLabel = psalmLabelName;
@@ -2154,6 +2158,7 @@ namespace WordSend
                                     case "fk":
                                     case "fq":
                                     case "fqa":
+                                    case "fl":
                                     case "fv":
                                     case "ft":
                                     case "xk":
@@ -2343,6 +2348,7 @@ namespace WordSend
                                     case "fk":
                                     case "fq":
                                     case "fqa":
+                                    case "fl":
                                     case "fv":
                                     case "ft":
                                     case "xk":

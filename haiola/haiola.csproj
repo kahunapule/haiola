@@ -78,6 +78,7 @@
     <Compile Include="Version.cs" />
     <EmbeddedResource Include="haiola.resx">
       <DependentUpon>haiola.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
