@@ -716,24 +716,24 @@
 	<Book testament="n">
 		<sfmTla>1JN</sfmTla>
 		<osisName>1John</osisName>
-		<name>John's First John</name>
-		<shortName>1 Letter</shortName>
+		<name>John's First Letter</name>
+		<shortName>1 John</shortName>
 		<sortOrder>92</sortOrder>
 		<numChapters>5</numChapters>
 	</Book>
 	<Book testament="n">
 		<sfmTla>2JN</sfmTla>
 		<osisName>2John</osisName>
-		<name>John's Second John</name>
-		<shortName>2 Letter</shortName>
+		<name>John's Second Letter</name>
+		<shortName>2 John</shortName>
 		<sortOrder>93</sortOrder>
 		<numChapters>1</numChapters>
 	</Book>
 	<Book testament="n">
 		<sfmTla>3JN</sfmTla>
 		<osisName>3John</osisName>
-		<name>John's Third John</name>
-		<shortName>3 Letter</shortName>
+		<name>John's Third Letter</name>
+		<shortName>3 John</shortName>
 		<sortOrder>94</sortOrder>
 		<numChapters>1</numChapters>
 	</Book>
