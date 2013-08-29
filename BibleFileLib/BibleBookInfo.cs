@@ -43,6 +43,7 @@ namespace WordSend
         public string osisName;
         public string name; // Constant English long name
         public string shortName;    // Constant English short name
+        private string swordName;   // Hard coded Sword Project English short name
         public int actualChapters;
         public string vernacularHeader; // From \h
         public string vernacularName;   // From \mt
@@ -69,6 +70,20 @@ namespace WordSend
             vernacularName = vernacularShortName = vernacularLongName = String.Empty;
             toc = new StringBuilder();
         }
+
+        public string swordShortName
+        {
+            get {
+                if (String.IsNullOrEmpty(swordName))
+                {
+                    if (shortName != null)
+                        swordName = shortName.Replace("1", "I").Replace("2", "II").Replace("3", "III");
+                }
+                return (swordName);
+            }
+            set { swordName = value; }
+        }
+
         /// <summary>
         /// Read only property returns true iff this book is present and nonempty
         /// </summary>

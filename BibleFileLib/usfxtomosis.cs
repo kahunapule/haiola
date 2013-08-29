@@ -627,6 +627,7 @@ namespace WordSend
             }
         }
 
+
         /// <summary>
         /// Writes a locale file for the Sword Project
         /// </summary>
@@ -634,12 +635,14 @@ namespace WordSend
         public void WriteLocaleFile(string localeFileName)
         {
             StreamWriter locale;
+            string abbr, abbr1;
             try
             {
                 locale = new StreamWriter(localeFileName, false, Encoding.UTF8);
                 locale.WriteLine("[Meta]");
                 locale.WriteLine("Name={0}", languageCode);
                 locale.WriteLine("Description={0}", vernacularLanguageName);
+                locale.WriteLine("Encoding=UTF-8");
                 locale.WriteLine();
                 locale.WriteLine("[Text]");
                 foreach (BibleBookRecord br in bookInfo.bookArray)
@@ -647,7 +650,7 @@ namespace WordSend
                     if (br != null)
                     {
                         if (!String.IsNullOrEmpty(br.vernacularShortName))
-                            locale.WriteLine("{0}={1}", br.shortName, br.vernacularShortName);
+                            locale.WriteLine("{0}={1}", br.swordShortName, br.vernacularShortName);
                     }
                 }
                 locale.WriteLine();
@@ -657,7 +660,13 @@ namespace WordSend
                     if (br != null)
                     {
                         if (!String.IsNullOrEmpty(br.vernacularAbbreviation))
-                            locale.WriteLine("{0}={1}", br.vernacularAbbreviation.ToUpper(CultureInfo.InvariantCulture), br.osisName);
+                        {
+                            abbr = br.vernacularAbbreviation.ToUpper(CultureInfo.InvariantCulture);
+                            abbr1 = abbr.Replace(" ", "");
+                            locale.WriteLine("{0}={1}", abbr, br.osisName);
+                            if (abbr1.Length != abbr.Length)
+                                locale.WriteLine("{0}={1}", abbr1, br.osisName);
+                        }
                     }
                 }
                 locale.WriteLine();
