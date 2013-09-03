@@ -38,6 +38,31 @@ namespace haiola
         public DateTime sourceDate = new DateTime(1611, 1, 1);
         PluginManager plugin;
 
+        protected string GuessParatextProjectsDir()
+        {
+            string path;
+            path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Paratext Projects");
+            if (File.Exists(Path.Combine(path, "usfm.sty")))
+                return path;
+            path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ParatextProjects");
+            if (File.Exists(Path.Combine(path, "usfm.sty")))
+                return path;
+            path = "~/ParatextProjects";
+            if (File.Exists(Path.Combine(path, "usfm.sty")))
+                return path;
+            path = "C:\\My Paratext Projects";
+            if (File.Exists(Path.Combine(path, "usfm.sty")))
+                return path;
+            return string.Empty;
+        }
+
+        public string paratextProjectsDir
+        {
+            get { return xini.ReadString("paratextProjectsDir", GuessParatextProjectsDir()); }
+            set { xini.WriteString("paratextProjectsDir", value.Trim()); }
+        }
+
+
 
         public haiolaForm()
         {
@@ -49,6 +74,10 @@ namespace haiola
             extensionLabel.Text = plugin.PluginMessage();
         }
 
+        /// <summary>
+        /// Prompt the user for the Haiola project directory to use.
+        /// </summary>
+        /// <returns>true iff a selection was made</returns>
         bool GetRootDirectory()
         {
             FolderBrowserDialog dlg = new FolderBrowserDialog();
@@ -65,10 +94,11 @@ namespace haiola
         }
 
 
-
-
-
-
+        /// <summary>
+        /// Select the root data directory for Haiola projects (usually Documents/BibleConv)
+        /// </summary>
+        /// <param name="sender">Form sending event</param>
+        /// <param name="e">Event parameters</param>
         private void btnSetRootDirectory_Click(object sender, EventArgs e)
         {
             SaveOptions();
@@ -86,7 +116,6 @@ namespace haiola
                 if (!GetRootDirectory())
                     Application.Exit();
             LoadWorkingDirectory(true);
-            
             Application.DoEvents();
             triggerautorun = Program.autorun;
             if (triggerautorun)
@@ -131,6 +160,7 @@ namespace haiola
         {
             int projCount = 0;
             int projReady = 0;
+            LoadParatextProjectList();
             m_projectsList.BeginUpdate();
             m_projectsList.Items.Clear();
             m_inputDirectory = Path.Combine(dataRootDir, "input");
@@ -580,9 +610,9 @@ namespace haiola
         }
 
 
-        public void PreprocessUsfmFiles()
+        public void PreprocessUsfmFiles(string SourceDir)
         {
-            string SourceDir = Path.Combine(m_inputProjectDirectory, "Source");
+            // string SourceDir = Path.Combine(m_inputProjectDirectory, "Source");
             string UsfmDir = Path.Combine(m_outputProjectDirectory, "usfm1");
             if (!Directory.Exists(SourceDir))
             {
@@ -616,8 +646,8 @@ namespace haiola
                     (lowerName != "tmp.txt") &&
                     (lowerName != "changes.txt") &&
                     (lowerName != "hyphenatedWords.txt") &&
-                    (lowerName != "wordBoundariesOutput.txt") &&
-                    (lowerName != "autocorrect.txt"))
+                    (lowerName != "wordboundariesoutput.txt") &&
+                    (lowerName != "printdraftchanges.txt"))
                 {
                     currentConversion = "preprocessing " + filename;
                     Application.DoEvents();
@@ -626,11 +656,14 @@ namespace haiola
                     string outputFileName = MakeUpUsfmFileName(inputFile) + ".usfm";
                     if (outputFileName.Length < 8)
                     {
-                        Logit.WriteLine("No proper \\id line found in "+inputFile);
-                        break;
+                        if (fileType != ".TXT")
+                            Logit.WriteLine("No proper \\id line found in " + inputFile);
                     }
-                    string outputFilePath = Path.Combine(UsfmDir, outputFileName);
-                    PreprocessOneFile(inputFile, m_options.preprocessingTables, outputFilePath);
+                    else
+                    {
+                        string outputFilePath = Path.Combine(UsfmDir, outputFileName);
+                        PreprocessOneFile(inputFile, m_options.preprocessingTables, outputFilePath);
+                    }
                 }
             }
         }
@@ -1437,27 +1470,36 @@ In addition, you have permission to convert the text to different file formats, 
     	private void GetUsfx(string projDirName)
     	{
 			SetCurrentProject(projDirName);
-			string source = Path.Combine(m_inputProjectDirectory, "Source");
-    		if (Directory.Exists(source))
-    		{
-    			PreprocessUsfmFiles();
-    		}
-    		else
-    		{
-    			source = Path.Combine(m_inputProjectDirectory, "usfx");
-    			if (Directory.Exists(source))
-    			{
-    				ImportUsfx(source);
-    			}
-    			else
-    			{
-    				source = Path.Combine(m_inputProjectDirectory, "usx");
-    				if (Directory.Exists(source))
-    				{
-    					//TODO: Create ImportUsx(source);
-    				}
-    			}
-    		}
+			string source = Path.Combine(paratextProjectsDir, (string)paratextcomboBox.SelectedItem);
+            if (!String.IsNullOrEmpty(source))
+            {
+                PreprocessUsfmFiles(source);
+            }
+            else
+            {
+                source = Path.Combine(m_inputProjectDirectory, "Source");
+                if (Directory.Exists(source))
+                {
+                    PreprocessUsfmFiles(source);
+                }
+                else
+                {
+                    source = Path.Combine(m_inputProjectDirectory, "usfx");
+                    if (Directory.Exists(source))
+                    {
+                        ImportUsfx(source);
+                    }
+                    else
+                    {
+                        source = Path.Combine(m_inputProjectDirectory, "usx");
+                        if (Directory.Exists(source))
+                        {
+                            MessageBox.Show("Sorry, direct USX import is not yet implemented. Please import to Paratext and export as USFM.");
+                            //TODO: Create ImportUsx(source);
+                        }
+                    }
+                }
+            }
     		Application.DoEvents();
     		if (fAllRunning)
     			ConvertUsfmToUsfx();
@@ -1587,6 +1629,7 @@ In addition, you have permission to convert the text to different file formats, 
             e10dblCheckBox.Checked = m_options.ETENDBL;
             archivedCheckBox.Checked = m_options.Archived;
             subsetCheckBox.Checked = m_options.subsetProject;
+            paratextcomboBox.SelectedItem = m_options.paratextProject;
             
             m_currentTemplate = xini.ReadString("currentTemplate", String.Empty);
             templateLabel.Text = "Current template: " + m_currentTemplate;
@@ -1790,6 +1833,7 @@ In addition, you have permission to convert the text to different file formats, 
             m_options.ETENDBL = e10dblCheckBox.Checked;
             m_options.Archived = archivedCheckBox.Checked;
             m_options.subsetProject = subsetCheckBox.Checked;
+            m_options.paratextProject = (string)paratextcomboBox.SelectedItem;
 
             List<string> tableNames = new List<string>();
             foreach (string filename in listInputProcesses.Items)
@@ -2451,5 +2495,45 @@ In addition, you have permission to convert the text to different file formats, 
             LoadWorkingDirectory(false);
         }
 
+        /// <summary>
+        /// Load the Paratext Projects combo box item list based on projects found in the Paratext directory.
+        /// </summary>
+        private void LoadParatextProjectList()
+        {
+            paratextDirLabel.Text = paratextProjectsDir;
+            if (File.Exists(Path.Combine(paratextProjectsDir, "usfm.sty")))
+            {
+                paratextcomboBox.Items.Clear();
+                paratextcomboBox.Items.Add(String.Empty);
+                string[] dirList = Directory.GetDirectories(paratextProjectsDir);
+                foreach (string d in dirList)
+                {
+                    string ssf = d + ".ssf";
+                    string projName = Path.GetFileNameWithoutExtension(ssf);
+                    if (File.Exists(ssf))
+                    {
+                        paratextcomboBox.Items.Add(projName);
+                    }
+                }
+            }
+        }
+
+        private void paratextButton_Click(object sender, EventArgs e)
+        {
+            SaveOptions();
+            FolderBrowserDialog dlg = new FolderBrowserDialog();
+            dlg.SelectedPath = paratextProjectsDir;
+            dlg.Description =
+                @"Please select your existing Paratext Projects folder.";
+            dlg.ShowNewFolderButton = true;
+            if ((dlg.ShowDialog() != System.Windows.Forms.DialogResult.OK) || (dlg.SelectedPath == null))
+                return;
+            if (File.Exists(Path.Combine(dlg.SelectedPath, "usfm.sty")))
+            {
+                paratextProjectsDir = dlg.SelectedPath;
+                xini.Write();
+                LoadParatextProjectList();
+            }
+        }
     }
 }

@@ -234,7 +234,7 @@ namespace WordSend
                 bsb.Append("<form name=\"bkch1\"><div class=\"navChapters\">");
                 bsb.Append("<select name=\"bksch1\" onChange=\"location=document.bkch1.bksch1.options[document.bkch1.bksch1.selectedIndex].value;\">");
                 i = 0;
-                while (i < bookInfo.publishArray.Length)
+                while (i < bookInfo.publishArrayCount)
                 {
                     if (bookInfo.publishArray[i] != null)
                     {
@@ -335,7 +335,7 @@ namespace WordSend
                 bsb.Append(OptionSelectedOpeningElement + "---</option>\r\n");
                 i = 0;
                 BibleBookRecord bookRec;
-                while ((i < bookInfo.publishArray.Length) && (bookInfo.publishArray[i] != null))
+                while (i < bookInfo.publishArrayCount)
                 {
                     bookRec = (BibleBookRecord)bookInfo.publishArray[i];
                     if (bookRec.isPresent && (bookRec.chapterFiles != null) && (bookRec.chapterFiles.Count > 0))
@@ -1547,7 +1547,7 @@ namespace WordSend
                                         return false;
                                     }
                                     foundThisBook = false;
-                                    for (i = 0; (i < bookInfo.publishArray.Length) && (bookInfo.publishArray[i] != null) && !foundThisBook; i++)
+                                    for (i = 0; (i < bookInfo.publishArrayCount) && !foundThisBook; i++)
                                     {
                                         {
                                             if (bookInfo.publishArray[i].tla == bookRecord.tla)
@@ -1792,7 +1792,7 @@ namespace WordSend
                 try
                 {
 
-                    for (i = 0; (i < BibleBookInfo.MAXNUMBOOKS) && (bookInfo.publishArray[i] != null); i++)
+                    for (i = 0; (i < bookInfo.publishArrayCount); i++)
                     {
                         if (bookInfo.publishArray[i].isPresent && (bookInfo.publishArray[i].chapterFiles != null))
                         {   // This book is in the input files and contains at least one character of text.

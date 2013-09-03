@@ -174,6 +174,12 @@ namespace haiola
 			set { ini.WriteString("contributor", value.Trim()); }
 		}
 
+        public string paratextProject
+        {
+            get { return ini.ReadString("paratextProject", String.Empty); }
+            set { ini.WriteString("paratextProject", value.Trim()); }
+        }
+
 		public string vernacularTitle
 		{
 			get { return ini.ReadString("vernacularTitle", String.Empty); }

@@ -1,15 +1,15 @@
 /* stylesheet for use with Prophero */
 /* Dave van Grootheest, Netherlands Bible Society */
 /* Adapted 2009-07-21 for use with Prophero and expanded to include most of the USFM 2.2 style set by Kahunapule */
-
+/* 2013-09-02 Expanded for USFM 2.4 by Kahunapule */
 /* JohnT: global defaults */
 
-body	{ font-family:'Gentium Basic', 'Gentium', 'Liberation Serif', 'Times New Roman', 'serif'; font-size: 13pt; line-height: 1.4em }
+body	{ font-family:'Gentium Basic', 'Gentium', 'Liberation Serif', 'Times New Roman', 'serif'; font-size: 14pt; line-height: 1.5em }
 body.mainDoc	{
 	background-color: rgb(255,255,255);
 	min-width: 120px
 	}
-select { font-family: 'Gentium Basic', 'Gentium', 'Liberation Serif', 'Times New Roman', 'serif'; font-size: 13pt; line-height: 1.4em }
+select { font-family: 'Gentium Basic', 'Gentium', 'Liberation Serif', 'Times New Roman', 'serif'; font-size: 14pt; line-height: 1.5em }
 
 /* Styles for USFM elements -- div for paragraph and span for character styles */
 span.add { font-style: italic }
@@ -39,6 +39,9 @@ div.f {  font-size: 11pt; display: block; margin-bottom: 6pt; line-height: 1.4em
 div.glo {  font-size: 13pt; font-weight: bold; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; text-indent: 2em }
 div.ib, div.idx, div.ie, div.iex, div.intro, div.ip, div.zp {  font-size: 11pt; color: rgb(0,0,128); display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; text-indent: 2em }
 div.ili, div.ili1 {  font-size: 11pt; color: rgb(0,0,128); display: list-item; list-style-type: square; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; text-indent: 0em; margin-left: 2em }
+div.ili2 {  font-size: 11pt; color: rgb(0,0,128); display: list-item; list-style-type: square; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; text-indent: 0em; margin-left: 4em }
+div.ili3 {  font-size: 11pt; color: rgb(0,0,128); display: list-item; list-style-type: square; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; text-indent: 0em; margin-left: 8em }
+div.ili4 {  font-size: 11pt; color: rgb(0,0,128); display: list-item; list-style-type: square; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; text-indent: 0em; margin-left: 12em }
 div.io, div.io1 {  font-size: 11pt; color: rgb(0,0,128); display: list-item; list-style-type: none; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; text-indent: 0em; margin-left: 2em }
 div.io2 {  font-size: 11pt; color: rgb(0,0,128); display: list-item; list-style-type: none; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; text-indent: 0em; margin-left: 4em }
 div.io3 {  font-size: 11pt; color: rgb(0,0,128); display: list-item; list-style-type: none; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; text-indent: 0em; margin-left: 6em }
@@ -66,7 +69,8 @@ div.keyword2 {  font-size: 13pt; font-weight: bold; display: block; margin-botto
 div.keyword3 {  font-size: 13pt; font-weight: bold; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:left; margin-top: 6pt; margin-right: 12em; text-indent: -2em }
 div.li, div.li1, div.ph, div.ph1 { display: list-item; list-style-type: none; text-align:left; text-indent: 2em }
 div.li2, div.ph2, div.phi { display: list-item; list-style-type: none; text-align:left; text-indent: 4em }
-div.li3, div.ph3 { display: list-item; list-style-type: none; text-align:left; text-indent: 12em }
+div.li3, div.ph3 { display: list-item; list-style-type: none; text-align:left; text-indent: 8em }
+div.li4, div.ph4 { display: list-item; list-style-type: none; text-align:left; text-indent: 12em }
 div.lit { text-align: right }
 div.m { text-indent: 0em; margin-top: 0 }
 div.mi { text-indent: 2em; text-align: left; margin-top: 0 }
@@ -75,7 +79,7 @@ div.ms, div.ms1 { color: rgb(0,0,128); font-weight: bold;  font-size: 13pt; disp
 div.ms2 { font-weight: bold;  font-size: 13pt; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:center; margin-top: 6pt; text-indent: 2em }
 div.ms3 { font-weight: bold;  font-size: 13pt; display: block; margin-bottom: 6pt; line-height: 1.4em; text-align:center; margin-top: 6pt; text-indent: 2em }
 div.mt, div.mt1, div.mte, div.mte1, h1 { font-weight: bold; font-size: 16pt; text-align: center; line-height: 1.7em }
-div.mt2, div.mte2, h2 { font-weight: bold; font-size: 13pt; text-align: center; line-height: 1.7em }
+div.mt2, div.mte2, h2 { font-weight: bold; font-size: 14pt; text-align: center; line-height: 1.7em }
 div.mt3, div.mte3, h3 { font-weight: bold; font-size: 13pt; text-align: center; line-height: 1.7em }
 div.nb, div.ps { text-indent: 0em; margin-top: 0em }
 div.k1 { text-indent: 0em; text-align: left; font-weight: bold }
