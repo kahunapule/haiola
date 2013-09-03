@@ -39,6 +39,7 @@
             this.btnSetRootDirectory = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.idTabPage = new System.Windows.Forms.TabPage();
+            this.subsetCheckBox = new System.Windows.Forms.CheckBox();
             this.archivedCheckBox = new System.Windows.Forms.CheckBox();
             this.e10dblCheckBox = new System.Windows.Forms.CheckBox();
             this.webSiteReadyCheckBox = new System.Windows.Forms.CheckBox();
@@ -191,7 +192,10 @@
             this.statsButton = new System.Windows.Forms.Button();
             this.markRetryButton = new System.Windows.Forms.Button();
             this.extensionLabel = new System.Windows.Forms.Label();
-            this.subsetCheckBox = new System.Windows.Forms.CheckBox();
+            this.paratextButton = new System.Windows.Forms.Button();
+            this.paratextDirLabel = new System.Windows.Forms.Label();
+            this.label52 = new System.Windows.Forms.Label();
+            this.paratextcomboBox = new System.Windows.Forms.ComboBox();
             this.tabControl1.SuspendLayout();
             this.idTabPage.SuspendLayout();
             this.copyrightTabPage.SuspendLayout();
@@ -229,7 +233,7 @@
             // 
             // unmarkAllButton
             // 
-            this.unmarkAllButton.Location = new System.Drawing.Point(370, 1);
+            this.unmarkAllButton.Location = new System.Drawing.Point(407, 0);
             this.unmarkAllButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.unmarkAllButton.Name = "unmarkAllButton";
             this.unmarkAllButton.Size = new System.Drawing.Size(73, 23);
@@ -250,10 +254,10 @@
             // 
             // reloadButton
             // 
-            this.reloadButton.Location = new System.Drawing.Point(171, 2);
+            this.reloadButton.Location = new System.Drawing.Point(240, -1);
             this.reloadButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.reloadButton.Name = "reloadButton";
-            this.reloadButton.Size = new System.Drawing.Size(97, 23);
+            this.reloadButton.Size = new System.Drawing.Size(81, 23);
             this.reloadButton.TabIndex = 1;
             this.reloadButton.Text = "M&ark ready";
             this.reloadButton.UseVisualStyleBackColor = true;
@@ -261,10 +265,10 @@
             // 
             // WorkOnAllButton
             // 
-            this.WorkOnAllButton.Location = new System.Drawing.Point(447, 1);
+            this.WorkOnAllButton.Location = new System.Drawing.Point(484, 1);
             this.WorkOnAllButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.WorkOnAllButton.Name = "WorkOnAllButton";
-            this.WorkOnAllButton.Size = new System.Drawing.Size(117, 23);
+            this.WorkOnAllButton.Size = new System.Drawing.Size(80, 23);
             this.WorkOnAllButton.TabIndex = 6;
             this.WorkOnAllButton.Text = "&Run marked";
             this.WorkOnAllButton.UseVisualStyleBackColor = true;
@@ -275,7 +279,7 @@
             this.btnSetRootDirectory.Location = new System.Drawing.Point(0, 1);
             this.btnSetRootDirectory.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.btnSetRootDirectory.Name = "btnSetRootDirectory";
-            this.btnSetRootDirectory.Size = new System.Drawing.Size(123, 23);
+            this.btnSetRootDirectory.Size = new System.Drawing.Size(100, 23);
             this.btnSetRootDirectory.TabIndex = 0;
             this.btnSetRootDirectory.Text = "&Set data directory";
             this.btnSetRootDirectory.UseVisualStyleBackColor = true;
@@ -292,17 +296,19 @@
             this.tabControl1.Controls.Add(this.booksPage);
             this.tabControl1.Controls.Add(this.framesPage);
             this.tabControl1.Controls.Add(this.messagesTabPage);
-            this.tabControl1.Location = new System.Drawing.Point(0, 85);
+            this.tabControl1.Location = new System.Drawing.Point(0, 79);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.ShowToolTips = true;
-            this.tabControl1.Size = new System.Drawing.Size(715, 573);
+            this.tabControl1.Size = new System.Drawing.Size(715, 579);
             this.tabControl1.TabIndex = 9;
             this.tabControl1.Leave += new System.EventHandler(this.tabControl1_Leave);
             // 
             // idTabPage
             // 
+            this.idTabPage.Controls.Add(this.paratextcomboBox);
+            this.idTabPage.Controls.Add(this.label52);
             this.idTabPage.Controls.Add(this.subsetCheckBox);
             this.idTabPage.Controls.Add(this.archivedCheckBox);
             this.idTabPage.Controls.Add(this.e10dblCheckBox);
@@ -338,10 +344,20 @@
             this.idTabPage.Margin = new System.Windows.Forms.Padding(2);
             this.idTabPage.Name = "idTabPage";
             this.idTabPage.Padding = new System.Windows.Forms.Padding(2);
-            this.idTabPage.Size = new System.Drawing.Size(707, 547);
+            this.idTabPage.Size = new System.Drawing.Size(707, 553);
             this.idTabPage.TabIndex = 0;
             this.idTabPage.Text = "Identification";
             this.idTabPage.UseVisualStyleBackColor = true;
+            // 
+            // subsetCheckBox
+            // 
+            this.subsetCheckBox.AutoSize = true;
+            this.subsetCheckBox.Location = new System.Drawing.Point(415, 418);
+            this.subsetCheckBox.Name = "subsetCheckBox";
+            this.subsetCheckBox.Size = new System.Drawing.Size(194, 17);
+            this.subsetCheckBox.TabIndex = 39;
+            this.subsetCheckBox.Text = "Subset project -- don\'t double count";
+            this.subsetCheckBox.UseVisualStyleBackColor = true;
             // 
             // archivedCheckBox
             // 
@@ -648,7 +664,7 @@
             this.copyrightTabPage.Location = new System.Drawing.Point(4, 22);
             this.copyrightTabPage.Margin = new System.Windows.Forms.Padding(2);
             this.copyrightTabPage.Name = "copyrightTabPage";
-            this.copyrightTabPage.Size = new System.Drawing.Size(707, 547);
+            this.copyrightTabPage.Size = new System.Drawing.Size(707, 529);
             this.copyrightTabPage.TabIndex = 2;
             this.copyrightTabPage.Text = "Copyright";
             this.copyrightTabPage.UseVisualStyleBackColor = true;
@@ -885,7 +901,7 @@
             this.processTabPage.Margin = new System.Windows.Forms.Padding(2);
             this.processTabPage.Name = "processTabPage";
             this.processTabPage.Padding = new System.Windows.Forms.Padding(2);
-            this.processTabPage.Size = new System.Drawing.Size(707, 547);
+            this.processTabPage.Size = new System.Drawing.Size(707, 529);
             this.processTabPage.TabIndex = 1;
             this.processTabPage.Text = "Processes";
             this.processTabPage.UseVisualStyleBackColor = true;
@@ -1051,7 +1067,7 @@
             this.htmlTabPage.Location = new System.Drawing.Point(4, 22);
             this.htmlTabPage.Margin = new System.Windows.Forms.Padding(2);
             this.htmlTabPage.Name = "htmlTabPage";
-            this.htmlTabPage.Size = new System.Drawing.Size(707, 547);
+            this.htmlTabPage.Size = new System.Drawing.Size(707, 553);
             this.htmlTabPage.TabIndex = 3;
             this.htmlTabPage.Text = "HTML options";
             this.htmlTabPage.UseVisualStyleBackColor = true;
@@ -1161,7 +1177,7 @@
             this.licenseTextBox.Multiline = true;
             this.licenseTextBox.Name = "licenseTextBox";
             this.licenseTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.licenseTextBox.Size = new System.Drawing.Size(701, 201);
+            this.licenseTextBox.Size = new System.Drawing.Size(701, 207);
             this.licenseTextBox.TabIndex = 49;
             // 
             // label4
@@ -1874,7 +1890,7 @@
             // helpButton
             // 
             this.helpButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.helpButton.Location = new System.Drawing.Point(128, 0);
+            this.helpButton.Location = new System.Drawing.Point(197, -1);
             this.helpButton.Name = "helpButton";
             this.helpButton.Size = new System.Drawing.Size(38, 23);
             this.helpButton.TabIndex = 2;
@@ -1904,9 +1920,9 @@
             // 
             // markRetryButton
             // 
-            this.markRetryButton.Location = new System.Drawing.Point(273, 3);
+            this.markRetryButton.Location = new System.Drawing.Point(326, 1);
             this.markRetryButton.Name = "markRetryButton";
-            this.markRetryButton.Size = new System.Drawing.Size(92, 21);
+            this.markRetryButton.Size = new System.Drawing.Size(76, 21);
             this.markRetryButton.TabIndex = 4;
             this.markRetryButton.Text = "Mark &failed";
             this.markRetryButton.UseVisualStyleBackColor = true;
@@ -1921,21 +1937,49 @@
             this.extensionLabel.TabIndex = 30;
             this.extensionLabel.Text = "--";
             // 
-            // subsetCheckBox
+            // paratextButton
             // 
-            this.subsetCheckBox.AutoSize = true;
-            this.subsetCheckBox.Location = new System.Drawing.Point(415, 418);
-            this.subsetCheckBox.Name = "subsetCheckBox";
-            this.subsetCheckBox.Size = new System.Drawing.Size(194, 17);
-            this.subsetCheckBox.TabIndex = 39;
-            this.subsetCheckBox.Text = "Subset project -- don\'t double count";
-            this.subsetCheckBox.UseVisualStyleBackColor = true;
+            this.paratextButton.Location = new System.Drawing.Point(106, 2);
+            this.paratextButton.Name = "paratextButton";
+            this.paratextButton.Size = new System.Drawing.Size(85, 20);
+            this.paratextButton.TabIndex = 31;
+            this.paratextButton.Text = "Paratext";
+            this.paratextButton.UseVisualStyleBackColor = true;
+            this.paratextButton.Click += new System.EventHandler(this.paratextButton_Click);
+            // 
+            // paratextDirLabel
+            // 
+            this.paratextDirLabel.AutoSize = true;
+            this.paratextDirLabel.Location = new System.Drawing.Point(376, 23);
+            this.paratextDirLabel.Name = "paratextDirLabel";
+            this.paratextDirLabel.Size = new System.Drawing.Size(104, 13);
+            this.paratextDirLabel.TabIndex = 32;
+            this.paratextDirLabel.Text = "My Paratext Projects";
+            // 
+            // label52
+            // 
+            this.label52.AutoSize = true;
+            this.label52.Location = new System.Drawing.Point(474, 6);
+            this.label52.Name = "label52";
+            this.label52.Size = new System.Drawing.Size(84, 13);
+            this.label52.TabIndex = 40;
+            this.label52.Text = "Paratext project:";
+            // 
+            // paratextcomboBox
+            // 
+            this.paratextcomboBox.FormattingEnabled = true;
+            this.paratextcomboBox.Location = new System.Drawing.Point(564, 5);
+            this.paratextcomboBox.Name = "paratextcomboBox";
+            this.paratextcomboBox.Size = new System.Drawing.Size(138, 21);
+            this.paratextcomboBox.TabIndex = 41;
             // 
             // haiolaForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(984, 661);
+            this.Controls.Add(this.paratextDirLabel);
+            this.Controls.Add(this.paratextButton);
             this.Controls.Add(this.extensionLabel);
             this.Controls.Add(this.markRetryButton);
             this.Controls.Add(this.statsButton);
@@ -2144,6 +2188,10 @@
         private System.Windows.Forms.CheckBox prepublicationChecksCheckBox;
         private System.Windows.Forms.Label label51;
         private System.Windows.Forms.CheckBox subsetCheckBox;
+        private System.Windows.Forms.Button paratextButton;
+        private System.Windows.Forms.Label paratextDirLabel;
+        private System.Windows.Forms.ComboBox paratextcomboBox;
+        private System.Windows.Forms.Label label52;
 	}
 }
 

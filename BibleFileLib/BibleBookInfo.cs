@@ -106,8 +106,27 @@ namespace WordSend
         public Hashtable books;
         public BibleBookRecord[] bookArray = new BibleBookRecord[MAXNUMBOOKS];
         public BibleBookRecord[] publishArray = new BibleBookRecord[MAXNUMBOOKS];
+        protected int publishArrayActualBookCount = -1;
         public Hashtable altNames;
         protected bool apocryphaFound;
+
+        public int publishArrayCount
+        {
+            get
+            {
+                int i;
+                if (publishArrayActualBookCount < 0)
+                {
+                    i = 0;
+                    while ((publishArray[i] != null) && (i < publishArray.Length))
+                    {
+                        i++;
+                    }
+                    publishArrayActualBookCount = i;
+                }
+                return publishArrayActualBookCount;
+            }
+        }
 
         // protected HashSet<string> presentVerses;
 
@@ -450,6 +469,7 @@ namespace WordSend
                 }
                 if (i < MAXNUMBOOKS)
                     publishArray[i] = null;
+                publishArrayActualBookCount = i;
                 sr.Close();
             }
             catch (Exception ex)
