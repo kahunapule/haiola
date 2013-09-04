@@ -1271,6 +1271,8 @@ In addition, you have permission to convert the text to different file formats, 
                 // Start with an EMPTY USFM directory to avoid problems with old files 
                 Utils.DeleteDirectory(UsfmDir);
                 fileHelper.EnsureDirectory(UsfmDir);
+                string usfxDir = Path.Combine(m_outputProjectDirectory, "usfx");
+                fileHelper.EnsureDirectory(usfxDir);
                 string[] inputFileNames = Directory.GetFiles(SourceDir);
                 if (inputFileNames.Length == 0)
                 {
@@ -1293,7 +1295,6 @@ In addition, you have permission to convert the text to different file formats, 
                         {
                             if (xr.Name == "usfx")
                             {
-
                                 logFile = Path.Combine(m_outputProjectDirectory, "usfx2usfm_log.txt");
                                 Logit.OpenFile(logFile);
                                 Logit.GUIWriteString = showMessageString;
@@ -1309,22 +1310,23 @@ In addition, you have permission to convert the text to different file formats, 
                                     m_options.lastRunResult = false;
                                 }
                                 currentConversion = "converted USFX to USFM.";
+                                File.Copy(inputFile, Path.Combine(usfxDir, "usfx.xml"), true);
                             }
                             else if (xr.Name == "vernacularParms")
                             {
                                 // TODO: Insert code here to read metadata in this file into options file.
+                                File.Copy(inputFile, Path.Combine(usfxDir, "vernacularParms.xml"), true);
                             }
                             else if (xr.Name == "vernacularParmsMiscellaneous")
                             {
                                 // TODO: Insert code here to read this file into options file.
+                                File.Copy(inputFile, Path.Combine(usfxDir, "vernacularParmsMiscellaneous.xml"), true);
                             }
                         }
                         xr.Close();
                         Application.DoEvents();
-
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -1471,9 +1473,12 @@ In addition, you have permission to convert the text to different file formats, 
     	{
 			SetCurrentProject(projDirName);
 			string source = Path.Combine(paratextProjectsDir, (string)paratextcomboBox.SelectedItem);
-            if (!String.IsNullOrEmpty(source))
+            if (!String.IsNullOrEmpty((string)paratextcomboBox.SelectedItem))
             {
                 PreprocessUsfmFiles(source);
+                Application.DoEvents();
+                if (fAllRunning)
+                    ConvertUsfmToUsfx();
             }
             else
             {
@@ -1481,6 +1486,9 @@ In addition, you have permission to convert the text to different file formats, 
                 if (Directory.Exists(source))
                 {
                     PreprocessUsfmFiles(source);
+                    Application.DoEvents();
+                    if (fAllRunning)
+                        ConvertUsfmToUsfx();
                 }
                 else
                 {
@@ -1500,9 +1508,6 @@ In addition, you have permission to convert the text to different file formats, 
                     }
                 }
             }
-    		Application.DoEvents();
-    		if (fAllRunning)
-    			ConvertUsfmToUsfx();
     	}
 
     	private void WorkOnAllButton_Click(object sender, EventArgs e)
