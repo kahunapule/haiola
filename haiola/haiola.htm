@@ -60,7 +60,10 @@ but I never tried it on your system with your data. <span style="font-weight: bo
 consumer-level software.</span> There aren’t many error traps. Strange
 data will cause very strange results and/or strange messages, so please
 watch for error
-messages and check your outputs to make sure they look reasonable.<br>
+messages and check your outputs to make sure they look reasonable. In particular,
+please note that bad markup that does not conform exactly to the USFM specification
+WILL cause problems. Customizations of the style sheet (custom.sty) in Paratext
+are NOT honored by Haiola, and will confuse Haiola.<br>
 </p>
 
 <p>Haiola is a free and open source collection of
@@ -82,8 +85,8 @@ Haiola:</p>
   <li>A relatively modern computer running a
 reasonably current version Linux, Mac OS X, and/or Windows. (I only
 test with the
-most recent version of Ubuntu Linux, Mac OS X Lion, and
-Windows 7. Your results may
+most recent version of Ubuntu Linux, Mac OS X, and
+Windows 8. Your results may
 vary if you use a different operating system.)</li>
   <li>
     <p>Above-average computer literacy, including
@@ -149,7 +152,8 @@ script or batch file to process them.<br>
 <h2>How do I install Haiola on Microsoft Windows?</h2>
 <p>Method 1: Standard windows install</p>
 <ol>
-<li>Install prerequisites: <a href="http://scripts.sil.org/Andika_download">SIL Andika Font</a>, <a href="http://scripts.sil.org/cms/scripts/page.php?item_id=Gentium_download">SIL
+<li>Install prerequisites: <a href="http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=xetex"><b>XeTeX</b></a> (<a href="http://miktex.org/">MiKTeX</a> is a nice way to do that in Windows),
+<a href="http://scripts.sil.org/Andika_download">SIL Andika Font</a>, <a href="http://scripts.sil.org/cms/scripts/page.php?item_id=Gentium_download">SIL
 Gentium Plus Font</a>, and <a href="http://msdn.microsoft.com/en-us/netframework/cc378097">Microsoft
 .NET Framework 3.5 SP 1</a> (<a href="http://haiola.org/dotnetfx35.exe">mirrored here</a>) and/or <a href="http://www.go-mono.com/mono-downloads/download.html">Mono for
 Windows</a>.</li>
@@ -158,10 +162,13 @@ Windows</a>.</li>
 <li>Run Haiola. On the first run, you will be asked to specify where you
 want to put your data files. Normally, this is in the BibleConv folder
 in your Documents folder.</li>
+<li>If you wish to use direct Paratext project data import (without having to manually copy files over or make a backup file and unzip it to the Source directory), then you must tell Haiola where
+your "My Paratext Projects" directory is (whatever you called it when you installed Paratext) by pressing the Paratext button and navigating to it.</li>
 </ol>
 <p>Method 2: Portable install (for installation on removable media)</p>
 <ol>
-<li>Install prerequisites: <a href="http://scripts.sil.org/Andika_download">SIL Andika Font</a>, <a href="http://scripts.sil.org/cms/scripts/page.php?item_id=Gentium_download">SIL
+<li>Install prerequisites: <a href="http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=xetex"><b>XeTeX</b></a> (<a href="http://miktex.org/">MiKTeX</a> is a nice way to do that in Windows),
+<a href="http://scripts.sil.org/Andika_download">SIL Andika Font</a>, <a href="http://scripts.sil.org/cms/scripts/page.php?item_id=Gentium_download">SIL
 Gentium Plus Font</a>, and <a href="http://msdn.microsoft.com/en-us/netframework/cc378097">Microsoft
 .NET Framework 3.5 SP 1</a> (<a href="http://haiola.org/dotnetfx35.exe">mirrored here</a>) and/or <a href="http://www.go-mono.com/mono-downloads/download.html">Mono for
 Windows</a>.</li>
@@ -171,11 +178,13 @@ Windows</a>.</li>
 <li>Run Haiola. On the first run, you will be asked to specify where you
 want to put your data files. Normally, this is in the BibleConv folder
 in your Documents folder.</li>
+<li>If you wish to use direct Paratext project data import (without having to manually copy files over or make a backup file and unzip it to the Source directory), then you must tell Haiola where
+your "My Paratext Projects" directory is (whatever you called it when you installed Paratext) by pressing the Paratext button and navigating to it.</li>
 </ol>
 
 <h2>How do I install Haiola on OS X?</h2>
 <ol>
-<li>Install prerequisites: <a href="http://scripts.sil.org/Andika_download">SIL Andika Font</a>, <a href="http://scripts.sil.org/Gentium">SIL Gentium Plus Font</a>, and <a href="http://www.go-mono.com/mono-downloads/download.html">Mono for
+<li>Install prerequisites: <a href="http://scripts.sil.org/cms/scripts/page.php?item_id=xetex_download">XeTeX</a>, <a href="http://scripts.sil.org/Andika_download">SIL Andika Font</a>, <a href="http://scripts.sil.org/Gentium">SIL Gentium Plus Font</a>, and <a href="http://www.go-mono.com/mono-downloads/download.html">Mono for
 Mac OS X</a>.</li>
 <li><a href="http://haiola.org/Haiola.dmg">Download the Haiola Mac OS X disk
 image file</a>, open it, and drag the application bundle to your
@@ -183,10 +192,12 @@ Application directory.</li>
 <li>Run Haiola. On the first run, you will be asked to specify where you
 want to put your data files. Normally, this is in the BibleConv folder
 in your Documents folder.</li>
+<li>If you wish to use direct Paratext project data import (without having to manually copy files over or make a backup file and unzip it to the Source directory), then you must tell Haiola where
+your "My Paratext Projects" directory is (whatever you called it when you installed Paratext) by pressing the Paratext button and navigating to it.</li>
 </ol>
 <h2>How do I install Haiola on Linux?</h2>
 <ol>
-<li>Install prerequisites: <a href="http://scripts.sil.org/Andika_download">SIL Andika Font</a>, <a href="http://scripts.sil.org/Gentium">SIL Gentium Plus Font</a>, and <a href="http://www.go-mono.com/mono-downloads/download.html">Mono for
+<li>Install prerequisites: <a href="http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=xetex"><b>XeTeX</b></a> (texlive-xetex package in Ubuntu Linux), <a href="http://scripts.sil.org/Andika_download">SIL Andika Font</a>, <a href="http://scripts.sil.org/Gentium">SIL Gentium Plus Font</a>, and <a href="http://www.go-mono.com/mono-downloads/download.html">Mono for
 Linux</a>. (These may be available in your distribution package
 management system. For Ubuntu, you can get the latest SIL fonts from
 "apt source deb http://packages.sil.org/ubuntu distro main", where
@@ -206,6 +217,8 @@ you installed Haiola in ~/haiola/, the command to start it would be
 "mono ~/haiola/haiola.exe".</li>
 <li>Run Haiola. On the first run, you will be asked to specify where you
 want to put your data files. Normally, this is in "~/BibleConv".</li>
+<li>If you wish to use direct Paratext project data import (without having to manually copy files over or make a backup file and unzip it to the Source directory), then you must tell Haiola where
+your "My Paratext Projects" directory is (whatever you called it when you installed Paratext) by pressing the Paratext button and navigating to it.</li>
 </ol>
 
 <h2>What is the required directory structure?</h2>
@@ -260,7 +273,11 @@ introduction files, etc.<br>
 
 <p>Of the folders above, the ones you create are the project folders
 and ONE of Source, usfx, or usx folder for input under each project
-folder. Haiola checks for Source (USFM files) first, then if that
+folder, unless you are reading the data directly from a Paratext project.
+In that case, you must configure the Paratext data directory (commonly
+c:\My Paratext Projects, but it might be any folder that you configured in
+Paratext). Haiola checks for a configured Paratext project first, then
+Source (USFM files), then if that
 directory doesn't exist, it checks for usfx, then if that doesn't
 exist, it checks for usx. You then fill the Source, usfx, or usx folder
 with the appropriate input files for

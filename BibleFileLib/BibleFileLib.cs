@@ -68,7 +68,8 @@ namespace WordSend
 
 		public void Close()
 		{
-			OutputFile.Close();
+            if (fileIsOpen)
+			    OutputFile.Close();
 			fileIsOpen = false;
 		}
 
