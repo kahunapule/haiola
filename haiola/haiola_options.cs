@@ -128,7 +128,7 @@ namespace haiola
 
         public string customCssFileName
         {
-            get { return ini.ReadString("customCssFileName", "prophero.css"); }
+            get { return ini.ReadString("customCssFileName", "haiola.css"); }
             set { ini.WriteString("customCssFileName", value); }
         }
 
@@ -156,6 +156,12 @@ namespace haiola
             set { ini.WriteBool("WebSiteReady", value); }
         }
 
+        public bool selected
+        {
+            get { return ini.ReadBool("selected", false); }
+            set { ini.WriteBool("selected", value); }
+        }
+
         public bool ETENDBL
         {
             get { return ini.ReadBool("ETENDBL", false); }
@@ -177,7 +183,7 @@ namespace haiola
         public string paratextProject
         {
             get { return ini.ReadString("paratextProject", String.Empty); }
-            set { ini.WriteString("paratextProject", value.Trim()); }
+            set { ini.WriteString("paratextProject", String.IsNullOrEmpty(value) ? String.Empty : value.Trim()); }
         }
 
 		public string vernacularTitle

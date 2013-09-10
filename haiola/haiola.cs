@@ -170,6 +170,7 @@ namespace haiola
             fileHelper.EnsureDirectory(m_outputDirectory);
             workDirLabel.Text = dataRootDir;
 
+            EnsureTemplateFile("haiola.css");
             EnsureTemplateFile("prophero.css");
             EnsureTemplateFile("fixquotes.re");
 
@@ -1472,9 +1473,10 @@ In addition, you have permission to convert the text to different file formats, 
     	private void GetUsfx(string projDirName)
     	{
 			SetCurrentProject(projDirName);
-			string source = Path.Combine(paratextProjectsDir, (string)paratextcomboBox.SelectedItem);
+			string source;
             if (!String.IsNullOrEmpty((string)paratextcomboBox.SelectedItem))
             {
+                source = Path.Combine(paratextProjectsDir, (string)paratextcomboBox.SelectedItem);
                 PreprocessUsfmFiles(source);
                 Application.DoEvents();
                 if (fAllRunning)

@@ -1913,6 +1913,7 @@
 		<row><td>download.htm</td><td>ISX_DEFAULTCOMPONENT</td><td>download.htm</td><td>0</td><td/><td/><td/><td>1</td><td>C:\Users\MICHAEL\Documents\source\prophero\haiola\download.htm</td><td>1</td><td/></row>
 		<row><td>fixquotes.re</td><td>ISX_DEFAULTCOMPONENT</td><td>FIXQUO~1.RE|fixquotes.re</td><td>0</td><td/><td/><td/><td>1</td><td>C:\Users\MICHAEL\Documents\source\prophero\haiola\fixquotes.re</td><td>1</td><td/></row>
 		<row><td>framefuncs.js</td><td>ISX_DEFAULTCOMPONENT</td><td>FRAMEF~1.JS|frameFuncs.js</td><td>0</td><td/><td/><td/><td>1</td><td>C:\Users\MICHAEL\Documents\source\prophero\haiola\frameFuncs.js</td><td>1</td><td/></row>
+		<row><td>haiola.css</td><td>ISX_DEFAULTCOMPONENT</td><td>haiola.css</td><td>0</td><td/><td/><td/><td>1</td><td>C:\Users\MICHAEL\Documents\source\prophero\haiola\haiola.css</td><td>1</td><td/></row>
 		<row><td>haiola.htm</td><td>ISX_DEFAULTCOMPONENT</td><td>haiola.htm</td><td>0</td><td/><td/><td/><td>1</td><td>C:\Users\MICHAEL\Documents\source\prophero\haiola\haiola.htm</td><td>1</td><td/></row>
 		<row><td>haiola.primary_output</td><td>haiola.Primary_output</td><td>haiola.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;haiola1&gt;|Built</td><td>3</td><td/></row>
 		<row><td>index.htm</td><td>ISX_DEFAULTCOMPONENT</td><td>index.htm</td><td>0</td><td/><td/><td/><td>1</td><td>C:\Users\MICHAEL\Documents\source\prophero\haiola\index.htm</td><td>1</td><td/></row>
