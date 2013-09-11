@@ -103,7 +103,7 @@ namespace haiola
         {
             SaveOptions();
             if (GetRootDirectory())
-                LoadWorkingDirectory(true);
+                LoadWorkingDirectory(true, false, false);
         }
 
         private void haiolaForm_Load(object sender, EventArgs e)
@@ -115,7 +115,7 @@ namespace haiola
             if (!Directory.Exists(m_inputDirectory))
                 if (!GetRootDirectory())
                     Application.Exit();
-            LoadWorkingDirectory(true);
+            LoadWorkingDirectory(false, false, false);
             Application.DoEvents();
             triggerautorun = Program.autorun;
             if (triggerautorun)
@@ -156,10 +156,21 @@ namespace haiola
             }
         }
 
-        private void LoadWorkingDirectory(bool all)
+        private bool loadingDirectory = false;
+
+        /// <summary>
+        /// Load the working directory and set the requested projects as selected to run.
+        /// </summary>
+        /// <param name="all">Set all ready projects.</param>
+        /// <param name="failed">Set projects that are ready but failed last run.</param>
+        /// <param name="none">Clear all selection checkboxes.</param>
+        private void LoadWorkingDirectory(bool all, bool failed = false, bool none = false)
         {
+            loadingDirectory = true;
+            bool isReady = false;
             int projCount = 0;
             int projReady = 0;
+            SaveOptions();
             LoadParatextProjectList();
             m_projectsList.BeginUpdate();
             m_projectsList.Items.Clear();
@@ -192,16 +203,40 @@ namespace haiola
                     m_options.Reload(m_xiniPath);
                 }
 
-                if (File.Exists(Path.Combine(path, "options.xini")) && 
-                    (Directory.Exists(Path.Combine(path, "Source")) || Directory.Exists(Path.Combine(path, "usfx"))))
+                bool gotParatextProject = false;
+                if (!String.IsNullOrEmpty(paratextProjectsDir))
                 {
-                    m_projectsList.SetItemChecked(m_projectsList.Items.Count - 1, all || !m_options.lastRunResult);
+                    if (!String.IsNullOrEmpty(m_options.paratextProject))
+                    {
+                        if (Directory.Exists(Path.Combine(paratextProjectsDir, m_options.paratextProject)))
+                        {
+                            gotParatextProject = true;
+                        }
+                    }
+                }
+
+
+                if ((!String.IsNullOrEmpty(m_options.languageId)) && 
+                    (gotParatextProject ||
+                    Directory.Exists(Path.Combine(path, "Source")) || Directory.Exists(Path.Combine(path, "usfx"))))
+                {
+                    isReady = true;
                     projReady++;
                 }
                 else
                 {
-                    m_projectsList.SetItemChecked(m_projectsList.Items.Count - 1, false);
+                    isReady = false;
                 }
+                if (none)
+                    m_options.selected = false;
+                else if (all)
+                    m_options.selected = isReady;
+                else if (failed)
+                    m_options.selected = isReady && !m_options.lastRunResult;
+                else
+                    m_options.selected = isReady && m_options.selected;
+                m_projectsList.SetItemChecked(m_projectsList.Items.Count - 1, m_options.selected);
+                m_options.Write();
             }
             m_projectsList.EndUpdate();
             statsLabel.Text = projReady.ToString() + " of " + projCount.ToString() + " project directories are ready to run.";
@@ -218,6 +253,7 @@ namespace haiola
                                 "No Projects", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 WorkOnAllButton.Enabled = false;
             }
+            loadingDirectory = false;
         }
 
         /// <summary>
@@ -1568,10 +1604,15 @@ In addition, you have permission to convert the text to different file formats, 
             }
         }
 
+        /// <summary>
+        /// Reload working directory and mark all ready projects for running.
+        /// </summary>
+        /// <param name="sender">form</param>
+        /// <param name="e">button event parameters</param>
         private void reloadButton_Click(object sender, EventArgs e)
         {
             SaveOptions();
-            LoadWorkingDirectory(true);
+            LoadWorkingDirectory(true, false, false);
         }
 
         /*
@@ -1589,8 +1630,7 @@ In addition, you have permission to convert the text to different file formats, 
         {
             int i;
             SaveOptions();
-            for (i = 0; i < m_projectsList.Items.Count; i++)
-                m_projectsList.SetItemChecked(i, false);
+            LoadWorkingDirectory(false, false, true);
         }
 
         private void displayOptions()
@@ -1841,6 +1881,9 @@ In addition, you have permission to convert the text to different file formats, 
             m_options.Archived = archivedCheckBox.Checked;
             m_options.subsetProject = subsetCheckBox.Checked;
             m_options.paratextProject = (string)paratextcomboBox.SelectedItem;
+            int sel = m_projectsList.SelectedIndex;
+            if (sel >= 0)
+                m_options.selected = m_projectsList.GetItemChecked(m_projectsList.SelectedIndex);
 
             List<string> tableNames = new List<string>();
             foreach (string filename in listInputProcesses.Items)
@@ -2499,7 +2542,7 @@ In addition, you have permission to convert the text to different file formats, 
         private void markRetryButton_Click(object sender, EventArgs e)
         {
             SaveOptions();
-            LoadWorkingDirectory(false);
+            LoadWorkingDirectory(false, true, false);
         }
 
         /// <summary>
@@ -2540,6 +2583,17 @@ In addition, you have permission to convert the text to different file formats, 
                 paratextProjectsDir = dlg.SelectedPath;
                 xini.Write();
                 LoadParatextProjectList();
+            }
+        }
+
+        private void m_projectsList_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            if (!loadingDirectory)
+            {
+                SaveOptions();
+                displayOptions();
+                m_options.selected = e.NewValue == CheckState.Checked;
+                m_options.Write();
             }
         }
     }

@@ -93,7 +93,7 @@ namespace WordSend
 			}
 		}
         /// <summary>
-        /// Using ~ as an escape character, ensure the output string has no <, >, or & characters
+        /// Using ~ as an escape character, ensure the output string has no less than, greater than, or ampersand characters
         /// in a reversible way. Expands the string when any of those 4 characters are in it.
         /// </summary>
         /// <param name="s">unencoded string</param>
@@ -101,7 +101,7 @@ namespace WordSend
         public static string encodeStringForXml(string s)
         {
             if ((s == null) || (s == String.Empty))
-                return s;
+                return String.Empty;
             string result = s.Replace("~", "~~");
             result = result.Replace("<", "~l");
             result = result.Replace(">", "~g");

@@ -39,6 +39,8 @@
             this.btnSetRootDirectory = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.idTabPage = new System.Windows.Forms.TabPage();
+            this.paratextcomboBox = new System.Windows.Forms.ComboBox();
+            this.label52 = new System.Windows.Forms.Label();
             this.subsetCheckBox = new System.Windows.Forms.CheckBox();
             this.archivedCheckBox = new System.Windows.Forms.CheckBox();
             this.e10dblCheckBox = new System.Windows.Forms.CheckBox();
@@ -194,8 +196,6 @@
             this.extensionLabel = new System.Windows.Forms.Label();
             this.paratextButton = new System.Windows.Forms.Button();
             this.paratextDirLabel = new System.Windows.Forms.Label();
-            this.label52 = new System.Windows.Forms.Label();
-            this.paratextcomboBox = new System.Windows.Forms.ComboBox();
             this.tabControl1.SuspendLayout();
             this.idTabPage.SuspendLayout();
             this.copyrightTabPage.SuspendLayout();
@@ -219,6 +219,7 @@
             this.m_projectsList.ScrollAlwaysVisible = true;
             this.m_projectsList.Size = new System.Drawing.Size(265, 649);
             this.m_projectsList.TabIndex = 10;
+            this.m_projectsList.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.m_projectsList_ItemCheck);
             this.m_projectsList.SelectedIndexChanged += new System.EventHandler(this.m_projectsList_SelectedIndexChanged);
             // 
             // batchLabel
@@ -348,6 +349,23 @@
             this.idTabPage.TabIndex = 0;
             this.idTabPage.Text = "Identification";
             this.idTabPage.UseVisualStyleBackColor = true;
+            // 
+            // paratextcomboBox
+            // 
+            this.paratextcomboBox.FormattingEnabled = true;
+            this.paratextcomboBox.Location = new System.Drawing.Point(564, 5);
+            this.paratextcomboBox.Name = "paratextcomboBox";
+            this.paratextcomboBox.Size = new System.Drawing.Size(138, 21);
+            this.paratextcomboBox.TabIndex = 41;
+            // 
+            // label52
+            // 
+            this.label52.AutoSize = true;
+            this.label52.Location = new System.Drawing.Point(474, 6);
+            this.label52.Name = "label52";
+            this.label52.Size = new System.Drawing.Size(84, 13);
+            this.label52.TabIndex = 40;
+            this.label52.Text = "Paratext project:";
             // 
             // subsetCheckBox
             // 
@@ -664,7 +682,7 @@
             this.copyrightTabPage.Location = new System.Drawing.Point(4, 22);
             this.copyrightTabPage.Margin = new System.Windows.Forms.Padding(2);
             this.copyrightTabPage.Name = "copyrightTabPage";
-            this.copyrightTabPage.Size = new System.Drawing.Size(707, 529);
+            this.copyrightTabPage.Size = new System.Drawing.Size(707, 553);
             this.copyrightTabPage.TabIndex = 2;
             this.copyrightTabPage.Text = "Copyright";
             this.copyrightTabPage.UseVisualStyleBackColor = true;
@@ -901,7 +919,7 @@
             this.processTabPage.Margin = new System.Windows.Forms.Padding(2);
             this.processTabPage.Name = "processTabPage";
             this.processTabPage.Padding = new System.Windows.Forms.Padding(2);
-            this.processTabPage.Size = new System.Drawing.Size(707, 529);
+            this.processTabPage.Size = new System.Drawing.Size(707, 553);
             this.processTabPage.TabIndex = 1;
             this.processTabPage.Text = "Processes";
             this.processTabPage.UseVisualStyleBackColor = true;
@@ -1277,7 +1295,7 @@
             this.advancedTabPage.Location = new System.Drawing.Point(4, 22);
             this.advancedTabPage.Margin = new System.Windows.Forms.Padding(2);
             this.advancedTabPage.Name = "advancedTabPage";
-            this.advancedTabPage.Size = new System.Drawing.Size(707, 547);
+            this.advancedTabPage.Size = new System.Drawing.Size(707, 553);
             this.advancedTabPage.TabIndex = 6;
             this.advancedTabPage.Text = "Advanced";
             this.advancedTabPage.UseVisualStyleBackColor = true;
@@ -1506,7 +1524,7 @@
             this.concordanceTabPage.Controls.Add(this.generateConcordanceCheckBox);
             this.concordanceTabPage.Location = new System.Drawing.Point(4, 22);
             this.concordanceTabPage.Name = "concordanceTabPage";
-            this.concordanceTabPage.Size = new System.Drawing.Size(707, 547);
+            this.concordanceTabPage.Size = new System.Drawing.Size(707, 553);
             this.concordanceTabPage.TabIndex = 7;
             this.concordanceTabPage.Text = "Concordance";
             this.concordanceTabPage.UseVisualStyleBackColor = true;
@@ -1653,7 +1671,7 @@
             this.booksPage.Controls.Add(this.listBooks);
             this.booksPage.Location = new System.Drawing.Point(4, 22);
             this.booksPage.Name = "booksPage";
-            this.booksPage.Size = new System.Drawing.Size(707, 547);
+            this.booksPage.Size = new System.Drawing.Size(707, 553);
             this.booksPage.TabIndex = 8;
             this.booksPage.Text = "Books";
             this.booksPage.UseVisualStyleBackColor = true;
@@ -1717,7 +1735,7 @@
             this.framesPage.Controls.Add(this.useFramesCheckBox);
             this.framesPage.Location = new System.Drawing.Point(4, 22);
             this.framesPage.Name = "framesPage";
-            this.framesPage.Size = new System.Drawing.Size(707, 547);
+            this.framesPage.Size = new System.Drawing.Size(707, 553);
             this.framesPage.TabIndex = 9;
             this.framesPage.Text = "Frames";
             this.framesPage.UseVisualStyleBackColor = true;
@@ -1857,7 +1875,7 @@
             this.messagesTabPage.Location = new System.Drawing.Point(4, 22);
             this.messagesTabPage.Name = "messagesTabPage";
             this.messagesTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.messagesTabPage.Size = new System.Drawing.Size(707, 547);
+            this.messagesTabPage.Size = new System.Drawing.Size(707, 553);
             this.messagesTabPage.TabIndex = 10;
             this.messagesTabPage.Text = "Messages";
             this.messagesTabPage.UseVisualStyleBackColor = true;
@@ -1955,23 +1973,6 @@
             this.paratextDirLabel.Size = new System.Drawing.Size(104, 13);
             this.paratextDirLabel.TabIndex = 32;
             this.paratextDirLabel.Text = "My Paratext Projects";
-            // 
-            // label52
-            // 
-            this.label52.AutoSize = true;
-            this.label52.Location = new System.Drawing.Point(474, 6);
-            this.label52.Name = "label52";
-            this.label52.Size = new System.Drawing.Size(84, 13);
-            this.label52.TabIndex = 40;
-            this.label52.Text = "Paratext project:";
-            // 
-            // paratextcomboBox
-            // 
-            this.paratextcomboBox.FormattingEnabled = true;
-            this.paratextcomboBox.Location = new System.Drawing.Point(564, 5);
-            this.paratextcomboBox.Name = "paratextcomboBox";
-            this.paratextcomboBox.Size = new System.Drawing.Size(138, 21);
-            this.paratextcomboBox.TabIndex = 41;
             // 
             // haiolaForm
             // 
