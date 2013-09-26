@@ -95,11 +95,13 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="base32string.cs" />
     <Compile Include="BibleBookInfo.cs" />
     <Compile Include="BibleFileLib.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ChapterInfo.cs" />
+    <Compile Include="haiola_options.cs" />
     <Compile Include="Usfx2XeTeX.cs" />
     <Compile Include="ConcFrameGenerator.cs" />
     <Compile Include="ConcGenerator.cs" />
@@ -113,6 +115,7 @@
     <Compile Include="UsfxToFramedHtmlConverter.cs" />
     <Compile Include="usfxtomosis.cs" />
     <Compile Include="usfxToXhtmlConverter.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="WordformInfo.cs" />
     <Compile Include="WordOccurrence.cs" />
     <Compile Include="xmlini.cs" />

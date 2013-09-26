@@ -4629,7 +4629,6 @@ namespace WordSend
         public void USFXtoUSFM(string inFileName, string outDir, string outFileName)
 		{
 			int i;
-			stringPair tagPair;
 			int quoteLevel = 0;
             int charStyleStackLevel = 0;
             int noteStyleStackLevel = 0;

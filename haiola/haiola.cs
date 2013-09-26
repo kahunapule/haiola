@@ -13,7 +13,6 @@ using System.Xml;
 using BibleFileLib;
 using Microsoft.Win32;
 using WordSend;
-using sepp;
 
 namespace haiola
 {
@@ -932,6 +931,9 @@ namespace haiola
                 expandPercentEscapes(m_options.licenseHtml),
                 m_options.ignoreExtras,
                 m_options.goText);
+            toHtm.RecordStats(m_options);
+            m_options.Write();
+            LoadStatisticsTab();
             Logit.CloseFile();
             if (Logit.loggedError)
             {
@@ -1628,7 +1630,6 @@ In addition, you have permission to convert the text to different file formats, 
 
         private void unmarkAllButton_Click(object sender, EventArgs e)
         {
-            int i;
             SaveOptions();
             LoadWorkingDirectory(false, false, true);
         }
@@ -1728,6 +1729,19 @@ In addition, you have permission to convert the text to different file formats, 
         	LoadConcTab();
 			LoadBooksTab();
         	LoadFramesTab();
+            LoadStatisticsTab();
+        }
+
+        private void LoadStatisticsTab()
+        {
+            statisticsTextBox.Text = String.Format(@"Old Testament: {0} books;  {1} chapters;  {2} verse tags;  {3} verse range; 
+New Testament: {4} books;  {5} chapters;  {6} verse tags;  {7} verse range: 
+Apocrypha/Deuterocanon: {8} books;  {9} chapters;  {10} verse tags;  {11} verse range;
+Peripherals: {12} books",
+                                m_options.otBookCount, m_options.otChapCount, m_options.otVerseCount, m_options.otVerseMax,
+                                m_options.ntBookCount, m_options.ntChapCount, m_options.ntVerseCount, m_options.ntVerseMax,
+                                m_options.adBookCount, m_options.adChapCount, m_options.adVerseCount, m_options.adVerseMax,
+                                m_options.pBookCount);
         }
 
 		private void LoadConcTab()

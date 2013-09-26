@@ -91,6 +91,36 @@ namespace WordSend
         {
             get { return isPresent && ((chapterFiles != null && chapterFiles.Count > 0) || (testament == "x")); }
         }
+
+        /// <summary>
+        /// Returns true iff the listed chapter and verse are included in this translation.
+        /// (This currently does not take into account missing verses within a chapter.)
+        /// </summary>
+        /// <param name="ch">Chapter number to check</param>
+        /// <param name="vs">Verse number to check</param>
+        /// <returns></returns>
+        public bool isValidTarget(int ch, int vs)
+        {
+            bool result = false;
+            int i;
+            ChapterInfo ci;
+            if (isPresent)
+            {
+                for (i = 0; (i < chaptersFound.Count) && (!result); i++)
+                {
+                    ci = (ChapterInfo)chaptersFound[i];
+                    if (ci != null)
+                    {
+                        if (ci.chapterInteger == ch)
+                        {
+                            if (vs <= ci.maxVerse)
+                                result = true;
+                        }
+                    }
+                }
+            }
+            return result;
+        }
     }
 
     /// <summary>
@@ -240,6 +270,23 @@ namespace WordSend
             if (br == null)
                 return "";
             return br.osisName;
+        }
+
+        /// <summary>
+        /// Returns true iff we are pretty sure this book, chapter, and verse are present.
+        /// </summary>
+        /// <param name="bk">Three-character book abbreviation</param>
+        /// <param name="ch">chapter number</param>
+        /// <param name="vs">verse number</param>
+        /// <returns>true iff we think that verse is in this translation</returns>
+        public bool isValidTarget(string bk, int ch, int vs)
+        {
+            BibleBookRecord br = (BibleBookRecord)books[bk];
+            if (br == null)
+                return false;
+            if (!br.isPresent)
+                return false;
+            return br.isValidTarget(ch, vs);
         }
 
         /// <summary>
@@ -607,7 +654,7 @@ namespace WordSend
                                 break;
                             case "c":
                                 chapterString = id.Trim();
-                                currentLocation = currentBookAbbrev + "." + chapterString;
+                                currentLocation = currentBookAbbrev + "_" + chapterString;
                                 verseString = verseRangeEnd = String.Empty;
                                 verseNumber = verseRangeEndNumber = 0;
                                 int chNum;
@@ -678,7 +725,7 @@ namespace WordSend
                                     verseRangeEndNumber = verseNumber;
                                 }
                                 bookRecord.verseCount[chapterNumber] = verseRangeEndNumber;
-                                currentLocation = currentBookAbbrev + "." + chapterString + "." + verseNumber.ToString();
+                                currentLocation = currentBookAbbrev + "_" + chapterString + "_" + verseNumber.ToString();
                                 break;
                             case "x":
 
