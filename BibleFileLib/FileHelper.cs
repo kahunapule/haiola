@@ -219,6 +219,12 @@ namespace WordSend
             return s;
         }
 
+        public static string escapeJsonString(string s)
+        {
+            s = s.Replace("\"", "\\\"");
+            return s;
+        }
+
         /// <summary>
         /// Escapes \ and "  as \\ and \", respectively.
         /// </summary>

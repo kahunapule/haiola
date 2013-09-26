@@ -187,6 +187,8 @@
             this.useFramesCheckBox = new System.Windows.Forms.CheckBox();
             this.messagesTabPage = new System.Windows.Forms.TabPage();
             this.messagesListBox = new System.Windows.Forms.ListBox();
+            this.statsTabPage = new System.Windows.Forms.TabPage();
+            this.statisticsTextBox = new System.Windows.Forms.TextBox();
             this.statsLabel = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.helpButton = new System.Windows.Forms.Button();
@@ -207,6 +209,7 @@
             this.booksPage.SuspendLayout();
             this.framesPage.SuspendLayout();
             this.messagesTabPage.SuspendLayout();
+            this.statsTabPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // m_projectsList
@@ -288,6 +291,8 @@
             // 
             // tabControl1
             // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.tabControl1.Controls.Add(this.idTabPage);
             this.tabControl1.Controls.Add(this.copyrightTabPage);
             this.tabControl1.Controls.Add(this.processTabPage);
@@ -297,6 +302,7 @@
             this.tabControl1.Controls.Add(this.booksPage);
             this.tabControl1.Controls.Add(this.framesPage);
             this.tabControl1.Controls.Add(this.messagesTabPage);
+            this.tabControl1.Controls.Add(this.statsTabPage);
             this.tabControl1.Location = new System.Drawing.Point(0, 79);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(2);
             this.tabControl1.Name = "tabControl1";
@@ -1890,6 +1896,26 @@
             this.messagesListBox.Size = new System.Drawing.Size(701, 446);
             this.messagesListBox.TabIndex = 0;
             // 
+            // statsTabPage
+            // 
+            this.statsTabPage.Controls.Add(this.statisticsTextBox);
+            this.statsTabPage.Location = new System.Drawing.Point(4, 22);
+            this.statsTabPage.Name = "statsTabPage";
+            this.statsTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.statsTabPage.Size = new System.Drawing.Size(707, 553);
+            this.statsTabPage.TabIndex = 11;
+            this.statsTabPage.Text = "Statistics";
+            this.statsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // statisticsTextBox
+            // 
+            this.statisticsTextBox.Location = new System.Drawing.Point(8, 6);
+            this.statisticsTextBox.Multiline = true;
+            this.statisticsTextBox.Name = "statisticsTextBox";
+            this.statisticsTextBox.ReadOnly = true;
+            this.statisticsTextBox.Size = new System.Drawing.Size(693, 541);
+            this.statisticsTextBox.TabIndex = 0;
+            // 
             // statsLabel
             // 
             this.statsLabel.AutoSize = true;
@@ -2020,6 +2046,8 @@
             this.framesPage.ResumeLayout(false);
             this.framesPage.PerformLayout();
             this.messagesTabPage.ResumeLayout(false);
+            this.statsTabPage.ResumeLayout(false);
+            this.statsTabPage.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2193,6 +2221,8 @@
         private System.Windows.Forms.Label paratextDirLabel;
         private System.Windows.Forms.ComboBox paratextcomboBox;
         private System.Windows.Forms.Label label52;
+        private System.Windows.Forms.TabPage statsTabPage;
+        private System.Windows.Forms.TextBox statisticsTextBox;
 	}
 }
 

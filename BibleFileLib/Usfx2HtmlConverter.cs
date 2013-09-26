@@ -11,9 +11,9 @@
 // 
 // <remarks>
 // Most of the inner workings of the WordSend Bible format conversion
-// project are in this DLL. The objects in this object library are
-// called by both the command line and the Windows UI versions of the
-// USFM to WordML converter. They may also be used by other conversion
+// project are in BibleFileLib.dll. The objects in this object library are
+// called by both the command line and the GUI versions of the
+// USFM to relevant converters. They may also be used by other conversion
 // processes.
 // </remarks>
 // --------------------------------------------------------------------------------------------
@@ -595,6 +595,8 @@ namespace WordSend
         protected string bookOsisId;
         protected string chapterOsisId;
         protected string verseOsisId;
+        protected string chapterId;
+        protected string verseId;
 
 
         /// <summary>
@@ -1021,7 +1023,9 @@ namespace WordSend
             else
                 chapterNumber++;
             chapterOsisId = bookOsisId + "." + chapterNumber.ToString();
+            chapterId = currentBookAbbrev + "_" + chapterNumber.ToString();
             verseOsisId = chapterOsisId + ".0";
+            verseId = chapterId + "_0";
             chopChapter = true;
             newChapterFound = true;
             CloseHtmlFile();
@@ -1075,6 +1079,7 @@ namespace WordSend
                 verseNumber++;
             }
             verseOsisId = chapterOsisId + "." + verseNumber.ToString();
+            verseId = chapterId + "_" + verseNumber.ToString();
             StartVerse();
         }
 
@@ -1192,6 +1197,7 @@ namespace WordSend
                                     chapterNumber++;
                                 bookRecord.actualChapters = Math.Max(bookRecord.actualChapters, chapterNumber);
                                 chapterOsisId = bookOsisId + "." + chapterNumber.ToString();
+                                chapterId = currentBookAbbrev + "_" + chapterNumber.ToString();
                                 break;
                             case "v":
                                 currentVerse = id;
@@ -1213,6 +1219,7 @@ namespace WordSend
                                     verseNumber++;
                                 }
                                 verseOsisId = chapterOsisId + "." + verseNumber.ToString();
+                                verseId = chapterId + "_" + verseNumber.ToString();
                                 break;
                             case "f":
                                 inFootnote = true;
@@ -1410,6 +1417,48 @@ namespace WordSend
             CloseHtmlFile();
         }
 
+        bool inLink = false;
+
+        /// <summary>
+        /// Start a hyperlink to the destination indicated.
+        /// </summary>
+        /// <param name="tgt"></param>
+        /// <param name="web"></param>
+        protected virtual void StartLink(string tgt, string web)
+        {
+            if (tgt.Length > 0)
+            {
+                string [] bcv = tgt.Split(new Char [] {'.'});
+                int ch;
+                int vs;
+                if (Int32.TryParse(bcv[1], out ch) && Int32.TryParse(bcv[2], out vs))
+                {
+                    if (bookInfo.isValidTarget(bcv[0], ch, vs))
+                    {
+                        htm.Write("<a href=\"{0}{1}.htm#V{2}", bcv[0], bcv[1], bcv[2]);
+                        inLink = true;
+                    }
+                }
+            }
+            else if (web.Length > 0)
+            {
+                inLink = true;
+                htm.Write("<a href=\"{0}\">", web);
+            }
+        }
+
+        /// <summary>
+        /// End a link started by StartLink.
+        /// </summary>
+        protected virtual void EndLink()
+        {
+            if (inLink)
+            {
+                htm.Write("</a>");
+                inLink = false;
+            }
+        }
+
         public string translationIdentifier;
         public string languageIdentifier;
 
@@ -1420,7 +1469,7 @@ namespace WordSend
         public string customCssName = "prophero.css";   // Name of the css file to use for this project.
         protected bool inOrigin = false;
         protected bool hasLemma = false;
-
+        protected bool refTagFound;
 
         /// <summary>
         /// Converts the USFX file usfxName to a set of HTML files, one file per chapter, in the
@@ -1466,7 +1515,7 @@ namespace WordSend
             psalmLabel = psalmLabelName;
             chapterNumber = verseNumber = 0;
             bookList.Clear();
-            bookOsisId = chapterOsisId = verseOsisId = String.Empty;
+            bookOsisId = chapterOsisId = verseOsisId = chapterId = verseId = String.Empty;
             currentBookAbbrev = currentBookTitle = currentChapterPublished = wordForChapter = String.Empty;
             currentChapter = currentFileName = currentVerse = languageCode = String.Empty;
             ChapterInfo ci = new ChapterInfo();
@@ -1488,6 +1537,7 @@ namespace WordSend
 
             bool containsDC = false;
             newChapterFound = false;
+            refTagFound = false;
             bool foundThisBook;
             ignore = false;
             StringBuilder toc = new StringBuilder();
@@ -1540,7 +1590,9 @@ namespace WordSend
                                     bookRecord.chaptersFound = new ArrayList(151);
                                     bookOsisId = bookRecord.osisName;
                                     chapterOsisId = bookOsisId + ".0";
+                                    chapterId = currentBookAbbrev + "_0";
                                     verseOsisId = chapterOsisId + ".0";
+                                    verseId = chapterId + "_0";
                                     if (bookRecord == null)
                                     {
                                         Logit.WriteError("Cannot process unknown book: " + currentBookAbbrev);
@@ -1671,13 +1723,17 @@ namespace WordSend
                                 else
                                     chapterNumber++;
                                 chapterOsisId = bookOsisId + "." + chapterNumber.ToString();
+                                chapterId = currentBookAbbrev + "_" + chapterNumber.ToString();
                                 verseOsisId = chapterOsisId + ".0";
+                                verseId = chapterId + "_0";
                                 bookRecord.actualChapters = Math.Max(bookRecord.actualChapters, chapterNumber);
                                 ci = new ChapterInfo();
                                 ci.chapterInteger = chapterNumber;
                                 ci.alternate = ci.actual = currentChapter;
                                 ci.published = currentChapterPublished;
                                 ci.osisChapter = chapterOsisId;
+                                ci.chapterId = chapterId;
+                                ci.maxVerse = ci.verseCount = 0;
                                 bookRecord.chaptersFound.Add(ci);
                                 LeaveHeader();
                                 chopChapter = true;
@@ -1748,7 +1804,10 @@ namespace WordSend
                                 {
                                     verseNumber++;
                                 }
+                                ci.maxVerse = Math.Max(ci.maxVerse, verseNumber);
+                                ci.verseCount++;
                                 verseOsisId = chapterOsisId + "." + verseNumber.ToString();
+                                verseId = chapterId + "_" + verseNumber.ToString();
                                 break;
                             case "w":
                             case "zw":
@@ -1927,7 +1986,13 @@ namespace WordSend
                                                 figReference = EscapeHtml(usfx.Value.Trim());
                                         }
                                         break;
-
+                                    case "ref":
+                                        // Not yet used: string src = GetNamedAttribute("src");
+                                        string tgt = GetNamedAttribute("tgt");
+                                        string web = GetNamedAttribute("web");
+                                        StartLink(tgt, web);
+                                        refTagFound = true;
+                                        break;
                                     case "book":
                                         currentBookAbbrev = id;
                                         chapterNumber = 0;
@@ -1935,7 +2000,9 @@ namespace WordSend
                                         bookRecord = (BibleBookRecord)bookInfo.books[id];
                                         bookOsisId = bookRecord.osisName;
                                         chapterOsisId = bookOsisId + ".0";
+                                        chapterId = currentBookAbbrev + "_0";
                                         verseOsisId = chapterOsisId + ".0";
+                                        verseId = chapterId + "_0";
                                         currentBookHeader = bookRecord.vernacularShortName;
                                         if (!bookRecord.isPresent)
                                         {   // Skip book not on publication list or containing no chapters.
@@ -2279,6 +2346,9 @@ namespace WordSend
                                         if (ignoreIntros)
                                             ignore = false;
                                         break;
+                                    case "ref":
+                                        EndLink();
+                                        break;
                                     case "ms":
                                     case "d":
                                     case "s":
@@ -2296,8 +2366,10 @@ namespace WordSend
                                                 preVerse = new StringBuilder(String.Empty);
                                             }
                                             verseNumber++;
+                                            /*
                                             htm.Write("<a name=\"C{0}V{1}\"></a>",
                                                 chapterNumber.ToString(), verseNumber.ToString());
+                                             */
                                         }
                                         EndHtmlParagraph();
                                         if (chopChapter)
@@ -2389,6 +2461,91 @@ namespace WordSend
             }
             conversionProgress = String.Empty;
             return result;
+        }
+
+        public void RecordStats(Options m_options)
+        {
+            int i, j;
+            int otBookCount = 0;
+            int ntBookCount = 0;
+            int adBookCount = 0;
+            int pBookCount = 0;
+            int otChapCount = 0;
+            int ntChapCount = 0;
+            int adChapCount = 0;
+            int otVerseCount = 0;
+            int ntVerseCount = 0;
+            int adVerseCount = 0;
+            int otVerseMax = 0;
+            int ntVerseMax = 0;
+            int adVerseMax = 0;
+            BibleBookRecord br;
+            ChapterInfo ci;
+            for (i = 0; i < bookList.Count; i++)
+            {
+                br = (BibleBookRecord)bookList[i];
+                if (br.isPresent)
+                {
+                    switch (br.testament)
+                    {
+                        case "o":
+                            otBookCount++;
+                            otChapCount = br.chaptersFound.Count;
+                            for (j = 0; j < otChapCount; j++)
+                            {
+                                ci = (ChapterInfo)br.chaptersFound[j];
+                                if (ci != null)
+                                {
+                                    otVerseCount += ci.verseCount;
+                                    otVerseMax += ci.maxVerse;
+                                }
+                            }
+                            break;
+                        case "n":
+                            ntBookCount++;
+                            ntChapCount = br.chaptersFound.Count;
+                            for (j = 0; j < ntChapCount; j++)
+                            {
+                                ci = (ChapterInfo)br.chaptersFound[j];
+                                if (ci != null)
+                                {
+                                    ntVerseCount += ci.verseCount;
+                                    ntVerseMax += ci.maxVerse;
+                                }
+                            }
+                            break;
+                        case "a":
+                            adBookCount++;
+                            adChapCount = br.chaptersFound.Count;
+                            for (j = 0; j < adChapCount; j++)
+                            {
+                                ci = (ChapterInfo)br.chaptersFound[j];
+                                if (ci != null)
+                                {
+                                    adVerseCount += ci.verseCount;
+                                    adVerseMax += ci.maxVerse;
+                                }
+                            }
+                            break;
+                        case "x":
+                            pBookCount++;
+                            break;
+                    }
+                }
+            }
+            m_options.otBookCount = otBookCount;
+            m_options.ntBookCount = ntBookCount;
+            m_options.adBookCount = adBookCount;
+            m_options.pBookCount = pBookCount;
+            m_options.otChapCount = otChapCount;
+            m_options.ntChapCount = ntChapCount;
+            m_options.adChapCount = adChapCount;
+            m_options.otVerseCount = otVerseCount;
+            m_options.ntVerseCount = ntVerseCount;
+            m_options.adVerseCount = adVerseCount;
+            m_options.otVerseMax = otVerseMax;
+            m_options.ntVerseMax = ntVerseMax;
+            m_options.adVerseMax = adVerseMax;
         }
 
         protected virtual void GenerateIndexFile(string translationId, string indexHtml, string goText)
@@ -2494,12 +2651,14 @@ namespace WordSend
         /// 2. Each item from the above is split at commas. Consider all to come from same book and chapter, if later ones don't specify those.
         /// 3. In first of each comma group, search for a match for known book name. If found, or if we are carrying a book name forward, we can make a hot link.
         /// 4. Convert occurrences of #%#%bookN back.
+        /// Note: this is now a fall-back function, used when ref tags are not found in the USFX source file. If there is even one ref tag,
+        /// then those are used exclusively, as a more reliable method of handling all of the possible cases.
         /// </summary>
         /// <param name="chunk1"></param>
-        /// <returns></returns>
+        /// <returns>input string, but with HTML links added</returns>
         protected string ConvertCrossRefsToHotLinks(string chunk1)
         {
-            if (CrossRefToFilePrefixMap == null || CrossRefToFilePrefixMap.Count == 0)
+            if (refTagFound || CrossRefToFilePrefixMap == null || CrossRefToFilePrefixMap.Count == 0)
                 return chunk1;
             string chunk = chunk1;
             int ibook = 0;

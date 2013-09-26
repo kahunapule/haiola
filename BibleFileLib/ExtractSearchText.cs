@@ -177,14 +177,14 @@ namespace WordSend
                                 EndVerse(); // In case file lacks <ve /> elements.
                                 currentChapter = id;
                                 currentVerse = String.Empty;
-                                currentPlace = currentBook + "." + currentChapter;
+                                currentPlace = currentBook + "_" + currentChapter;
                                 SkipElement(); // Doesn't skip chapter, just the published chapter number, if present.
                                 break;
                             case "v":
                                 EndVerse(); // In case file lacks <ve /> elements.
                                 inVerse = true;
                                 currentVerse = id;
-                                currentPlace = currentBook + "." + currentChapter + "." + currentVerse;
+                                currentPlace = currentBook + "_" + currentChapter + "_" + currentVerse;
                                 SkipElement();  // Just in case there is a published verse number present.
                                 break;
                             case "ve":

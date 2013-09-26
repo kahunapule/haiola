@@ -17,7 +17,10 @@ namespace WordSend
         public int chapterInteger; // Chapter number as an integer
         public string actual;  // Monotonically increasing integer as a string
         public string published;   // Published chapter number/name
-        public string osisChapter; // OSIS ID of this book and chapter, i.e. Gen.3
+        public string osisChapter; // OSIS ID of this book and chapter, i.e. John.3
+        public string chapterId;    // Book and chapter ID using SIL/UBS TLA, i.e. JHN.3
         public string alternate;    // Alternate chapter number
+        public int maxVerse;    // Highest verse number actually found in the chapter
+        public int verseCount;  // Number of verse markers actually found
     }
 }
