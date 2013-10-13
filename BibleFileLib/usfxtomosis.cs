@@ -93,6 +93,7 @@ namespace WordSend
         protected bool inNote = false;
         protected bool eatPoetryLineEnd = false;
         protected bool mtStarted = false;
+        protected bool inReference = false;
         protected int listLevel = 0;
         protected int itemLevel = 0;
         protected int indentLevel = 0;
@@ -1148,6 +1149,18 @@ namespace WordSend
                                     StartElementWithAttribute("l", "type", "selah");
                                 }
                                 break;
+                            case "ref":
+                                string tgt = GetNamedAttribute("tgt");
+                                if (tgt.Length > 6)
+                                {
+                                    string[] bcv = tgt.Split(new Char[] { '.' });
+                                    if (bcv.Length >= 3)
+                                    {
+                                        StartElementWithAttribute("reference", "osisRef", bookInfo.OsisID(bcv[0]) + "." + bcv[1] + "." + bcv[2]);
+                                        inReference = true;
+                                    }
+                                }
+                                break;
                             case "table":
                                 StartMosisElement("table");
                                 break;
@@ -1422,6 +1435,13 @@ namespace WordSend
                                 else
                                 {
                                     WriteMosisEndElement();
+                                }
+                                break;
+                            case "ref":
+                                if (inReference)
+                                {
+                                    WriteMosisEndElement(); // reference
+                                    inReference = false;
                                 }
                                 break;
                             case "fe":

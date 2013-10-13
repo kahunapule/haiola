@@ -202,6 +202,12 @@ namespace WordSend
             set { ini.WriteString("xoFormat", value); }
         }
 
+        public string translationTraditionalAbbreviation
+        {
+            get { return ini.ReadString("translationTraditionalAbbreviation", String.Empty); }
+            set { ini.WriteString("translationTraditionalAbbreviation", value); }
+        }
+
         public string customCssFileName
         {
             get { return ini.ReadString("customCssFileName", "haiola.css"); }

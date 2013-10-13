@@ -73,9 +73,9 @@ namespace WordSend
                 htm.WriteLine("<script src=\"TextFuncs.js\" type=\"text/javascript\"></script>");
             }
             htm.WriteLine("<title>{0} {1} {2}</title>",
-                langName, currentBookHeader, currentChapterPublished);
+                translationName, currentBookHeader, currentChapterPublished);
             htm.WriteLine(string.Format("<meta name=\"keywords\" content=\"{0}, {1}, Holy, Scripture, Bible, Scriptures\" />",
-                langName, langId));
+                translationName, langId));
             htm.WriteLine("</head>");
             htm.WriteLine("<body class=\"mainDoc\"{0}>", OnLoadArgument());
             WriteNavButtons();
@@ -266,25 +266,6 @@ namespace WordSend
             chapterFileIndex++;
         }
 
-        CrossReference xref;
-        bool doXrefMerge = false;
-        public void MergeXref(string xrefName)
-        {
-            doXrefMerge = false;
-            try
-            {
-                if ((xrefName != null) && File.Exists(xrefName))
-                {
-                    xref = new CrossReference(xrefName);
-                    doXrefMerge = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                Logit.WriteError(ex.Message);
-                throw;
-            }
-        }
 
         protected void EndFootnoteStyle()
         {

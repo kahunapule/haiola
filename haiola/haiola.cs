@@ -29,7 +29,6 @@ namespace haiola
         public string m_outputProjectDirectory; // e.g., full path to BibleConv\output\Kupang
         public string m_project = String.Empty; // e.g., Kupang
         public string currentConversion;   // e.g., "Preprocessing" or "Portable HTML"
-        public static bool fAllRunning = false;
         public string m_xiniPath;  // e.g., BibleConv\input\Kupang\options.xini
         public XMLini projectXini;
         public Options m_options;
@@ -262,12 +261,13 @@ namespace haiola
         /// <param name="pathName">Full path to the file to read the \id line from.</param>
         /// <returns>Sort order plus 3-letter abbreviation of the Bible book (or front/back matter), upper case,
         /// unless the file lacks an \id line, in which case in returns and empty string.</returns>
-        public string MakeUpUsfmFileName(string pathName)
+        public string MakeUpUsfmFileName(string pathName, out string id)
         {
             if (bkInfo == null)
                 bkInfo = new WordSend.BibleBookInfo();
             // Use the ID line.
             string result = "";
+            id = "";
             string line;
             string chap = "";
             StreamReader sr = new StreamReader(pathName);
@@ -276,7 +276,7 @@ namespace haiola
                 line = sr.ReadLine();
                 if (line.StartsWith(@"\id ") && (line.Length > 6))
                 {
-                    result = line.Substring(4, 3).ToUpper(System.Globalization.CultureInfo.InvariantCulture);
+                    id = result = line.Substring(4, 3).ToUpper(System.Globalization.CultureInfo.InvariantCulture);
                 }
                 else if ((line.StartsWith(@"\c ")) && (line.Length > 3))
                 {
@@ -649,6 +649,10 @@ namespace haiola
         public void PreprocessUsfmFiles(string SourceDir)
         {
             // string SourceDir = Path.Combine(m_inputProjectDirectory, "Source");
+            StreamReader sr = new StreamReader(orderFile);
+            string allowedBookList = sr.ReadToEnd();
+            string bookId;
+            sr.Close();
             string UsfmDir = Path.Combine(m_outputProjectDirectory, "usfm1");
             if (!Directory.Exists(SourceDir))
             {
@@ -687,9 +691,9 @@ namespace haiola
                 {
                     currentConversion = "preprocessing " + filename;
                     Application.DoEvents();
-                    if (!fAllRunning)
+                    if (!fileHelper.fAllRunning)
                         break;
-                    string outputFileName = MakeUpUsfmFileName(inputFile) + ".usfm";
+                    string outputFileName = MakeUpUsfmFileName(inputFile, out bookId) + ".usfm";
                     if (outputFileName.Length < 8)
                     {
                         if (fileType != ".TXT")
@@ -697,8 +701,17 @@ namespace haiola
                     }
                     else
                     {
-                        string outputFilePath = Path.Combine(UsfmDir, outputFileName);
-                        PreprocessOneFile(inputFile, m_options.preprocessingTables, outputFilePath);
+                        if (allowedBookList.Contains(bookId))
+                        {
+                            string outputFilePath = Path.Combine(UsfmDir, outputFileName);
+                            PreprocessOneFile(inputFile, m_options.preprocessingTables, outputFilePath);
+                        }
+                        /*
+                        else
+                        {
+                            Logit.WriteLine("Skipping book " + bookId + " (not in " + orderFile + ")");
+                        }
+                        */
                     }
                 }
             }
@@ -726,7 +739,7 @@ namespace haiola
                 m_options.lastRunResult = false;
             }
             Application.DoEvents();
-            return fAllRunning;
+            return fileHelper.fAllRunning;
         }
 
         private void logProjectStart(string s)
@@ -741,6 +754,7 @@ namespace haiola
         {
             string UsfmDir = Path.Combine(m_outputProjectDirectory, "usfm1");
             string UsfxPath = GetUsfxDirectoryPath();
+            string usfxName = GetUsfxFilePath();
             if (!Directory.Exists(UsfmDir))
             {
                 UsfmDir = Path.Combine(m_outputProjectDirectory, "usfm");
@@ -784,10 +798,12 @@ namespace haiola
 
             // Write out the USFX file.
             SFConverter.scripture.languageCode = m_options.languageId;
-            SFConverter.scripture.WriteUSFX(GetUsfxFilePath());
+            SFConverter.scripture.WriteUSFX(usfxName);
             string bookNames = Path.Combine(m_inputProjectDirectory, "BookNames.xml");
             SFConverter.scripture.bkInfo.WriteDefaultBookNames(bookNames);
             File.Copy(bookNames, Path.Combine(Path.Combine(m_outputProjectDirectory, "usfx"), "BookNames.xml"), true);
+            SFConverter.scripture.AddRefTags(usfxName);
+            SFConverter.scripture.ValidateUsfx(usfxName);
             Logit.CloseFile();
             if (Logit.loggedError)
             {
@@ -908,9 +924,6 @@ namespace haiola
         	toHtm.GeneratingConcordance = m_options.GenerateConcordance;
     		toHtm.CrossRefToFilePrefixMap = m_options.CrossRefToFilePrefixMap;
     		string usfxFilePath = Path.Combine(UsfxPath, "usfx.xml");
-            string orderFile = Path.Combine(m_inputProjectDirectory, "bookorder.txt");
-            if (!File.Exists(orderFile))
-                orderFile = SFConverter.FindAuxFile("bookorder.txt");
             toHtm.bookInfo.ReadPublicationOrder(orderFile);
             toHtm.MergeXref(Path.Combine(m_inputProjectDirectory, "xref.xml"));
             toHtm.sourceLink = expandPercentEscapes("<a href=\"http://%h/%t\">%v</a>");
@@ -931,7 +944,7 @@ namespace haiola
                 expandPercentEscapes(m_options.licenseHtml),
                 m_options.ignoreExtras,
                 m_options.goText);
-            toHtm.RecordStats(m_options);
+            toHtm.bookInfo.RecordStats(m_options);
             m_options.Write();
             LoadStatisticsTab();
             Logit.CloseFile();
@@ -942,7 +955,7 @@ namespace haiola
 
             currentConversion = "Writing auxilliary metadata files.";
             Application.DoEvents();
-            if (!fAllRunning)
+            if (!fileHelper.fAllRunning)
                 return;
 
             // We currently have the information handy to write some auxilliary XML files
@@ -1171,43 +1184,6 @@ In addition, you have permission to convert the text to different file formats, 
 			}
         }
 
-        /// <summary>
-        /// Runs a command like it was typed on the command line.
-        /// Uses bash as the command interpretor on Linux & Mac OSX; cmd.exe on Windows.
-        /// </summary>
-        /// <param name="command">Command to run, with or without full path.</param>
-        public void RunCommand(string command)
-        {
-            System.Diagnostics.Process runningCommand = null;
-            try
-            {
-                if (Path.DirectorySeparatorChar == '/')
-                {
-                    runningCommand = System.Diagnostics.Process.Start("bash", " -c '" + command + "'");
-                }
-                else
-                {
-                    runningCommand = System.Diagnostics.Process.Start("cmd.exe", " /c " + command);
-                }
-                if (runningCommand != null)
-                {
-                    while (fAllRunning && !runningCommand.HasExited)
-                    {
-                        System.Windows.Forms.Application.DoEvents();
-                        System.Threading.Thread.Sleep(200);
-                    }
-                    if ((!runningCommand.HasExited) && (!fAllRunning))
-                    {
-                        runningCommand.Kill();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Unable to run command " + command);
-            }
-        }
-
         public void showHelp(string helpFile)
         {
             try
@@ -1246,9 +1222,10 @@ In addition, you have permission to convert the text to different file formats, 
                 currentConversion = "Running " + command;
                 batchLabel.Text = currentConversion;
                 Application.DoEvents();
-                RunCommand(command);
+                if (!fileHelper.RunCommand(command))
+                    MessageBox.Show(fileHelper.runCommandError, "Error " + currentConversion);
                 currentConversion = String.Empty;
-                if (!fAllRunning)
+                if (!fileHelper.fAllRunning)
                     return;
             }
             
@@ -1273,7 +1250,7 @@ In addition, you have permission to convert the text to different file formats, 
                 fileHelper.EnsureDirectory(UsfmDir);
                 currentConversion = "Normalizing USFM from USFX. ";
                 Application.DoEvents();
-                if (!fAllRunning)
+                if (!fileHelper.fAllRunning)
                     return;
                 logFile = Path.Combine(m_outputProjectDirectory, "usfx2usfm2_log.txt");
                 Logit.OpenFile(logFile);
@@ -1327,7 +1304,7 @@ In addition, you have permission to convert the text to different file formats, 
                     {
                         currentConversion = "processing " + filename;
                         Application.DoEvents();
-                        if (!fAllRunning)
+                        if (!fileHelper.fAllRunning)
                             break;
                         XmlTextReader xr = new XmlTextReader(inputFile);
                         if (xr.MoveToContent() == XmlNodeType.Element)
@@ -1448,8 +1425,7 @@ In addition, you have permission to convert the text to different file formats, 
             est.Filter(Path.Combine(UsfxPath, "usfx.xml"), Path.Combine(auxPath, "verseText.xml"));
         }
 
-
-        
+        protected string orderFile;
 
         /// <summary>
         /// Take the project input (exactly one of USFM, USFX, or USX) and create
@@ -1463,26 +1439,31 @@ In addition, you have permission to convert the text to different file formats, 
             displayOptions();
             logProjectStart("Processing " + m_options.translationId + " in " + m_inputProjectDirectory);
             Application.DoEvents();
-            if (!fAllRunning)
+            if (!fileHelper.fAllRunning)
                 return;
             // Find out what kind of input we have (USFX, USFM, or USX)
             // and produce USFX, USFM, (and in the future) USX outputs.
+
+            orderFile = Path.Combine(m_inputProjectDirectory, "bookorder.txt");
+            if (!File.Exists(orderFile))
+                orderFile = SFConverter.FindAuxFile("bookorder.txt");
+
             GetUsfx(projDirName);
             NormalizeUsfm();
             UpdateBooksList();
         	Application.DoEvents();
             // Create verseText.xml with unformatted canonical text only in verse containers.
-            if (fAllRunning)
+            if (fileHelper.fAllRunning)
                 PrepareSearchText();
             // Create HTML output for posting on web sites.
-            if (fAllRunning)
+            if (fileHelper.fAllRunning)
                 ConvertUsfxToPortableHtml();
             Application.DoEvents();
             // Create Modified OSIS output for conversion to Sword format.
-            if (fAllRunning)
+            if (fileHelper.fAllRunning)
                 ConvertUsfxToMosis();
             Application.DoEvents();
-            if (fAllRunning)
+            if (fileHelper.fAllRunning)
             {
                 // Get updated BookNames.xml file for input directory
                 File.Copy(Path.Combine(Path.Combine(m_outputProjectDirectory, "usfx"), "BookNames.xml"),
@@ -1490,11 +1471,11 @@ In addition, you have permission to convert the text to different file formats, 
             }
             Application.DoEvents();
             // Run proprietary extension conversions, if any.
-            if (fAllRunning)
+            if (fileHelper.fAllRunning)
                 plugin.DoProprietaryConversions();
             Application.DoEvents();
             // Run custom per project scripts.
-            if (fAllRunning)
+            if (fileHelper.fAllRunning)
                 DoPostprocess();
             Application.DoEvents();
             m_options.Write();
@@ -1517,7 +1498,7 @@ In addition, you have permission to convert the text to different file formats, 
                 source = Path.Combine(paratextProjectsDir, (string)paratextcomboBox.SelectedItem);
                 PreprocessUsfmFiles(source);
                 Application.DoEvents();
-                if (fAllRunning)
+                if (fileHelper.fAllRunning)
                     ConvertUsfmToUsfx();
             }
             else
@@ -1527,7 +1508,7 @@ In addition, you have permission to convert the text to different file formats, 
                 {
                     PreprocessUsfmFiles(source);
                     Application.DoEvents();
-                    if (fAllRunning)
+                    if (fileHelper.fAllRunning)
                         ConvertUsfmToUsfx();
                 }
                 else
@@ -1552,15 +1533,15 @@ In addition, you have permission to convert the text to different file formats, 
 
     	private void WorkOnAllButton_Click(object sender, EventArgs e)
         {
-            if (fAllRunning)
+            if (fileHelper.fAllRunning)
             {
-                fAllRunning = false;
+                fileHelper.fAllRunning = false;
                 WorkOnAllButton.Enabled = false;
                 WorkOnAllButton.Text = "Stopping...";
                 Application.DoEvents();
                 return;
             }
-            fAllRunning = true;
+            fileHelper.fAllRunning = true;
             btnSetRootDirectory.Enabled = false;
             reloadButton.Enabled = false;
             m_projectsList.Enabled = false;
@@ -1580,11 +1561,11 @@ In addition, you have permission to convert the text to different file formats, 
             {
                 ProcessOneProject((string)o);
                 Application.DoEvents();
-                if (!fAllRunning)
+                if (!fileHelper.fAllRunning)
                     break;
             }
             currentConversion = String.Empty;
-            fAllRunning = false;
+            fileHelper.fAllRunning = false;
             batchLabel.Text = (DateTime.UtcNow - startTime).ToString() + " " + "Done.";
             messagesListBox.Items.Add(batchLabel.Text);
             m_projectsList_SelectedIndexChanged(null, null);
@@ -1646,6 +1627,7 @@ In addition, you have permission to convert the text to different file formats, 
             }
             ethnologueCodeTextBox.Text = m_options.languageId;
             translationIdTextBox.Text = m_options.translationId;
+            traditionalAbbreviationTextBox.Text = m_options.translationTraditionalAbbreviation;
             languageNameTextBox.Text = m_options.languageName;
             engLangNameTextBox.Text = m_options.languageNameInEnglish;
             dialectTextBox.Text = m_options.dialect;
@@ -1683,7 +1665,7 @@ In addition, you have permission to convert the text to different file formats, 
             templateLabel.Text = "Current template: " + m_currentTemplate;
             copyFromTemplateButton.Enabled = (m_currentTemplate.Length > 0) && (m_currentTemplate != m_project);
             makeTemplateButton.Enabled = m_currentTemplate != m_project;
-            if (!fAllRunning)
+            if (!fileHelper.fAllRunning)
             {
                 if (m_options.lastRunResult)
                     BackColor = Color.LightGreen;
@@ -1734,9 +1716,9 @@ In addition, you have permission to convert the text to different file formats, 
 
         private void LoadStatisticsTab()
         {
-            statisticsTextBox.Text = String.Format(@"Old Testament: {0} books;  {1} chapters;  {2} verse tags;  {3} verse range; 
-New Testament: {4} books;  {5} chapters;  {6} verse tags;  {7} verse range: 
-Apocrypha/Deuterocanon: {8} books;  {9} chapters;  {10} verse tags;  {11} verse range;
+            statisticsTextBox.Text = String.Format(@"Old Testament: {0} books;  {1} chapters;  {2} verses;  {3} verse range; 
+New Testament: {4} books;  {5} chapters;  {6} verses;  {7} verse range: 
+Apocrypha/Deuterocanon: {8} books;  {9} chapters;  {10} verses;  {11} verse range;
 Peripherals: {12} books",
                                 m_options.otBookCount, m_options.otChapCount, m_options.otVerseCount, m_options.otVerseMax,
                                 m_options.ntBookCount, m_options.ntChapCount, m_options.ntVerseCount, m_options.ntVerseMax,
@@ -1860,6 +1842,7 @@ Peripherals: {12} books",
                 return;
             m_options.languageId = ethnologueCodeTextBox.Text;
             m_options.translationId = translationIdTextBox.Text;
+            m_options.translationTraditionalAbbreviation = traditionalAbbreviationTextBox.Text;
             m_options.languageName = languageNameTextBox.Text;
             m_options.languageNameInEnglish = engLangNameTextBox.Text;
             m_options.dialect = dialectTextBox.Text;
@@ -2047,7 +2030,7 @@ Peripherals: {12} books",
                 // batchLabel.Text = (DateTime.UtcNow - startTime).ToString().Substring(0, 8) + " " + m_project + " " + currentConversion;
                 Application.DoEvents();
             }
-            return fAllRunning;
+            return fileHelper.fAllRunning;
         }
 
         private DateTime startTime = new DateTime(1, 1, 1);
@@ -2061,7 +2044,7 @@ Peripherals: {12} books",
                 progress = ConcGenerator.Stage + " " + ConcGenerator.Progress;
             else
                 progress = currentConversion + " " + WordSend.usfxToHtmlConverter.conversionProgress;
-            if (fAllRunning)
+            if (fileHelper.fAllRunning)
                 runtime = (DateTime.UtcNow - startTime).ToString().Substring(0, 8) + " " + m_project + " ";
             batchLabel.Text = runtime + progress;
             extensionLabel.Text = plugin.PluginMessage();
@@ -2142,15 +2125,15 @@ Peripherals: {12} books",
 
         private void runHighlightedButton_Click(object sender, EventArgs e)
         {
-            if (fAllRunning)
+            if (fileHelper.fAllRunning)
             {
-                fAllRunning = false;
+                fileHelper.fAllRunning = false;
                 WorkOnAllButton.Enabled = false;
                 WorkOnAllButton.Text = "Stopping...";
                 Application.DoEvents();
                 return;
             }
-            fAllRunning = true;
+            fileHelper.fAllRunning = true;
             btnSetRootDirectory.Enabled = false;
             reloadButton.Enabled = false;
             m_projectsList.Enabled = false;
@@ -2169,7 +2152,7 @@ Peripherals: {12} books",
             ProcessOneProject(SelectedProject);
 
             currentConversion = String.Empty;
-            fAllRunning = false;
+            fileHelper.fAllRunning = false;
             batchLabel.Text = (DateTime.UtcNow - startTime).ToString() + " " + "Done.";
             messagesListBox.Items.Add(batchLabel.Text);
             m_projectsList_SelectedIndexChanged(null, null);
@@ -2349,7 +2332,7 @@ Peripherals: {12} books",
             altUrlFile.WriteLine("UNLOCK TABLES;");
             sqlFile.Close();
             altUrlFile.Close();
-            fAllRunning = false;
+            fileHelper.fAllRunning = false;
             currentConversion = numProjects.ToString() + " projects; " + numTranslations.ToString() + " public. " + urlid.ToString() + " URLs " + numSites.ToString() + " sites " + numLanguages.ToString() + " languages " + numDialects.ToString() + " dialects (including languages). ";
 
             scorecard.WriteLine("Haiola project statistics as of {0} UTC", DateTime.UtcNow.ToString("R"));

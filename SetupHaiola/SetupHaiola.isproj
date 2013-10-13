@@ -48,6 +48,10 @@
 			<Name>massregex1</Name>
 			<Project>{20E590DE-DDF6-46DA-9348-D06F8F238A25}</Project>
 		</ProjectReference>
+		<ProjectReference Include="..\phrasetrans\phrasetrans.csproj">
+			<Name>phrasetrans1</Name>
+			<Project>{705FEBE4-212B-4CD5-81B5-33C2E72F3EDC}</Project>
+		</ProjectReference>
 		<ProjectReference Include="..\usfm2usfx\usfm2usfx.csproj">
 			<Name>usfm2usfx1</Name>
 			<Project>{1CF6DB62-8ABD-4A0D-89D2-782433458878}</Project>
