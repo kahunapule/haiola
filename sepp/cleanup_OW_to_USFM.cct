@@ -1,0 +1,9 @@
+begin >
+
+group(main)
+nl "***\s2]" > ""
+
+nl "\x" > "\x"
+nl "\*x" > "\*x"
+nl "\f" > "\f"
+nl "\*f" > "\*f"

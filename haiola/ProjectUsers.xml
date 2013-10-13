@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ProjectUsers PeerSharing="true">
+  <User UserName="Michael Johnson" FirstUser="true">
+    <Role>Administrator</Role>
+    <AllBooks>true</AllBooks>
+    <Books />
+  </User>
+  <User UserName="Robert Cape" FirstUser="false">
+    <Role>Administrator</Role>
+    <AllBooks>false</AllBooks>
+    <Books />
+  </User>
+  <User UserName="Bill Dyck" FirstUser="false">
+    <Role>Administrator</Role>
+    <AllBooks>false</AllBooks>
+    <Books />
+  </User>
+  <User UserName="Lois Gourley" FirstUser="false">
+    <Role>Administrator</Role>
+    <AllBooks>false</AllBooks>
+    <Books />
+  </User>
+</ProjectUsers>
