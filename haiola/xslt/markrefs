@@ -1,0 +1,7 @@
+#!/bin/bash
+rm listOfBookNames.html listOfBookNamesStartingWithDigit.html temp3.xml temp4.xml usfxout.xml
+java -jar ../saxon9he.jar -o:"/home/kahunapule/sync/source/prophero/haiola/xslt/listOfBookNames.html" -s:"/home/kahunapule/sync/source/prophero/haiola/xslt/BookNames.xml" -xsl:"../step1.xsl"
+java -jar ../saxon9he.jar -o:"/home/kahunapule/sync/source/prophero/haiola/xslt/listOfBookNamesStartingWithDigit.html" -s:"/home/kahunapule/sync/source/prophero/haiola/xslt/BookNames.xml" -xsl:"../step2.xsl"
+java -jar ../saxon9he.jar -o:"/home/kahunapule/sync/source/prophero/haiola/xslt/temp3.xml" -s:"/home/kahunapule/sync/source/prophero/haiola/xslt/usfx.xml" -xsl:"../step3.xsl" bookNamesFile="/home/kahunapule/sync/source/prophero/haiola/xslt/listOfBookNames.html" bookNamesXml="/home/kahunapule/sync/source/prophero/haiola/xslt/BookNames.xml" 
+java -jar ../saxon9he.jar -o:"/home/kahunapule/sync/source/prophero/haiola/xslt/temp4.xml" -s:"/home/kahunapule/sync/source/prophero/haiola/xslt/temp3.xml" -xsl:"../step4.xsl" numberedBookNamesFile="/home/kahunapule/sync/source/prophero/haiola/xslt/listOfBookNamesStartingWithDigit.html"
+java -jar ../saxon9he.jar -o:"/home/kahunapule/sync/source/prophero/haiola/xslt/usfxout.xml" -s:"/home/kahunapule/sync/source/prophero/haiola/xslt/temp4.xml" -xsl:"../step5.xsl"

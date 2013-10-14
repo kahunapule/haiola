@@ -41,6 +41,9 @@ namespace WordSend
         public bool stripPictures = false;
         public string htmlextrasDir = String.Empty;
         public LanguageCodeInfo langCodes;
+        public string languageNameInEnglish = String.Empty;
+        public string languageNameInVernacular = String.Empty;
+        public string traditionalAbbreviation = String.Empty;
 
         protected const string IndexFileName = "index.htm";
         protected string usfxFileName;
@@ -71,7 +74,7 @@ namespace WordSend
         protected string previousFileName = "";
         protected string chapterLabel = "";
         protected string psalmLabel = "";
-        protected string langName = "";
+        protected string translationName = "";
         protected string langId = "";
         protected string shortLangId = "";
         protected string footerTextHTML = "";
@@ -101,13 +104,6 @@ namespace WordSend
         protected bool newChapterFound;
         public BibleBookInfo bookInfo = new BibleBookInfo();
         protected BibleBookRecord bookRecord;
-
-        /// <summary>
-        /// Null except when we have seen an open element with name p and style "Parallel Passage Reference" but have not yet seen the corresponding end element.
-        /// Set to empty when we see the open element, any intermediate text is added to it.
-        /// The end element then generates the complete cross-ref.
-        /// </summary>
-        protected string parallelPassage;
 
         /// <summary>
         /// Null except when we have seen an "x" element and not yet seen the corresponding "/x". Then we accumulate here the material we will write to
@@ -202,6 +198,9 @@ namespace WordSend
 
         protected string navButtonCode;
         protected Boolean eatSpace = false;
+        protected int allChapterIndex;
+        protected string nextid;
+        protected string previd;
 
         /// <summary>
         /// Write navigational links to get to another book or another chapter from here. Also include links to site home, previous chapter, and next chapter.
@@ -209,7 +208,7 @@ namespace WordSend
         protected virtual void WriteNavButtons()
         {
             int i;
-            string s = string.Empty;
+            string s = String.Empty;
             StringBuilder sb = new StringBuilder(s);
             StringBuilder bsb = new StringBuilder(s);
             BibleBookRecord br;
@@ -229,7 +228,7 @@ namespace WordSend
             {
 
                 htm.WriteLine("<div class=\"navButtons\"><a href=\"index.htm\">{0}</a> <a href=\"{1}\">{2}</a> {3}</div>",
-                                langName, firstChapterFile, bookRecord.vernacularShortName, currentChapterPublished);
+                                translationName, firstChapterFile, bookRecord.vernacularShortName, currentChapterPublished);
                 bsb.Append("<table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" align=\"center\"><tbody><tr><td>");
                 bsb.Append("<form name=\"bkch1\"><div class=\"navChapters\">");
                 bsb.Append("<select name=\"bksch1\" onChange=\"location=document.bkch1.bksch1.options[document.bkch1.bksch1.selectedIndex].value;\">");
@@ -329,7 +328,7 @@ namespace WordSend
             }
             else
             {
-                htm.WriteLine("<div class=\"navButtons\"><a href=\"index.htm\">{0}</a></div>", langName);
+                htm.WriteLine("<div class=\"navButtons\"><a href=\"index.htm\">{0}</a></div>", translationName);
                 bsb.Append("<form name=\"bkch1\"><div class=\"navChapters\">");
                 bsb.Append("<select name=\"bksch1\" onChange=\"location=document.bkch1.bksch1.options[document.bkch1.bksch1.selectedIndex].value;\">");
                 bsb.Append(OptionSelectedOpeningElement + "---</option>\r\n");
@@ -472,9 +471,9 @@ namespace WordSend
                 htm.WriteLine("<script src=\"TextFuncs.js\" type=\"text/javascript\"></script>");
             }
             htm.WriteLine("<title>{0} {1} {2}</title>",
-                langName, currentBookHeader, currentChapterPublished);
+                translationName, currentBookHeader, currentChapterPublished);
             htm.WriteLine(string.Format("<meta name=\"keywords\" content=\"{0}, {1}, Holy Bible, Scripture, Bible, Scriptures, New Testament, Old Testament, Gospel\" />",
-                langName, langId));
+                translationName, langId));
             htm.WriteLine("</head>");
             if (skipNav)
             {
@@ -618,6 +617,7 @@ namespace WordSend
             htm.Write(string.Format(" <span class=\"verse\"> <a name=\"V{1}\">{0}&nbsp;</a></span>",
                 currentVersePublished, verseNumber.ToString()));
             eatSpace = true;
+           
             if (doXrefMerge)
             {
                 string xn = xref.find(currentBCV);
@@ -628,6 +628,7 @@ namespace WordSend
                     EndHtmlNote();
                 }
             }
+            
         }
 
         /// <summary>
@@ -648,23 +649,22 @@ namespace WordSend
             {
                 if (currentBookAbbrev.CompareTo("PSA") == 0)
                 {
-                    WriteHtml(String.Format("<div class=\"chapterlabel\"><a name=\"V0\">{0} {1}</a></div>", psalmLabel, currentChapterPublished));
+                    WriteHtml(String.Format("<div class='chapterlabel'><a name=\"V0\">{0} {1}</a></div>", psalmLabel, currentChapterPublished));
                 }
                 else
                 {
-                    WriteHtml(String.Format("<div class=\"chapterlabel\"><a name=\"V0\">{0} {1}</a></div>", chapterLabel, currentChapterPublished));
+                    WriteHtml(String.Format("<div class='chapterlabel'><a name=\"V0\">{0} {1}</a></div>", chapterLabel, currentChapterPublished));
                 }
                 newChapterFound = false;
             }
-            string s = String.Format("<div class=\"{0}\">", style);
+            string s = String.Format("<div class='{0}'>", style);
             WriteHtml(s);
-
         }
 
         /// <summary>
         /// Finish up an HTML paragraph, which is really a div element.
         /// </summary>
-        protected void EndHtmlParagraph()
+        protected virtual void EndHtmlParagraph()
         {
             if (inParagraph)
             {
@@ -682,7 +682,7 @@ namespace WordSend
             if (!ignore)
             {
                 inTextStyle++;
-                WriteHtml(String.Format("<span class=\"{0}\">", style));
+                WriteHtml(String.Format("<span class='{0}'>", style));
             }
         }
 
@@ -747,10 +747,12 @@ namespace WordSend
                 var escapeHtml = EscapeHtml(text);
                 if (inFootnote)
                 {
+                    /*
                     if (xRef != null && !inFootnoteStyle)
                         xRef += escapeHtml; // accumluate for hot-link processing.
                     else
-                        footnotesToWrite.Append(escapeHtml);
+                     */
+                    footnotesToWrite.Append(escapeHtml);
                     // Also written to main document section for pop-up.
                 }
                 else
@@ -773,11 +775,11 @@ namespace WordSend
             WriteHtml("<br/>");
         }
 
-        /// <summary>
+                /// <summary>
         /// Write text to HTML file if open, or queue it up for when an HTML file gets opened.
         /// </summary>
         /// <param name="s"></param>
-        protected void WriteHtml(string s)
+        protected virtual void WriteHtml(string s)
         {
             if (!ignore)
             {
@@ -825,7 +827,7 @@ namespace WordSend
                 else
                 {
                     // style =="x", cross-ref: start accumulating text we will process for hot link cross-refs
-                    xRef = "";
+                    //xRef = "";
                     marker = "✡";
                 }
             }
@@ -857,9 +859,11 @@ namespace WordSend
             {
                 EndHtmlNoteStyle();
                 WriteHtml("</span></a>");   // End popup text
+                /*
                 if (xRef != null)
                     footnotesToWrite.Append(ConvertCrossRefsToHotLinks(xRef));
                 xRef = null;
+                */
                 footnotesToWrite.Append("</p>\r\n");    // End footnote paragraph
                 inFootnote = false;
             }
@@ -1023,7 +1027,7 @@ namespace WordSend
             else
                 chapterNumber++;
             chapterOsisId = bookOsisId + "." + chapterNumber.ToString();
-            chapterId = currentBookAbbrev + "_" + chapterNumber.ToString();
+            chapterId = currentBookCode + chapterNumber.ToString();
             verseOsisId = chapterOsisId + ".0";
             verseId = chapterId + "_0";
             chopChapter = true;
@@ -1197,7 +1201,7 @@ namespace WordSend
                                     chapterNumber++;
                                 bookRecord.actualChapters = Math.Max(bookRecord.actualChapters, chapterNumber);
                                 chapterOsisId = bookOsisId + "." + chapterNumber.ToString();
-                                chapterId = currentBookAbbrev + "_" + chapterNumber.ToString();
+                                chapterId = currentBookCode + chapterNumber.ToString();
                                 break;
                             case "v":
                                 currentVerse = id;
@@ -1341,7 +1345,7 @@ namespace WordSend
         {
             inStrongs = false;
         }
-
+                
         protected CrossReference xref;
         protected bool doXrefMerge = false;
         public void MergeXref(string xrefName)
@@ -1361,7 +1365,7 @@ namespace WordSend
                 throw;
             }
         }
-
+        
         protected virtual void WriteContentsPage()
         {
             hasContentsPage = bookRecord.toc.Length > 0;
@@ -1370,7 +1374,7 @@ namespace WordSend
             {
                 currentChapterPublished = "0";
                 OpenHtmlFile();
-                htm.WriteLine("<div class=\"toc\"><a href=\"index.htm\">^</a></div>\r\n{0}",
+                htm.Write("<div class='toc'><a href='index.htm'>^</a></div>{0}",
                     bookRecord.toc.ToString());
                 CloseHtmlFile();
             }
@@ -1380,7 +1384,7 @@ namespace WordSend
         {
             if ((preVerse.Length > 0) && (htm != null))
             {
-                htm.WriteLine(preVerse.ToString());
+                htm.Write(preVerse.ToString());
                 preVerse = new StringBuilder(String.Empty);
             }
         }
@@ -1417,7 +1421,27 @@ namespace WordSend
             CloseHtmlFile();
         }
 
-        bool inLink = false;
+        protected virtual void EndBook()
+        {
+            if (bookRecord.testament.CompareTo("x") == 0)
+            {
+                if (chapterNumber == 0)
+                {
+                    chapterNumber++;
+                    if (htm == null)
+                        OpenHtmlFile();
+                    if (preVerse.Length > 0)
+                    {
+                        htm.WriteLine(preVerse.ToString());
+                        preVerse = new StringBuilder(String.Empty);
+                    }
+                }
+            }
+            CloseHtmlFile();
+        }
+        
+
+        protected bool inLink = false;
 
         /// <summary>
         /// Start a hyperlink to the destination indicated.
@@ -1426,24 +1450,43 @@ namespace WordSend
         /// <param name="web"></param>
         protected virtual void StartLink(string tgt, string web)
         {
+            int ch;
+            int vs;
+            string chapterFormat = "00";
+            string theLink;
             if (tgt.Length > 0)
             {
                 string [] bcv = tgt.Split(new Char [] {'.'});
-                int ch;
-                int vs;
-                if (Int32.TryParse(bcv[1], out ch) && Int32.TryParse(bcv[2], out vs))
+                if (bcv.Length >= 3)
                 {
-                    if (bookInfo.isValidTarget(bcv[0], ch, vs))
+                    if (Int32.TryParse(bcv[1], out ch) && Int32.TryParse(bcv[2], out vs))
                     {
-                        htm.Write("<a href=\"{0}{1}.htm#V{2}", bcv[0], bcv[1], bcv[2]);
-                        inLink = true;
+                        if (bookInfo.isValidTarget(bcv[0], ch, vs))
+                        {
+                            if (bcv[0].CompareTo("PSA") == 0)
+                                chapterFormat = "000";
+                            theLink = String.Format("<a href='{0}{1}.htm#V{2}'>", bcv[0], ch.ToString(chapterFormat), vs.ToString());
+                            if (inFootnote)
+                            {
+                                footnotesToWrite.Append(theLink);
+                            }
+                            else
+                            {
+                                WriteHtml(theLink);
+                            }
+                            inLink = true;
+                        }
                     }
                 }
             }
             else if (web.Length > 0)
             {
                 inLink = true;
-                htm.Write("<a href=\"{0}\">", web);
+                theLink = String.Format("<a href=\"{0}\">", web);
+                if (inFootnote)
+                    footnotesToWrite.Append(theLink);
+                else
+                    htm.Write(theLink);
             }
         }
 
@@ -1454,11 +1497,40 @@ namespace WordSend
         {
             if (inLink)
             {
-                htm.Write("</a>");
+                if (inFootnote)
+                {
+                    footnotesToWrite.Append("</a>");
+                }
+                else
+                {
+                    WriteHtml("</a>");
+                }
                 inLink = false;
             }
         }
 
+        /// <summary>
+        /// Append a line to the Table of Contents
+        /// </summary>
+        /// <param name="level">Table of contents line class, i.e. toc1, toc2, toc3...</param>
+        /// <param name="title">Title to add</param>
+        protected virtual void AppendToc(string level, string title)
+        {
+            bookRecord.toc.Append(String.Format("<div class=\"{0}\"><a target=\"_top\" href=\"{1}#V{2}\">{3}</a></div>\r\n",
+                level,
+                MainFileLinkTarget(currentBookAbbrev, Math.Max(1, chapterNumber).ToString(chapFormat)),
+                verseNumber.ToString(), usfx.Value.Trim()));
+        }
+
+        /// <summary>
+        /// Intended to be overriden in child class
+        /// </summary>
+        protected virtual void ChapterToc()
+        {
+            newChapterFound = false;
+        }
+
+        protected string chapFormat;
         public string translationIdentifier;
         public string languageIdentifier;
 
@@ -1470,6 +1542,9 @@ namespace WordSend
         protected bool inOrigin = false;
         protected bool hasLemma = false;
         protected bool refTagFound;
+        protected string currentBookCode;  // Current book short code
+        protected bool firstTitle;
+
 
         /// <summary>
         /// Converts the USFX file usfxName to a set of HTML files, one file per chapter, in the
@@ -1501,6 +1576,7 @@ namespace WordSend
             string figCopyright = String.Empty;
             string figCaption = String.Empty;
             string figReference = String.Empty; // Figure parameters
+            firstTitle = true;
             translationIdentifier = translationId;
             languageIdentifier = languageId;
             ignoreIntros = ignoreNotes = skipHelps;
@@ -1510,7 +1586,7 @@ namespace WordSend
             htmDir = htmlDir;
             langId = languageId;
             shortLangId = langCodes.ShortCode(langId);
-            langName = languageName;
+            translationName = languageName;
             chapterLabel = chapterLabelName;
             psalmLabel = psalmLabelName;
             chapterNumber = verseNumber = 0;
@@ -1518,7 +1594,7 @@ namespace WordSend
             bookOsisId = chapterOsisId = verseOsisId = chapterId = verseId = String.Empty;
             currentBookAbbrev = currentBookTitle = currentChapterPublished = wordForChapter = String.Empty;
             currentChapter = currentFileName = currentVerse = languageCode = String.Empty;
-            ChapterInfo ci = new ChapterInfo();
+            currentBookCode = String.Empty;
             inFootnote = inFootnoteStyle = false;
             inTextStyle = 0;
             inParagraph = chopChapter = false;
@@ -1537,11 +1613,11 @@ namespace WordSend
 
             bool containsDC = false;
             newChapterFound = false;
-            refTagFound = false;
+            refTagFound = false;    // If ref tags are present, use those instead of the previously-written logic for recognizing internal links.
             bool foundThisBook;
             ignore = false;
             StringBuilder toc = new StringBuilder();
-            string chapFormat = "00";
+            chapFormat = "00";
             int i;
 
             footnotesToWrite = new StringBuilder(String.Empty);
@@ -1587,10 +1663,10 @@ namespace WordSend
                                 {
                                     currentBookAbbrev = id;
                                     bookRecord = (BibleBookRecord)bookInfo.books[currentBookAbbrev];
-                                    bookRecord.chaptersFound = new ArrayList(151);
                                     bookOsisId = bookRecord.osisName;
+                                    currentBookCode = bookRecord.shortCode;
                                     chapterOsisId = bookOsisId + ".0";
-                                    chapterId = currentBookAbbrev + "_0";
+                                    chapterId = currentBookCode + "0";
                                     verseOsisId = chapterOsisId + ".0";
                                     verseId = chapterId + "_0";
                                     if (bookRecord == null)
@@ -1645,6 +1721,7 @@ namespace WordSend
                                 footNoteCall.reset();
                                 break;
                             case "p":
+                                ChapterToc();
                                 if (sfm.CompareTo("mt") == 0)
                                 {
                                     usfx.Read();
@@ -1661,9 +1738,7 @@ namespace WordSend
                                     usfx.Read();
                                     if (usfx.NodeType == XmlNodeType.Text)
                                     {
-                                        bookRecord.toc.Append(String.Format("<div class=\"toc1\"><a target=\"_top\" href=\"{0}#V{1}\">{2}</a></div>\r\n",
-                                            MainFileLinkTarget(currentBookAbbrev, Math.Max(1, chapterNumber).ToString(chapFormat)),
-                                            verseNumber.ToString(), usfx.Value.Trim()));
+                                        AppendToc("toc1", usfx.Value.Trim());
                                     }
                                     hasContentsPage = true;
                                 }
@@ -1674,24 +1749,24 @@ namespace WordSend
                                     LeaveHeader();
                                 }
                                 break;
+                            case "ref":
+                                refTagFound = true;
+                                break;
                             case "h":
                                 usfx.Read();
                                 if (usfx.NodeType == XmlNodeType.Text)
                                 {
-                                    currentBookHeader = EscapeHtml(usfx.Value.Trim());
-                                    bookRecord.toc.Append(String.Format("<div class=\"toc1\"><a target=\"_top\" href=\"{0}\">{1}</a></div>\r\n",
-                                        MainFileLinkTarget(currentBookAbbrev, chapFormat.Substring(1) + "1"), currentBookHeader));
+                                    AppendToc("toc1", usfx.Value.Trim());
                                 }
 
                                 break;
                             case "s":
                             case "d":
+                                ChapterToc();
                                 usfx.Read();
                                 if (usfx.NodeType == XmlNodeType.Text)
                                 {
-                                    bookRecord.toc.Append(String.Format("<div class=\"toc2\"><a target=\"_top\" href=\"{0}#V{1}\">{2}</a></div>\r\n",
-                                        MainFileLinkTarget(currentBookAbbrev, Math.Max(1, chapterNumber).ToString(chapFormat)),
-                                        verseNumber.ToString(), usfx.Value.Trim()));
+                                    AppendToc("toc2", usfx.Value.Trim());
                                 }
                                 hasContentsPage = true;
                                 break;
@@ -1723,20 +1798,13 @@ namespace WordSend
                                 else
                                     chapterNumber++;
                                 chapterOsisId = bookOsisId + "." + chapterNumber.ToString();
-                                chapterId = currentBookAbbrev + "_" + chapterNumber.ToString();
+                                chapterId = currentBookCode + chapterNumber.ToString();
                                 verseOsisId = chapterOsisId + ".0";
                                 verseId = chapterId + "_0";
                                 bookRecord.actualChapters = Math.Max(bookRecord.actualChapters, chapterNumber);
-                                ci = new ChapterInfo();
-                                ci.chapterInteger = chapterNumber;
-                                ci.alternate = ci.actual = currentChapter;
-                                ci.published = currentChapterPublished;
-                                ci.osisChapter = chapterOsisId;
-                                ci.chapterId = chapterId;
-                                ci.maxVerse = ci.verseCount = 0;
-                                bookRecord.chaptersFound.Add(ci);
                                 LeaveHeader();
                                 chopChapter = true;
+                                newChapterFound = true;
                                 break;
                             case "cp":
                                 if (!usfx.IsEmptyElement)
@@ -1745,7 +1813,6 @@ namespace WordSend
                                     if (usfx.NodeType == XmlNodeType.Text)
                                     {
                                         currentChapterPublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
-                                        ci.published = currentChapterPublished;
                                     }
                                 }
                                 break;
@@ -1756,7 +1823,6 @@ namespace WordSend
                                     if (usfx.NodeType == XmlNodeType.Text)
                                     {
                                         currentChapterAlternate = usfx.Value.Trim();
-                                        ci.alternate = currentChapterAlternate;
                                     }
                                 }
                                 break;
@@ -1779,11 +1845,15 @@ namespace WordSend
                                             case "3":
                                                 bookRecord.vernacularAbbreviation = usfx.Value.Trim();
                                                 break;
+                                            case "4":
+                                                bookRecord.vernacularAltName = usfx.Value.Trim();
+                                                break;
                                         }
                                     }
                                 }
                                 break;
                             case "v":
+                                ChapterToc();
                                 currentVerse = id;
                                 currentVersePublished = fileHelper.LocalizeDigits(currentVerse);
                                 currentVerseAlternate = "";
@@ -1804,8 +1874,6 @@ namespace WordSend
                                 {
                                     verseNumber++;
                                 }
-                                ci.maxVerse = Math.Max(ci.maxVerse, verseNumber);
-                                ci.verseCount++;
                                 verseOsisId = chapterOsisId + "." + verseNumber.ToString();
                                 verseId = chapterId + "_" + verseNumber.ToString();
                                 break;
@@ -1877,6 +1945,13 @@ namespace WordSend
                     return false;
                 }
 
+
+                bookOsisId = chapterOsisId = verseOsisId = chapterId = verseId = String.Empty;
+                currentBookAbbrev = currentBookTitle = currentChapterPublished = String.Empty;
+                currentChapter = currentFileName = currentVerse = String.Empty;
+                chapterNumber = verseNumber = 0;
+
+
                 // Index page
                 GenerateIndexFile(translationId, indexHtml, goText);
 
@@ -1886,7 +1961,7 @@ namespace WordSend
 
                 usfx = new XmlTextReader(usfxName);
                 usfx.WhitespaceHandling = WhitespaceHandling.All;
-
+                allChapterIndex = 0;
                 chapterFileIndex = 0;
                 bookListIndex = 0;
                 while (usfx.Read())
@@ -1991,16 +2066,16 @@ namespace WordSend
                                         string tgt = GetNamedAttribute("tgt");
                                         string web = GetNamedAttribute("web");
                                         StartLink(tgt, web);
-                                        refTagFound = true;
                                         break;
                                     case "book":
                                         currentBookAbbrev = id;
                                         chapterNumber = 0;
                                         verseNumber = 0;
                                         bookRecord = (BibleBookRecord)bookInfo.books[id];
+                                        currentBookCode = bookRecord.shortCode;
                                         bookOsisId = bookRecord.osisName;
                                         chapterOsisId = bookOsisId + ".0";
-                                        chapterId = currentBookAbbrev + "_0";
+                                        chapterId = currentBookCode + "0";
                                         verseOsisId = chapterOsisId + ".0";
                                         verseId = chapterId + "_0";
                                         currentBookHeader = bookRecord.vernacularShortName;
@@ -2078,8 +2153,7 @@ namespace WordSend
                                         if (ignoreIntros && ((sfm == "ip") || (sfm == "imt") || (sfm == "io") || (sfm == "is") || (sfm == "iot")))
                                             ignore = true;
                                         ProcessParagraphStart(beforeVerse);
-                                        if (style == "Parallel Passage Reference")
-                                            parallelPassage = ""; // start accumulating cross-ref data
+                                      
                                         break;
                                     case "q":
                                     case "qs":  // qs is really a text style with paragraph attributes, but HTML/CSS can't handle that.
@@ -2201,7 +2275,7 @@ namespace WordSend
                                         inTableRow = true;
                                         break;
                                     case "thr":
-                                        WriteHtml("<td align=\"right\"><b>");
+                                        WriteHtml("<td align='right'><b>");
                                         inTableBold = true;
                                         inTableCol = true;
                                         break;
@@ -2210,7 +2284,7 @@ namespace WordSend
                                         inTableCol = true;
                                         break;
                                     case "tcr":
-                                        WriteHtml("<td align=\"right\">");
+                                        WriteHtml("<td align='right'>");
                                         inTableCol = true;
                                         break;
 
@@ -2273,10 +2347,7 @@ namespace WordSend
                         case XmlNodeType.Whitespace:
                         case XmlNodeType.SignificantWhitespace:
                         case XmlNodeType.Text:
-                            if (parallelPassage != null)
-                                parallelPassage = parallelPassage + usfx.Value;
-                            else
-                                WriteHtmlText(usfx.Value);
+                            WriteHtmlText(usfx.Value);
                             break;
                         case XmlNodeType.EndElement:
                             if (inUsfx)
@@ -2308,33 +2379,10 @@ namespace WordSend
                                         }
                                         break;
                                     case "book":
-                                        if (bookRecord.testament.CompareTo("x") == 0)
-                                        {
-                                            if (chapterNumber == 0)
-                                            {
-                                                chapterNumber++;
-                                                if (htm == null)
-                                                    OpenHtmlFile();
-                                                if (preVerse.Length > 0)
-                                                {
-                                                    htm.WriteLine(preVerse.ToString());
-                                                    preVerse = new StringBuilder(String.Empty);
-                                                }
-                                            }
-                                        }
-                                        CloseHtmlFile();
+                                        EndBook();
                                         bookListIndex++;
                                         break;
                                     case "p":
-                                        if (parallelPassage != null)
-                                        {
-                                            string crossRef = parallelPassage;
-                                            parallelPassage = null; // stop accumulating cross ref info!
-                                            // Escape it BEFORE we add the cross-ref markup, which may well include
-                                            // special characters.
-                                            WriteUnescapedHtmlText(ConvertCrossRefsToHotLinks(EscapeHtml(crossRef)));
-                                        }
-                                        goto case "mt";
                                     case "q":
                                     case "qs":  // qs is really a text style with paragraph attributes, but HTML/CSS can't handle that.
                                     case "b":
@@ -2463,90 +2511,6 @@ namespace WordSend
             return result;
         }
 
-        public void RecordStats(Options m_options)
-        {
-            int i, j;
-            int otBookCount = 0;
-            int ntBookCount = 0;
-            int adBookCount = 0;
-            int pBookCount = 0;
-            int otChapCount = 0;
-            int ntChapCount = 0;
-            int adChapCount = 0;
-            int otVerseCount = 0;
-            int ntVerseCount = 0;
-            int adVerseCount = 0;
-            int otVerseMax = 0;
-            int ntVerseMax = 0;
-            int adVerseMax = 0;
-            BibleBookRecord br;
-            ChapterInfo ci;
-            for (i = 0; i < bookList.Count; i++)
-            {
-                br = (BibleBookRecord)bookList[i];
-                if (br.isPresent)
-                {
-                    switch (br.testament)
-                    {
-                        case "o":
-                            otBookCount++;
-                            otChapCount = br.chaptersFound.Count;
-                            for (j = 0; j < otChapCount; j++)
-                            {
-                                ci = (ChapterInfo)br.chaptersFound[j];
-                                if (ci != null)
-                                {
-                                    otVerseCount += ci.verseCount;
-                                    otVerseMax += ci.maxVerse;
-                                }
-                            }
-                            break;
-                        case "n":
-                            ntBookCount++;
-                            ntChapCount = br.chaptersFound.Count;
-                            for (j = 0; j < ntChapCount; j++)
-                            {
-                                ci = (ChapterInfo)br.chaptersFound[j];
-                                if (ci != null)
-                                {
-                                    ntVerseCount += ci.verseCount;
-                                    ntVerseMax += ci.maxVerse;
-                                }
-                            }
-                            break;
-                        case "a":
-                            adBookCount++;
-                            adChapCount = br.chaptersFound.Count;
-                            for (j = 0; j < adChapCount; j++)
-                            {
-                                ci = (ChapterInfo)br.chaptersFound[j];
-                                if (ci != null)
-                                {
-                                    adVerseCount += ci.verseCount;
-                                    adVerseMax += ci.maxVerse;
-                                }
-                            }
-                            break;
-                        case "x":
-                            pBookCount++;
-                            break;
-                    }
-                }
-            }
-            m_options.otBookCount = otBookCount;
-            m_options.ntBookCount = ntBookCount;
-            m_options.adBookCount = adBookCount;
-            m_options.pBookCount = pBookCount;
-            m_options.otChapCount = otChapCount;
-            m_options.ntChapCount = ntChapCount;
-            m_options.adChapCount = adChapCount;
-            m_options.otVerseCount = otVerseCount;
-            m_options.ntVerseCount = ntVerseCount;
-            m_options.adVerseCount = adVerseCount;
-            m_options.otVerseMax = otVerseMax;
-            m_options.ntVerseMax = ntVerseMax;
-            m_options.adVerseMax = adVerseMax;
-        }
 
         protected virtual void GenerateIndexFile(string translationId, string indexHtml, string goText)
         {
@@ -2656,10 +2620,11 @@ namespace WordSend
         /// </summary>
         /// <param name="chunk1"></param>
         /// <returns>input string, but with HTML links added</returns>
+        /* Deprecated, replaced by XSL process that works with a wider variety of links.
         protected string ConvertCrossRefsToHotLinks(string chunk1)
         {
             if (refTagFound || CrossRefToFilePrefixMap == null || CrossRefToFilePrefixMap.Count == 0)
-                return chunk1;
+                return chunk1;  // If there are <ref> tags, use those instead of this function.
             string chunk = chunk1;
             int ibook = 0;
             Dictionary<string, string> subsBookToFile = new Dictionary<string, string>(CrossRefToFilePrefixMap.Count);
@@ -2773,7 +2738,7 @@ namespace WordSend
             }
 
             return result;
-        }
+        }*/
 
         /// <summary>
         /// Given a book ID and a chapter number, generate the corresponding HTML file name.

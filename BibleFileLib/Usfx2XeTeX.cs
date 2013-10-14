@@ -73,9 +73,9 @@ namespace WordSend
                 htm.WriteLine("<script src=\"TextFuncs.js\" type=\"text/javascript\"></script>");
             }
             htm.WriteLine("<title>{0} {1} {2}</title>",
-                langName, currentBookHeader, currentChapterPublished);
+                translationName, currentBookHeader, currentChapterPublished);
             htm.WriteLine(string.Format("<meta name=\"keywords\" content=\"{0}, {1}, Holy, Scripture, Bible, Scriptures\" />",
-                langName, langId));
+                translationName, langId));
             htm.WriteLine("</head>");
             htm.WriteLine("<body class=\"mainDoc\"{0}>", OnLoadArgument());
             WriteNavButtons();
@@ -266,25 +266,6 @@ namespace WordSend
             chapterFileIndex++;
         }
 
-        CrossReference xref;
-        bool doXrefMerge = false;
-        public void MergeXref(string xrefName)
-        {
-            doXrefMerge = false;
-            try
-            {
-                if ((xrefName != null) && File.Exists(xrefName))
-                {
-                    xref = new CrossReference(xrefName);
-                    doXrefMerge = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                Logit.WriteError(ex.Message);
-                throw;
-            }
-        }
 
         protected void EndFootnoteStyle()
         {
@@ -626,8 +607,6 @@ namespace WordSend
                                         if (ignoreIntros && ((sfm == "ip") || (sfm == "imt") || (sfm == "io") || (sfm == "is") || (sfm == "iot")))
                                             ignore = true;
                                         StartParagraph(beforeVerse);
-                                        if (style == "Parallel Passage Reference")
-                                            parallelPassage = ""; // start accumulating cross-ref data
                                         break;
                                     case "q":
                                     case "qs":  // qs is really a text style with paragraph attributes, but HTML/CSS can't handle that.
@@ -798,10 +777,7 @@ namespace WordSend
                         case XmlNodeType.Whitespace:
                         case XmlNodeType.SignificantWhitespace:
                         case XmlNodeType.Text:
-                            if (parallelPassage != null)
-                                parallelPassage = parallelPassage + usfx.Value;
-                            else
-                                texFile.Write(usfx.Value);
+                            texFile.Write(usfx.Value);
                             break;
                         case XmlNodeType.EndElement:
                             if (inUsfx)
@@ -853,16 +829,7 @@ namespace WordSend
                                         bookListIndex++;
                                         break;
                                     case "p":
-                                        if (parallelPassage != null)
-                                        {
-                                            string crossRef = parallelPassage;
-                                            parallelPassage = null; // stop accumulating cross ref info!
-                                            // Escape it BEFORE we add the cross-ref markup, which may well include
-                                            // special characters.
-                                            WritUnescapedeHtmlText(ConvertCrossRefsToHotLinks(EscapeHtml(crossRef)));
-                                        }
-                                        goto case "mt";
-                                    case "q":
+x                                    case "q":
                                     case "qs":  // qs is really a text style with paragraph attributes, but HTML/CSS can't handle that.
                                     case "b":
                                     case "mt":

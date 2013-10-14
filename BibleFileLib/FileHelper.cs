@@ -219,10 +219,58 @@ namespace WordSend
             return s;
         }
 
+        public static bool fAllRunning;
+        public static string runCommandError;
+
+        /// <summary>
+        /// Runs a command like it was typed on the command line.
+        /// Uses bash as the command interpretor on Linux & Mac OSX; cmd.exe on Windows.
+        /// </summary>
+        /// <param name="command">Command to run, with or without full path.</param>
+        public static bool RunCommand(string command, string defaultDirectory = "")
+        {
+            runCommandError = String.Empty;
+            System.Diagnostics.Process runningCommand = null;
+            try
+            {
+                if (defaultDirectory.Length > 0)
+                {
+                    command = "cd " + defaultDirectory + " && " + command;
+                }
+                if (Path.DirectorySeparatorChar == '/')
+                {
+                    runningCommand = System.Diagnostics.Process.Start("bash", " -c '" + command + "'");
+                }
+                else
+                {
+                    runningCommand = System.Diagnostics.Process.Start("cmd.exe", " /c " + command);
+                }
+                if (runningCommand != null)
+                {
+                    while (fileHelper.fAllRunning && !runningCommand.HasExited)
+                    {
+                        System.Windows.Forms.Application.DoEvents();
+                        System.Threading.Thread.Sleep(200);
+                    }
+                    if ((!runningCommand.HasExited) && (!fileHelper.fAllRunning))
+                    {
+                        runningCommand.Kill();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                runCommandError = ex.Message;
+                return false;
+            }
+            return true;
+        }
+
+
+
         public static string escapeJsonString(string s)
         {
-            s = s.Replace("\"", "\\\"");
-            return s;
+            return s.Replace("\"", "\\\"").Replace('\r', ' ').Replace('\n', ' ').Replace("  ", " ");
         }
 
         /// <summary>

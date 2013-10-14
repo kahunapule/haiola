@@ -18,9 +18,10 @@ namespace WordSend
         public string actual;  // Monotonically increasing integer as a string
         public string published;   // Published chapter number/name
         public string osisChapter; // OSIS ID of this book and chapter, i.e. John.3
-        public string chapterId;    // Book and chapter ID using SIL/UBS TLA, i.e. JHN.3
+        public string chapterId;    // Book and chapter ID using 2-character book code and chapter i.e. PS119 or JN3.
         public string alternate;    // Alternate chapter number
         public int maxVerse;    // Highest verse number actually found in the chapter
         public int verseCount;  // Number of verse markers actually found
+        public BibleBookRecord bookRecord; // Pointer to information about the book this chapter resides in.
     }
 }
