@@ -680,7 +680,7 @@ namespace haiola
                     (fileType != ".XML") && (fileType != ".HTM") &&
                     (fileType != ".KB2") && (fileType != ".HTML") &&
                     (fileType != ".CSS") && (fileType != ".SWP") &&
-                    (fileType != ".ID") && 
+                    (fileType != ".ID") && (fileType != ".DIC") &&
                     (fileType != ".VRS") && (!inputFile.EndsWith("~")) &&
                     (lowerName != "autocorrect.txt") &&
                     (lowerName != "tmp.txt") &&
@@ -2592,6 +2592,12 @@ Peripherals: {12} books",
                 m_options.selected = e.NewValue == CheckState.Checked;
                 m_options.Write();
             }
+        }
+
+        private void postprocessListBox_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (postprocessListBox.SelectedItem != null)
+                postprocessTextBox.Text = (string)postprocessListBox.SelectedItem;
         }
     }
 }

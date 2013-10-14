@@ -106,13 +106,6 @@ namespace WordSend
         protected BibleBookRecord bookRecord;
 
         /// <summary>
-        /// Null except when we have seen an open element with name p and style "Parallel Passage Reference" but have not yet seen the corresponding end element.
-        /// Set to empty when we see the open element, any intermediate text is added to it.
-        /// The end element then generates the complete cross-ref.
-        /// </summary>
-        protected string parallelPassage;
-
-        /// <summary>
         /// Null except when we have seen an "x" element and not yet seen the corresponding "/x". Then we accumulate here the material we will write to
         /// the footnote, after attempting to convert relevant parts to cross-refs.
         /// </summary>
@@ -2073,7 +2066,6 @@ namespace WordSend
                                         string tgt = GetNamedAttribute("tgt");
                                         string web = GetNamedAttribute("web");
                                         StartLink(tgt, web);
-                                        refTagFound = true;
                                         break;
                                     case "book":
                                         currentBookAbbrev = id;
@@ -2161,8 +2153,7 @@ namespace WordSend
                                         if (ignoreIntros && ((sfm == "ip") || (sfm == "imt") || (sfm == "io") || (sfm == "is") || (sfm == "iot")))
                                             ignore = true;
                                         ProcessParagraphStart(beforeVerse);
-                                        if (style == "Parallel Passage Reference")
-                                            parallelPassage = ""; // start accumulating cross-ref data
+                                      
                                         break;
                                     case "q":
                                     case "qs":  // qs is really a text style with paragraph attributes, but HTML/CSS can't handle that.
@@ -2356,10 +2347,7 @@ namespace WordSend
                         case XmlNodeType.Whitespace:
                         case XmlNodeType.SignificantWhitespace:
                         case XmlNodeType.Text:
-                            if (parallelPassage != null)
-                                parallelPassage = parallelPassage + usfx.Value;
-                            else
-                                WriteHtmlText(usfx.Value);
+                            WriteHtmlText(usfx.Value);
                             break;
                         case XmlNodeType.EndElement:
                             if (inUsfx)
@@ -2395,15 +2383,6 @@ namespace WordSend
                                         bookListIndex++;
                                         break;
                                     case "p":
-                                        if (parallelPassage != null)
-                                        {
-                                            string crossRef = parallelPassage;
-                                            parallelPassage = null; // stop accumulating cross ref info!
-                                            // Escape it BEFORE we add the cross-ref markup, which may well include
-                                            // special characters.
-                                            WriteUnescapedHtmlText(ConvertCrossRefsToHotLinks(EscapeHtml(crossRef)));
-                                        }
-                                        goto case "mt";
                                     case "q":
                                     case "qs":  // qs is really a text style with paragraph attributes, but HTML/CSS can't handle that.
                                     case "b":
@@ -2641,6 +2620,7 @@ namespace WordSend
         /// </summary>
         /// <param name="chunk1"></param>
         /// <returns>input string, but with HTML links added</returns>
+        /* Deprecated, replaced by XSL process that works with a wider variety of links.
         protected string ConvertCrossRefsToHotLinks(string chunk1)
         {
             if (refTagFound || CrossRefToFilePrefixMap == null || CrossRefToFilePrefixMap.Count == 0)
@@ -2758,7 +2738,7 @@ namespace WordSend
             }
 
             return result;
-        }
+        }*/
 
         /// <summary>
         /// Given a book ID and a chapter number, generate the corresponding HTML file name.
