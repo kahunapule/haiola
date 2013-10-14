@@ -1049,4 +1049,9 @@
 		<levelExpected>false</levelExpected>
 		<comment>Empty pair indicates end of the word or phrase that the previous \zw word number refers to.</comment>
 	</sfm>
+	<sfm kind="meta">
+		<tag>ztoc</tag>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+	</sfm>
 </SFMInfo>

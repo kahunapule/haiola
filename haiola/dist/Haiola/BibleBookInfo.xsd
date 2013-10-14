@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSPY v2004 rel. 3 U (http://www.xmlspy.com) by Michael Paul Johnson (private) -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
 	<xs:element name="BibleBookInfo">
 		<xs:annotation>
 			<xs:documentation>Comment describing your root element</xs:documentation>
@@ -16,6 +17,7 @@
 							<xs:element name="shortName" type="xs:string"/>
 							<xs:element name="sortOrder" type="xs:integer"/>
 							<xs:element name="numChapters" type="xs:integer"/>
+							<xs:element name="shortCode" type="xs:string"/>
 						</xs:sequence>
 						<xs:attribute name="testament" type="xs:string" use="optional"/>
 					</xs:complexType>

@@ -103,6 +103,12 @@ either of those two characters as the first character of a file name.
 
 				// Write out the USFX file.
 				SFConverter.scripture.WriteUSFX(outName);
+                // string bookNames = Path.Combine(m_inputProjectDirectory, "BookNames.xml");
+                // SFConverter.scripture.bkInfo.WriteDefaultBookNames(bookNames);
+                // File.Copy(bookNames, Path.Combine(Path.Combine(m_outputProjectDirectory, "usfx"), "BookNames.xml"), true);
+                // SFConverter.scripture.AddRefTags(usfxName);
+                // SFConverter.scripture.ValidateUsfx(usfxName);
+
 			}
 		}
 	}

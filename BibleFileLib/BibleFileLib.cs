@@ -3737,9 +3737,10 @@ namespace WordSend
 								        StartUSFXElement(sf.tag, "id", sf.attribute, sf.text);
 								        EndUSFXElement();
 								        break;
+                                    case "ztoc":
                                     case "toc":
                                         EndUSFXParagraph();
-                                        StartUSFXElement(sf.tag, "level", sf.level.ToString(), sf.text);
+                                        StartUSFXElement("toc", "level", sf.level.ToString(), sf.text);
                                         EndUSFXElement();
                                         break;
                                     case "ide":
@@ -4387,6 +4388,121 @@ namespace WordSend
 			}
 		}
 
+
+        /// <summary>
+        /// Saxon9he is not very good at finding files other than where its xsl file is, so we copy
+        /// it to the current working directory.
+        /// </summary>
+        /// <param name="xslt">Name of xsl file to copy to the current working directory.</param>
+        /// <returns></returns>
+        protected string GetXslt(string xslt, string localPath)
+        {
+            string sourceName = SFConverter.FindAuxFile(xslt);
+            string destName = Path.Combine(localPath, xslt);
+            if (!File.Exists(destName))
+                File.Copy(sourceName, destName);
+            return xslt;
+        }
+
+        public void AddRefTags(string fileName)
+        {
+            string command;
+            string twoUp = Path.Combine("..", "..");
+            string usfxDirectory = Path.GetDirectoryName(fileName);
+            string temp1name = Path.Combine(usfxDirectory, "listOfBookNames.html");
+            string temp2name = Path.Combine(usfxDirectory, "listOfBookNamesStartingWithDigit.html");
+            string temp3name = Path.Combine(usfxDirectory, "temp3.usfx");
+            string temp4name = Path.Combine(usfxDirectory, "temp4.usfx");
+            string temp5name = Path.Combine(usfxDirectory, "tempusfx.xml");
+            string saxonJar = SFConverter.FindAuxFile("saxon9he.jar");
+            string bookNames = Path.Combine(usfxDirectory, "BookNames.xml");
+            if (!File.Exists(bookNames))
+            {
+                Logit.WriteError("Error: " + bookNames + " not found.");
+                return;
+            }
+            string logFile = Path.Combine(usfxDirectory, "xsltlog.txt");
+            try
+            {
+                // Clean up temporary files from a possible earlier run that failed.
+                File.Delete(temp1name); // Note: it is not an error if the file doesn't already exist.
+                File.Delete(temp2name);
+                File.Delete(temp3name);
+                File.Delete(temp4name);
+                File.Delete(temp5name);
+
+                // Extract book names
+                command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" 2> \"{4}\"", saxonJar, temp1name, bookNames,
+                    GetXslt("step1.xsl", usfxDirectory), logFile);
+                if (!fileHelper.RunCommand(command, usfxDirectory))
+                {
+                    Logit.WriteError("Error running command " + command);
+                    Logit.WriteError(fileHelper.runCommandError);
+                    return;
+                }
+                // Extract book names that start with a digit
+                command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" 2>> \"{4}\"", saxonJar, temp2name, bookNames,
+                    GetXslt("step2.xsl", usfxDirectory), logFile);
+                if (!fileHelper.RunCommand(command, usfxDirectory))
+                {
+                    Logit.WriteError("Error running command " + command);
+                    Logit.WriteError(fileHelper.runCommandError);
+                    return;
+                }
+                // Mark fully identified canonical references
+                command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" bookNamesFile=\"{4}\" bookNamesXml=\"{5}\" 2>> \"{6}\"",
+                    saxonJar, temp3name,
+                    fileName, GetXslt("step3.xsl", usfxDirectory), "listOfBookNames.html", "BookNames.xml", logFile);
+                if (!fileHelper.RunCommand(command, usfxDirectory))
+                {
+                    Logit.WriteError("Error running command " + command);
+                    Logit.WriteError(fileHelper.runCommandError);
+                    return;
+                }
+                // Correct error with (2) parenthesis
+                command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" numberedBookNamesFile=\"{4}\" 2>> \"{5}\"",
+                    saxonJar, temp4name, temp3name,
+                    GetXslt("step4.xsl", usfxDirectory), "listOfBookNamesStartingWithDigit.html", logFile);
+                if (!fileHelper.RunCommand(command, usfxDirectory))
+                {
+                    Logit.WriteError("Error running command " + command);
+                    Logit.WriteError(fileHelper.runCommandError);
+                    return;
+                }
+                // Add missing book and chapter numbers to canonical references
+                command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" 2>> \"{4}\"", saxonJar, temp5name, temp4name,
+                    GetXslt("step5.xsl", usfxDirectory), logFile);
+                if (!fileHelper.RunCommand(command, usfxDirectory))
+                {
+                    Logit.WriteError("Error running command " + command);
+                    Logit.WriteError(fileHelper.runCommandError);
+                    return;
+                }
+                // Replace the original usfx.xml with the new file.
+                File.Replace(temp5name, fileName, fileName + ".bak");
+                
+                // Get rid of temporary files that are no longer needed.
+                File.Delete(temp1name);
+                File.Delete(temp2name);
+                File.Delete(temp3name);
+                File.Delete(temp4name);
+                File.Delete(temp5name);
+                File.Delete(fileName + ".bak");
+                File.Delete(Path.Combine(usfxDirectory, "step1.xsl"));
+                File.Delete(Path.Combine(usfxDirectory, "step2.xsl"));
+                File.Delete(Path.Combine(usfxDirectory, "step3.xsl"));
+                File.Delete(Path.Combine(usfxDirectory, "step4.xsl"));
+                File.Delete(Path.Combine(usfxDirectory, "step5.xsl"));
+                
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError("Error adding ref tags to " + fileName);
+                Logit.WriteError("Is Java installed?");
+                Logit.WriteError(ex.Message);
+            }
+        }
+
         public string languageCode = "";
         protected string UsfxFileName;
         protected string currentElement;
@@ -4395,8 +4511,16 @@ namespace WordSend
         protected string validationVerse;
         protected string validationLocation;
 
+        protected bool usfxValid;
+
+        /// <summary>
+        /// Record errors and warnings from XML validation attempt
+        /// </summary>
+        /// <param name="sender">sending object</param>
+        /// <param name="error">ValidationEventArgs</param>
         private void UsfxValidationCallBack(object sender, ValidationEventArgs error)
         {
+            usfxValid = false;
             if (error.Severity == XmlSeverityType.Error)
                 Logit.WriteError("ERROR in " + UsfxFileName + " at " + validationLocation + " after " + currentElement + "\r\n" + error.Message);
             else
@@ -4404,9 +4528,61 @@ namespace WordSend
         }
 
 
+        public bool ValidateUsfx(string fileName)
+        {
+            usfxValid = true;
+            // Validate this file against the Schema
+            validationLocation = "header";
+            currentElement = "";
+            Directory.SetCurrentDirectory(Path.GetDirectoryName(SFConverter.FindAuxFile(UsfxSchema)));
+            XmlTextReader ur = new XmlTextReader(UsfxFileName);
+            // XmlValidatingReader is used for compatibility with Mono, in spite of the warning message.
+            XmlValidatingReader reader = new XmlValidatingReader(ur);
+            // Hopefully Mono will support Microsoft's new way of doing XML validation before Microsoft
+            // chooses to break the "obsolete" XmlValidatingReader. Not safe to move on as of 1 Jan 2013.
+
+            // Set the validation event handle
+
+            reader.ValidationEventHandler += new ValidationEventHandler(UsfxValidationCallBack);
+
+            // Read XML data
+
+            while (reader.Read())
+            {
+                if (reader.NodeType == XmlNodeType.Element)
+                {
+                    currentElement = reader.Name;
+                    string id = reader.GetAttribute("id");
+                    if (id != null)
+                    {
+                        switch (reader.Name)
+                        {
+                            case "book":
+                                validationBook = validationLocation = id;
+                                break;
+                            case "c":
+                                validationChapter = id;
+                                validationLocation = validationBook + "." + validationChapter;
+                                break;
+                            case "v":
+                                validationVerse = id;
+                                validationLocation = validationBook + "." + validationChapter + "." + validationVerse;
+                                break;
+                        }
+                    }
+                }
+            }
+            reader.Close();
+            return usfxValid;
+        }
+
         protected const string UsfxSchema = "usfx-2013-08-05.xsd";  // File name only for speed; expected to be on the aux file path
         protected const string UsfxNamespace = "http://eBible.org/usfx.xsd";    // This alias will point to the latest USFX schema, starting 1 January 2013.
 
+        /// <summary>
+        /// Write a USFX file from the USFM previously read in.
+        /// </summary>
+        /// <param name="fileName">Name of USFX file to write</param>
 		public void WriteUSFX(string fileName)
 		{
 			int j;
@@ -4446,48 +4622,9 @@ namespace WordSend
 				xw.Close();
 //				Logit.WriteLine(fileName+" written.");
 
-                // Validate this file against the Schema
-                validationLocation = "header";
-                currentElement = "";
-                Directory.SetCurrentDirectory(Path.GetDirectoryName(SFConverter.FindAuxFile(UsfxSchema)));
-                XmlTextReader ur = new XmlTextReader(UsfxFileName);
-                // XmlValidatingReader is used for compatibility with Mono, in spite of the warning message.
-                XmlValidatingReader reader = new XmlValidatingReader(ur);
-                // Hopefully Mono will support Microsoft's new way of doing XML validation before Microsoft
-                // chooses to break the "obsolete" XmlValidatingReader. Not safe to move on as of 1 Jan 2013.
+                // Add <ref> tags based on human-readable references
+                // AddRefTags(fileName);
 
-                // Set the validation event handle
-
-                reader.ValidationEventHandler += new ValidationEventHandler(UsfxValidationCallBack);
-
-                // Read XML data
-
-                while (reader.Read())
-                {
-                    if (reader.NodeType == XmlNodeType.Element)
-                    {
-                        currentElement = reader.Name;
-                        string id = reader.GetAttribute("id");
-                        if (id != null)
-                        {
-                            switch (reader.Name)
-                            {
-                                case "book":
-                                    validationBook = validationLocation = id;
-                                    break;
-                                case "c":
-                                    validationChapter = id;
-                                    validationLocation = validationBook + "." + validationChapter;
-                                    break;
-                                case "v":
-                                    validationVerse = id;
-                                    validationLocation = validationBook + "." + validationChapter + "." + validationVerse;
-                                    break;
-                            }
-                        }
-                    }
-                }
-                reader.Close();
 			}
 			catch (System.Exception ex)
 			{
@@ -4641,6 +4778,9 @@ namespace WordSend
 			string level = "";
 			string who = "";
 			string s = "";
+            //string tgt = "";
+            //string src = "";
+            //string web = "";
             string strongs = "";
             string plural = "";
 			Stack sfmPairStack = new Stack();
@@ -4680,6 +4820,7 @@ namespace WordSend
                         // The SFM name is the element name UNLESS sfm attribute overrides it.
                         sfm = usfxFile.Name;
                         id = level = style = who = strongs = plural = "";
+                        //tgt = src = web = "";
                         if (usfxFile.HasAttributes)
                         {
                             for (i = 0; i < usfxFile.AttributeCount; i++)
@@ -4718,6 +4859,15 @@ namespace WordSend
                                         break;
                                     case "plural":
                                         plural = usfxFile.Value;
+                                        break;
+                                    case "tgt":
+                                        //tgt = usfxFile.Value;
+                                        break;
+                                    case "src":
+                                        //src = usfxFile.Value;
+                                        break;
+                                    case "web":
+                                        //web = usfxFile.Value;
                                         break;
                                     case "xmlns:ns0":
                                     case "xmlns:xsi":
@@ -4869,6 +5019,9 @@ namespace WordSend
                                     usfmFile.WriteString("‘");
                                 */
                                 break;
+                            case "ref":
+                                // Do nothing: USFM doesn't support this tag.
+                                break;
                             case "quoteRemind":
                                 /* Do nothing. Read the quotation mark from the element contents.
                                 if (!usfxFile.IsEmptyElement)
@@ -4954,6 +5107,14 @@ namespace WordSend
                                 usfmFile.WriteString(strongs);
                                 usfmFile.WriteSFM("zw*", "", "", false, (charStyleStackLevel > 0));
                                 break;
+                            case "ztoc":
+                            case "toc":
+                                int levelInt = 0;
+                                if (Int32.TryParse(level, out levelInt) && (levelInt >= 4))
+                                    usfmFile.WriteSFM("ztoc", level, id, true, false);
+                                else
+                                    usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag(), stackTag);
+                                break;
                             default:
                                 if (tags.info(sfm).kind == "character")
                                 {
@@ -5013,6 +5174,7 @@ namespace WordSend
                             case "quoteStart":
                             case "quoteRemind":
                             case "quoteEnd":
+                            case "ref":
                                 // Do nothing.
                                 break;
                             case "f":

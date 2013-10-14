@@ -277,10 +277,15 @@ namespace WordSend
                                 break;
                         }
                     }
-                    else if ((usfx.NodeType == XmlNodeType.Text) || (usfx.NodeType == XmlNodeType.SignificantWhitespace))
+                    else if (usfx.NodeType == XmlNodeType.Text)
                     {
                         if (inVerse || inPsalmTitle)
                             verseText.Append(usfx.Value);
+                    }
+                    else if ((usfx.NodeType == XmlNodeType.SignificantWhitespace) || (usfx.NodeType == XmlNodeType.Whitespace))
+                    {
+                        if (inVerse || inPsalmTitle)
+                            verseText.Append(" ");
                     }
                 }
                 Logit.ShowStatus("writing " + verseFileName);
