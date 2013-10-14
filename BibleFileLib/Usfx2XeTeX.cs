@@ -607,8 +607,6 @@ namespace WordSend
                                         if (ignoreIntros && ((sfm == "ip") || (sfm == "imt") || (sfm == "io") || (sfm == "is") || (sfm == "iot")))
                                             ignore = true;
                                         StartParagraph(beforeVerse);
-                                        if (style == "Parallel Passage Reference")
-                                            parallelPassage = ""; // start accumulating cross-ref data
                                         break;
                                     case "q":
                                     case "qs":  // qs is really a text style with paragraph attributes, but HTML/CSS can't handle that.
@@ -779,10 +777,7 @@ namespace WordSend
                         case XmlNodeType.Whitespace:
                         case XmlNodeType.SignificantWhitespace:
                         case XmlNodeType.Text:
-                            if (parallelPassage != null)
-                                parallelPassage = parallelPassage + usfx.Value;
-                            else
-                                texFile.Write(usfx.Value);
+                            texFile.Write(usfx.Value);
                             break;
                         case XmlNodeType.EndElement:
                             if (inUsfx)
@@ -834,16 +829,7 @@ namespace WordSend
                                         bookListIndex++;
                                         break;
                                     case "p":
-                                        if (parallelPassage != null)
-                                        {
-                                            string crossRef = parallelPassage;
-                                            parallelPassage = null; // stop accumulating cross ref info!
-                                            // Escape it BEFORE we add the cross-ref markup, which may well include
-                                            // special characters.
-                                            WritUnescapedeHtmlText(ConvertCrossRefsToHotLinks(EscapeHtml(crossRef)));
-                                        }
-                                        goto case "mt";
-                                    case "q":
+x                                    case "q":
                                     case "qs":  // qs is really a text style with paragraph attributes, but HTML/CSS can't handle that.
                                     case "b":
                                     case "mt":

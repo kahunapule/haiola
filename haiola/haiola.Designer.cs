@@ -39,6 +39,8 @@
             this.btnSetRootDirectory = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.idTabPage = new System.Windows.Forms.TabPage();
+            this.traditionalAbbreviationTextBox = new System.Windows.Forms.TextBox();
+            this.label53 = new System.Windows.Forms.Label();
             this.paratextcomboBox = new System.Windows.Forms.ComboBox();
             this.label52 = new System.Windows.Forms.Label();
             this.subsetCheckBox = new System.Windows.Forms.CheckBox();
@@ -359,6 +361,22 @@
             this.idTabPage.TabIndex = 0;
             this.idTabPage.Text = "Identification";
             this.idTabPage.UseVisualStyleBackColor = true;
+            // 
+            // traditionalAbbreviationTextBox
+            // 
+            this.traditionalAbbreviationTextBox.Location = new System.Drawing.Point(229, 30);
+            this.traditionalAbbreviationTextBox.Name = "traditionalAbbreviationTextBox";
+            this.traditionalAbbreviationTextBox.Size = new System.Drawing.Size(119, 20);
+            this.traditionalAbbreviationTextBox.TabIndex = 43;
+            // 
+            // label53
+            // 
+            this.label53.AutoSize = true;
+            this.label53.Location = new System.Drawing.Point(7, 33);
+            this.label53.Name = "label53";
+            this.label53.Size = new System.Drawing.Size(216, 13);
+            this.label53.TabIndex = 42;
+            this.label53.Text = "Traditional abbreviation (i.e. KJV, ASV, etc.):";
             // 
             // paratextcomboBox
             // 
@@ -1008,6 +1026,7 @@
             this.postprocessListBox.Name = "postprocessListBox";
             this.postprocessListBox.Size = new System.Drawing.Size(695, 212);
             this.postprocessListBox.TabIndex = 39;
+            this.postprocessListBox.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.postprocessListBox_MouseDoubleClick);
             // 
             // moveDownButton
             // 

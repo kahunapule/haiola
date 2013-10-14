@@ -287,7 +287,8 @@ namespace WordSend
         }
 
         protected const string localOsisSchema = "osisCore.2.1.1.xsd";
-        protected const string osisSchema = "http://www.bibletechnologies.net/osisCore.2.1.1.xsd";
+        /* protected const string osisSchema = "http://www.bibletechnologies.net/osisCore.2.1.1.xsd"; */
+        protected const string osisSchema = "osisCore.2.1.1.xsd";
         protected const string osisNamespace = "http://www.bibletechnologies.net/2003/OSIS/namespace";
 
         protected void OpenMosisFile(string mosisFileName)
@@ -326,6 +327,9 @@ namespace WordSend
  in the text of the Scriptures. This is why the n attribute of <q> is always the empty string. Because of these limitations, this
  file may be good to include in archives, BUT not to the exclusion of the source USFM, USFX, or USX file(s) from which this Modified
  OSIS file was generated.
+ The home URL for the OSIS schema that this file was validated against is http://www.bibletechnologies.net/osisCore.2.1.1.xsd. It is
+ also mirrored at http://eBible.org/osisCore.2.1.1.xsd. Reference is made to a local copy to save bandwidth and avoid errors caused
+ by intermittent Internet connectivity issues.
 ");
             WriteMosisEndElement();
             StartMosisElement("revisionDesc");

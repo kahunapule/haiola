@@ -386,7 +386,7 @@ namespace WordSend
                 {
                     if (br != null)
                     {
-                        if (!(String.IsNullOrEmpty(br.tla) || (String.IsNullOrEmpty(br.vernacularShortName))))
+                        if ((br.testament != "x") && (!(String.IsNullOrEmpty(br.tla) || (String.IsNullOrEmpty(br.vernacularShortName)))))
                         {
                             xw.WriteStartElement("book");
                             xw.WriteAttributeString("code", br.tla);
@@ -843,10 +843,15 @@ namespace WordSend
                             }
                             if (bookRecord.vernacularShortName == String.Empty)
                             {
-                                bookRecord.vernacularShortName = bookRecord.vernacularLongName;
-                                if ((bookRecord.vernacularShortName == String.Empty) ||
-                                    ((bookRecord.testament != "o") && (bookRecord.testament != "n") && (bookRecord.testament != "a")))
+                                if (bookRecord.testament == "x")
+                                {
+                                    bookRecord.vernacularShortName = bookRecord.tla;
+                                }
+                                else
+                                {
+                                    bookRecord.vernacularShortName = bookRecord.vernacularLongName;
                                     Logit.WriteError("Missing vernacular short name toc2 or h in " + currentBookAbbrev + " in " + usfxName);
+                                }
                             }
                             if (bookRecord.vernacularAbbreviation == String.Empty)
                             {
