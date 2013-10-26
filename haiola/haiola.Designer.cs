@@ -200,8 +200,8 @@
             this.extensionLabel = new System.Windows.Forms.Label();
             this.paratextButton = new System.Windows.Forms.Button();
             this.paratextDirLabel = new System.Windows.Forms.Label();
-            this.label53 = new System.Windows.Forms.Label();
-            this.traditionalAbbreviationTextBox = new System.Windows.Forms.TextBox();
+//            this.label53 = new System.Windows.Forms.Label();
+//            this.traditionalAbbreviationTextBox = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.idTabPage.SuspendLayout();
             this.copyrightTabPage.SuspendLayout();

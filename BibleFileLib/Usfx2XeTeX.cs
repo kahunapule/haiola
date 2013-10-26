@@ -208,26 +208,12 @@ namespace WordSend
                 EndParagraph();
         }
 
-        /// <summary>
-        /// Get an attribute with the given name from the current usfx element, or an empty string if it is not present.
-        /// </summary>
-        /// <param name="attributeName">attribute name</param>
-        /// <returns>attribute value or an empty string if not found</returns>
-        protected string GetNamedAttribute(string attributeName)
-        {
-            string result = usfx.GetAttribute(attributeName);
-            if (result == null)
-                result = String.Empty;
-            return result;
-        }
 
-        bool inHeader = true;
-        protected Boolean eatSpace = false;
 
         /// <summary>
         /// Process a chapter tag
         /// </summary>
-        private void ProcessChapter()
+        protected override void  ProcessChapter()
         {
             currentChapter = id;
             currentChapterPublished = fileHelper.LocalizeDigits(currentChapter);
@@ -248,22 +234,6 @@ namespace WordSend
             newChapterFound = true;
             chapterFileIndex++;
             inHeader = false;
-        }
-
-        /// <summary>
-        /// Start-of-chapter processing for when there is no actual chapter, but there is a verse
-        /// </summary>
-        private void VirtualChapter()
-        {
-            currentChapter = "1";
-            currentChapterPublished = fileHelper.LocalizeDigits(currentChapter);
-            chapterNumber = 1;
-            currentChapterAlternate = String.Empty;
-            currentVerse = currentVersePublished = currentVerseAlternate = String.Empty;
-            verseNumber = 0;
-            if (!bookInfo.isPeripheral(currentBookAbbrev))
-                newChapterFound = true;
-            chapterFileIndex++;
         }
 
 

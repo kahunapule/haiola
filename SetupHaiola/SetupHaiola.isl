@@ -3971,7 +3971,7 @@
 		<row><td>ID_STRING4</td><td>1033</td><td>http://haiola.org</td><td>0</td><td/><td>740368779</td></row>
 		<row><td>ID_STRING5</td><td>1033</td><td>Launch |Built</td><td>0</td><td/><td>740388425</td></row>
 		<row><td>ID_STRING6</td><td>1033</td><td>*=-PATH</td><td>0</td><td/><td>1294019855</td></row>
-		<row><td>ID_STRING7</td><td>1033</td><td>[~];;[INSTALLDIR]</td><td>0</td><td/><td>1294017807</td></row>
+		<row><td>ID_STRING7</td><td>1033</td><td>[~];;[INSTALLDIR];C:\Program Files (x86)\Java\jre7\bin</td><td>0</td><td/><td>-719228181</td></row>
 		<row><td>ID_STRING8</td><td>1033</td><td>*=-CLASSPATH</td><td>0</td><td/><td>1294052623</td></row>
 		<row><td>ID_STRING9</td><td>1033</td><td>[~];[INSTALLDIR]\saxon9he.jar</td><td>0</td><td/><td>1428276622</td></row>
 		<row><td>IIDS_UITEXT_FeatureUninstalled</td><td>1033</td><td>This feature will remain uninstalled.</td><td>0</td><td/><td>-73290637</td></row>
