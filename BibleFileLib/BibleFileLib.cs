@@ -1089,6 +1089,7 @@ namespace WordSend
             // put the math operator tilde in the source text (because it looks the same), but swap
             // it out, here.
             text = text.Replace('\u223C', '~'); // Math operator tilde -> tilde
+            text = text.Replace("\u0000", "").Replace("\u0008", "");    // Null and backspace should not be in the source text (but sometimes I have seen them there).
 			if (tag == "id")
 			{
 				if ((attribute.StartsWith("BAK")) || (attribute.StartsWith("OTH")) || (attribute.StartsWith("FRT")) ||
@@ -4479,7 +4480,25 @@ namespace WordSend
                     return;
                 }
                 // Replace the original usfx.xml with the new file.
-                File.Replace(temp5name, fileName, fileName + ".bak");
+                if (File.Exists(fileName) && File.Exists(temp5name))
+                {
+                    File.Replace(temp5name, fileName, fileName + ".bak");
+                }
+                else
+                {
+                    if (File.Exists(logFile))
+                    {
+                        StreamReader sr = new StreamReader(logFile);
+                        string s = sr.ReadLine();
+                        while (s != null)
+                        {
+                            Logit.WriteError(s);
+                            s = sr.ReadLine();
+                        }
+                        sr.Close();
+                    }
+                    return;
+                }
                 
                 // Get rid of temporary files that are no longer needed.
                 File.Delete(temp1name);
@@ -4497,8 +4516,7 @@ namespace WordSend
             }
             catch (Exception ex)
             {
-                Logit.WriteError("Error adding ref tags to " + fileName);
-                Logit.WriteError("Is Java installed?");
+                Logit.WriteError("Error calling Java to add ref tags to " + fileName);
                 Logit.WriteError(ex.Message);
             }
         }

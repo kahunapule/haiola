@@ -668,7 +668,7 @@ namespace WordSend
         {
             if (inParagraph)
             {
-                WriteHtml("</div>\r\n");
+                WriteHtml("</div>");
                 inParagraph = false;
             }
         }
@@ -742,6 +742,7 @@ namespace WordSend
         /// <param name="text">text to write</param>
         protected void WriteHtmlText(string text)
         {
+            text = text.Replace('\r', ' ').Replace('\n', ' ').Replace("  ", " ");
             if (!ignore)
             {
                 var escapeHtml = EscapeHtml(text);
