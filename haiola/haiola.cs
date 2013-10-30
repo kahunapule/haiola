@@ -648,6 +648,7 @@ namespace haiola
 
         public void PreprocessUsfmFiles(string SourceDir)
         {
+            Logit.GUIWriteString = showMessageString;
             // string SourceDir = Path.Combine(m_inputProjectDirectory, "Source");
             StreamReader sr = new StreamReader(orderFile);
             string allowedBookList = sr.ReadToEnd();
