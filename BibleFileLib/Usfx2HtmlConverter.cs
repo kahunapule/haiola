@@ -212,6 +212,8 @@ namespace WordSend
             StringBuilder sb = new StringBuilder(s);
             StringBuilder bsb = new StringBuilder(s);
             BibleBookRecord br;
+            try
+            {
 
             // Write the "Home" link if one is desired.
             if ((homeLinkHTML != null) && (homeLinkHTML.Trim().Length > 0))
@@ -244,7 +246,7 @@ namespace WordSend
                         }
                         else
                         {
-                            if (br.HasContent)
+                            if (br.HasContent && (br.chapterFiles.Count > 0))
                             {
                                 bsb.Append("<option value=\"" + br.chapterFiles[0] + ".htm\">" + br.vernacularShortName + "</option>\r\n");
                             }
@@ -354,6 +356,12 @@ namespace WordSend
             else
                 htm.WriteLine(navButtonCode);
             navButtonCode = navButtonCode.Replace("ch1", "ch2");
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError("ERROR in WriteNavButtons():");
+                Logit.WriteError(ex.Message);
+            }
         }
 
         /// <summary>
