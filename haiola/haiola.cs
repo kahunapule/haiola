@@ -2205,12 +2205,14 @@ Peripherals: {12} books",
             StreamWriter sqlFile = new StreamWriter(Path.Combine(m_outputDirectory, "Bible_list.sql"), false, System.Text.Encoding.UTF8);
             StreamWriter altUrlFile = new StreamWriter(Path.Combine(m_outputDirectory, "urllist.sql"), false, System.Text.Encoding.UTF8);
             StreamWriter scorecard = new StreamWriter(Path.Combine(m_outputDirectory, "scorecard.txt"), false, System.Text.Encoding.UTF8);
+            StreamWriter infoHtm;
             sqlFile.WriteLine("USE Prophero;");
             sqlFile.WriteLine("DROP TABLE IF EXISTS 'bible_list';");
             sqlFile.WriteLine(@"CREATE TABLE 'bible_list' ('translationid' VARCHAR(64) NOT NULL,
 'languagecode' VARCHAR(4) NOT NULL, 'languagename' VARCHAR(128), 'languagenameinenglish' VARCHAR(128),
 'dialect' VARCHAR(128), 'homedomain' VARCHAR(128), 'title' VARCHAR(256), 'description' VARCHAR(1024),
-'free' BOOL, 'copyright' VARCHAR(1024), 'updatedate' DATE, 'publicationurl' VARCHAR(1024), PRIMARY KEY('translationid')) DEFAULT CHARSET=utf8;");
+'free' BOOL, 'copyright' VARCHAR(1024), 'updatedate' DATE, 'publicationurl' VARCHAR(1024),
+PRIMARY KEY('translationid')) DEFAULT CHARSET=utf8;");
             sqlFile.WriteLine("LOCK TABLES 'bible_list' WRITE;");
 
             altUrlFile.WriteLine("USE Prophero;");
@@ -2219,16 +2221,27 @@ Peripherals: {12} books",
 'languagecode' VARCHAR(4) NOT NULL, 'translationid' VARCHAR(64) NOT NULL, 'url' VARCHAR(1024) NOT NULL);");
             sqlFile.WriteLine("LOCK TABLES 'urllist' WRITE;");
 
-            sw.WriteLine("\"languageCode\",\"translationId\",\"languageName\",\"languageNameInEnglish\",\"dialect\",\"homeDomain\",\"title\",\"description\",\"Free\",\"Copyright\",\"UpdateDate\",\"publicationURL\"");
+            sw.WriteLine("\"languageCode\",\"translationId\",\"languageName\",\"languageNameInEnglish\",\"dialect\",\"homeDomain\",\"title\",\"description\",\"Free\",\"Copyright\",\"UpdateDate\",\"publicationURL\",\"OTbooks\",\"OTchapters\",\"OTverses\",\"NTbooks\",\"NTchapters\",\"NTverses\",\"DCbooks\",\"DCchapters\",\"DCverses\"");
             foreach (object o in m_projectsList.Items)
             {
                 m_project = (string)o;
                 m_inputProjectDirectory = Path.Combine(m_inputDirectory, m_project);
                 m_outputProjectDirectory = Path.Combine(m_outputDirectory, m_project);
-
                 m_xiniPath = Path.Combine(m_inputProjectDirectory, "options.xini");
                 displayOptions();
                 numProjects++;
+                if (Directory.Exists(m_outputProjectDirectory))
+                {
+                    infoHtm = new StreamWriter(Path.Combine(m_outputProjectDirectory, "info.inc"), false, System.Text.Encoding.UTF8);
+                    infoHtm.WriteLine("<tr><td><a href='http://www.ethnologue.com/language/{0}'>{0}</a></td><td><a href='{2}/'>{1}</a></td><td><a href='{2}/'>{3}</a></td><td>{4}</td><td>{5}</td></tr>",
+                        m_options.languageId,
+                        m_options.languageName,
+                        m_options.translationId,
+                        m_options.vernacularTitle,
+                        m_options.languageNameInEnglish,
+                        m_options.dialect);
+                    infoHtm.Close();
+                }
                 if ((!m_options.privateProject) && (m_options.languageId.Length > 1))
                 {
                     if (m_options.subsetProject)
@@ -2291,7 +2304,7 @@ Peripherals: {12} books",
                         coprCount = (int)coprTable[copr];
                         coprTable[copr] = coprCount + 1;
                     }
-                    sw.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\",\"{10}\",\"http://{5}/{1}/\"",
+                    sw.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\",\"{10}\",\"http://{5}/{1}/\",\"{11}\",\"{12}\",\"{13}\",\"{14}\",\"{15}\",\"{16}\",\"{17}\",\"{18}\",\"{19}\"",
                         m_options.languageId,
                         m_options.translationId,
                         fileHelper.csvString(m_options.languageName),
@@ -2302,7 +2315,16 @@ Peripherals: {12} books",
                         fileHelper.csvString(m_options.EnglishDescription.Trim()),
                         (m_options.publicDomain || m_options.creativeCommons).ToString(),
                         fileHelper.csvString(m_options.publicDomain ? "public domain" : "Copyright © " + m_options.copyrightYears + " " + m_options.copyrightOwner),
-                        m_options.contentUpdateDate.ToString("yyyy-MM-dd"));
+                        m_options.contentUpdateDate.ToString("yyyy-MM-dd"),
+                        m_options.otBookCount,
+                        m_options.otChapCount,
+                        m_options.otVerseCount,
+                        m_options.ntBookCount,
+                        m_options.ntChapCount,
+                        m_options.ntVerseCount,
+                        m_options.adBookCount,
+                        m_options.adChapCount,
+                        m_options.adVerseCount);
                     sqlFile.WriteLine("INSERT INTO 'bible_list' VALUES \"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\",\"{10}\",\"http://{5}/{0}/\";",
                         m_options.translationId,
                         m_options.languageId,
