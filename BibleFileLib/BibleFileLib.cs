@@ -4425,6 +4425,7 @@ namespace WordSend
             string logFile = Path.Combine(usfxDirectory, "xsltlog.txt");
             try
             {
+                Directory.SetCurrentDirectory(usfxDirectory);
                 // Clean up temporary files from a possible earlier run that failed.
                 File.Delete(temp1name); // Note: it is not an error if the file doesn't already exist.
                 File.Delete(temp2name);

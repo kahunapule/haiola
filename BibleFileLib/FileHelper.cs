@@ -243,6 +243,10 @@ namespace WordSend
                 }
                 else
                 {
+                    if ((defaultDirectory.Length >= 2) && (defaultDirectory[1] == ':'))
+                    {
+                        command = defaultDirectory.Substring(0,2) + " && " + command;
+                    }
                     runningCommand = System.Diagnostics.Process.Start("cmd.exe", " /c " + command);
                 }
                 if (runningCommand != null)

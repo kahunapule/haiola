@@ -249,7 +249,7 @@ operating system.</p>
 translation identifier<br>
 &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; Source<br>
 &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; Unicode USFM files
-for this project<br>
+for this project (if direct Paratext import is not used)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -or-<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; usfx<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; USFX
@@ -257,7 +257,7 @@ file for import<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -or-<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; usx<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; USX
-files (i. e. an unziped Digital Bible Library bundle)<br>
+files (i. e. an unziped Digital Bible Library bundle: not yet implemented)<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -and (optional)-<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; htmlextras<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -287,6 +287,15 @@ that Bible translation. For example, if you have a Bible translation
 (Ambala Ayta), you would create a folder like
 BibleConv/Work/abc/Source/ and then put the USFM files in there. The
 USFM files should use Unicode UTF-8 text encoding. </p>
+
+<p>If you have source books that you don't want to publish, like unfinished
+books in a Paratext project, you may omit them by deleting their abbreviations from a custom
+bookorder.txt file in the input/project directory. The bookorder.txt file is simply a list
+of SIL/UBS 3-letter abbreviations of the books that are to be included (if present), in the order
+that they are to be presented to the user. This file is also useful if you would like to reorder
+the books to fit different traditions, such as Messianic Jewish tradition or Roman Catholic tradition.
+The default book order is a common traditional order that is usually appropriate, but this gives
+you control when you need to exclude or reorder books in a project.</p>
 
 <h2>Including Illustrations</h2>
 <p>To include illustrations in lightweight HTML output, include
