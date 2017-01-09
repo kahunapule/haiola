@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DBLMetadata type="text" typeVersion="1.2" id="" revision="">
+  <identification>
+    <name></name>
+    <nameLocal></nameLocal>
+    <abbreviation></abbreviation>
+    <abbreviationLocal></abbreviationLocal>
+    <scope></scope>
+    <description></description>
+    <dateCompleted></dateCompleted>
+    <systemId type="paratext"></systemId>
+    <bundleProducer></bundleProducer>
+  </identification>
+  <confidential></confidential>
+  <agencies>
+    <etenPartner></etenPartner>
+    <!-- Currently "UBS", "WBT", "Biblica" -->
+    <creator></creator>
+    <!-- primary translation agency/sponsorship -->
+    <publisher></publisher>
+    <!-- primary publishing agency> -->
+    <contributor></contributor>
+  </agencies>
+  <language>
+    <iso></iso>
+    <name></name>
+    <ldml></ldml>
+    <rod></rod>
+    <script></script>
+    <scriptDirection></scriptDirection>
+    <!-- LTR (Left to Right) or RTL (Right to Left) -->
+    <numerals></numerals>
+  </language>
+  <country>
+    <iso></iso>
+    <name></name>
+  </country>
+  <type>
+    <translationType></translationType>
+    <audience></audience>
+  </type>
+  <bookNames>
+  </bookNames>
+  <contents>
+  </contents>
+  <contact>
+    <rightsHolder></rightsHolder>
+    <rightsHolderLocal></rightsHolderLocal>
+    <rightsHolderAbbreviation></rightsHolderAbbreviation>
+    <rightsHolderURL></rightsHolderURL>
+    <rightsHolderFacebook></rightsHolderFacebook>
+  </contact>
+  <copyright>
+    <!-- Allow XHTML: <h1> <h2> <h3> <p> <blockquote> <ul> <ol> <li> <br> <strong> <em> <a> -->
+    <statement contentType="xhtml">
+    </statement>
+  </copyright>
+  <promotion>
+    <!-- Allow XHTML: <h1> <h2> <h3> <p> <blockquote> <ul> <ol> <li> <br> <strong> <em> <a> -->
+    <promoVersionInfo contentType="xhtml">
+    </promoVersionInfo>
+    <!-- Allow XHTML: <h1> <h2> <h3> <p> <blockquote> <ul> <ol> <li> <br> <strong> <em> <a> -->
+    <promoEmail contentType="xhtml"></promoEmail>
+  </promotion>
+  <archiveStatus>
+    <archivistName></archivistName>
+    <dateArchived></dateArchived>
+    <dateUpdated></dateUpdated>
+    <comments></comments>
+  </archiveStatus>
+  <format>text/xml</format>
+</DBLMetadata>

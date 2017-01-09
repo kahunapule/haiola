@@ -22,6 +22,7 @@ namespace WordSend
     {
         void RunConversions();  // Write new output formats.
         string ShowStatus();    // Give the user feedback about what is going on.
+        string fcbh_token();
         int InterfaceVersion();
     }
 
@@ -29,7 +30,7 @@ namespace WordSend
     /// <summary>
     /// Load the plugin if present.
     /// </summary>
-    class PluginManager
+    public class PluginManager
     {
         private bool pluginPresent = false;
 
@@ -57,6 +58,7 @@ namespace WordSend
 
         public PluginManager()
         {
+            pluginPresent = false;
             try
             {
                 string proprietaryModule = WordSend.SFConverter.FindAuxFile("proprietary.dll");

@@ -1,0 +1,11 @@
+bin\Release\sf2word.exe
+bin\Release\BibleFileLib.dll
+obj\Release\ResolveAssemblyReference.cache
+obj\Release\sf2word.exe
+bin\Debug\sf2word.exe
+bin\Debug\sf2word.pdb
+bin\Debug\BibleFileLib.dll
+bin\Debug\BibleFileLib.pdb
+obj\Debug\ResolveAssemblyReference.cache
+obj\Debug\sf2word.exe
+obj\Debug\sf2word.pdb

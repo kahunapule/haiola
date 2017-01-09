@@ -29,7 +29,7 @@ namespace BibleFileLib
 
 //		private XmlTextReader usfx;
 //		private string vernacularName = ""; // from toc level 1 if found
-		private string mtName; // from p sfm = mt level = 1
+//		private string mtName; // from p sfm = mt level = 1
 //		private string bookId = ""; // ID of current book
 //		private string vernacularAbbreviation = "";
 		protected string sfm; // sfm attribute of current element

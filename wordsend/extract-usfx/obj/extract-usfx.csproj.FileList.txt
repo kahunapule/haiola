@@ -1,0 +1,11 @@
+bin\Release\extract-usfx.exe
+bin\Release\BibleFileLib.dll
+obj\Release\ResolveAssemblyReference.cache
+obj\Release\extract-usfx.exe
+bin\Debug\extract-usfx.exe
+bin\Debug\extract-usfx.pdb
+bin\Debug\BibleFileLib.dll
+bin\Debug\BibleFileLib.pdb
+obj\Debug\ResolveAssemblyReference.cache
+obj\Debug\extract-usfx.exe
+obj\Debug\extract-usfx.pdb

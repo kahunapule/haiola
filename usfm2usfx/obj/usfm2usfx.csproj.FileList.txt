@@ -1,0 +1,11 @@
+bin\Release\usfm2usfx.exe
+bin\Release\BibleFileLib.dll
+obj\Release\ResolveAssemblyReference.cache
+obj\Release\usfm2usfx.exe
+bin\Debug\usfm2usfx.exe
+bin\Debug\usfm2usfx.pdb
+bin\Debug\BibleFileLib.dll
+bin\Debug\BibleFileLib.pdb
+obj\Debug\ResolveAssemblyReference.cache
+obj\Debug\usfm2usfx.exe
+obj\Debug\usfm2usfx.pdb

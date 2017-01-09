@@ -1,0 +1,7 @@
+Getting started with Haiola
+
+When you first run Haiola, it will ask you to create a new directory to store 
+project information in. This should not be an existing directory, like your 
+Paratext directory. Once that directory is created, you can start populating it 
+with projects as explained in haiola.htm (on your local hard drive in the 
+program directory or at http://haiola.org/haiola.htm).

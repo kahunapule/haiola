@@ -1,0 +1,86 @@
+﻿01O GEN Genesis
+02O EXO Exodus
+03O LEV Leviticus
+04O NUM Numbers
+05O DEU Deuteronomy
+06O JOS Joshua
+07O JDG Judges
+08O RUT Ruth
+09O 1SA 1 Samuel
+10O 2SA 2 Samuel
+11O 1KI 1 Kings
+12O 2KI 2 Kings
+13O 1CH 1 Chronicles
+14O 2CH 2 Chronicles
+15O EZR Ezra
+16O NEH Nehemiah
+17O EST Esther
+18O JOB Job
+19O PSA Psalms
+20O PRO Proverbs
+21O ECC Ecclesiastes
+22O SNG Song of Solomon
+23O ISA Isaiah
+24O JER Jeremiah
+25O LAM Lamentations
+26O EZK Ezekiel
+27O DAN Daniel
+28O HOS Hosea
+29O JOL Joel
+30O AMO Amos
+31O OBA Obadiah
+32O JON Jonah
+33O MIC Micah
+34O NAM Nahum
+35O HAB Habakkuk
+36O ZEP Zephaniah
+37O HAG Haggai
+38O ZEC Zechariah
+39O MAL Malachi
+40N MAT Matthew
+41N MRK Mark
+42N LUK Luke
+43N JHN John
+44N ACT Acts of the Apostles
+45N ROM Romans
+46N 1CO 1 Corinthians
+47N 2CO 2 Corinthians
+48N GAL Galatians
+49N EPH Ephesians
+50N PHP Philippians
+51N COL Colossians
+52N 1TH 1 Thessalonians
+53N 2TH 2 Thessalonians
+54N 1TI 1 Timothy
+55N 2TI 2 Timothy
+56N TIT Titus
+57N PHM Philemon
+58N HEB Hebrews
+59N JAS James
+60N 1PE 1 Peter
+61N 2PE 2 Peter
+62N 1JN 1 John
+63N 2JN 2 John
+64N 3JN 3 John
+65N JUD Jude
+66N REV Revelation
+67A TOB Tobit
+68A JDT Judith
+69A ESG Esther, Greek
+70A WIS Wisdom of Solomon
+71A SIR Ecclesiasticus (Sira
+72A BAR Baruch
+73A LJE Epistle of Jeremiah
+74A S3Y Prayer of Azariah
+75A SUS Susanna
+76A BEL Bel and the Dragon
+77A 1MA 1 Maccabees
+78A 2MA 2 Maccabees
+79A 3MA 3 Maccabees
+80A 4MA 4 Maccabees
+81A 1ES 1 Esdras
+82A 2ES 2 Esdras
+83A MAN Prayer of Manasseh
+84A PS2 Psalm 151
+85A PSS Psalm of Solomon
+86A ODA Odes

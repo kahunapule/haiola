@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSPY v2004 rel. 3 U (http://www.xmlspy.com) by Michael Paul Johnson (private) -->
 <BibleBookInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="BibleBookInfo.xsd">
 	<Book testament="x">
 		<sfmTla>FRT</sfmTla>
@@ -9,15 +8,17 @@
 		<sortOrder>0</sortOrder>
 		<numChapters>1</numChapters>
 		<shortCode>FR</shortCode>
+		<bibleworksCode/>
 	</Book>
 	<Book testament="x">
 		<sfmTla>INT</sfmTla>
 		<osisName>Intro</osisName>
 		<name>Introduction</name>
-		<shortName>Introductino</shortName>
+		<shortName>Introduction</shortName>
 		<sortOrder>1</sortOrder>
 		<numChapters>1</numChapters>
 		<shortCode>IN</shortCode>
+		<bibleworksCode/>
 	</Book>
 	<Book testament="o">
 		<sfmTla>GEN</sfmTla>
@@ -27,6 +28,7 @@
 		<sortOrder>2</sortOrder>
 		<numChapters>50</numChapters>
 		<shortCode>GN</shortCode>
+		<bibleworksCode>GEN</bibleworksCode>
 	</Book>
 	<Book testament="o">
 		<sfmTla>EXO</sfmTla>
@@ -36,6 +38,7 @@
 		<sortOrder>3</sortOrder>
 		<numChapters>40</numChapters>
 		<shortCode>EX</shortCode>
+		<bibleworksCode>EXO</bibleworksCode>
 	</Book>
 	<Book testament="o">
 		<sfmTla>LEV</sfmTla>
@@ -45,6 +48,7 @@
 		<sortOrder>4</sortOrder>
 		<numChapters>27</numChapters>
 		<shortCode>LV</shortCode>
+		<bibleworksCode>LEV</bibleworksCode>
 	</Book>
 	<Book testament="o">
 		<sfmTla>NUM</sfmTla>
@@ -54,6 +58,7 @@
 		<sortOrder>5</sortOrder>
 		<numChapters>36</numChapters>
 		<shortCode>NU</shortCode>
+		<bibleworksCode>NUM</bibleworksCode>
 	</Book>
 	<Book testament="o">
 		<sfmTla>DEU</sfmTla>
@@ -63,7 +68,7 @@
 		<sortOrder>6</sortOrder>
 		<numChapters>34</numChapters>
 		<shortCode>DT</shortCode>
-	</Book>
+	<bibleworksCode>DEU</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>JOS</sfmTla>
 		<osisName>Josh</osisName>
@@ -72,7 +77,7 @@
 		<sortOrder>7</sortOrder>
 		<numChapters>24</numChapters>
 		<shortCode>JS</shortCode>
-	</Book>
+	<bibleworksCode>JOS</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>JDG</sfmTla>
 		<osisName>Judg</osisName>
@@ -81,7 +86,7 @@
 		<sortOrder>8</sortOrder>
 		<numChapters>21</numChapters>
 		<shortCode>JG</shortCode>
-	</Book>
+	<bibleworksCode>JDG</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>RUT</sfmTla>
 		<osisName>Ruth</osisName>
@@ -90,7 +95,7 @@
 		<sortOrder>9</sortOrder>
 		<numChapters>4</numChapters>
 		<shortCode>RT</shortCode>
-	</Book>
+	<bibleworksCode>RUT</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>1SA</sfmTla>
 		<osisName>1Sam</osisName>
@@ -99,7 +104,7 @@
 		<sortOrder>10</sortOrder>
 		<numChapters>31</numChapters>
 		<shortCode>S1</shortCode>
-	</Book>
+	<bibleworksCode>1SA</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>2SA</sfmTla>
 		<osisName>2Sam</osisName>
@@ -108,7 +113,7 @@
 		<sortOrder>11</sortOrder>
 		<numChapters>24</numChapters>
 		<shortCode>S2</shortCode>
-	</Book>
+	<bibleworksCode>2SA</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>1KI</sfmTla>
 		<osisName>1Kgs</osisName>
@@ -117,7 +122,7 @@
 		<sortOrder>12</sortOrder>
 		<numChapters>22</numChapters>
 		<shortCode>K1</shortCode>
-	</Book>
+	<bibleworksCode>1KI</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>2KI</sfmTla>
 		<osisName>2Kgs</osisName>
@@ -126,7 +131,7 @@
 		<sortOrder>13</sortOrder>
 		<numChapters>25</numChapters>
 		<shortCode>K2</shortCode>
-	</Book>
+	<bibleworksCode>2KI</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>1CH</sfmTla>
 		<osisName>1Chr</osisName>
@@ -135,7 +140,7 @@
 		<sortOrder>14</sortOrder>
 		<numChapters>29</numChapters>
 		<shortCode>R1</shortCode>
-	</Book>
+	<bibleworksCode>1CH</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>2CH</sfmTla>
 		<osisName>2Chr</osisName>
@@ -144,7 +149,7 @@
 		<sortOrder>15</sortOrder>
 		<numChapters>36</numChapters>
 		<shortCode>R2</shortCode>
-	</Book>
+	<bibleworksCode>2CH</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>EZR</sfmTla>
 		<osisName>Ezra</osisName>
@@ -153,7 +158,7 @@
 		<sortOrder>16</sortOrder>
 		<numChapters>10</numChapters>
 		<shortCode>ER</shortCode>
-	</Book>
+	<bibleworksCode>EZR</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>NEH</sfmTla>
 		<osisName>Neh</osisName>
@@ -162,7 +167,7 @@
 		<sortOrder>17</sortOrder>
 		<numChapters>13</numChapters>
 		<shortCode>NH</shortCode>
-	</Book>
+	<bibleworksCode>NEH</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>EST</sfmTla>
 		<osisName>Esth</osisName>
@@ -171,7 +176,7 @@
 		<sortOrder>18</sortOrder>
 		<numChapters>10</numChapters>
 		<shortCode>ET</shortCode>
-	</Book>
+	<bibleworksCode>EST</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>JOB</sfmTla>
 		<osisName>Job</osisName>
@@ -180,7 +185,7 @@
 		<sortOrder>19</sortOrder>
 		<numChapters>42</numChapters>
 		<shortCode>JB</shortCode>
-	</Book>
+	<bibleworksCode>JOB</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>PSA</sfmTla>
 		<osisName>Ps</osisName>
@@ -189,7 +194,7 @@
 		<sortOrder>20</sortOrder>
 		<numChapters>150</numChapters>
 		<shortCode>PS</shortCode>
-	</Book>
+	<bibleworksCode>PSA</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>PRO</sfmTla>
 		<osisName>Prov</osisName>
@@ -198,7 +203,7 @@
 		<sortOrder>21</sortOrder>
 		<numChapters>31</numChapters>
 		<shortCode>PR</shortCode>
-	</Book>
+	<bibleworksCode>PRO</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>ECC</sfmTla>
 		<osisName>Eccl</osisName>
@@ -207,7 +212,7 @@
 		<sortOrder>22</sortOrder>
 		<numChapters>12</numChapters>
 		<shortCode>EC</shortCode>
-	</Book>
+	<bibleworksCode>ECC</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>SNG</sfmTla>
 		<osisName>Song</osisName>
@@ -216,7 +221,7 @@
 		<sortOrder>23</sortOrder>
 		<numChapters>8</numChapters>
 		<shortCode>SS</shortCode>
-	</Book>
+	<bibleworksCode>SOL</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>ISA</sfmTla>
 		<osisName>Isa</osisName>
@@ -225,7 +230,7 @@
 		<sortOrder>24</sortOrder>
 		<numChapters>66</numChapters>
 		<shortCode>IS</shortCode>
-	</Book>
+	<bibleworksCode>ISA</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>JER</sfmTla>
 		<osisName>Jer</osisName>
@@ -234,7 +239,7 @@
 		<sortOrder>25</sortOrder>
 		<numChapters>52</numChapters>
 		<shortCode>JR</shortCode>
-	</Book>
+	<bibleworksCode>JER</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>LAM</sfmTla>
 		<osisName>Lam</osisName>
@@ -243,7 +248,7 @@
 		<sortOrder>26</sortOrder>
 		<numChapters>5</numChapters>
 		<shortCode>LM</shortCode>
-	</Book>
+	<bibleworksCode>LAM</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>EZK</sfmTla>
 		<osisName>Ezek</osisName>
@@ -252,7 +257,7 @@
 		<sortOrder>27</sortOrder>
 		<numChapters>48</numChapters>
 		<shortCode>EK</shortCode>
-	</Book>
+	<bibleworksCode>EZE</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>DAN</sfmTla>
 		<osisName>Dan</osisName>
@@ -261,7 +266,7 @@
 		<sortOrder>28</sortOrder>
 		<numChapters>12</numChapters>
 		<shortCode>DN</shortCode>
-	</Book>
+	<bibleworksCode>DAN</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>HOS</sfmTla>
 		<osisName>Hos</osisName>
@@ -270,7 +275,7 @@
 		<sortOrder>29</sortOrder>
 		<numChapters>14</numChapters>
 		<shortCode>HS</shortCode>
-	</Book>
+	<bibleworksCode>HOS</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>JOL</sfmTla>
 		<osisName>Joel</osisName>
@@ -279,7 +284,7 @@
 		<sortOrder>30</sortOrder>
 		<numChapters>3</numChapters>
 		<shortCode>JL</shortCode>
-	</Book>
+	<bibleworksCode>JOE</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>AMO</sfmTla>
 		<osisName>Amos</osisName>
@@ -288,7 +293,7 @@
 		<sortOrder>31</sortOrder>
 		<numChapters>9</numChapters>
 		<shortCode>AM</shortCode>
-	</Book>
+	<bibleworksCode>AMO</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>OBA</sfmTla>
 		<osisName>Obad</osisName>
@@ -297,7 +302,7 @@
 		<sortOrder>32</sortOrder>
 		<numChapters>1</numChapters>
 		<shortCode>OB</shortCode>
-	</Book>
+	<bibleworksCode>OBA</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>JON</sfmTla>
 		<osisName>Jonah</osisName>
@@ -306,7 +311,7 @@
 		<sortOrder>33</sortOrder>
 		<numChapters>4</numChapters>
 		<shortCode>JH</shortCode>
-	</Book>
+	<bibleworksCode>JON</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>MIC</sfmTla>
 		<osisName>Mic</osisName>
@@ -315,7 +320,7 @@
 		<sortOrder>34</sortOrder>
 		<numChapters>7</numChapters>
 		<shortCode>MC</shortCode>
-	</Book>
+	<bibleworksCode>MIC</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>NAM</sfmTla>
 		<osisName>Nah</osisName>
@@ -324,7 +329,7 @@
 		<sortOrder>35</sortOrder>
 		<numChapters>3</numChapters>
 		<shortCode>NM</shortCode>
-	</Book>
+	<bibleworksCode>NAH</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>HAB</sfmTla>
 		<osisName>Hab</osisName>
@@ -333,7 +338,7 @@
 		<sortOrder>36</sortOrder>
 		<numChapters>3</numChapters>
 		<shortCode>HK</shortCode>
-	</Book>
+	<bibleworksCode>HAB</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>ZEP</sfmTla>
 		<osisName>Zeph</osisName>
@@ -342,7 +347,7 @@
 		<sortOrder>37</sortOrder>
 		<numChapters>3</numChapters>
 		<shortCode>ZP</shortCode>
-	</Book>
+	<bibleworksCode>ZEP</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>HAG</sfmTla>
 		<osisName>Hag</osisName>
@@ -351,7 +356,7 @@
 		<sortOrder>38</sortOrder>
 		<numChapters>2</numChapters>
 		<shortCode>HG</shortCode>
-	</Book>
+	<bibleworksCode>HAG</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>ZEC</sfmTla>
 		<osisName>Zech</osisName>
@@ -360,7 +365,7 @@
 		<sortOrder>39</sortOrder>
 		<numChapters>14</numChapters>
 		<shortCode>ZC</shortCode>
-	</Book>
+	<bibleworksCode>ZEC</bibleworksCode></Book>
 	<Book testament="o">
 		<sfmTla>MAL</sfmTla>
 		<osisName>Mal</osisName>
@@ -369,7 +374,7 @@
 		<sortOrder>40</sortOrder>
 		<numChapters>4</numChapters>
 		<shortCode>ML</shortCode>
-	</Book>
+	<bibleworksCode>MAL</bibleworksCode></Book>
 	<Book testament="a">
 		<sfmTla>TOB</sfmTla>
 		<osisName>Tob</osisName>
@@ -378,7 +383,7 @@
 		<sortOrder>41</sortOrder>
 		<numChapters>14</numChapters>
 		<shortCode>TB</shortCode>
-	</Book>
+	<bibleworksCode>TOB</bibleworksCode></Book>
 	<Book testament="a">
 		<sfmTla>JDT</sfmTla>
 		<osisName>Jdt</osisName>
@@ -387,7 +392,7 @@
 		<sortOrder>42</sortOrder>
 		<numChapters>16</numChapters>
 		<shortCode>JT</shortCode>
-	</Book>
+	<bibleworksCode>JDT</bibleworksCode></Book>
 	<Book testament="a">
 		<sfmTla>ESG</sfmTla>
 		<osisName>EsthGr</osisName>
@@ -396,7 +401,7 @@
 		<sortOrder>43</sortOrder>
 		<numChapters>16</numChapters>
 		<shortCode>EG</shortCode>
-	</Book>
+	<bibleworksCode>ESG</bibleworksCode></Book>
 	<Book testament="a">
 		<sfmTla>ADE</sfmTla>
 		<osisName>AddEsth</osisName>
@@ -405,7 +410,7 @@
 		<sortOrder>44</sortOrder>
 		<numChapters>16</numChapters>
 		<shortCode>AE</shortCode>
-	</Book>
+	<bibleworksCode>ESG</bibleworksCode></Book>
 	<Book testament="a">
 		<sfmTla>WIS</sfmTla>
 		<osisName>Wis</osisName>
@@ -414,7 +419,7 @@
 		<sortOrder>45</sortOrder>
 		<numChapters>19</numChapters>
 		<shortCode>WS</shortCode>
-	</Book>
+	<bibleworksCode>WIS</bibleworksCode></Book>
 	<Book testament="a">
 		<sfmTla>SIR</sfmTla>
 		<osisName>Sir</osisName>
@@ -423,7 +428,7 @@
 		<sortOrder>46</sortOrder>
 		<numChapters>51</numChapters>
 		<shortCode>SR</shortCode>
-	</Book>
+	<bibleworksCode>SIR</bibleworksCode></Book>
 	<Book testament="a">
 		<sfmTla>BAR</sfmTla>
 		<osisName>Bar</osisName>
@@ -432,7 +437,7 @@
 		<sortOrder>47</sortOrder>
 		<numChapters>5</numChapters>
 		<shortCode>BR</shortCode>
-	</Book>
+	<bibleworksCode>BAR</bibleworksCode></Book>
 	<Book testament="a">
 		<sfmTla>LJE</sfmTla>
 		<osisName>EpJer</osisName>
@@ -441,7 +446,7 @@
 		<sortOrder>48</sortOrder>
 		<numChapters>1</numChapters>
 		<shortCode>LJ</shortCode>
-	</Book>
+	<bibleworksCode>EPJ</bibleworksCode></Book>
 	<Book testament="a">
 		<sfmTla>S3Y</sfmTla>
 		<osisName>PrAzar</osisName>
@@ -450,7 +455,7 @@
 		<sortOrder>49</sortOrder>
 		<numChapters>1</numChapters>
 		<shortCode>PA</shortCode>
-	</Book>
+	<bibleworksCode>PRA</bibleworksCode></Book>
 	<Book testament="a">
 		<sfmTla>SUS</sfmTla>
 		<osisName>Sus</osisName>
@@ -459,7 +464,7 @@
 		<sortOrder>50</sortOrder>
 		<numChapters>1</numChapters>
 		<shortCode>SN</shortCode>
-	</Book>
+	<bibleworksCode>SUS</bibleworksCode></Book>
 	<Book testament="a">
 		<sfmTla>BEL</sfmTla>
 		<osisName>Bel</osisName>
@@ -468,7 +473,7 @@
 		<sortOrder>51</sortOrder>
 		<numChapters>1</numChapters>
 		<shortCode>BL</shortCode>
-	</Book>
+	<bibleworksCode>BEL</bibleworksCode></Book>
 	<Book testament="a">
 		<sfmTla>1MA</sfmTla>
 		<osisName>1Macc</osisName>
@@ -477,7 +482,7 @@
 		<sortOrder>52</sortOrder>
 		<numChapters>16</numChapters>
 		<shortCode>M1</shortCode>
-	</Book>
+	<bibleworksCode>1MA</bibleworksCode></Book>
 	<Book testament="a">
 		<sfmTla>2MA</sfmTla>
 		<osisName>2Macc</osisName>
@@ -486,7 +491,7 @@
 		<sortOrder>53</sortOrder>
 		<numChapters>15</numChapters>
 		<shortCode>M2</shortCode>
-	</Book>
+	<bibleworksCode>2MA</bibleworksCode></Book>
 	<Book testament="a">
 		<sfmTla>1ES</sfmTla>
 		<osisName>1Esd</osisName>
@@ -495,7 +500,7 @@
 		<sortOrder>54</sortOrder>
 		<numChapters>9</numChapters>
 		<shortCode>E1</shortCode>
-	</Book>
+	<bibleworksCode>1ES</bibleworksCode></Book>
 	<Book testament="a">
 		<sfmTla>MAN</sfmTla>
 		<osisName>PrMan</osisName>
@@ -503,8 +508,8 @@
 		<shortName>Prayer of Manasses</shortName>
 		<sortOrder>55</sortOrder>
 		<numChapters>1</numChapters>
-		<shortCode>PM</shortCode>
-	</Book>
+		<shortCode>PN</shortCode>
+	<bibleworksCode>PRM</bibleworksCode></Book>
 	<Book testament="a">
 		<sfmTla>PS2</sfmTla>
 		<osisName>AddPs</osisName>
@@ -513,7 +518,7 @@
 		<sortOrder>56</sortOrder>
 		<numChapters>1</numChapters>
 		<shortCode>PX</shortCode>
-	</Book>
+	<bibleworksCode>PSX</bibleworksCode></Book>
 	<Book testament="a">
 		<sfmTla>3MA</sfmTla>
 		<osisName>3Macc</osisName>
@@ -522,7 +527,7 @@
 		<sortOrder>57</sortOrder>
 		<numChapters>7</numChapters>
 		<shortCode>M3</shortCode>
-	</Book>
+	<bibleworksCode>3MA</bibleworksCode></Book>
 	<Book testament="a">
 		<sfmTla>2ES</sfmTla>
 		<osisName>2Esd</osisName>
@@ -531,7 +536,7 @@
 		<sortOrder>58</sortOrder>
 		<numChapters>16</numChapters>
 		<shortCode>E2</shortCode>
-	</Book>
+	<bibleworksCode>4ES</bibleworksCode></Book>
 	<Book testament="a">
 		<sfmTla>4MA</sfmTla>
 		<osisName>4Macc</osisName>
@@ -540,8 +545,8 @@
 		<sortOrder>59</sortOrder>
 		<numChapters>18</numChapters>
 		<shortCode>M4</shortCode>
-	</Book>
-	<Book testament="Septuagint">
+	<bibleworksCode>4MA</bibleworksCode></Book>
+	<Book testament="a">
 		<sfmTla>ODS</sfmTla>
 		<osisName>OdesSol</osisName>
 		<name>Odes of Solomon</name>
@@ -549,8 +554,8 @@
 		<sortOrder>60</sortOrder>
 		<numChapters>0</numChapters>
 		<shortCode>OS</shortCode>
-	</Book>
-	<Book testament="Septuagint">
+	<bibleworksCode>ODE</bibleworksCode></Book>
+	<Book testament="a">
 		<sfmTla>PSS</sfmTla>
 		<osisName>PssSol</osisName>
 		<name>Psalms of Solomon</name>
@@ -558,8 +563,8 @@
 		<sortOrder>61</sortOrder>
 		<numChapters>0</numChapters>
 		<shortCode>SP</shortCode>
-	</Book>
-	<Book testament="Vulgate">
+	<bibleworksCode>PSS</bibleworksCode></Book>
+	<Book testament="a">
 		<sfmTla>EPL</sfmTla>
 		<osisName>EpLao</osisName>
 		<name>Epistle to the Laodiceans</name>
@@ -567,8 +572,8 @@
 		<sortOrder>62</sortOrder>
 		<numChapters>0</numChapters>
 		<shortCode>LL</shortCode>
-	</Book>
-	<Book testament="Orthodox Canon">
+	<bibleworksCode>LAO</bibleworksCode></Book>
+	<Book testament="a">
 		<sfmTla>1EN</sfmTla>
 		<osisName>1En</osisName>
 		<name>Ethiopic Apocalypse of Enoch</name>
@@ -576,8 +581,8 @@
 		<sortOrder>63</sortOrder>
 		<numChapters>0</numChapters>
 		<shortCode>N1</shortCode>
-	</Book>
-	<Book testament="Orthodox Canon">
+	<bibleworksCode/></Book>
+	<Book testament="a">
 		<sfmTla>JUB</sfmTla>
 		<osisName>Jub</osisName>
 		<name>Jubilees</name>
@@ -594,7 +599,7 @@
 		<sortOrder>65</sortOrder>
 		<numChapters>14</numChapters>
 		<shortCode>AD</shortCode>
-	</Book>
+	<bibleworksCode>DNG</bibleworksCode></Book>
 	<Book testament="a">
 		<sfmTla>DAG</sfmTla>
 		<osisName>DanGr</osisName>
@@ -603,7 +608,7 @@
 		<sortOrder>66</sortOrder>
 		<numChapters>12</numChapters>
 		<shortCode>DG</shortCode>
-	</Book>
+	<bibleworksCode>DNG</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>MAT</sfmTla>
 		<osisName>Matt</osisName>
@@ -612,7 +617,7 @@
 		<sortOrder>70</sortOrder>
 		<numChapters>28</numChapters>
 		<shortCode>MT</shortCode>
-	</Book>
+	<bibleworksCode>MAT</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>MRK</sfmTla>
 		<osisName>Mark</osisName>
@@ -621,7 +626,7 @@
 		<sortOrder>71</sortOrder>
 		<numChapters>16</numChapters>
 		<shortCode>MK</shortCode>
-	</Book>
+	<bibleworksCode>MAR</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>LUK</sfmTla>
 		<osisName>Luke</osisName>
@@ -630,7 +635,7 @@
 		<sortOrder>72</sortOrder>
 		<numChapters>24</numChapters>
 		<shortCode>LK</shortCode>
-	</Book>
+	<bibleworksCode>LUK</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>JHN</sfmTla>
 		<osisName>John</osisName>
@@ -639,7 +644,7 @@
 		<sortOrder>73</sortOrder>
 		<numChapters>21</numChapters>
 		<shortCode>JN</shortCode>
-	</Book>
+	<bibleworksCode>JOH</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>ACT</sfmTla>
 		<osisName>Acts</osisName>
@@ -648,7 +653,7 @@
 		<sortOrder>74</sortOrder>
 		<numChapters>28</numChapters>
 		<shortCode>AC</shortCode>
-	</Book>
+	<bibleworksCode>ACT</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>ROM</sfmTla>
 		<osisName>Rom</osisName>
@@ -657,7 +662,7 @@
 		<sortOrder>75</sortOrder>
 		<numChapters>16</numChapters>
 		<shortCode>RM</shortCode>
-	</Book>
+	<bibleworksCode>ROM</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>1CO</sfmTla>
 		<osisName>1Cor</osisName>
@@ -666,7 +671,7 @@
 		<sortOrder>76</sortOrder>
 		<numChapters>16</numChapters>
 		<shortCode>C1</shortCode>
-	</Book>
+	<bibleworksCode>1CO</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>2CO</sfmTla>
 		<osisName>2Cor</osisName>
@@ -675,7 +680,7 @@
 		<sortOrder>77</sortOrder>
 		<numChapters>13</numChapters>
 		<shortCode>C2</shortCode>
-	</Book>
+	<bibleworksCode>2CO</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>GAL</sfmTla>
 		<osisName>Gal</osisName>
@@ -684,7 +689,7 @@
 		<sortOrder>78</sortOrder>
 		<numChapters>6</numChapters>
 		<shortCode>GL</shortCode>
-	</Book>
+	<bibleworksCode>GAL</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>EPH</sfmTla>
 		<osisName>Eph</osisName>
@@ -693,7 +698,7 @@
 		<sortOrder>79</sortOrder>
 		<numChapters>6</numChapters>
 		<shortCode>EP</shortCode>
-	</Book>
+	<bibleworksCode>EPH</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>PHP</sfmTla>
 		<osisName>Phil</osisName>
@@ -702,7 +707,7 @@
 		<sortOrder>80</sortOrder>
 		<numChapters>4</numChapters>
 		<shortCode>PP</shortCode>
-	</Book>
+	<bibleworksCode>PHI</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>COL</sfmTla>
 		<osisName>Col</osisName>
@@ -711,7 +716,7 @@
 		<sortOrder>81</sortOrder>
 		<numChapters>4</numChapters>
 		<shortCode>CL</shortCode>
-	</Book>
+	<bibleworksCode>COL</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>1TH</sfmTla>
 		<osisName>1Thess</osisName>
@@ -720,7 +725,7 @@
 		<sortOrder>82</sortOrder>
 		<numChapters>5</numChapters>
 		<shortCode>H1</shortCode>
-	</Book>
+	<bibleworksCode>1TH</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>2TH</sfmTla>
 		<osisName>2Thess</osisName>
@@ -729,7 +734,7 @@
 		<sortOrder>83</sortOrder>
 		<numChapters>3</numChapters>
 		<shortCode>H2</shortCode>
-	</Book>
+	<bibleworksCode>2TH</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>1TI</sfmTla>
 		<osisName>1Tim</osisName>
@@ -738,7 +743,7 @@
 		<sortOrder>84</sortOrder>
 		<numChapters>6</numChapters>
 		<shortCode>T1</shortCode>
-	</Book>
+	<bibleworksCode>1TI</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>2TI</sfmTla>
 		<osisName>2Tim</osisName>
@@ -747,7 +752,7 @@
 		<sortOrder>85</sortOrder>
 		<numChapters>4</numChapters>
 		<shortCode>T2</shortCode>
-	</Book>
+	<bibleworksCode>2TI</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>TIT</sfmTla>
 		<osisName>Titus</osisName>
@@ -756,7 +761,7 @@
 		<sortOrder>86</sortOrder>
 		<numChapters>3</numChapters>
 		<shortCode>TT</shortCode>
-	</Book>
+	<bibleworksCode>TIT</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>PHM</sfmTla>
 		<osisName>Phlm</osisName>
@@ -765,7 +770,7 @@
 		<sortOrder>87</sortOrder>
 		<numChapters>1</numChapters>
 		<shortCode>PM</shortCode>
-	</Book>
+	<bibleworksCode>PHM</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>HEB</sfmTla>
 		<osisName>Heb</osisName>
@@ -774,7 +779,7 @@
 		<sortOrder>88</sortOrder>
 		<numChapters>13</numChapters>
 		<shortCode>HB</shortCode>
-	</Book>
+	<bibleworksCode>HEB</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>JAS</sfmTla>
 		<osisName>Jas</osisName>
@@ -783,7 +788,7 @@
 		<sortOrder>89</sortOrder>
 		<numChapters>5</numChapters>
 		<shortCode>JM</shortCode>
-	</Book>
+	<bibleworksCode>JAM</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>1PE</sfmTla>
 		<osisName>1Pet</osisName>
@@ -792,7 +797,7 @@
 		<sortOrder>90</sortOrder>
 		<numChapters>5</numChapters>
 		<shortCode>P1</shortCode>
-	</Book>
+	<bibleworksCode>1PE</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>2PE</sfmTla>
 		<osisName>2Pet</osisName>
@@ -801,7 +806,7 @@
 		<sortOrder>91</sortOrder>
 		<numChapters>3</numChapters>
 		<shortCode>P2</shortCode>
-	</Book>
+	<bibleworksCode>2PE</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>1JN</sfmTla>
 		<osisName>1John</osisName>
@@ -810,7 +815,7 @@
 		<sortOrder>92</sortOrder>
 		<numChapters>5</numChapters>
 		<shortCode>J1</shortCode>
-	</Book>
+	<bibleworksCode>1JO</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>2JN</sfmTla>
 		<osisName>2John</osisName>
@@ -819,7 +824,7 @@
 		<sortOrder>93</sortOrder>
 		<numChapters>1</numChapters>
 		<shortCode>J2</shortCode>
-	</Book>
+	<bibleworksCode>2JO</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>3JN</sfmTla>
 		<osisName>3John</osisName>
@@ -828,7 +833,7 @@
 		<sortOrder>94</sortOrder>
 		<numChapters>1</numChapters>
 		<shortCode>J3</shortCode>
-	</Book>
+	<bibleworksCode>3JO</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>JUD</sfmTla>
 		<osisName>Jude</osisName>
@@ -837,7 +842,7 @@
 		<sortOrder>95</sortOrder>
 		<numChapters>1</numChapters>
 		<shortCode>JD</shortCode>
-	</Book>
+	<bibleworksCode>JUD</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>REV</sfmTla>
 		<osisName>Rev</osisName>
@@ -846,7 +851,7 @@
 		<sortOrder>96</sortOrder>
 		<numChapters>22</numChapters>
 		<shortCode>RV</shortCode>
-	</Book>
+	<bibleworksCode>REV</bibleworksCode></Book>
 	<Book testament="x">
 		<sfmTla>BAK</sfmTla>
 		<osisName>Back</osisName>

@@ -1,10 +1,7 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html><head>
-  
-  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
   <title>Haiola Downloads</title>
-
-  
 </head><body>
 <h1><a href="http://haiola.org">Haiola</a> Downloads</h1>
 
@@ -18,23 +15,18 @@
       <td><b>Description</b></td>
     </tr>
     <tr>
-      <td><a href="http://haiola.org/Haiola.dmg">Haiola.dmg</a></td>
-      <td>Mac disk image for setup on Mac OS X. <a href="http://www.mono-project.com/Main_Page">Install mono</a>, then
-drag Haiola.app to the Applications folder.</td>
-    </tr>
-    <tr>
       <td><a href="http://haiola.org/haiola.zip">haiola.zip</a><br>
       </td>
-      <td>Manual setup files for Windows, Linux, or Mac OS X. Install a current Java Runtime Environment if you don't already have one. <a href="http://www.mono-project.com/Main_Page">Install mono</a> and/or
-Microsoft .NET 3.5 SP1, then unzip to a folder and run from there. The
+      <td>Manual setup files for Windows or Linux. <a href="http://www.mono-project.com/Main_Page">Install mono</a> and/or
+Microsoft .NET 4.5, then unzip to a folder and run from there. The
 folder can be on a flash drive or your hard disk drive. The manual part
 of the setup is creating startup scripts or icons yourself.<br>
       </td>
     </tr>
     <tr>
-      <td><a href="http://haiola.org/haiolasetup.zip">haiolasetup.zip</a><br>
+      <td><a href="http://haiola.org/setuphaiola.exe">setuphaiola.exe</a><br>
       </td>
-      <td>Windows installer. I build and test on Windows 8, but it should theoretically work on systems as old as Windows XP as long as the prerequisites are met. Use anything older than Windows 7 at your own risk. Note that a Java Runtime Environment (not included) is required.<br>
+      <td>Windows installer. I build and test on Windows 10, but it should theoretically work on some older versions of Windows as long as the prerequisites are met. Use anything older than Windows 7 at your own risk.<br>
       </td>
     </tr>
     <tr>
@@ -54,6 +46,127 @@ of the setup is creating startup scripts or icons yourself.<br>
       <td><b>Version</b></td>
       <td><b>Change</b> </td>
     </tr>
+<tr>
+ <td>2016-12-28</td>
+ <td>Corrected some file omission problems with the installation files. Removed the word "color" from PDF index for a PDF that is no longer color.</td>
+</tr>
+<tr>
+ <td>2016-12-21</td>
+ <td>Replaced the Windows installer. Numerous enhancements and bug fixes. Dropped Mac support for lack of manpower to support it properly. (If you fiddle with a manual install, it might work, but I haven't tested it. Running in a Linux or Windows virtual machine would probably be a better plan for Mac users.) Upgraded to Microsoft .NET 4.5. Removed the dependency on Java.</td>
+</tr>
+<tr>
+ <td>2015-09-30</td>
+ <td>Added missing file covertemplate.svg to the Windows installer.</td>
+</tr>
+<tr>
+ <td>2015-09-29</td>
+ <td>Corrected a serious bug in the Windows installer. Added XeTeX generation (a first step in the process of generating PDFs).</td>
+</tr>
+<tr>
+ <td>2015-08-06</td>
+ <td>Added Sword module configuration file generation code. If the Sword utility osis2mod is in your executable path, Haiola will attempt to make Sword modules for you.</td>
+</tr>
+<tr>
+ <td>2015-08-03</td>
+ <td>Corrected problem with Windows installation file.</td>
+</tr>
+<tr>
+ <td>2015-07-16</td>
+ <td>Corrected problem with USFM normalization. Added option to regenerate origin references for footnotes, cross references, and figures as required by new Paratext checks. Added optional postprocessing automation via postprocess.bat in the input directory.</td>
+</tr>
+<tr>
+ <td>2015-05-14</td>
+ <td>Added WordML generation. Corrected problem with cover handling. Changed output target directory for sql files to be consistent with the other formats. Starts window minimized when run with -a command line switch.</td>
+</tr>
+<tr>
+ <td>2015-03-18</td>
+ <td>Refined epub generation. Corrected a problem with svg cover generation.</td>
+</tr>
+<tr>
+ <td>2015-02-18</td>
+ <td>Added beta-level epub 3 generation. The epub files also have epub 2 navigation for some level of backward compatibility with old epub readers, but best results come from using real epub3 readers.
+ There were also some refinements to the USFX schema validation and some other minor enhancements.</td>
+</tr>
+<tr>
+ <td>2014-12-04</td>
+ <td>Corrected problem with reference detection, fixing broken link generation. Updated USFX generation and validation. Updated <a href="http://eBible.org/usfx/">USFX</a> schema.</td>
+</tr>
+<tr>
+ <td>2014-10-14</td>
+ <td>Updated XSLT code to handle references to one-chapter books better. (Thanks, Jim!)</td>
+</tr>
+<tr>
+ <td>2014-10-08</td>
+ <td>Added option to vary footnote callers.</td>
+</tr>
+<tr>
+ <td>2014-07-27</td>
+ <td>Added some more metadata fields and rearranged the font and CSS blanks to be on the same tab.</td>
+</tr>
+<tr>
+ <td>2014-07-02</td>
+ <td>Fixed bug affecting section header index pages for Bibles having markup like \add in those section headings. Removed target="_top" from section header index page links for Mobile HTML and Classic HTML. Added a couple of metadata fields for future use.</td>
+</tr>
+<tr>
+ <td>2014-06-27</td>
+ <td>Added some MySQL output.</td>
+</tr>
+<tr>
+ <td>2014-06-05</td>
+ <td>Bug fix affecting support for USFM extension tags to support lossless conversion of the USFX <ref> tag.</td>
+</tr>
+<tr>
+ <td>2014-06-04</td>
+ <td>Added support for USFM extension tags to support lossless conversion of the USFX <ref> tag. Made a speed improvement.</td>
+</tr>
+<tr>
+ <td>2014-05-16</td>
+ <td>Decluttered UI with settings button and integrating "Stats" function into "Run Marked". Added preliminary MySQL output. Improved the Mobile HTML format, dropping CSS dropdown menus in favor of separate book and chapter chooser pages.</td>
+</tr>
+<tr>
+ <td>2014-04-24</td>
+ <td>Added ETEN DBL metadata file import from usx/metadata.xml. Added more fields to the UI.</td>
+</tr>
+<tr>
+ <td>2014-04-18</td>
+ <td>Adjusted UI for smaller screens. Handled problem with USFM file ending with a table.</td>
+</tr>
+<tr>
+ <td>2014-03-31</td>
+ <td>Added USX import feature.</td>
+</tr>
+<tr>
+ <td>2014-03-13</td>
+ <td>Added new simple mobile HTML format that works better with rtl and nonroman scripts. Corrected Mac OS distribution bug.</td>
+</tr>
+<tr>
+ <td>2014-02-06</td>
+ <td>Improved imposis2xml.exe to support red letters. Some cosmetic changes.</td>
+</tr>
+<tr>
+ <td>2014-01-17</td>
+ <td>Forced short translation ID and project directory name to match. Added feature to reorder projects when one depends on another, i.e. for orthography changes, etc.</td>
+</tr>
+<tr>
+ <td>2014-01-02</td>
+ <td>Fixed bugs in imposis2xml.exe command line program. Added output format that can be imported into BibleWorks.</td>
+</tr>
+<tr>
+ <td>2013-12-20</td>
+ <td>Added imposis2xml.exe command line program and minimal documentation for included command line programs.</td>
+</tr>
+<tr>
+ <td>2013-12-11</td>
+ <td>Added ℗ notice field. Added usfx2mosis.exe command line program.</td>
+</tr>
+<tr>
+ <td>2013-11-23</td>
+ <td>Corrected bug in handling of conversion from USFM \fp to OSIS. Clarified some field labels on the identification tab.</td>
+</tr>
+<tr>
+ <td>2013-11-06</td>
+ <td>Added font name option to avoid the disappearing text when nonroman script information is added to certain vernacular fields. Suspended updates of Mac version until someone lets me know they are actually using it) to save build and testing time. Still testing on both Windows and Linux.</td>
+</tr>
 <tr>
  <td>2013-11-02</td>
  <td>Corrected setup bug affecting reference link detection feature.</td>

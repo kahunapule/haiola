@@ -1,0 +1,1 @@
+Input file name is kjvextracted_usfx.xml; output suffx is sf/kjv.sfm

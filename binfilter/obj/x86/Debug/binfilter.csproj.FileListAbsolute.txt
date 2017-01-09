@@ -1,0 +1,8 @@
+Z:\Documents\source\prophero\binfilter\bin\Debug\binfilter.exe.config
+Z:\Documents\source\prophero\binfilter\bin\Debug\binfilter.exe
+Z:\Documents\source\prophero\binfilter\bin\Debug\binfilter.pdb
+Z:\Documents\source\prophero\binfilter\bin\Debug\Newtonsoft.Json.dll
+Z:\Documents\source\prophero\binfilter\bin\Debug\Newtonsoft.Json.xml
+Z:\Documents\source\prophero\binfilter\obj\x86\Debug\binfilter.csprojResolveAssemblyReference.cache
+Z:\Documents\source\prophero\binfilter\obj\x86\Debug\binfilter.exe
+Z:\Documents\source\prophero\binfilter\obj\x86\Debug\binfilter.pdb

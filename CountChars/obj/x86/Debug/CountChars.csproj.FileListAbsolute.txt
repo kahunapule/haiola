@@ -1,0 +1,6 @@
+Z:\Documents\source\prophero\CountChars\bin\Debug\CountChars.exe.config
+Z:\Documents\source\prophero\CountChars\bin\Debug\CountChars.exe
+Z:\Documents\source\prophero\CountChars\bin\Debug\CountChars.pdb
+Z:\Documents\source\prophero\CountChars\obj\x86\Debug\CountChars.csprojResolveAssemblyReference.cache
+Z:\Documents\source\prophero\CountChars\obj\x86\Debug\CountChars.exe
+Z:\Documents\source\prophero\CountChars\obj\x86\Debug\CountChars.pdb

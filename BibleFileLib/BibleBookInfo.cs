@@ -16,16 +16,11 @@
 // --------------------------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Data;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
-using System.Xml.Schema;
-using System.Diagnostics;
 
 namespace WordSend
 {
@@ -44,6 +39,7 @@ namespace WordSend
         public string name; // Constant English long name
         public string shortName;    // Constant English short name
         public string shortCode;    // Constant English-like 2-char abbreviation
+        public string bibleworksCode;   // 3-letter codes used by BibleWorks software for import
         private string swordName;   // Hard coded Sword Project English short name
         public int actualChapters;
         public string vernacularHeader; // From \h
@@ -70,7 +66,7 @@ namespace WordSend
             actualChapters = 0;
             isPresent = false;
             tla = osisName = name = shortName = testament = vernacularAbbreviation = vernacularHeader = String.Empty;
-            vernacularName = vernacularShortName = vernacularLongName = String.Empty;
+            vernacularName = vernacularShortName = vernacularLongName = bibleworksCode = String.Empty;
             toc = new StringBuilder();
         }
 
@@ -79,8 +75,13 @@ namespace WordSend
             get {
                 if (String.IsNullOrEmpty(swordName))
                 {
-                    if (shortName != null)
-                        swordName = shortName.Replace("1", "I").Replace("2", "II").Replace("3", "III");
+                    if (tla == "REV")
+                        swordName = "Revelation of John";
+                    else
+                    {
+                        if (shortName != null)
+                            swordName = shortName.Replace("1", "I").Replace("2", "II").Replace("3", "III");
+                    }
                 }
                 return (swordName);
             }
@@ -140,7 +141,7 @@ namespace WordSend
         public BibleBookRecord[] bookArray = new BibleBookRecord[MAXNUMBOOKS];
         public BibleBookRecord[] publishArray = new BibleBookRecord[MAXNUMBOOKS];
         protected int publishArrayActualBookCount = -1;
-        public Hashtable altNames;
+        // public Hashtable altNames;
         protected bool apocryphaFound;
 
         public int publishArrayCount
@@ -159,6 +160,45 @@ namespace WordSend
                 }
                 return publishArrayActualBookCount;
             }
+        }
+
+        /// <summary>
+        /// Returns the standard three-character abbreviation for a book given the 2-character short code for the book.
+        /// </summary>
+        /// <param name="shortAbbr">2-chararter abbreviation for a book</param>
+        /// <returns>3-character abbreviation for a book</returns>
+        public string tlaFrom2la(string shortAbbr)
+        {
+            string tla = String.Empty;
+            int i = 0;
+            while ((tla == String.Empty) && (i < bookArray.Length))
+            {   // Ugly, time-consuming linear search... but simple to code. Refactor later if this is too slow.
+                if (bookArray[i].shortCode == shortAbbr)
+                    tla = bookArray[i].tla;
+                i++;
+            }
+            return tla;
+        }
+
+        /// <summary>
+        /// Returns standard three-character abbreviation for a book given the BibleWorks code.
+        /// </summary>
+        /// <param name="bwCode">BibleWorks book abbreviation</param>
+        /// <returns>Standard SIL/UBS 3-character abbreviation for a book.</returns>
+        public string tlaFromBW(string bwCode)
+        {
+            string tla = String.Empty;
+            int i = 0;
+            while ((tla == String.Empty) && (i < bookArray.Length))
+            {   // Ugly, time-consuming linear search... but simple to code. Refactor later if this is too slow.
+                if ((bookArray[i] != null) && !String.IsNullOrEmpty(bookArray[i].bibleworksCode))
+                {
+                    if (bookArray[i].bibleworksCode.ToUpper() == bwCode.ToUpper())
+                        tla = bookArray[i].tla;
+                }
+                i++;
+            }
+            return tla;
         }
 
         // protected HashSet<string> presentVerses;
@@ -183,9 +223,61 @@ namespace WordSend
         /// </summary>
         /// <param name="book">vernacular name of Bible book</param>
         /// <returns>standard 3-letter abbreviation of Bible book</returns>
+        /*
         public string getTla(string book)
         {
             string tla = (string)altNames[PrepareToCompare(book)];
+            if (tla == null)
+                tla = String.Empty;
+            return tla;
+        }
+        */
+
+        protected Hashtable osis2Tla = null;
+
+        /// <summary>
+        /// Finds the UBS/SIL three-letter abbreviation for a book, given the OSIS book abbreviation.
+        /// </summary>
+        /// <param name="book"></param>
+        /// <returns>3-letter book abbreviation</returns>
+        public string TlaFromOsisBook(string book)
+        {
+            string tla;
+            if (osis2Tla == null)
+            {
+                osis2Tla = new Hashtable(109);
+                foreach (BibleBookRecord br in bookArray)
+                {
+                    if (br != null)
+                        osis2Tla[br.osisName] = br.tla;
+                }
+            }
+            tla = (string)osis2Tla[book];
+            if (tla == null)
+                tla = String.Empty;
+            return tla;
+        }
+
+        protected Hashtable sword2Tla = null;
+
+        /// <summary>
+        /// Finds the UBS/SIL three-letter abbreviation for a book, given the Sword short book name.
+        /// </summary>
+        /// <param name="book">Standard Sword short book name.</param>
+        /// <returns>3-letter book abbreviation</returns>
+        public string TlaFromSwordBook(string book)
+        {
+            string tla;
+            if (sword2Tla == null)
+            {
+                sword2Tla = new Hashtable(109);
+                foreach (BibleBookRecord br in bookArray)
+                {
+                    if (br != null)
+                        sword2Tla[br.swordShortName.ToUpperInvariant()] = br.tla;
+                }
+            }
+            tla = (string)sword2Tla[book.Trim().ToUpperInvariant()];
             if (tla == null)
                 tla = String.Empty;
             return tla;
@@ -202,6 +294,14 @@ namespace WordSend
             if (br == null)
                 return false;
             return br.testament == "a";
+        }
+
+        public bool isCanon(string abbrev)
+        {
+            BibleBookRecord br = (BibleBookRecord)books[abbrev];
+            if (br == null)
+                return false;
+            return (br.testament == "o") || (br.testament == "n");
         }
 
         /// <summary>
@@ -362,11 +462,13 @@ namespace WordSend
             }
             catch (Exception ex)
             {
-                Logit.WriteError("Error reading "+ bookNamesFile +"\r\n"+ ex.Message);
+                Logit.WriteError("Error reading "+ bookNamesFile +Environment.NewLine+ ex.Message);
                 return false;
             }
             return true;
         }
+
+        public List<bookMatch> bookMatchList;
 
         /// <summary>
         /// Writes a BookNames.xml file in the same format as used by Paratext.
@@ -375,12 +477,12 @@ namespace WordSend
         public void WriteDefaultBookNames(string bookNamesFile)
         {
             XmlTextWriter xw;
+            bookMatchList = new List<bookMatch>();
             try
             {
                 xw = new XmlTextWriter(bookNamesFile, Encoding.UTF8);
                 xw.Formatting = Formatting.Indented;
                 xw.WriteStartDocument();
-                xw.WriteDocType("BookNames", null, null/* "ini.dtd" */, null);
                 xw.WriteStartElement("BookNames");
                 foreach (BibleBookRecord br in bookArray)
                 {
@@ -391,19 +493,30 @@ namespace WordSend
                             xw.WriteStartElement("book");
                             xw.WriteAttributeString("code", br.tla);
                             xw.WriteAttributeString("abbr", fileHelper.NoNull(br.vernacularAbbreviation));
+                            if (!string.IsNullOrEmpty(br.vernacularAbbreviation))
+                                bookMatchList.Add(new bookMatch() { bookName = br.vernacularAbbreviation, bookTLA = br.tla });
                             xw.WriteAttributeString("short", fileHelper.NoNull(br.vernacularShortName));
+                            if ((br.vernacularAbbreviation != br.vernacularShortName) && !string.IsNullOrEmpty(br.vernacularShortName))
+                            {
+                                bookMatchList.Add(new bookMatch() { bookName = br.vernacularShortName, bookTLA = br.tla });
+                            }
                             xw.WriteAttributeString("long", fileHelper.NoNull(br.vernacularLongName));
                             xw.WriteAttributeString("alt", fileHelper.NoNull(br.vernacularAltName));
+                            if ((!string.IsNullOrEmpty(br.vernacularAltName)) && (br.vernacularAltName != br.vernacularShortName))
+                            {
+                                bookMatchList.Add(new bookMatch() { bookName = br.vernacularShortName, bookTLA = br.tla });
+                            }
                             xw.WriteEndElement();   // book
                         }
                     }
                 }
                 xw.WriteEndElement();   // BookNames
                 xw.Close();
+                bookMatchList.Sort();
             }
             catch (Exception ex)
             {
-                Logit.WriteError("Error writing "+bookNamesFile+"\r\n"+ex.Message);
+                Logit.WriteError("Error writing "+bookNamesFile+Environment.NewLine+ex.Message);
             }
         }
 
@@ -425,7 +538,7 @@ namespace WordSend
             xr.WhitespaceHandling = WhitespaceHandling.Significant;
             while (xr.Read())
             {
-                if (xr.NodeType == XmlNodeType.Element)
+                if ((xr.NodeType == XmlNodeType.Element) && (!xr.IsEmptyElement))
                 {
                     switch (xr.Name)
                     {
@@ -475,6 +588,10 @@ namespace WordSend
                             xr.Read();
                             bkRecord.shortCode = xr.Value;
                             break;
+                        case "bibleworksCode":
+                            xr.Read();
+                            bkRecord.bibleworksCode = xr.Value;
+                            break;
                     }
                 }
                 else if (xr.NodeType == XmlNodeType.EndElement)
@@ -483,7 +600,7 @@ namespace WordSend
                     {
                         books[bkRecord.tla] = bkRecord;
                         bookArray[bkRecord.sortOrder] = bkRecord;
-                        publishArray[bkRecord.sortOrder] = bkRecord;    // Default book publication order
+                        //publishArray[bkRecord.sortOrder] = bkRecord;    // Default book publication order- set elsewhere
                     }
                 }
             }
@@ -574,7 +691,8 @@ namespace WordSend
 
         /// <summary>
         /// Reads vernacular book name and versification information from USFX file.
-        /// Also tracks which chapters and verses are present.
+        /// Also tracks which chapters and verses are present and populates ChapterInfo and VerseInfo arrays
+        /// for each book.
         /// </summary>
         /// <param name="usfxName">Name of the USFX file to parse</param>
         public void ReadUsfxVernacularNames(string usfxName)
@@ -595,6 +713,7 @@ namespace WordSend
             string bookNamesFile = Path.Combine(Path.GetDirectoryName(usfxName), "BookNames.xml");
             int verseNumber = 0;
             int verseRangeEndNumber = 0;
+            int i;
             bool inParagraph = false;
             allChapters = new ArrayList(1195);  // Big enough for OT + NT + some peripherals. Reallocation will happen with Apocrypha/Deuterocanon.
             ChapterInfo ci = new ChapterInfo();
@@ -603,26 +722,12 @@ namespace WordSend
 
             try
             {
-
-                foreach (BibleBookRecord br in bookArray)
-                {
-                    if (br != null)
-                    {
-                        br.vernacularAbbreviation = String.Empty;   // toc3
-                        br.vernacularHeader = String.Empty; // h
-                        br.vernacularLongName = String.Empty;   // toc1
-                        br.vernacularName = String.Empty;   // mt
-                        br.vernacularShortName = String.Empty;  // toc2
-                        br.vernacularAltName = String.Empty;    // ztoc4
-                    }
-                }
-
                 // Look for default names for books not in the USFX file.
                 ReadDefaultBookNames(bookNamesFile);
 
                 XmlTextReader usfx = new XmlTextReader(usfxName);
                 usfx.WhitespaceHandling = WhitespaceHandling.Significant;
-                altNames = new Hashtable(997);
+                // altNames = new Hashtable(997);
                 while (usfx.Read())
                 {
                     if (usfx.NodeType == XmlNodeType.Element)
@@ -653,7 +758,7 @@ namespace WordSend
                                         Logit.WriteError("Cannot process unknown book \"" + currentBookAbbrev + "\" in " + usfxName);
                                         return;
                                     }
-                                    altNames[currentBookAbbrev] = currentBookAbbrev;
+                                    // altNames[currentBookAbbrev] = currentBookAbbrev;
                                 }
                                 chapterString = verseString = String.Empty;
                                 chapterNumber = 0;
@@ -676,7 +781,7 @@ namespace WordSend
                                         else
                                             bookRecord.vernacularName = usfx.Value.Trim();
                                     }
-                                    altNames[PrepareToCompare(bookRecord.vernacularName)] = currentBookAbbrev;
+                                    // altNames[PrepareToCompare(bookRecord.vernacularName)] = currentBookAbbrev;
                                 }
                                 else
                                 {
@@ -690,7 +795,7 @@ namespace WordSend
                                 if (usfx.NodeType == XmlNodeType.Text)
                                 {
                                     bookRecord.vernacularHeader = usfx.Value.Trim();
-                                    altNames[PrepareToCompare(bookRecord.vernacularHeader)] = currentBookAbbrev;
+                                    // altNames[PrepareToCompare(bookRecord.vernacularHeader)] = currentBookAbbrev;
                                 }
 
                                 break;
@@ -717,6 +822,9 @@ namespace WordSend
                                 ci.chapterId = currentBookCode + chapterNumber.ToString();
                                 ci.maxVerse = ci.verseCount = 0;
                                 ci.bookRecord = bookRecord;
+                                ci.verses[0] = new VerseInfo();
+                                ci.verses[0].startVerse = ci.verses[0].endVerse = 0;
+                                ci.verses[0].verse = string.Empty;
                                 bookRecord.chaptersFound.Add(ci);
                                 allChapters.Add(ci);
                                 break;
@@ -751,20 +859,32 @@ namespace WordSend
                                         switch (level)
                                         {
                                             case "1":
-                                                bookRecord.vernacularLongName = usfx.Value.Trim();
-                                                altNames[PrepareToCompare(bookRecord.vernacularLongName)] = currentBookAbbrev;
+                                                if (String.IsNullOrEmpty(bookRecord.vernacularLongName))
+                                                {
+                                                    bookRecord.vernacularLongName = usfx.Value.Trim();
+                                                }
+                                                // altNames[PrepareToCompare(bookRecord.vernacularLongName)] = currentBookAbbrev;
                                                 break;
                                             case "2":
-                                                bookRecord.vernacularShortName = usfx.Value.Trim();
-                                                altNames[PrepareToCompare(bookRecord.vernacularShortName)] = currentBookAbbrev;
+                                                if (String.IsNullOrEmpty(bookRecord.vernacularShortName))
+                                                {
+                                                    bookRecord.vernacularShortName = usfx.Value.Trim();
+                                                }
+                                                // altNames[PrepareToCompare(bookRecord.vernacularShortName)] = currentBookAbbrev;
                                                 break;
                                             case "3":
-                                                bookRecord.vernacularAbbreviation = usfx.Value.Trim();
-                                                altNames[PrepareToCompare(bookRecord.vernacularAbbreviation)] = currentBookAbbrev;
+                                                if (String.IsNullOrEmpty(bookRecord.vernacularAbbreviation))
+                                                {
+                                                    bookRecord.vernacularAbbreviation = usfx.Value.Trim();
+                                                }
+                                                // altNames[PrepareToCompare(bookRecord.vernacularAbbreviation)] = currentBookAbbrev;
                                                 break;
                                             case "4":
-                                                bookRecord.vernacularAltName = usfx.Value.Trim();
-                                                altNames[PrepareToCompare(bookRecord.vernacularAltName)] = currentBookAbbrev;
+                                                if (String.IsNullOrEmpty(bookRecord.vernacularAltName))
+                                                {
+                                                    bookRecord.vernacularAltName = usfx.Value.Trim();
+                                                }
+                                                // altNames[PrepareToCompare(bookRecord.vernacularAltName)] = currentBookAbbrev;
                                                 break;
                                         }
                                     }
@@ -793,7 +913,14 @@ namespace WordSend
                                 }
                                 if (Int32.TryParse(verseRangeEnd, out vnum))
                                 {
-                                    verseRangeEndNumber = vnum;
+                                    if (vnum >= verseNumber)
+                                    {
+                                        verseRangeEndNumber = vnum;
+                                    }
+                                    else
+                                    {
+                                        verseRangeEndNumber = verseNumber;
+                                    }
                                 }
                                 else
                                 {
@@ -802,6 +929,20 @@ namespace WordSend
                                 bookRecord.verseCount[chapterNumber] = verseRangeEndNumber;
                                 ci.maxVerse = Math.Max(ci.maxVerse, verseRangeEndNumber);
                                 ci.verseCount += verseRangeEndNumber - verseNumber + 1;
+                                for (i = verseNumber; i <= verseRangeEndNumber; i++)
+                                {
+                                    if ((i >= 0) && (i < ChapterInfo.MAXNUMVERSES))
+                                    {
+                                        ci.verses[i] = new VerseInfo();
+                                        ci.verses[i].startVerse = verseNumber;
+                                        ci.verses[i].endVerse = verseRangeEndNumber;
+                                        ci.verses[i].verse = verseString;
+                                    }
+                                    else
+                                    {
+                                        Logit.WriteError("Bad verse number: " + i.ToString() + " in " + currentBookAbbrev + " " + chapterString);
+                                    }
+                                }
 
                                 break;
                             case "x":
@@ -884,12 +1025,114 @@ namespace WordSend
                     //System.Windows.Forms.Application.DoEvents();
                 }
                 usfx.Close();
-                WriteDefaultBookNames(bookNamesFile);   // Override book names with toc tags
+                WriteDefaultBookNames(bookNamesFile);   // Write book names with possible additions from toc tags
             }
             catch (Exception ex)
             {
-                Logit.WriteError("Error reading vernacular file names from USFX\r\n"+ex.Message + "\r\n" + ex.StackTrace);
+                Logit.WriteError("Error reading vernacular file names from USFX: " + ex.Message + "  " + ex.StackTrace);
             }
+        }
+
+        /// <summary>
+        /// Splits Book.chapter.verse string up and validates to see if it exists in this translation.
+        /// </summary>
+        /// <param name="BCV">Input string, like JHN.3.16</param>
+        /// <returns>Information about the normalized Book Chapter and Verse information</returns>
+        public BCVInfo ValidateInternalReference(string BCV)
+        {
+            BCVInfo result = new BCVInfo();
+            BCV = BCV.Trim();
+            if (BCV.Length < 7)
+                return result;
+            string[] sa = BCV.Split(new char[] { '.' });
+            if (sa.Length < 3)
+                return result;
+            return ValidateInternalReference(sa[0], sa[1], sa[2]);
+        }
+
+        /// <summary>
+        /// Check to see if the book, chapter, and verse given exist in this translation, and if so,
+        /// normalize the reference to the first verse of the target verse bridge.
+        /// </summary>
+        /// <param name="bookTla">Book TLA, like JHN</param>
+        /// <param name="chap">Chapter string, like 3</param>
+        /// <param name="vs">Verse string, 16</param>
+        /// <returns></returns>
+        public BCVInfo ValidateInternalReference(string bookTla, string chap, string vs)
+        {
+            BCVInfo result = new BCVInfo();
+            result.exists = false;
+            int i, j;
+            int vnum;
+            int chapNum;
+            if (bookTla.Length != 3)
+            {
+                return result;
+            }
+            if (chap.Length < 1)
+            {
+                return result;
+            }
+            else if (!Int32.TryParse(chap.Trim(), out chapNum))
+            {
+                return result;
+            }
+            vs = vs.Trim();
+            int dashPlace = vs.IndexOf('-');
+            if (dashPlace > 0)
+            {
+                vs = vs.Substring(0, dashPlace);
+            }
+            if (vs.Length < 1)
+            {
+                vnum = 0;
+            }
+            else if (!Int32.TryParse(vs, out vnum))
+            {
+                return result;
+            }
+            if ((vnum < 0) || (vnum >= ChapterInfo.MAXNUMVERSES))
+                return result;
+            BibleBookRecord foundBr;
+            ChapterInfo foundCi;
+            VerseInfo foundVi;
+            // Is the book in publishArray?
+            bool found = false;
+            for (i = 0; (i < publishArray.Length) && !found; i++)
+            {
+                if (publishArray[i] != null)
+                {
+                    foundBr = publishArray[i];
+                    if (foundBr.tla == bookTla)
+                    {
+                        result.bkInfo = foundBr;
+                        if (foundBr.chapterFiles == null)
+                            return result;
+                        // We found the book and chapter list.
+                        for (j = 0; (j < foundBr.chaptersFound.Count) && !found; j++)
+                        {
+                            foundCi = (ChapterInfo)foundBr.chaptersFound[j];
+                            if (foundCi != null)
+                            {
+                                if ((foundCi.chapterInteger == chapNum) || (chapNum == 0))
+                                {   // We found the chapter.
+                                    result.chapInfo = foundCi;
+                                    foundVi = foundCi.verses[vnum];
+                                    if (foundVi == null)
+                                        return result;  // No such verse in this translation.
+                                    result.vsInfo = foundVi;
+                                    result.exists = true;
+                                    found = true;
+                                    // We found it! Normalize to first verse of verse bridge.
+                                }
+                            }
+                        }
+                        if (!found)
+                            return result;
+                    }
+                }
+            }
+            return result;
         }
 
         public void RecordStats(Options m_options)
@@ -919,14 +1162,17 @@ namespace WordSend
                     {
                         case "o":
                             otBookCount++;
-                            otChapCount += br.chaptersFound.Count;
-                            for (j = 0; j < br.chaptersFound.Count; j++)
+                            if (br.chaptersFound != null)
                             {
-                                ci = (ChapterInfo)br.chaptersFound[j];
-                                if (ci != null)
+                                otChapCount += br.chaptersFound.Count;
+                                for (j = 0; j < br.chaptersFound.Count; j++)
                                 {
-                                    otVerseCount += ci.verseCount;
-                                    otVerseMax += ci.maxVerse;
+                                    ci = (ChapterInfo)br.chaptersFound[j];
+                                    if (ci != null)
+                                    {
+                                        otVerseCount += ci.verseCount;
+                                        otVerseMax += ci.maxVerse;
+                                    }
                                 }
                             }
                             break;

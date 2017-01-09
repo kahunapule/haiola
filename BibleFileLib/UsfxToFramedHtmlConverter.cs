@@ -228,17 +228,17 @@ namespace BibleFileLib
 					}
 				}
 			}
-            sb.Append("<div class=\"navButtons\">\r\n");
+            sb.Append("<div class=\"navButtons\">"+Environment.NewLine);
 			if (!string.IsNullOrEmpty(previousFileLink))
 			{
 				sb.Append(
 					"<input type=\"button\" value=\"" + PreviousChapterLinkText + "\" title=\"" + PreviousChapterLinkText +
-					"\" onclick=\"top.location.href='" + TopFrameName(previousFileLink) + "'\"/>\r\n");
+					"\" onclick=\"top.location.href='" + TopFrameName(previousFileLink) + "'\"/>"+Environment.NewLine);
 			}
             if (!string.IsNullOrEmpty(firstChapterFile))
             {
                 sb.Append("<input type=\"button\" value=\"" + currentBookHeader + "\" title=\"" + currentBookHeader +
-					"\" onclick=\"top.location.href='" + TopFrameName(firstChapterFile) + "'\"/>\r\n");
+					"\" onclick=\"top.location.href='" + TopFrameName(firstChapterFile) + "'\"/>"+Environment.NewLine);
             }
 			if (!string.IsNullOrEmpty(nextFileLink))
 			{
@@ -255,6 +255,62 @@ namespace BibleFileLib
             repeatedNavButtons = sb.ToString();
 			htm.WriteLine("</div>");
 		}
+
+        /// <summary>
+        /// Open an HTML file named with the given name if non-empty, or with the 3-letter book abbreviation followed by the chapter number then ".htm"
+        /// and write the HTML header.
+        /// </summary>
+        /// <param name="fileName">Name of file to open if other than a Bible chapter.</param>
+        /// <param name="mainScriptureFile">true iff TextFunc.js is to be included.</param>
+        protected override void OpenHtmlFile(string fileName, bool mainScriptureFile, bool skipNav = false)
+        {
+            CloseHtmlFile();
+            string chap = currentChapter;
+            if ((fileName != null) && (fileName.Length > 0))
+            {
+                currentFileName = Path.Combine(htmDir, fileName);
+            }
+            else
+            {
+                if (currentBookAbbrev == "PSA")
+                    chap = String.Format("{0}", chapterNumber.ToString("000"));
+                else
+                    chap = String.Format("{0}", chapterNumber.ToString("00"));
+                currentFileName = Path.Combine(htmDir, currentBookAbbrev + chap + ".htm");
+            }
+            MakeFramesFor(currentFileName);
+            htm = new StreamWriter(currentFileName, false, Encoding.UTF8);
+            // It is important that the DOCTYPE declaration should be a single line, and that the <html> element starts the second line.
+            // This is because the concordance parser uses a ReadLine to skip the DOCTYPE declaration in order to read the rest of the file as XML.
+            // Note: we used XHTML in the framed version, instead of HTML 5, because frames are mostly deprecated in HTML 5.
+            htm.WriteLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+            htm.WriteLine("<html lang=\"{0}\" dir=\"{1}\">", shortLangId, textDirection);
+            htm.WriteLine("<head>");
+            htm.WriteLine("<meta charset=\"UTF-8\" />");
+            //            htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />");
+            htm.WriteLine("<link rel=\"stylesheet\" href=\"{0}\" type=\"text/css\" />", customCssName);
+            htm.WriteLine("<meta name=\"viewport\" content=\"user-scalable=yes, initial-scale=1, minimum-scale=1, width=device-width\"/>");
+            //            htm.WriteLine("<meta name=\"viewport\" content=\"user-scalable=yes, initial-scale=1, minimum-scale=1, width=device-width, height=device-height\"/>");
+            if (mainScriptureFile)
+            {
+                htm.WriteLine("<script src=\"TextFuncs.js\" type=\"text/javascript\"></script>");
+            }
+            htm.WriteLine("<title>{0} {1} {2}</title>",
+                translationName, currentBookHeader, currentChapterPublished);
+            htm.WriteLine(string.Format("<meta name=\"keywords\" content=\"{0}, {1}, Holy Bible, Scripture, Bible, Scriptures, New Testament, Old Testament, Gospel\" />",
+                translationName, langId));
+            htm.WriteLine("</head>");
+            if (skipNav)
+            {
+                navButtonCode = String.Empty;
+            }
+            else
+            {
+                htm.WriteLine("<body class=\"mainDoc\"{0}>", OnLoadArgument());
+                WriteNavButtons();
+            }
+        }
+
 
 		protected override void RepeatNavButtons()
 		{   // We use the stored string instead of computing the chapter links all over again, because the chapter number at this point is one higher.

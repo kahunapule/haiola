@@ -74,7 +74,7 @@ namespace WordSend
 				SFConverter.scripture = new Scriptures();
 
 				// Write out the USFM file
-				SFConverter.scripture.USFXtoUSFM(inName, Path.GetDirectoryName(outName), Path.GetFileName(outName));
+				SFConverter.scripture.USFXtoUSFM(inName, Path.GetDirectoryName(outName), Path.GetFileName(outName), false, new Options("tempoptions.xini"));
 			}
 			if (showBanner)
 			{
@@ -95,8 +95,8 @@ File names with embedded spaces must be surrounded by quotes.
 Do not use - as the first character of a path or file name.
 
 ");
-				Logit.CloseFile();
 			}
-		}
+            Logit.CloseFile();
+        }
 	}
 }

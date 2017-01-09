@@ -1,18 +1,43 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html><head>
-  
   <meta content="text/html; charset=utf-8" http-equiv="content-type">
   <title>Haiola Scripture Publishing Software</title>
-
-  
 </head><body>
 <h1>Haiola Scripture Publishing Software</h1>
+<img src="haiola.jpg" alt="Haiola converts USFM files to usable Bible formats.">
+<p>Would you like to convert <a href="http://paratext.org/about/usfm">USFM files</a> from <a href="http://paratext.org/">Paratext</a>,
+<a href="http://bibledit.org/">Bibledit</a>, <a href="http://adapt-it.org/">Adapt It</a>, or another source to formats usable by end users?<br/>
+Would you like to convert <a href="http://www.everytribeeverynation.org/">Every Tribe Every Nation (ETEN)</a>
+<a href="http://thedigitalbiblelibrary.org/">Digital Bible Library (DBL)</a> bundles into usable formats?<br/>
+Would you like a little help normalizing USFM files for submission to the ETEN DBL?<br/>
+If so, you might like to use Haiola.</p>
+<p>Haiola is a free and open source Bible file format converter. It takes any of the following inputs:</p>
+<ul>
+<li>Unicode USFM files (from a Paratext project or any other standards-compliant source)</li>
+<li>Unzipped ETEN DBL bundles</li>
+<li><a href="http://ebible.org/usfx/">USFX files</a></li></ul>
+<p>Haiola produces the following output formats:</p>
+<ul><li>HTML (for web sites or for offline reading in a browser)</li>
+<li>EPUB3 files with backward compatibility with EPUB2 readers</li>
+<li><a href="http://crosswire.org">Crosswire Sword Project modules (using Sword utilities from Crosswire.org)</a></li>
+<li>Microsoft Word XML (WordML)</li>
+<li>PDF files (using XeLaTeX)</li>
+<li>Various technical formats for further conversions and imports into Bible study programs</li>
+</ul>
 
+<p>Note that further formats can be produced from the above formats. EPUB3 files can be converted to Amazon Kindle .mobi files using <a href="https://www.amazon.com/gp/feature.html?docId=1000765211">Kindlegen</a>.
+The WordML output can be converted to various formats using Microsoft Word 2006 or later or the current LibreOffice Writer.
+Additional conversions are also possible using <a href="http://pathway.sil.org/">SIL Pathway.</a></p>
+
+<p>Haiola can be used in do-it-yourself projects using the software directly. You may also be interested in Scripture publishing services where
+I use Haiola to create the above formats plus <a href="http://inscript.org">InScript</a> and also add the Bible translation to the <a href="eBible.org">eBible.org</a>
+Crosswire Sword repository. This service is free for qualified Bible translation projects in exchange for open access licensing allowing redistribution.
+Please <a href="http://eBible.org/cgi-bin/contact.cgi">contact Michael Johnson</a> for details.</p>
 <p>Haiola is the continuation of both the Prophero (SEPP) and WordSend (Onyx) open source Scripture publishing software projects.<br>
 </p>
-<p>Haiola Scripture publishing software is in alpha test. So is this
+<p>Haiola Scripture publishing software is under development. So is this
 documentation. Please use it only at your own risk, and with frequent
-backups of your data.</p>
+backups of your data. We try to keep it reliable, but make no guarantees.</p>
 
 <p>Please remember that in publishing Scripture:</p>
 
@@ -36,28 +61,19 @@ with computers and file systems. Some knowledge of programming is helpful.</p>
   <li><a href="haiola.zip">Haiola manual installation .zip file.</a>
 Requires <a href="http://www.go-mono.com/mono-downloads/download.html">Mono</a>. Note: if you need BibleBookInfo.xml or SFMInfo.xml for an older copy of WordSend, this is a good place to get it.<br>
 </li>
-  <li><a href="haiolasetup.zip">Zipped windows installation file.</a> Requires Microsoft .NET
-Framework 3.5 to run.</li>
-  <li><a href="Haiola.dmg">Mac OS X disk image installation file.
-Drag Haiola.app to Applications directory to install.</a> Requires <a href="http://www.go-mono.com/mono-downloads/download.html">Mono</a> to
-run.</li>
+  <li><a href="setuphaiola.exe">Windows installation file.</a> Requires Microsoft .NET
+Framework 4.5 to run. NOTE: If this install program fails, try a manual install by unzipping all of <a href="haiola.zip">haiola.zip</a> to a suitable location on your computer or on a memory stick, then running haiola.exe.</li>
   <li><a href="download.htm">Change log and link to downloads</a></li>
-  <li><a href="http://lists.ebible.org/mailman/listinfo/haiola">Haiola
-announcement email list sign-up</a> or send a blank email to
-haiola-subscribe@eBible.org from the address you want to subscribe.
-(Nobody reads mail to that address. The Mailman program processes it
-and sends you a confirmation email.)</li>
   <li><a href="http://groups.google.com/group/haiola?hl=en">Haiola
 announcement Google group sign-up</a></li>
+  <li><a href="https://groups.google.com/forum/feed/haiola/msgs/rss.xml?num=15">Haiola News</a></li>
   <li><a href="http://projects.palaso.org/projects/show/prophero">Haiola
 source code repository</a> (using the project's prior names, Prophero and SEPP)</li>
-  <li><a href="https://code.google.com/p/haiola/">Haiola source code
-repository mirror</a></li>
 </ul>
 
-<p>Note: the two mailing lists mentioned above are for announcements
-only, and do not allow posting by anyone besides list managers
-(currently just <a href="http://mljohnson.org">Kahunapule Michael Johnson</a>), so hopefully they won't overfill your inbox.<br>
+<p>Note: the mailing list mentioned above is for announcements about Haiola and Michael's Scripture publishing news
+only, and does not allow posting by anyone besides list manager
+(currently <a href="http://mljohnson.org">Kahunapule Michael Johnson</a>), so those messages won't overfill your inbox.<br>
 </p>
 
 </body></html>

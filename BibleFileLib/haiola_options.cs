@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -10,7 +10,7 @@ namespace WordSend
 {
 	public class Options
 	{
-		private XMLini ini;
+		public XMLini ini;
 		private List<string> m_tableNames;
 		private List<string> m_postprocesses;
 		private List<string> m_altLinks;
@@ -18,50 +18,58 @@ namespace WordSend
 
 		public void Reload(string iniName)
 		{
-			if (changed)
-				Write();
-			m_tableNames = null;
-			m_postprocesses = null;
-			m_altLinks = null;
-			_books = null;
-			_referenceAbbeviationsMap = null;
-			_crossRefToFilePrefixMap = null;
-			LegacyOptions oldOpts = null;
-			int i, fileCount;
+            try
+            {
+                if (changed)
+                    Write();
+                m_tableNames = null;
+                m_postprocesses = null;
+                m_altLinks = null;
+                _books = null;
+                _referenceAbbeviationsMap = null;
+                _crossRefToFilePrefixMap = null;
+                LegacyOptions oldOpts = null;
+                int i, fileCount;
 
-			if (!File.Exists(iniName))
-			{
-				// Check for legacy options file.
-				string seppOptions = Path.Combine(Path.GetDirectoryName(iniName), "Sepp Options.xml");
-				if (File.Exists(seppOptions))
-				{
-					oldOpts = new LegacyOptions();
-					oldOpts.LoadOptions(seppOptions);
-				}
-			}
-			ini = new XMLini(iniName);
-			if (oldOpts != null)
-			{
-				// Read old options that are in current use into new options format.
-				ini.WriteString("languageName", oldOpts.m_languageName);
-				ini.WriteString("languageId", oldOpts.m_languageId);
-				ini.WriteString("chapterLabel", oldOpts.m_chapterLabel);
-				ini.WriteString("psalmLabel", oldOpts.m_psalmLabel);
-				ini.WriteString("copyrightLink", oldOpts.m_copyrightLink);
-				ini.WriteString("homeLink", oldOpts.m_homeLink);
-				ini.WriteString("footerHtml", oldOpts.m_footerHtml);
-				ini.WriteString("indexHtml", oldOpts.m_indexHtml);
-				ini.WriteString("licenseHtml", oldOpts.m_licenseHtml);
-				ini.WriteBool("useKhmerDigits", oldOpts.m_useKhmerDigits);
-				ini.WriteBool("ignoreExtras", oldOpts.m_ignoreExtras);
-				fileCount = oldOpts.PreprocessingTables.Count;
-				ini.WriteInt("numProcessingFiles", fileCount);
-				for (i = 0; i < fileCount; i++)
-				{
-					ini.WriteString("processingFile" + i.ToString(), oldOpts.PreprocessingTables[i]);
-				}
-				ini.Write();
-			}
+                if (!File.Exists(iniName))
+                {
+                    // Check for legacy options file.
+                    string seppOptions = Path.Combine(Path.GetDirectoryName(iniName), "Sepp Options.xml");
+                    if (File.Exists(seppOptions))
+                    {
+                        oldOpts = new LegacyOptions();
+                        oldOpts.LoadOptions(seppOptions);
+                    }
+                }
+                ini = new XMLini(iniName);
+                if (oldOpts != null)
+                {
+                    // Read old options that are in current use into new options format.
+                    ini.WriteString("languageName", oldOpts.m_languageName);
+                    ini.WriteString("languageId", oldOpts.m_languageId);
+                    ini.WriteString("chapterLabel", oldOpts.m_chapterLabel);
+                    ini.WriteString("psalmLabel", oldOpts.m_psalmLabel);
+                    ini.WriteString("copyrightLink", oldOpts.m_copyrightLink);
+                    ini.WriteString("homeLink", oldOpts.m_homeLink);
+                    ini.WriteString("footerHtml", oldOpts.m_footerHtml);
+                    ini.WriteString("indexHtml", oldOpts.m_indexHtml);
+                    ini.WriteString("licenseHtml", oldOpts.m_licenseHtml);
+                    ini.WriteBool("useKhmerDigits", oldOpts.m_useKhmerDigits);
+                    ini.WriteBool("ignoreExtras", oldOpts.m_ignoreExtras);
+                    fileCount = oldOpts.PreprocessingTables.Count;
+                    ini.WriteInt("numProcessingFiles", fileCount);
+                    for (i = 0; i < fileCount; i++)
+                    {
+                        ini.WriteString("processingFile" + i.ToString(), oldOpts.PreprocessingTables[i]);
+                    }
+                    ini.Write();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error loading ini file " + iniName);
+            }
 		}
 
 		/// <summary>
@@ -76,6 +84,207 @@ namespace WordSend
 			Reload(iniName);
 		}
 
+        public string allowedBookList;
+
+        public string AudioCopyrightNotice
+        {
+            get { return ini.ReadString("AudioCopyrightNotice", String.Empty); }
+            set { ini.WriteString("AudioCopyrightNotice", value); }
+        }
+
+        public string fcbhId
+        {
+            get { return ini.ReadString("fcbhId", String.Empty).Replace(".",""); }
+            set { ini.WriteString("fcbhId", value); }
+        }
+
+        public string shortTitle
+        {
+            get { return ini.ReadString("shortTitle", String.Empty); }
+            set { ini.WriteString("shortTitle", value); }
+        }
+
+        public string epubId
+        {
+            get { return ini.ReadString("epubId", String.Empty); }
+            set { ini.WriteString("epubId", value); }
+        }
+
+        public bool redistributable
+        {
+            get { return ((ini.ReadBool("redistributable", false) || publicDomain || ccbyndnc || ccbysa || ccbynd) && !privateProject); }
+            set { ini.WriteBool("redistributable", (!privateProject) && (value || publicDomain || ccbyndnc || ccbysa || ccbynd)); }
+        }
+
+        public bool ccbysa
+        {
+            get { return (ini.ReadBool("ccbysa", false)); }
+            set { ini.WriteBool("ccbysa", value); }
+        }
+
+        public bool rechecked
+        {
+            get { return ini.ReadBool("rechecked", false); }
+            set { ini.WriteBool("rechecked", value); }
+        }
+
+        public bool ccbynd
+        {
+            get { return (ini.ReadBool("ccbynd", !(ccbysa || publicDomain || ccbyndnc || allRightsReserved || silentCopyright || otherLicense))); }
+            set { ini.WriteBool("ccbynd", value); }
+        }
+
+        public bool done
+        {
+            get { return (ini.ReadBool("done", false)); }
+            set { ini.WriteBool("done", value); }
+        }
+
+        public bool makeHtml
+        {
+            get { return (ini.ReadBool("makeHtml", true)); }
+            set { ini.WriteBool("makeHtml", value); }
+        }
+
+        public bool makeSword
+        {
+            get { return (ini.ReadBool("makeSword", true)); }
+            set { ini.WriteBool("makeSword", value); }
+        }
+
+        public bool makeWordML
+        {
+            get { return (ini.ReadBool("makeWordML", true)); }
+            set { ini.WriteBool("makeWordML", value); }
+        }
+
+        public int longestWordLength
+        {
+            get { return (ini.ReadInt("longestWordLength", 0)); }
+            set { ini.WriteInt("longestWordLength", value); }
+        }
+
+        public string isbn13
+        {
+            get { return ini.ReadString("isbn13", String.Empty); }
+            set { ini.WriteString("isbn13", value); }
+        }
+
+        public string isbn10
+        {
+            get { return ini.ReadString("isbn10", String.Empty); }
+            set { ini.WriteString("isbn10", value); }
+        }
+
+        public bool makeEub
+        {
+            get { return (ini.ReadBool("makeEpub", true)); }
+            set { ini.WriteBool("makeEpub", value); }
+        }
+
+        public bool dbsCover
+        {
+            get { return (ini.ReadBool("dbsCover", false)); }
+            set { ini.WriteBool("dbsCOver", value); }
+        }
+
+        public int printPdfPageCount
+        {
+            get { return (ini.ReadInt("printPdfPageCount", 0)); }
+            set { ini.WriteInt("printPdfPageCount", value); }
+        }
+
+        public bool makePDF
+        {
+            get { return (ini.ReadBool("makePDF", true)); }
+            set { ini.WriteBool("makePDF", value); }
+        }
+
+        public bool makeInScript
+        {
+            get { return (ini.ReadBool("makeInScript", true)); }
+            set { ini.WriteBool("makeInScript", value); }
+        }
+
+        public bool makeHotLinks
+        {
+            get { return (ini.ReadBool("makeHotLinks", true)); }
+            set { ini.WriteBool("makeHotLinks", value); }
+        }
+
+        public bool customPermissions
+        {
+            get { return ini.ReadBool("customPermissions", false); }
+            set { ini.WriteBool("customPermissions", value); }
+        }
+
+        public bool commonChars
+        {
+            get { return ini.ReadBool("commonChars", true); }
+            set { ini.WriteBool("commonChars", value); }
+        }
+
+        public string commentText
+        {
+            get { return ini.ReadString("commentText", "comment"); }
+            set { ini.WriteString("commentText", value); }
+        }
+
+        public string canonTypeEnglish
+        {
+            get { return ini.ReadString("canonTypeEnglish", "common"); }
+            set { ini.WriteString("canonTypeEnglish", value); }
+        }
+
+        public string canonTypeLocal
+        {
+            get { return ini.ReadString("canonTypeLocal", String.Empty); }
+            set { ini.WriteString("canonTypeLocal", value); }
+        }
+
+
+        public bool includeApocrypha
+        {
+            get { return ini.ReadBool("includeApocrypha", true); }
+            set { ini.WriteBool("includeApocrypha", value); }
+        }
+
+        public bool extendUsfm
+        {
+            get { return ini.ReadBool("extendUsfm", false); }
+            set { ini.WriteBool("extendUsfm", value); }
+        }
+
+        public string fcbhDramaNT
+        {
+            get { return ini.ReadString("fcbhDramaNT", String.Empty); }
+            set { ini.WriteString("fcbhDramaNT", value); }
+        }
+
+        public string fcbhAudioNT
+        {
+            get { return ini.ReadString("fcbhAudioNT", String.Empty); }
+            set { ini.WriteString("fcbhAudioNT", value); }
+        }
+
+        public string fcbhDramaOT
+        {
+            get { return ini.ReadString("fcbhDramaOT", String.Empty); }
+            set { ini.WriteString("fcbhDramaOT", value); }
+        }
+
+        public string fcbhAudioOT
+        {
+            get { return ini.ReadString("fcbhAudioOT", String.Empty); }
+            set { ini.WriteString("fcbhAudioOT", value); }
+        }
+
+        public string fcbhAudioPortion
+        {
+            get { return ini.ReadString("fcbhAudioPortion", String.Empty); }
+            set { ini.WriteString("fcbhAudioPortion", value); }
+        }
+
         public int otBookCount
         {
             get { return ini.ReadInt("otBookCount", 0); }
@@ -86,6 +295,18 @@ namespace WordSend
         {
             get { return ini.ReadInt("ntBookCount", 0); }
             set { ini.WriteInt("ntBookCount", value); }
+        }
+
+        public bool eBibleCertified
+        {
+            get { return ini.ReadBool("eBibleCertified", false); }
+            set { ini.WriteBool("eBibleCertified", value); }
+        }
+
+        public bool DBSandeBible
+        {
+            get { return (!privateProject) && ini.ReadBool("DBSandeBible", (!privateProject) && File.Exists(@"/home/kahunapule/sync/doc/Electronic Scripture Publishing/eBible.org_certified.jpg")); }
+            set { ini.WriteBool("DBSandeBible", value); }
         }
             
         public int adBookCount
@@ -172,6 +393,34 @@ namespace WordSend
 			set { ini.WriteString("languageId", value.Trim()); }
 		}
 
+        public string JesusFilmLinkText
+        {
+            get { return ini.ReadString("JesusFilmLinkText", "<img src='../JesusFilmtn.jpg' />"); }
+            set { ini.WriteString("JesusFilmLinkText", value.Trim()); }
+        }
+
+        public string JesusFilmLinkTarget
+        {
+            get { return ini.ReadString("JesusFilmLinkTarget", String.Empty); }
+            set { ini.WriteString("JesusFilmLinkTarget", value.Trim()); }
+        }
+
+        public string SwordName
+        {
+            get
+            {
+                return ini.ReadString("SwordName", translationId);
+            }
+            set { ini.WriteString("SwordName", value.Trim()); }
+        }
+
+        public string ObsoleteSwordName
+        {
+            get { return ini.ReadString("ObsoleteSwordName", String.Empty); }
+            set { ini.WriteString("ObsoleteSwordName", value.Trim()); }
+        }
+
+
 		public string translationId
 		{
 			get
@@ -184,10 +433,58 @@ namespace WordSend
 			set { ini.WriteString("translationId", value.Trim()); }
 		}
 
+        public bool rebuild
+        {
+            get { return ini.ReadBool("rebuild", false); }
+            set { ini.WriteBool("rebuild", value); }
+        }
+
+        public bool runXetex
+        {
+            get { return ini.ReadBool("runXini", false); }
+            set { ini.WriteBool("runXini", value); }
+        }
+
+        public string fontFamily
+        {
+            get { return ini.ReadString("fontFamily", "Gentium"); }
+            set { ini.WriteString("fontFamily", value.Trim()); }
+        }
+
         public bool subsetProject
         {
             get { return ini.ReadBool("subsetProject", false); }
             set { ini.WriteBool("subsetProject", value); }
+        }
+
+        public string pageWidth
+        {
+            get { return ini.ReadString("pageWidth", "150 mm"); }
+            set { ini.WriteString("pageWidth", value); }
+        }
+
+        public string pageLength
+        {
+            get { return ini.ReadString("pageLength", "216 mm"); }
+            set { ini.WriteString("pageLength", value); }
+        }
+
+        public bool includeCropMarks
+        {
+            get { return ini.ReadBool("includeCropMarks", false); }
+            set { ini.WriteBool("includeCropMarks", value); }
+        }
+
+        public bool verse1
+        {
+            get { return ini.ReadBool("verse1", true); }
+            set { ini.WriteBool("verse1", value); }
+        }
+
+        public bool chapter1
+        {
+            get { return ini.ReadBool("chapter1", true); }
+            set { ini.WriteBool("chapter1", value); }
         }
 
 		public string dialect
@@ -198,7 +495,7 @@ namespace WordSend
 
         public string xoFormat
         {
-            get { return ini.ReadString("xoFormat", "%c:%v:"); }
+            get { return ini.ReadString("xoFormat", "%c:%v"); }
             set { ini.WriteString("xoFormat", value); }
         }
 
@@ -208,10 +505,52 @@ namespace WordSend
             set { ini.WriteString("translationTraditionalAbbreviation", value); }
         }
 
+        public string ldml
+        {
+            get { return ini.ReadString("ldml", String.Empty); }
+            set { ini.WriteString("ldml", value); }
+        }
+
+        public string rodCode
+        {
+            get { return ini.ReadString("rodCode", String.Empty); }
+            set { ini.WriteString("rodCode", value); }
+        }
+
+        public string script
+        {
+            get { return ini.ReadString("script", "Latin"); }
+            set { ini.WriteString("script", value); }
+        }
+
+        public string localRightsHolder
+        {
+            get { return ini.ReadString("localRightsHolder", String.Empty); }
+            set { ini.WriteString("localRightsHolder", value); }
+        }
+
+        public string facebook
+        {
+            get { return ini.ReadString("facebook", String.Empty); }
+            set { ini.WriteString("facebook", value); }
+        }
+
         public string customCssFileName
         {
             get { return ini.ReadString("customCssFileName", "haiola.css"); }
             set { ini.WriteString("customCssFileName", value); }
+        }
+
+        public string footNoteCallers
+        {
+            get { return ini.ReadString("footNoteCallers", "* â€  â€¡ Â§"); }
+            set { ini.WriteString("footNoteCallers", value); }
+        }
+
+        public string xrefCallers
+        {
+            get { return ini.ReadString("xrefCallers", "âœ¡"); }
+            set { ini.WriteString("xrefCallers", value); }
         }
 
         public bool stripNoteOrigin
@@ -226,10 +565,22 @@ namespace WordSend
             set { ini.WriteBool("Archived", value); }
         }
 
+        public bool downloadsAllowed
+        {
+            get { return ini.ReadBool("downloadsAllowed", redistributable || ccbyndnc || publicDomain || ccbysa || ccbynd) && !privateProject; }
+            set { ini.WriteBool("downloadsAllowed", value); }
+        }
+
         public bool PrepublicationChecks
         {
             get { return ini.ReadBool("PrepublicationChecks", false); }
             set { ini.WriteBool("PrepublicationChecks", value); }
+        }
+
+        public string textSourceUrl
+        {
+            get { return ini.ReadString("textSourceUrl", String.Empty); }
+            set { ini.WriteString("textSourceUrl", value); }
         }
 
         public bool WebSiteReady
@@ -268,6 +619,18 @@ namespace WordSend
             set { ini.WriteString("paratextProject", String.IsNullOrEmpty(value) ? String.Empty : value.Trim()); }
         }
 
+        public string paratextUniqueId
+        {
+            get { return ini.ReadString("paratextUniqueId", String.Empty); }
+            set { ini.WriteString("paratextUniqueId", value.Trim()); }
+        }
+
+        public string paratextGuid
+        {
+            get { return ini.ReadString("paratextGuid", String.Empty); }
+            set { ini.WriteString("paratextGuid", value); }
+        }
+
 		public string vernacularTitle
 		{
 			get { return ini.ReadString("vernacularTitle", String.Empty); }
@@ -292,6 +655,31 @@ namespace WordSend
 			set { ini.WriteDateTime("contentUpdateDate", value); }
 		}
 
+        public DateTime SwordVersionDate
+        {
+            get { return ini.ReadDateTime("SwordVersionDate", contentUpdateDate); }
+            set { ini.WriteDateTime("SwordVersionDate", value); }
+        }
+
+        public DateTime SourceFileDate
+        {
+            get { return ini.ReadDateTime("SourceFileDate", contentUpdateDate); }
+            set { ini.WriteDateTime("SourceFileDate", value); }
+        }
+
+        public int SwordMajorVersion
+        {
+            get { return ini.ReadInt("SwordMajorVersion", 0); }
+            set { ini.WriteInt("SwordMajorVersion", value); }
+        }
+
+        public int SwordMinorVersion
+        {
+            get { return ini.ReadInt("SwordMinorVersion", 200); }
+            set { ini.WriteInt("SwordMinorVersion", value); }
+        }
+
+
 		public bool ignoreExtras
 		{
 			get { return ini.ReadBool("ignoreExtras", false); }
@@ -302,6 +690,12 @@ namespace WordSend
         {
             get { return ini.ReadBool("relaxUsfmNesting", false); }
             set { ini.WriteBool("relaxUsfmNesting", value); }
+        }
+
+        public bool hasStrongs
+        {
+            get { return ini.ReadBool("hasStrongs", false); }
+            set { ini.WriteBool("hasStrongs", value); }
         }
 
  /*
@@ -319,9 +713,9 @@ namespace WordSend
 		}
 
 
-		public bool creativeCommons
+		public bool ccbyndnc
 		{
-			get { return ini.ReadBool("creativeCommons", true); }
+			get { return ini.ReadBool("creativeCommons", false); }
 			set { ini.WriteBool("creativeCommons", value); }
 		}
 
@@ -344,12 +738,15 @@ namespace WordSend
 			set { ini.WriteBool("silentCopyright", value); }
 		}
 
+        /*
 		public bool preprocess
 		{
 			get { return ini.ReadBool("preprocess", true); }
 			set { ini.WriteBool("preprocess", value); }
 		}
+        */
 
+        /*
 		public bool doUsfmToUsfx
 		{
 			get { return ini.ReadBool("doUsfmToUsfx", true); }
@@ -385,6 +782,7 @@ namespace WordSend
 			get { return ini.ReadBool("doOdf", true); }
 			set { ini.WriteBool("doOdf", value); }
 		}
+        */
 
 		public string copyrightOwner
 		{
@@ -434,9 +832,21 @@ namespace WordSend
 			set { ini.WriteString("homeLink", value.Trim()); }
 		}
 
+        public string country
+        {
+            get { return ini.ReadString("country", String.Empty); }
+            set { ini.WriteString("country", value); }
+        }
+
+        public string countryCode
+        {
+            get { return ini.ReadString("countryCode", String.Empty); }
+            set { ini.WriteString("countryCode", value); }
+        }
+
 		public string copyrightLink
 		{
-			get { return ini.ReadString("copyrightLink", "<a href=\"copyright.htm\">©</a>"); }
+			get { return ini.ReadString("copyrightLink", "<a href=\"copyright.htm\">Â©</a>"); }
 			set { ini.WriteString("copyrightLink", value.Trim()); }
 		}
 
@@ -446,29 +856,47 @@ namespace WordSend
             set { ini.WriteString("goText", value.Trim()); }
 		}
 
+        public bool disablePrintingFigOrigins
+        {
+            get { return ini.ReadBool("disablePrintingFigOrigins", true); }
+            set { ini.WriteBool("disablePrintingFigOrigins", value); }
+        }
+
 		public string footerHtml
 		{
-			get { return ini.ReadString("footerHtml", String.Empty); }
-            set { ini.WriteString("footerHtml", value.Trim()); }
+			get { return ini.ReadString("footerHtml", String.Empty).Replace("<br>", "<br />"); }
+            set { ini.WriteString("footerHtml", value.Trim().Replace("<br>", "<br />")); }
 		}
 
 		public string indexHtml
 		{
-			get { return ini.ReadString("indexHtml", String.Empty); }
-            set { ini.WriteString("indexHtml", value.Trim()); }
+            get { return ini.ReadString("indexHtml", String.Empty).Replace("<br>", "<br />"); }
+            set { ini.WriteString("indexHtml", value.Trim().Replace("<br>", "<br />")); }
 		}
 
 		public string licenseHtml
 		{
-			get { return ini.ReadString("licenseHtml", String.Empty); }
-            set { ini.WriteString("licenseHtml", value.Trim()); }
+            get { return ini.ReadString("licenseHtml", String.Empty).Replace("<br>", "<br />"); }
+            set { ini.WriteString("licenseHtml", value.Trim().Replace("<br>", "<br />")); }
 		}
+
+        public string promoHtml
+        {
+            get { return ini.ReadString("promoHtml", String.Empty).Replace("<br>", "<br />"); }
+            set { ini.WriteString("promoHtml", value.Replace("<br>", "<br />")); }
+        }
 
 		public string versificationScheme
 		{
 			get { return ini.ReadString("versificationScheme", "Automatic"); }
             set { ini.WriteString("versificationScheme", value.Trim()); }
 		}
+
+        public string swordVersification
+        {
+            get { return ini.ReadString("swordVersification", "NRSVA"); }
+            set { ini.WriteString("swordVersification", value); }
+        }
 
 		public string psalmLabel
 		{
@@ -482,12 +910,13 @@ namespace WordSend
 			set { ini.WriteString("chapterLabel", value); }
 		}
 
-
+        /* Replaced by CVSeparator
 		public string chapterAndVerseSeparator
 		{
 			get { return ini.ReadString("chapterAndVerseSeparator", ":"); }
 			set { ini.WriteString("chapterAndVerseSeparator", value); }
 		}
+        */
 
 		public string rangeSeparator
 		{
@@ -507,11 +936,77 @@ namespace WordSend
 			set { ini.WriteString("multiRefDifferentChapterSeparator", value); }
 		}
 
-		public string verseNumberLocation
+        public bool RegenerateNoteOrigins
+        {
+            get { return ini.ReadBool("RegenerateNoteOrigins", true); }
+            set { ini.WriteBool("RegenerateNoteOrigins", value); }
+        }
+
+        public string verseNumberLocation
 		{
 			get { return ini.ReadString("verseNumberLocation", "Begin"); }
 			set { ini.WriteString("verseNumberLocation", value); }
 		}
+
+        public string CVSeparator   // Same as Paratext ssf ChapterVerseSeparator
+        {
+            get { return ini.ReadString("CVSeparator", ":"); }
+            set { ini.WriteString("CVSeparator", value); }
+        }
+
+        /* Replaced by RangeSeparator
+        public string RangeIndicator
+        {
+            get { return ini.ReadString("RangeIndicator", "-"); }
+            set { ini.WriteString("RangeIndicator", value); }
+        }
+        */
+
+        /* Replaced by multiRefSameChapterSeparator
+        public string SequenceIndicator
+        {
+            get { return ini.ReadString("SequenceIndicator", ", "); }
+            set { ini.WriteString("SequenceIndicator", value); }
+        }
+        */
+
+        /* Replaced by multiRefDifferentChapterSeparator
+        public string ChapterRangeIndicator
+        {
+            get { return ini.ReadString("ChapterRangeIndicator", "â€“"); }
+            set { ini.WriteString("ChapterRangeIndicator", value); }
+        }
+        */
+
+        public string BookSequenceSeparator
+        {
+            get { return ini.ReadString("BookSequenceSeparator", ";"); }
+            set { ini.WriteString("BookSequenceSeparator", value); }
+        }
+
+        public string ChapterNumberSeparator
+        {
+            get { return ini.ReadString("ChapterNumberSeparator", ";"); }
+            set { ini.WriteString("ChapterNumberSeparator", value); }
+        }
+
+        public string BookSourceForMarkerXt
+        {
+            get { return ini.ReadString("BookSourceForMarkerXt", "ShortName"); }
+            set { ini.WriteString("BookSourceForMarkerXt", value); }
+        }
+
+        public string BookSourceForMarkerR
+        {
+            get { return ini.ReadString("BookSourceForMarkerR", "ShortName"); }
+            set { ini.WriteString("BookSourceForMarkerR", value); }
+        }
+
+        public string dependsOn
+        {
+            get { return ini.ReadString("dependsOn", String.Empty); }
+            set { ini.WriteString("dependsOn", value); }
+        }
 
 		public string footnoteMarkerStyle
 		{
@@ -523,12 +1018,6 @@ namespace WordSend
 		{
 			get { return ini.ReadString("footnoteMarkerResetAt", "Book"); }
 			set { ini.WriteString("footnoteMarkerResetAt", value); }
-		}
-
-		public string footnoteMarkers
-		{
-			get { return ini.ReadString("footnoteMarkers", "* † ‡ §"); }
-			set { ini.WriteString("footnoteMarkers", value); }
 		}
 
 		public string textDir
@@ -561,6 +1050,7 @@ namespace WordSend
 			set { ini.WriteString("homeDomain", value); }
 		}
 
+        /*
 		public bool useKhmerDigits
 		{
 			get { return ini.ReadBool("useKhmerDigits", false); }
@@ -572,6 +1062,7 @@ namespace WordSend
 			get { return ini.ReadBool("useArabicDigits", !ini.ReadBool("useKhmerDigits", false)); }
 			set { ini.WriteBool("useArabicDigits", value); }
 		}
+        */
 
         public bool lastRunResult
         {
@@ -692,6 +1183,24 @@ namespace WordSend
 			get { return ini.ReadBool("generateConcordance", false); }
 			set { ini.WriteBool("generateConcordance", value); }
 		}
+
+        /// <summary>
+        /// Generate Mobile HTML instead of Concordance or the old HTML with JavaScript
+        /// </summary>
+        public bool GenerateMobileHtml
+        {
+            get { return ini.ReadBool("GenerateMobileHtml", true); }
+            set { ini.WriteBool("GenerateMobileHtml", value); }
+        }
+
+        /// <summary>
+        /// Generate legacy HTML instead of Mobile HTML or Concordance HTML
+        /// </summary>
+        public bool LegacyHtml
+        {
+            get { return ini.ReadBool("LegacyHtml", false); }
+            set { ini.WriteBool("LegacyHtml", value); }
+        }
 
 		/// <summary>
 		/// if wordforms differing only by case occur merge them
@@ -915,7 +1424,9 @@ namespace WordSend
 
 		/// <summary>
 		/// True if we should generate the frame-based view, with the Scripture embedded in one pane of a frame
-		/// along with some navigation tools.
+		/// along with some navigation tools. This persistent variable is redefined to imply concordance generation,
+        /// since we don't test or support frames in the regular HTML any more. HTML 5 pretty much did away with
+        /// frames.
 		/// </summary>
 		public bool UseFrames
 		{
@@ -1031,44 +1542,14 @@ namespace WordSend
         public string m_languageName = string.Empty;
         public string m_chapterLabel = string.Empty;
         public string m_psalmLabel = string.Empty;
-        public string m_copyrightLink = "<a href=\"copyright.htm\">©</a>";
+        public string m_copyrightLink = "<a href=\"copyright.htm\">Â©</a>";
         public string m_homeLink = "<a href=\"../index.htm\"><img alt=\"^\" src=\"../css/home_sm.png\" border=\"0\" /></a>";
         public string m_footerHtml = string.Empty;
-        public string m_indexHtml = "<div class=\"toc1\"><a href=\"http://pngscriptures.org/{0}/{0}_html.zip\">{0}_html.zip</a></div>\r\n"+
-"<div class=\"toc1\"><a href=\"http://pngscriptures.org/resources.php?id={0}\">More downloads</a></div>\r\n"+
-"<div class=\"toc1\"><a href=\"http://pnglanguages.org/pacific/png/show_lang_entry.asp?id={0}\">Linguistic publications</a></div>\r\n"+
-"<div class=\"toc1\"><a href=\"http://www.ethnologue.org/show_language.asp?code={0}\">Ethnologue</a></div>\r\n";
-        public string m_licenseHtml = "<h1>The New Testament in the ____ Language</h1>\r\n"+
-"<p>Copyright © ____ <a href=\"http://www.wycliffe.org/\">Wycliffe, Inc.</a></p>\r\n"+
-"<p>This translation is made available to you under the terms of the <a href=\"http://creativecommons.org/licenses/by-nc-nd/3.0/\">Creative\r\n"+
-"Commons Attribution-Noncommercial-No Derivative Works license.</a> \r\n"+
-"In addition, you have permission to port the text to different file\r\n"+
-"formats, as long as you don't change any of the text or punctuation of\r\n"+
-"the Bible.</p>\r\n"+
-"<p>You may share, copy, distribute, transmit, and extract portions or\r\n"+
-"quotations from this work, provided that:<br />\r\n"+
-"</p>\r\n"+
-"<ul>\r\n"+
-"<li>You include the above copyright information and that you make it\r\n"+
-"clear that the work came from <a href=\"http://pngscriptures.org/\">http://pngscriptures.org/</a>.</li>\r\n"+
-"<li>You do not sell this work for a profit.F< />\r\n"+
-"</li>\r\n"+
-"<li>You do not make any derivative works that change any of the\r\n"+
-"actual words or punctuation of the Scriptures.</li>\r\n"+
-"</ul>\r\n"+
-"<p>Permissions beyond the scope of this license may be available if you\r\n"+
-"<a href=\"http://pngscriptures.org/contact.htm\">contact us</a>\r\n"+
-"with your request. If you want to revise a\r\n"+
-"translation, use a translation in an adaptation, or use a translation\r\n"+
-"commercially, we will relay your request to the appropriate copyright\r\n"+
-"owner.</p>\r\n"+
-"<p><a rel=\"license\"\r\n"+
-"href=\"http://creativecommons.org/licenses/by-nc-nd/3.0/\"><img\r\n"+
-"alt=\"Creative Commons License\" style=\"border-width: 0pt;\"\r\n"+
-"src=\"http://i.creativecommons.org/l/by-nc-nd/3.0/88x31.png\" /></a></p>\r\n"+
-"<p>If you have further questions about this web site or the <a href=\"../terms.htm\">Terms of\r\n"+
-"Use</a>, <a href=\"http://pngscriptures.org/contact.htm\">please contact us</a>.\r\n"+
-"</p>";
+        public string m_indexHtml = "<div class=\"toc1\"><a href=\"http://pngscriptures.org/{0}/{0}_html.zip\">{0}_html.zip</a></div>"+Environment.NewLine+
+"<div class=\"toc1\"><a href=\"http://pngscriptures.org/resources.php?id={0}\">More downloads</a></div>"+Environment.NewLine+
+//"<div class=\"toc1\"><a href=\"http://pnglanguages.org/pacific/png/show_lang_entry.asp?id={0}\">Linguistic publications</a></div>"+Environment.NewLine+
+"<div class=\"toc1\"><a href=\"http://www.ethnologue.org/language/{0}\">Ethnologue</a></div>"+Environment.NewLine;
+        public string m_licenseHtml = String.Empty;
         public bool m_useKhmerDigits = false;
         public bool m_ignoreExtras = false;
         
@@ -1166,6 +1647,8 @@ namespace WordSend
 		{
 			get { return m_files; }
 		}
+
+
 
 		/// <summary>
 		/// if wordforms differing only by case occur merge them
@@ -1475,6 +1958,7 @@ namespace WordSend
             result = result.Replace("~~lt", "<");
             return result;
         }
+
 
 		public void SaveOptions(string optionsPath)
 		{

@@ -1,0 +1,72 @@
+\\vmware-host\Shared Folders\Documents\Dropbox\source\prophero\usfm2usfx\bin\Debug\usfm2usfx.exe
+\\vmware-host\Shared Folders\Documents\Dropbox\source\prophero\usfm2usfx\bin\Debug\usfm2usfx.pdb
+\\vmware-host\Shared Folders\Documents\Dropbox\source\prophero\usfm2usfx\bin\Debug\BibleFileLib.dll
+\\vmware-host\Shared Folders\Documents\Dropbox\source\prophero\usfm2usfx\bin\Debug\BibleFileLib.pdb
+\\vmware-host\Shared Folders\Documents\Dropbox\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.exe
+\\vmware-host\Shared Folders\Documents\Dropbox\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.pdb
+\\vmware-host\Shared Folders\Documents\Dropbox\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.csprojResolveAssemblyReference.cache
+C:\Users\MICHAEL\Documents\Dropbox\source\prophero\usfm2usfx\bin\Debug\usfm2usfx.exe
+C:\Users\MICHAEL\Documents\Dropbox\source\prophero\usfm2usfx\bin\Debug\usfm2usfx.pdb
+C:\Users\MICHAEL\Documents\Dropbox\source\prophero\usfm2usfx\bin\Debug\BibleFileLib.dll
+C:\Users\MICHAEL\Documents\Dropbox\source\prophero\usfm2usfx\bin\Debug\BibleFileLib.pdb
+C:\Users\MICHAEL\Documents\Dropbox\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.csprojResolveAssemblyReference.cache
+C:\Users\MICHAEL\Documents\Dropbox\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.exe
+C:\Users\MICHAEL\Documents\Dropbox\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.pdb
+C:\Users\MICHAEL\Documents\source\prophero\usfm2usfx\bin\Debug\usfm2usfx.exe
+C:\Users\MICHAEL\Documents\source\prophero\usfm2usfx\bin\Debug\usfm2usfx.pdb
+C:\Users\MICHAEL\Documents\source\prophero\usfm2usfx\bin\Debug\BibleFileLib.dll
+C:\Users\MICHAEL\Documents\source\prophero\usfm2usfx\bin\Debug\BibleFileLib.pdb
+C:\Users\MICHAEL\Documents\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.csprojResolveAssemblyReference.cache
+C:\Users\MICHAEL\Documents\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.exe
+C:\Users\MICHAEL\Documents\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.pdb
+\\vmware-host\Shared Folders\Documents\source\prophero\usfm2usfx\bin\Debug\usfm2usfx.exe
+\\vmware-host\Shared Folders\Documents\source\prophero\usfm2usfx\bin\Debug\usfm2usfx.pdb
+\\vmware-host\Shared Folders\Documents\source\prophero\usfm2usfx\bin\Debug\BibleFileLib.dll
+\\vmware-host\Shared Folders\Documents\source\prophero\usfm2usfx\bin\Debug\BibleFileLib.pdb
+\\vmware-host\Shared Folders\Documents\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.exe
+\\vmware-host\Shared Folders\Documents\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.pdb
+E:\Documents\source\prophero\usfm2usfx\bin\Debug\usfm2usfx.exe
+E:\Documents\source\prophero\usfm2usfx\bin\Debug\usfm2usfx.pdb
+E:\Documents\source\prophero\usfm2usfx\bin\Debug\BibleFileLib.dll
+E:\Documents\source\prophero\usfm2usfx\bin\Debug\BibleFileLib.pdb
+E:\Documents\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.csprojResolveAssemblyReference.cache
+E:\Documents\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.exe
+E:\Documents\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.pdb
+C:\e\Documents\source\prophero\usfm2usfx\bin\Debug\usfm2usfx.exe
+C:\e\Documents\source\prophero\usfm2usfx\bin\Debug\usfm2usfx.pdb
+C:\e\Documents\source\prophero\usfm2usfx\bin\Debug\BibleFileLib.dll
+C:\e\Documents\source\prophero\usfm2usfx\bin\Debug\BibleFileLib.pdb
+C:\e\Documents\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.exe
+C:\e\Documents\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.pdb
+\\vmware-host\Shared Folders\Documents\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.csprojResolveAssemblyReference.cache
+C:\e\Documents\source\prophero\usfm2usfx\bin\Debug\Newtonsoft.Json.dll
+C:\e\Documents\source\prophero\usfm2usfx\bin\Debug\Newtonsoft.Json.xml
+\\vmware-host\Shared Folders\Documents\source\prophero\usfm2usfx\bin\Debug\Newtonsoft.Json.dll
+\\vmware-host\Shared Folders\Documents\source\prophero\usfm2usfx\bin\Debug\Newtonsoft.Json.xml
+C:\e\Documents\source\prophero\usfm2usfx\bin\Debug\usfm2usfx.exe.config
+C:\e\Documents\source\prophero\usfm2usfx\bin\Debug\ICSharpCode.SharpZipLib.dll
+\\vmware-host\Shared Folders\Documents\source\prophero\usfm2usfx\bin\Debug\usfm2usfx.exe.config
+\\vmware-host\Shared Folders\Documents\source\prophero\usfm2usfx\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\e\Documents\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.csprojResolveAssemblyReference.cache
+Z:\Documents\source\prophero\usfm2usfx\bin\Debug\usfm2usfx.exe.config
+Z:\Documents\source\prophero\usfm2usfx\bin\Debug\usfm2usfx.exe
+Z:\Documents\source\prophero\usfm2usfx\bin\Debug\usfm2usfx.pdb
+Z:\Documents\source\prophero\usfm2usfx\bin\Debug\BibleFileLib.dll
+Z:\Documents\source\prophero\usfm2usfx\bin\Debug\Newtonsoft.Json.dll
+Z:\Documents\source\prophero\usfm2usfx\bin\Debug\ICSharpCode.SharpZipLib.dll
+Z:\Documents\source\prophero\usfm2usfx\bin\Debug\BibleFileLib.pdb
+Z:\Documents\source\prophero\usfm2usfx\bin\Debug\Newtonsoft.Json.xml
+Z:\Documents\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.exe
+Z:\Documents\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.pdb
+Z:\Documents\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.csprojResolveAssemblyReference.cache
+\\KMPJX\source\prophero\usfm2usfx\bin\Debug\usfm2usfx.exe.config
+\\KMPJX\source\prophero\usfm2usfx\bin\Debug\usfm2usfx.exe
+\\KMPJX\source\prophero\usfm2usfx\bin\Debug\usfm2usfx.pdb
+\\KMPJX\source\prophero\usfm2usfx\bin\Debug\BibleFileLib.dll
+\\KMPJX\source\prophero\usfm2usfx\bin\Debug\Newtonsoft.Json.dll
+\\KMPJX\source\prophero\usfm2usfx\bin\Debug\ICSharpCode.SharpZipLib.dll
+\\KMPJX\source\prophero\usfm2usfx\bin\Debug\BibleFileLib.pdb
+\\KMPJX\source\prophero\usfm2usfx\bin\Debug\Newtonsoft.Json.xml
+\\KMPJX\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.csprojResolveAssemblyReference.cache
+\\KMPJX\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.exe
+\\KMPJX\source\prophero\usfm2usfx\obj\Debug\usfm2usfx.pdb

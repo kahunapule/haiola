@@ -1,0 +1,11 @@
+.directory
+*.user
+*.suo
+*.bak
+*~
+*.o
+bin/*
+obj/*
+dist/*
+proprietary/*
+.DS_Store

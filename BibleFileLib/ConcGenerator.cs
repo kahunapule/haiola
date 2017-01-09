@@ -244,9 +244,9 @@ namespace BibleFileLib
 			double count = sortedOccurrences.Count;
 			int groupSize = Convert.ToInt32(Math.Sqrt(count));
 			int iStartGroup = 0;
-			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n"
-                + "<html>\n<head>\n<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n</head>\n<body>\n";
-			string trailer = "</body>\n</html>\n";
+			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">" + Environment.NewLine
+                + "<html>"+Environment.NewLine+"<head>"+Environment.NewLine+"<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">"+Environment.NewLine+"</head>"+Environment.NewLine+"<body>"+Environment.NewLine+"";
+			string trailer = "</body>"+Environment.NewLine+"</html>"+Environment.NewLine+"";
 			string pathMain = Path.Combine(m_outputDirName, "concIndexBar.htm");
 			TextWriter writerMain = new StreamWriter(pathMain, false, Encoding.UTF8);
 			writerMain.Write(header);
@@ -261,7 +261,7 @@ namespace BibleFileLib
 					string groupFileName = "index" + groupIndex + ".htm";
 					WordformInfo firstItemInGroup = sortedOccurrences[iStartGroup];
 					WordformInfo lastItemInGroup = sortedOccurrences[iStartGroup + cThisGroup - 1];
-					writerMain.Write("<a href=\"{0}\" target=\"inner\">{1} - {2}</a><br/>\n",
+					writerMain.Write("<a href=\"{0}\" target=\"inner\">{1} - {2}</a><br/>"+Environment.NewLine,
 						new object[] { groupFileName, MakeSafeXml(firstItemInGroup.Form), MakeSafeXml(lastItemInGroup.Form) });
 					WriteInnerIndexFile(groupFileName, sortedOccurrences, groupIndex, iStartGroup, cThisGroup);
 				}
@@ -289,16 +289,16 @@ namespace BibleFileLib
 			}
 			return sOutput;
 		}
-		const string indexHeader = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n"
-                + "<html>\n<head>\n<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n"    
-				+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"mktree.css\">\n"
-				+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">\n"
-				+ "<script type=\"text/javascript\" src=\"mktree.js\"></script>\n</head>\n"
-				+ "<body class=\"ConcIndex\">\n"
+		string indexHeader = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">"+Environment.NewLine
+                + "<html>"+Environment.NewLine+"<head>"+Environment.NewLine+"<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">"+Environment.NewLine+""    
+				+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"mktree.css\">"+ Environment.NewLine
+				+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">"+Environment.NewLine
+				+ "<script type=\"text/javascript\" src=\"mktree.js\"></script>\n</head>"+Environment.NewLine
+				+ "<body class=\"ConcIndex\">"+Environment.NewLine
 				+ "<p><a target=\"_top\" href=\"../index.htm\">";
-		const string indexHeader2 = "</a></p>\n"
-				+ "<ul class=\"mktree\">\n";
-		const string indexTrailer = "</ul>\n</body>\n</html>\n";
+		string indexHeader2 = "</a></p>"+Environment.NewLine
+				+ "<ul class=\"mktree\">"+Environment.NewLine;
+		string indexTrailer = "</ul>\n</body>\n</html>"+Environment.NewLine;
 
 		/// <summary>
 		/// Make tree-organization index with equal ranges of words as the roots.
@@ -335,10 +335,10 @@ namespace BibleFileLib
 				{
 					WordformInfo firstItemInGroup = sortedOccurrences[iStartGroup];
 					WordformInfo lastItemInGroup = sortedOccurrences[iStartGroup + cThisGroup - 1];
-					writerMain.Write("<li>{0} - {1}<ul>\n",
+					writerMain.Write("<li>{0} - {1}<ul>"+Environment.NewLine,
 						new object[] { MakeSafeXml(firstItemInGroup.Form), MakeSafeXml(lastItemInGroup.Form) });
 					WriteInnerIndexItems(writerMain, sortedOccurrences, iStartGroup, cThisGroup);
-					writerMain.Write("</ul></li>\n");
+					writerMain.Write("</ul></li>"+Environment.NewLine);
 				}
 				iStartGroup += cThisGroup;
 				groupIndex++;
@@ -379,24 +379,24 @@ namespace BibleFileLib
 				{
 					iLimGroup++;
 				}
-				writerMain.Write("<li><span class=\"indexKeyLetter\">{0}</span><ul>\n", MakeSafeXml(keyLetter));
+				writerMain.Write("<li><span class=\"indexKeyLetter\">{0}</span><ul>"+Environment.NewLine, MakeSafeXml(keyLetter));
 				WriteInnerIndexItems(writerMain, sortedOccurrences, iStartGroup, iLimGroup - iStartGroup);
-				writerMain.Write("</ul></li>\n");
+				writerMain.Write("</ul></li>"+Environment.NewLine);
 				iStartGroup = iLimGroup;
 			}
 			writerMain.Write(indexTrailer);
 			writerMain.Close();
 		}
-		const string indexMfHeader = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n"
-            + "<html>\n"
-            + "<head>\n<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n"
-			+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"mktree.css\">\n"
-			+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">\n"
-			+ "</head>\n"
-			+ "<body class=\"ConcIndex\">\n"
+		string indexMfHeader = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">"+Environment.NewLine
+            + "<html>"+Environment.NewLine
+            + "<head>\n<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">"+Environment.NewLine
+			+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"mktree.css\">"+Environment.NewLine
+			+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">"+Environment.NewLine
+			+ "</head>"+Environment.NewLine
+			+ "<body class=\"ConcIndex\">"+Environment.NewLine
 			+ "<p><a target=\"_top\" href=\"../index.htm\">";
-		const string indexMfHeader2 = "</a></p>\n"
-				+ "<ul class=\"mktree\">\n";
+		string indexMfHeader2 = "</a></p>"+Environment.NewLine
+				+ "<ul class=\"mktree\">"+Environment.NewLine;
 		/// <summary>
 		/// Make tree-organization index with letters of alphabet as roots.
 		/// </summary>
@@ -447,16 +447,16 @@ namespace BibleFileLib
 				string keyLetterPath = Path.Combine(m_outputDirName, "Index" + keyLetterFileSuffix + ".htm");
 				if (expandLetter == keyLetter)
 				{
-					writerMain.Write("<li class=\"liOpen\"><span id=\"open\" class=\"indexKeyLetter\"><span class=\"bullet\" onclick=\"location='{1}#open'\">&nbsp;</span><a href=\"{1}\">{0}</a></span><ul>\n",
+					writerMain.Write("<li class=\"liOpen\"><span id=\"open\" class=\"indexKeyLetter\"><span class=\"bullet\" onclick=\"location='{1}#open'\">&nbsp;</span><a href=\"{1}\">{0}</a></span><ul>"+Environment.NewLine,
 						MakeSafeXml(keyLetter), Path.GetFileName(pathRoot));
 					WriteInnerIndexItems(writerMain, sortedOccurrences, iStartGroup, iLimGroup - iStartGroup);
-					writerMain.Write("</ul></li>\n");
+					writerMain.Write("</ul></li>"+Environment.NewLine);
 				}
 				else
 				{
 					// write an element that looks like a closed node, but is actually a hotlink to another index file.
 					// (And do NOT write the subitems!)
-					writerMain.Write("<li class=\"liClosed\"><span class=\"indexKeyLetter\"><span class=\"bullet\"onclick=\"location='{1}'\">&nbsp;</span><a href=\"{1}#open\">{0}</a></span></li>\n",
+					writerMain.Write("<li class=\"liClosed\"><span class=\"indexKeyLetter\"><span class=\"bullet\"onclick=\"location='{1}'\">&nbsp;</span><a href=\"{1}#open\">{0}</a></span></li>"+Environment.NewLine,
 						MakeSafeXml(keyLetter), Path.GetFileName(keyLetterPath));
 				}
 				if (expandLetter == null)
@@ -515,7 +515,7 @@ namespace BibleFileLib
 			for (int i = iStartGroup; i < iStartGroup + cThisGroup; i++)
 			{
 				WordformInfo item = sortedOccurrences[i];
-				writer.Write("<li><a href=\"wl{0}.htm\" target=\"conc\">{1} ({2})</a></li>\n",
+				writer.Write("<li><a href=\"wl{0}.htm\" target=\"conc\">{1} ({2})</a></li>"+Environment.NewLine,
 					new object[] { item.FileNumber, MakeSafeXml(item.Form), item.Occurrences.Count });
 			}
 		}
@@ -523,10 +523,10 @@ namespace BibleFileLib
 		private void WriteInnerIndexFile(string groupFileName, List<WordformInfo> sortedOccurrences, int groupIndex,
 			int iStartGroup, int cThisGroup)
 		{
-			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n"
-                + "<html>\n<head>\n<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\"></head>\n"
-                + "<body>\n";
-			string trailer = "</body>\n</html>\n";
+			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">"+Environment.NewLine
+                + "<html>\n<head>\n<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"></head>"+Environment.NewLine
+                + "<body>"+Environment.NewLine;
+			string trailer = "</body>\n</html>"+Environment.NewLine;
 			string path = Path.Combine(m_outputDirName, "index" + groupIndex + ".htm");
 			TextWriter writer = new StreamWriter(path, false, Encoding.UTF8);
 			writer.Write(header);
@@ -534,7 +534,7 @@ namespace BibleFileLib
 			for (int i = iStartGroup; i < iStartGroup + cThisGroup; i++)
 			{
 				WordformInfo item = sortedOccurrences[i];
-				writer.Write("<a href=\"wl{0}.htm\" target=\"conc\">{1}</a><br/>\n",
+				writer.Write("<a href=\"wl{0}.htm\" target=\"conc\">{1}</a><br/>"+Environment.NewLine,
 					new object[] { item.FileNumber, MakeSafeXml(item.Form) });
 			}
 			writer.Write(trailer);
@@ -647,7 +647,7 @@ namespace BibleFileLib
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + "\r\n" + ex.StackTrace, "Error parsing " + inputFile);
+                MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace, "Error parsing " + inputFile);
             }
 
 		}
@@ -686,13 +686,13 @@ namespace BibleFileLib
 			string flags = info.MixedCase ? "i" : "";
 			string infoForm = MakeSafeXml(info.Form);
 			string fixQuoteInfoForm = infoForm.Replace("'", "&#39"); // apostrophe in word can close onclick quote.
-			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n"
-                + "<html>\n"
-                + "<head>\n<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">\n"
-				+ "<script src=\"ConcFuncs.js\" type=\"text/javascript\"></script>\n"
-				+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"display.css\">\n"
-			    + "</head>\n<body>\n";
-			string trailer = "</body>\n</html>\n";
+			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">"+Environment.NewLine
+                + "<html>"+Environment.NewLine
+                + "<head>\n<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">"+Environment.NewLine
+				+ "<script src=\"ConcFuncs.js\" type=\"text/javascript\"></script>"+Environment.NewLine
+				+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"display.css\">"+Environment.NewLine
+			    + "</head>\n<body>"+Environment.NewLine;
+			string trailer = "</body>\n</html>"+Environment.NewLine;
 			string path = Path.Combine(m_outputDirName, "wl" + m_wordListFileCount.ToString() + ".htm");
 			info.FileNumber = m_wordListFileCount;
 			m_wordListFileCount++;
@@ -736,7 +736,7 @@ namespace BibleFileLib
 				{
 					writer.Write("</span>");
 				}
-				writer.Write("<br/>\n");
+				writer.Write("<br/>"+Environment.NewLine);
 			}
 			writer.Write(trailer);
 			writer.Close();

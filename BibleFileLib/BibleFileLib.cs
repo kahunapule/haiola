@@ -40,10 +40,10 @@ namespace WordSend
 	class SFWriter
 	{
 		protected StreamWriter OutputFile;
-		protected bool VirtualSpace;
+		public bool VirtualSpace;
 		protected int lineLength;
-		protected bool fileIsOpen;
-		const int WORDWRAPLENGTH = 128;
+		protected bool fileIsOpen = false;
+		const int WORDWRAPLENGTH = 32700;
 
 		public void Open(string fileName)
 		{
@@ -78,12 +78,14 @@ namespace WordSend
 			return fileIsOpen;
 		}
 
+        /*
 		protected void WriteEOL()
 		{
 			OutputFile.WriteLine();
 			lineLength = 0;
 			VirtualSpace = false;
 		}
+        */
 
         /* Special case of WriteSFM -- just call the latter with tag ending in *.
         public void WriteEndSFM(string marker, bool nested = false)
@@ -107,20 +109,26 @@ namespace WordSend
         }
         */
 
+
+        
+
 		public void WriteSFM(string marker, string level, string content, bool firstcol, bool nested = false)
 		{
-            //if (level == "1")
-            //    level = "";
+            if (marker != "h")
+            {
+                TagRecord ti = (TagRecord)SFConverter.scripture.tags.tags[marker];
+                if ((ti != null) && (ti.levelExpected && level == ""))
+                    level = "1";
+            }
 			if (!fileIsOpen)
 			{
-				Logit.WriteError("Error: attempt to write to closed file.");
+				Logit.WriteError("Error: attempt to write to closed file in WriteSFM.");
 				Logit.WriteLine("\\"+marker+level+" "+content);
 				return;
 			}
-			if ((firstcol && (lineLength > 0)) ||
-				((lineLength + marker.Length + content.Length) > WORDWRAPLENGTH))
+			if (firstcol && (lineLength > 0)) // ||((lineLength + marker.Length + content.Length) > WORDWRAPLENGTH))
 			{
-				OutputFile.WriteLine("");
+				OutputFile.WriteLine();
 				lineLength = 0;
 			}
 			else if (VirtualSpace)
@@ -148,9 +156,10 @@ namespace WordSend
             // We COULD convert nonbreaking spaces to tildes, here, but don't.
 			if (content != "")
 			{
-				OutputFile.Write(" {0}", content);
-				lineLength += 1 + content.Length;
-			}
+                OutputFile.Write(" ");
+                lineLength += 1;
+                WriteString(content);
+            }
 			if (!marker.EndsWith("*"))
 			{
 				VirtualSpace = true;
@@ -174,18 +183,19 @@ namespace WordSend
 		}
 
 		public void WriteString(string s)
-		{	// Writes a string out with fixed but loose word wrap that should
-			// usually result in lines less than WORDWRAPLENGTH characters long.
+		{	// Writes a string out with loose word wrap that finds the next word break after
+			// a line length of WORDWRAPLENGTH is reached.
 			int i, j;
-			char[] spaceLf = " \n".ToCharArray();
 
 			if (!fileIsOpen)
 			{
-				Logit.WriteError("Error: attempt to write to closed file.");
-				Logit.WriteLine(s);
+                if (s.Trim().Length > 0)
+                {
+                    Logit.WriteError("Error: attempt to write to closed file in WriteString.");
+                    Logit.WriteLine(s);
+                }
 				return;
 			}
-
 			if (VirtualSpace)
 			{
 				OutputFile.Write(" ");
@@ -194,34 +204,21 @@ namespace WordSend
 			}
 			for (i = 0; i < s.Length; i++)
 			{
-				if (((s[i] == '\n') || (s[i] == ' ')) && (lineLength >= (WORDWRAPLENGTH / 2)))
-				{
-					if (s.Length > i)
-                        j = s.IndexOfAny(spaceLf, i+1);
-					else
-						j = -1;
-					if ((j > 0) && (lineLength - i + j < WORDWRAPLENGTH))
-					{
-						OutputFile.Write(" ");
-						lineLength++;
-					}
-					else
-					{
-						OutputFile.WriteLine();
-						lineLength = 0;
-					}
-				}
-				else if (s[i] == '\n')
-				{
-					OutputFile.Write(' ');
-					lineLength++;
-				}
-				else if (s[i] == '\r')
-				{
-					// Ignore CR, react to LF
-				}
-				else
-				{
+                if ((s[i] == '\n') || (s[i] == ' '))
+                {
+                    if (lineLength >= WORDWRAPLENGTH)
+                    {
+                        OutputFile.WriteLine();
+                        lineLength = 0;
+                    }
+                    else
+                    {
+                        OutputFile.Write(" ");
+                        lineLength++;
+                    }
+                }
+				else if (s[i] != '\r')
+				{	// Ignore CR. Write non-whitespace characters out.
 					OutputFile.Write(s[i]);
 					lineLength++;
 				}
@@ -452,38 +449,43 @@ namespace WordSend
 		// marks = space separated list of markers, like "* † ‡" 
 		public FootNoteCaller(string marks)
 		{
-			index = 0;
-			markers = new ArrayList();
-			if ((marks == null) || (marks == ""))
-			{
-				markers.Add((object)"\u200b");	// zero-width space
-			}
-			else
-			{
-				StringBuilder sb = new StringBuilder();
-				int i;
-				for (i = 0; i < marks.Length; i++)
-				{
-                    if (fileHelper.IsNormalWhiteSpace(marks, i))
-					{
-						if (sb.Length > 0)
-						{
-							markers.Add(sb.ToString());
-							sb.Length = 0;
-						}
-					}
-					else
-					{
-						sb.Append(marks[i]);
-					}
-				}
-				if (sb.Length > 0)
-				{
-					markers.Add(sb.ToString());
-					sb.Length = 0;
-				}
-			}
+            SetMarkers(marks);
 		}
+
+        public void SetMarkers(string marks)
+        {
+            index = 0;
+            markers = new ArrayList();
+            if ((marks == null) || (marks == ""))
+            {
+                markers.Add((object)"\u200b");	// zero-width space
+            }
+            else
+            {
+                StringBuilder sb = new StringBuilder();
+                int i;
+                for (i = 0; i < marks.Length; i++)
+                {
+                    if (fileHelper.IsNormalWhiteSpace(marks, i))
+                    {
+                        if (sb.Length > 0)
+                        {
+                            markers.Add(sb.ToString());
+                            sb.Length = 0;
+                        }
+                    }
+                    else
+                    {
+                        sb.Append(marks[i]);
+                    }
+                }
+                if (sb.Length > 0)
+                {
+                    markers.Add(sb.ToString());
+                    sb.Length = 0;
+                }
+            }
+        }
 
 		public string Marker()
 		{
@@ -560,7 +562,9 @@ namespace WordSend
 
 		public TagRecord info(string id)
 		{
-			TagRecord result = (TagRecord)tags[id];
+            TagRecord result = null;
+            if (!String.IsNullOrEmpty(id))
+                result = (TagRecord)tags[id];
 			if (result == null)
 				result = new TagRecord();
 			return result;
@@ -670,10 +674,17 @@ namespace WordSend
 
     public class LanguageCodeInfo
     {
-        public Hashtable langCodes;
+        public Hashtable langCodes, shortLanguageCodes;
         
+        /// <summary>
+        /// Looks up the 2-letter language code for the given 3-letter language code, if it exists. If not, it returns the 3-letter language code.
+        /// </summary>
+        /// <param name="tla">3-letter language code.</param>
+        /// <returns>2-letter language code if it exists, otherwise the 3-letter language code.</returns>
         public string ShortCode(string tla)
         {
+            if (tla.Length == 2)
+                return tla;
             string bla = (string)langCodes[tla];
             if (bla != null)
             {
@@ -683,11 +694,30 @@ namespace WordSend
             return tla;
         }
 
+        /// <summary>
+        /// Looks up the 3-letter language code given a 2 or 3 letter language code
+        /// </summary>
+        /// <param name="bla">2 or 3 letter language code</param>
+        /// <returns>3 letter language code</returns>
+        public string LongCode(string bla)
+        {
+            if (bla.Length == 3)
+                return bla;
+            string tla = (string)shortLanguageCodes[bla];
+            if (bla != null)
+            {
+                if (tla.Length == 3)
+                    return tla;
+            }
+            return bla;
+        }
+
         public LanguageCodeInfo()
         {
             string tla = String.Empty;
             string bla = String.Empty;
             langCodes = new Hashtable(509);
+            shortLanguageCodes = new Hashtable(509);
             XmlTextReader langInfo = new XmlTextReader(SFConverter.FindAuxFile("langnames.xml"));
             langInfo.WhitespaceHandling = WhitespaceHandling.Significant;
             while (langInfo.Read())
@@ -726,7 +756,10 @@ namespace WordSend
                     if (langInfo.Name == "lang")
                     {
                         if (bla.Length == 2)
+                        {
                             langCodes[tla] = bla;
+                            shortLanguageCodes[bla] = tla;
+                        }
                     }
                 }
             }
@@ -755,6 +788,11 @@ namespace WordSend
         public bool nested; // True for tags starting with \+
 		public TagRecord info;  // Information about this particular tag
         public static string currentParagraph;  // Most recently encountered paragraph (after chapter)
+
+        private static string delayedTag = String.Empty;
+        private static string delayedText = String.Empty;
+        private static string delayedAttribute = String.Empty;
+        private static bool delayedIsEndTag = false;
 
         // The following state variables are used for input context validation on read.
         private static string prevTag = String.Empty;
@@ -826,7 +864,7 @@ namespace WordSend
                         Logit.WriteError("USFM error: \\b contains text at " + currentBook + " " + currentChapter + ":" + currentVerse);
                 }
             }
-            if ((info.kind.CompareTo("paragraph") == 0) || (tag == "nb"))
+            if ((info.kind.CompareTo("paragraph") == 0) || (tag == "nb") || (tag == "tr"))
             {
                 currentParagraph = tag;
                 if ((tag == "b") && (text.Trim().Length > 0))
@@ -870,11 +908,25 @@ namespace WordSend
 		/// -----------------------------------------------------------------------------------
 		public bool Read(StreamReader sr, string fileName)
 		{
+            if (SFConverter.scripture == null)
+                SFConverter.scripture = new Scriptures();
+            if (!String.IsNullOrEmpty(delayedTag))
+            {
+                tag = delayedTag;
+                info = SFConverter.scripture.tags.info(tag);
+                text = delayedText;
+                isEndTag = delayedIsEndTag;
+                attribute = delayedAttribute;
+                delayedTag = delayedText = delayedAttribute = string.Empty;
+                validate();
+                return true;
+            }
+
 			StringBuilder sb = new StringBuilder();
 			int ch;
 			int lookAhead;
             // int barCount = 0;
-			bool isEndTag = false;
+            isEndTag = false;
 			// Skip to \, parse parts up to but not including next \ or EOF.
 			do
 			{
@@ -1092,8 +1144,9 @@ namespace WordSend
             text = text.Replace("\u0000", "").Replace("\u0008", "");    // Null and backspace should not be in the source text (but sometimes I have seen them there).
 			if (tag == "id")
 			{
-				if ((attribute.StartsWith("BAK")) || (attribute.StartsWith("OTH")) || (attribute.StartsWith("FRT")) ||
-					(attribute.StartsWith("bak")) || (attribute.StartsWith("oth")) || (attribute.StartsWith("frt")))
+                if ((attribute.StartsWith("BAK")) || (attribute.StartsWith("OTH")) || (attribute.StartsWith("FRT")) ||
+                    (attribute.StartsWith("bak")) || (attribute.StartsWith("oth")) || (attribute.StartsWith("frt")) ||
+                    (attribute.StartsWith("CNC")) || (attribute.StartsWith("cnc")))
 				{
 					SFConverter.scripture.tags.inCanon = false;
 				}
@@ -1102,6 +1155,35 @@ namespace WordSend
 					SFConverter.scripture.tags.inCanon = true;
 				}
 			}
+
+            if (tag == "v")
+            {
+                if (attribute.EndsWith("a"))
+                {
+                    attribute = attribute.Replace("a", "");
+                }
+                else
+                {
+                    if (attribute.Length < 1)
+                    {
+                        Logit.WriteError("ERROR: \\v without attribute in " + fileName);
+                    }
+                    else
+                    {
+                        if (!char.IsDigit(attribute[attribute.Length - 1]))
+                        {
+                            delayedTag = "vp*";
+                            delayedText = text;
+                            delayedIsEndTag = true;
+                            delayedAttribute = string.Empty;
+                            text = attribute;
+                            attribute = string.Empty;
+                            tag = "vp";
+                        }
+                    }
+                }
+            }
+
             validate();
 			return true;
 		}
@@ -1125,6 +1207,7 @@ namespace WordSend
 		public int sortKey;				// Number in canonical order
 		public ArrayList chapterList;	// List of ArrayLists containing SfmObjects in chapter. Objects before \c go in chapter 0.
 		public string vernacularHeader;
+        public string toc1, toc2, toc3;
 		public string vernacularName;
 		protected int sfmIndex;
 		protected int chapterIndex;
@@ -1137,6 +1220,7 @@ namespace WordSend
 			chapterList.Add(new ArrayList());
 			vernacularHeader = "";
 			vernacularName = "";
+            toc1 = toc2 = toc3 = "";
 			sfmIndex = chapterIndex = 0;
 		}
 
@@ -1565,6 +1649,8 @@ namespace WordSend
             fieldStart = fieldEnd + 1;
             if (fieldStart >= s.Length)
                 fieldStart = s.Length - 1;
+            if (fieldStart < 0)
+                fieldStart = 0;
             fieldEnd = s.IndexOf('|', fieldStart);
             if (fieldEnd == -1)
                 fieldEnd = s.Length;
@@ -1679,6 +1765,8 @@ namespace WordSend
 		protected int inUSFXNoteStyle;
 		protected string currentFootnoteCaller;
         public bool sfmErrorsFound;
+        protected bool inWordTag, inWordTagNote;
+        protected bool inRefTag, inRefTagNote;
 
 
 
@@ -1701,8 +1789,85 @@ namespace WordSend
 			return result;
 		}
 
-		public Scriptures()
-		{
+
+        protected void ReadJobIni()
+        {
+            UsfxStyleSuspended = false;
+            isNTPP = true;
+            // Logit.WriteLine("--- "+DateTime.Now.ToLongDateString()+" "+DateTime.Now.ToLongTimeString()+" ---");
+            books = new BibleBook[BibleBookInfo.MAXNUMBOOKS];
+            bkInfo = new BibleBookInfo();
+            tags = new TagInfo();
+            currentParagraphStyle = "";
+            dynVars = new Hashtable();
+            inPara = false;
+            inRun = false;
+            inFootnote = false;
+            inXref = false;
+            inUSFXNote = false;
+            inUSFXNoteStyle = 0;
+            inEndnote = false;
+            chapterStart = false;
+            inFootnoteCharStyle = false;
+            cStyles = new TextAttributeTracker();
+            usfxStyleCount = 0;
+            currentCharacterStyle = null;
+            headerName = "";
+            activeRunStyle = null;
+            addRefToFootnote = SFConverter.jobIni.ReadBool("insertCallingVerseRef", true);
+            addRefToXrefNote = SFConverter.jobIni.ReadBool("insertXrefVerse", true);
+            customFootnoteMark = SFConverter.jobIni.ReadBool("useCustomFootnoteCaller", false);
+            customXrefMark = SFConverter.jobIni.ReadBool("useCustomXrefCaller", true);
+            footnoteMark = new FootNoteCaller(SFConverter.jobIni.ReadString("customFootnoteCaller", "* † ‡"));
+            xrefMark = new FootNoteCaller(SFConverter.jobIni.ReadString("customXrefCaller", "#"));
+            markFirstVerse = SFConverter.jobIni.ReadBool("verse1", true);
+            markFirstChapter = SFConverter.jobIni.ReadBool("chapter1", true);
+            markPsalmV1 = SFConverter.jobIni.ReadBool("labelPsalmV1", true);
+            markPsalm1 = SFConverter.jobIni.ReadBool("labelPsalm1", true);
+            dropCap = SFConverter.jobIni.ReadBool("dropCap", false);
+            dropCapPsalm = SFConverter.jobIni.ReadBool("dropCapPsalm", false);
+            ns = SFConverter.jobIni.ReadString("nameSpace", "").Trim();
+            if ((ns.Length > 0) && (ns[ns.Length - 1] != ':'))
+                ns = ns + ":";
+            versePrefix = ConvertToRealNBSpace(SFConverter.jobIni.ReadString("versePrefix", ""));
+            verseSuffix = ConvertToRealNBSpace(SFConverter.jobIni.ReadString("verseSuffix", "nbhs"));
+            chapterPrefix = ConvertToRealNBSpace(SFConverter.jobIni.ReadString("chapterName", ""));
+            chapterSuffix = ConvertToRealNBSpace(SFConverter.jobIni.ReadString("chapterSuffix", ""));
+            psalmPrefix = ConvertToRealNBSpace(SFConverter.jobIni.ReadString("vernacularPsalm", ""));
+            psalmSuffix = ConvertToRealNBSpace(SFConverter.jobIni.ReadString("vernacularPsalmSuffix", ""));
+            embedUsfx = SFConverter.jobIni.ReadBool("embedUsfx", false);
+            suppressIndentWithDropCap = SFConverter.jobIni.ReadBool("suppressIndentWithDropCap", false);
+            autoCalcDropCap = SFConverter.jobIni.ReadBool("autoCalcDropCap", true);
+            horizFromText = new LengthString(SFConverter.jobIni.ReadString("horizFromText", "72 twips"), 72, 't');
+            dropCapSpacing = new LengthString(SFConverter.jobIni.ReadString("dropCapSpacing", "459 twips"), 459.0, 't');
+            dropCapSize = new LengthString(SFConverter.jobIni.ReadString("dropCapSize", "26.5 pt"), 53, 'h');
+            dropCapPosition = new LengthString(SFConverter.jobIni.ReadString("dropCapPosition", "-3 pt"), -6.0, 'h');
+            dropCapBefore = new LengthString(SFConverter.jobIni.ReadString("dropCapBefore", "0 pt"), 0, 'p');
+            dropCapLines = SFConverter.jobIni.ReadInt("dropCapLines", 2);
+            includeCropMarks = SFConverter.jobIni.ReadBool("includeCropMarks", false);
+            croppedPageWidth = new LengthString(SFConverter.jobIni.ReadString("pageWidth", "130 mm"), 150.0, 'm');
+            croppedPageLength = new LengthString(SFConverter.jobIni.ReadString("pageLength", "197 mm"), 216.0, 'm');
+            ns = SFConverter.jobIni.ReadString("nameSpace", "").Trim();
+            xrefName = SFConverter.jobIni.ReadString("xrefName",
+                Path.Combine(Path.GetDirectoryName(XMLini.ExecutableName()), "crossreference.xml"));
+            substitutionName = SFConverter.jobIni.ReadString("substitutionName",
+                Path.Combine(Path.GetDirectoryName(XMLini.ExecutableName()), "fixquotemarks.xml"));
+            enableSubstitutions = SFConverter.jobIni.ReadBool("enableSubstitutions", false);
+            if (enableSubstitutions)
+                substitutions = new SubstituteStrings(substitutionName);
+            mergeXref = SFConverter.jobIni.ReadBool("mergeXref", false);
+            sfmErrorsFound = false;
+        }
+
+        public Scriptures(XMLini JobIni)
+        {
+            SFConverter.jobIni = JobIni;
+            templateName = SFConverter.FindAuxFile("Scripture.xml");
+            ReadJobIni();
+        }
+
+        public void Initialize()
+        {
             if (SFConverter.jobIni == null)
             {
                 string dataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "haiola");
@@ -1713,72 +1878,21 @@ namespace WordSend
                     Directory.CreateDirectory(dataDir);
                 SFConverter.jobIni = new XMLini(Path.Combine(dataDir, "joboptions.xml"));
             }
-			UsfxStyleSuspended = false;
-			isNTPP = true;
-			// Logit.WriteLine("--- "+DateTime.Now.ToLongDateString()+" "+DateTime.Now.ToLongTimeString()+" ---");
-			books = new BibleBook[BibleBookInfo.MAXNUMBOOKS];
-			bkInfo = new BibleBookInfo();
-			tags = new TagInfo();
-			currentParagraphStyle = "";
-			dynVars = new Hashtable();
-			inPara = false;
-			inRun = false;
-			inFootnote = false;
-			inXref = false;
-			inUSFXNote = false;
-			inUSFXNoteStyle = 0;
-			inEndnote = false;
-			chapterStart = false;
-			inFootnoteCharStyle = false;
-			cStyles = new TextAttributeTracker();
-			usfxStyleCount = 0;
-			currentCharacterStyle = null;
-			headerName = "";
-			activeRunStyle = null;
-			addRefToFootnote = SFConverter.jobIni.ReadBool("insertCallingVerseRef", true);
-			addRefToXrefNote = SFConverter.jobIni.ReadBool("insertXrefVerse", true);
-			customFootnoteMark = SFConverter.jobIni.ReadBool("useCustomFootnoteCaller", false);
-			customXrefMark = SFConverter.jobIni.ReadBool("useCustomXrefCaller", true);
-			footnoteMark = new FootNoteCaller(SFConverter.jobIni.ReadString("customFootnoteCaller", "* † ‡"));
-			xrefMark = new FootNoteCaller(SFConverter.jobIni.ReadString("customXrefCaller", "#"));
-			markFirstVerse = SFConverter.jobIni.ReadBool("verse1", true);
-			markFirstChapter = SFConverter.jobIni.ReadBool("chapter1", true);
-			markPsalmV1 = SFConverter.jobIni.ReadBool("labelPsalmV1", true);
-			markPsalm1  = SFConverter.jobIni.ReadBool("labelPsalm1", true);
-			dropCap = SFConverter.jobIni.ReadBool("dropCap", true);
-			dropCapPsalm = SFConverter.jobIni.ReadBool("dropCapPsalm", false);
-			ns = SFConverter.jobIni.ReadString("nameSpace", "").Trim();
-			if ((ns.Length > 0) && (ns[ns.Length-1] != ':'))
-				ns = ns + ":";
-			versePrefix = ConvertToRealNBSpace(SFConverter.jobIni.ReadString("versePrefix", ""));
-			verseSuffix = ConvertToRealNBSpace(SFConverter.jobIni.ReadString("verseSuffix", "nbhs"));
-			chapterPrefix = ConvertToRealNBSpace(SFConverter.jobIni.ReadString("chapterName", "Chapter"));
-			chapterSuffix = ConvertToRealNBSpace(SFConverter.jobIni.ReadString("chapterSuffix", ""));
-			psalmPrefix = ConvertToRealNBSpace(SFConverter.jobIni.ReadString("vernacularPsalm", "Psalm"));
-			psalmSuffix = ConvertToRealNBSpace(SFConverter.jobIni.ReadString("vernacularPsalmSuffix", ""));
-			embedUsfx =  SFConverter.jobIni.ReadBool("embedUsfx", true);
-			suppressIndentWithDropCap = SFConverter.jobIni.ReadBool("suppressIndentWithDropCap", false);
-			autoCalcDropCap = SFConverter.jobIni.ReadBool("autoCalcDropCap", true);
-			horizFromText = new LengthString(SFConverter.jobIni.ReadString("horizFromText", "72 twips"), 72, 't');
-			dropCapSpacing = new LengthString(SFConverter.jobIni.ReadString("dropCapSpacing", "459 twips"), 459.0, 't');
-			dropCapSize = new LengthString(SFConverter.jobIni.ReadString("dropCapSize", "26.5 pt"), 53, 'h');
-			dropCapPosition = new LengthString(SFConverter.jobIni.ReadString("dropCapPosition", "-3 pt"), -6.0, 'h');
-			dropCapBefore = new LengthString(SFConverter.jobIni.ReadString("dropCapBefore", "0 pt"), 0, 'p');
-			dropCapLines = SFConverter.jobIni.ReadInt("dropCapLines", 2);
-			includeCropMarks = SFConverter.jobIni.ReadBool("includeCropMarks", false);
-			croppedPageWidth = new LengthString(SFConverter.jobIni.ReadString("pageWidth", "150 mm"), 150.0, 'm');
-			croppedPageLength = new LengthString(SFConverter.jobIni.ReadString("pageLength", "216 mm"), 216.0, 'm');
+            templateName = SFConverter.jobIni.ReadString("templateName", SFConverter.FindAuxFile("Scripture.xml"));
+            ReadJobIni();
 
-			xrefName = SFConverter.jobIni.ReadString("xrefName",
-				Path.Combine(Path.GetDirectoryName(XMLini.ExecutableName()), "crossreference.xml"));
-			substitutionName = SFConverter.jobIni.ReadString("substitutionName",
-				Path.Combine(Path.GetDirectoryName(XMLini.ExecutableName()), "fixquotemarks.xml"));
-			enableSubstitutions = SFConverter.jobIni.ReadBool("enableSubstitutions", false);
-			if (enableSubstitutions)
-				substitutions = new SubstituteStrings(substitutionName);
-			mergeXref = SFConverter.jobIni.ReadBool("mergeXref", false);
-            sfmErrorsFound = false;
-		}
+        }
+
+		public Scriptures()
+		{
+            Initialize();
+        }
+
+        public Scriptures(Options options)
+        {
+            projectOptions = options;
+            Initialize();
+        }
 
 		protected int zindex;
 
@@ -1933,7 +2047,7 @@ namespace WordSend
 		public SortedList holyBible;	// List of BibleBooks
 
 		protected StreamReader sr;
-		protected XmlTextWriter xw;
+		public XmlTextWriter xw;
 
         public void ReadUSFM(string fileName)
         {
@@ -1975,6 +2089,15 @@ namespace WordSend
                         if (book.vernacularHeader.Length < 1)
                             book.vernacularHeader = book.vernacularName;
 					}
+                    else if (sfm.tag == "toc")
+                    {
+                        if (sfm.level == 1)
+                            book.toc1 = sfm.text;
+                        else if (sfm.level == 2)
+                            book.toc2 = sfm.text;
+                        else if (sfm.level == 3)
+                            book.toc3 = sfm.text;
+                    }
 					if (sfm.info.parameterName != null)
 					{
 						dynVars[sfm.info.parameterName] = sfm.attribute;
@@ -2013,6 +2136,10 @@ namespace WordSend
 					}
 					else if (sfm.tag == "v")
 					{
+                        if (sfm.attribute.Length < 1)
+                        {
+                            Logit.WriteError("ERROR: Verse missing attribute after " + book.bookCode +" "+ currentChapter.ToString() + ":" + vs.ToString());
+                        }
                         string highVerse = sfm.attribute;
                         int dashplace = highVerse.IndexOf('-');
                         if (dashplace > 0)
@@ -2057,7 +2184,7 @@ namespace WordSend
 				}
 			}
 
-			if ((bookIndex < 64) && (bookIndex != 19) && (bookIndex != 20))
+			if ((bookIndex < 64) && (bookIndex != 21) && (bookIndex != 20))
 			{
 				isNTPP = false;
 			}
@@ -2146,6 +2273,15 @@ namespace WordSend
 			WriteWordMLTextRun(StripLeadingWhiteSpace(contents), charStyle);
 		}
 
+        public bool includeUsfxLongStyleNames = false;
+
+        /// <summary>
+        /// Start a USFX Paragraph style
+        /// </summary>
+        /// <param name="sfm">USFM tag</param>
+        /// <param name="level">Level, like main title level 1, 2, or 3, as one digit</param>
+        /// <param name="styleName">Name of optional long style name to write if includeUsfxLongStyleNames is true</param>
+        /// <param name="contents">Contents of the tag/element</param>
 		protected void StartUSFXParagraph(string sfm, int level, string styleName, string contents)
 		{
 			try
@@ -2169,7 +2305,7 @@ namespace WordSend
                         {
                             xw.WriteStartElement(ns + "p");
                             xw.WriteAttributeString("sfm", sfm);
-                            if ((styleName != null) && (styleName != ""))
+                            if (includeUsfxLongStyleNames && (styleName != null) && (styleName != ""))
                                 xw.WriteAttributeString("style", styleName);
                         }
 						if (level > 1)
@@ -2288,7 +2424,7 @@ namespace WordSend
                     {
                         if (contents.EndsWith(" "))
                         {
-                            xw.WriteString(contents.TrimEnd() + "\r\n");
+                            xw.WriteString(contents.TrimEnd() + Environment.NewLine);
                         }
                         else
                         {
@@ -2398,6 +2534,11 @@ namespace WordSend
 
 		protected void EndUSFXParagraph()
 		{
+            if (inToc)
+            {
+                EndUSFXElement();
+                inToc = false;
+            }
 			if (inUsfxParagraph)
 			{
 				while  (usfxStyleCount > 0)
@@ -2468,12 +2609,13 @@ namespace WordSend
 				// Logit.WriteLine("Starting element "+elementName);
 				xw.WriteStartElement(ns+elementName);
 				usfxNestLevel++;
-				if ((attributeName != null) && (attribute != null))
+				if (!String.IsNullOrEmpty(attributeName) && !String.IsNullOrEmpty(attribute))
 				{
 					xw.WriteAttributeString(attributeName, attribute);
 				}
 			}
-			WriteUSFXText(contents);
+            if (!String.IsNullOrEmpty(contents))
+			    WriteUSFXText(contents);
 		}
 
 		protected void StartUSFXElement(string elementName)
@@ -2620,10 +2762,18 @@ namespace WordSend
 			return result;
 		}
 
+
+        private int preNoteStyleCount;
+
 		protected void StartUSFXNote(string sfm, string caller, string content)
 		{
+            preNoteStyleCount = Math.Max(usfxStyleCount, 0);
 			if (embedUsfx)
 			{
+                if (inUSFXNote)
+                {
+                    Logit.WriteError("Note started while note still active at " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                }
 				EndUSFXNote();
 				EndWordMLTextRun();	// Observer proper mixed WordML & custom XML mixing rules.
 				// Logit.WriteLine(" Starting note "+sfm);
@@ -2637,42 +2787,53 @@ namespace WordSend
 					xw.WriteStartElement(ns+sfm);
 				}
 				xw.WriteAttributeString("caller", caller);
-				inUSFXNote = true;
 			}
-			WriteUSFXText(content);
+            WriteUSFXText(content);
+            inUSFXNote = true;
+            inUSFXNoteStyle = 0;
 		}
 
 		protected void EndUSFXNote()
 		{
-            EndUSFXNoteStyle();
+            /*
+            while (usfxStyleCount > preNoteStyleCount)
+                EndUSFXStyle();
+             */
+            while (inUSFXNoteStyle > 0)
+                EndUSFXNoteStyle();
 			if (inUSFXNote)
-			{
-				// Logit.WriteLine(" Ending note.");
-                if (inFootnoteParagraph)
+            {
+                if (embedUsfx)
                 {
-                    xw.WriteEndElement();   // fp
-                    inFootnoteParagraph = false;
+                    EndRefTag();
+                    EndWordTag();
+                    xw.WriteEndElement();	// f, x
                 }
-				xw.WriteEndElement();	// f, x
 				inUSFXNote = false;
 			}
 		}
 
 		protected void EndUSFXNoteStyle()
 		{
-			if (inUSFXNoteStyle > 0)
-			{
-				// Logit.WriteLine("  Ending note style.");
-				xw.WriteEndElement();
-				inUSFXNoteStyle--;
-			}
+            if (inUSFXNoteStyle > 0)
+            {
+                // Logit.WriteLine("  Ending note style.");
+                xw.WriteEndElement();
+                inUSFXNoteStyle--;
+            }
+            /*
+            else
+            {
+                EndUSFXStyle();
+            }
+            */
 		}
 
 		protected void StartUSFXNoteStyle(string sfm, string content, bool nested = false)
 		{
-            if (!(nested || (assumeAllNested && (!sfm.StartsWith("f") && !sfm.StartsWith("x")))))
-			    EndUSFXNoteStyle();
-			if (embedUsfx)
+            if (isUnclosedNoteTag(sfm) || !(nested || assumeAllNested))
+                EndUSFXNoteStyle();
+            if (embedUsfx)
 			{
 				inUSFXNoteStyle++;
 				// Logit.WriteLine("  Starting note style "+sfm);
@@ -2689,12 +2850,36 @@ namespace WordSend
 
         protected void StartUSFXStyle(string sfm, string content, bool nested)
         {
+            if (activeCharacterStyle == null)
+                activeCharacterStyle = new string[32];  // Guessing that this is much higher than the possible character nesting level in real data...
+            
+            if (usfxStyleCount > 30)
+            {
+                Logit.WriteLine("Warning: WordML file malformed. Too many unclosed styles nested at " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                EndUSFXStyle();
+            }
             if ((usfxStyleCount == 0) || nested || (assumeAllNested && !inUSFXNote))
             {
                 usfxStyleCount++;
                 // Logit.WriteLine("Starting style "+sfm+" level "+usfxStyleCount.ToString());
-                if (charStyleTagList.IndexOf(" " + sfm + " ") >= 0)
+                if (sfm == "w")
+                {
+                    xw.WriteStartElement(ns + "gw");
+                    xw.WriteAttributeString("sfm", sfm);
+                    if (!string.IsNullOrEmpty(content))
+                    {
+                        string[] parts = content.Split('|');    // Separate display form and glossary entry form
+                        if (parts.Length > 1)
+                        {
+                            content = parts[0];
+                            xw.WriteAttributeString("root", parts[1]);
+                        }
+                    }
+                }
+                else if (charStyleTagList.IndexOf(" " + sfm + " ") >= 0)
+                {
                     xw.WriteStartElement(ns + sfm);
+                }
                 else
                 {
                     xw.WriteStartElement(ns + "cs");
@@ -2704,7 +2889,7 @@ namespace WordSend
             }
             else
             {
-                if ((!inUSFXNote))
+                if (!inUSFXNote)
                 {
                     Logit.WriteLine("Warning: Started new character style " + sfm + " without terminating " +
                         activeCharacterStyle[usfxStyleCount] +
@@ -2715,8 +2900,24 @@ namespace WordSend
                     EndUSFXStyle(); // Implicit termination of USFX character style
                     usfxStyleCount++;
                     // Logit.WriteLine("Starting style "+sfm+" level "+usfxStyleCount.ToString());
-                    if (charStyleTagList.IndexOf(" " + sfm + " ") >= 0)
+                    if (sfm == "w")
+                    {
+                        xw.WriteStartElement(ns + "gw");
+                        xw.WriteAttributeString("sfm", sfm);
+                        if (!string.IsNullOrEmpty(content))
+                        {
+                            string[] parts = content.Split('|');    // Separate display form and glossary entry form
+                            if (parts.Length > 1)
+                            {
+                                content = parts[0];
+                                xw.WriteAttributeString("root", parts[1]);
+                            }
+                        }
+                    }
+                    else if (charStyleTagList.IndexOf(" " + sfm + " ") >= 0)
+                    {
                         xw.WriteStartElement(ns + sfm);
+                    }
                     else
                     {
                         xw.WriteStartElement(ns + "cs");
@@ -2729,53 +2930,6 @@ namespace WordSend
         }
 
 
-/* Deprecated
-        protected void StartUSFXStyle(string sfm, string content)
-		{
-			EndWordMLTextRun();
-			if (embedUsfx)
-			{
-                if (activeCharacterStyle[usfxStyleCount] == String.Empty)
-                {
-                    usfxStyleCount++;
-                    // Logit.WriteLine("Starting style "+sfm+" level "+usfxStyleCount.ToString());
-                    if (charStyleTagList.IndexOf(sfm) > 0)
-                        xw.WriteStartElement(ns + sfm);
-                    else
-                    {
-                        xw.WriteStartElement(ns + "cs");
-                        xw.WriteAttributeString("sfm", sfm);
-                    }
-                    suspendedUsfxStyle = sfm;
-                    activeCharacterStyle[usfxStyleCount] = sfm;
-                }
-                else
-                {
-                    if (!(inUSFXNote))
-                    {
-                        Logit.WriteLine("Warning: Started new character style " + sfm + " without terminating " +
-                            activeCharacterStyle + " at " + book.bookCode + " " + chapterMark + ":" + verseMark);
-                    }
-                    if (activeCharacterStyle[usfxStyleCount] != sfm)
-                    {
-                        EndUSFXStyle();
-                        usfxStyleCount++;
-                        // Logit.WriteLine("Starting style "+sfm+" level "+usfxStyleCount.ToString());
-                        if (charStyleTagList.IndexOf(sfm) > 0)
-                            xw.WriteStartElement(ns + sfm);
-                        else
-                        {
-                            xw.WriteStartElement(ns + "cs");
-                            xw.WriteAttributeString("sfm", sfm);
-                        }
-                        suspendedUsfxStyle = sfm;
-                        activeCharacterStyle[usfxStyleCount] = sfm;
-                    }
-                }
-			}
-			WriteUSFXText(content);
-		}
- */
 
 		protected void EndUSFXStyle()
 		{
@@ -2811,8 +2965,10 @@ namespace WordSend
 		protected void StartFootnote(string caller, string charStyle)
 		{
 			if (inFootnote)
-				EndFootnote();
-			if (inXref)
+            {
+                EndFootnote();
+            }
+            if (inXref)
 				EndXref();
 			currentFootnoteCaller = caller;
 			// Insert footnote caller
@@ -3056,8 +3212,7 @@ namespace WordSend
 		protected string caller;
 		protected string chapterLabel;
         public bool fatalError;
-		string templateName;
-        protected bool inFootnoteParagraph = false;
+		public string templateName;
 
 		protected void WriteWordMLBook(int bknum)
 		{
@@ -3065,6 +3220,7 @@ namespace WordSend
 			string badsf;
 			string chapterModifier;
 			book = books[bknum];
+            embedUsfx = false;
 			bookStarted = false;
             // Figure fig;
 			if ((bkInfo.bookArray[bknum] != null) && (book != null))
@@ -3077,11 +3233,6 @@ namespace WordSend
 					xw.WriteAttributeString("sortOrder", bknum.ToString());
 				}
 				sf = book.FirstSfm();
-				if (embedUsfx)
-				{
-					xw.WriteStartElement(ns+"book");
-					xw.WriteAttributeString("id", book.bookCode);
-				}								
 				while (sf != null)
 				{
 					if (sf.info.contentName != "")
@@ -3133,7 +3284,8 @@ namespace WordSend
 							currentParagraphStyle = sf.info.paragraphStyleID(sf.level);
 							StartWordMLParagraph(currentParagraphStyle+chapterModifier, sf.text, currentCharacterStyle, sf.tag, sf.level, sf.info.paragraphStyle);
 							break;
-						case "meta":
+                        case "meta":
+                            /*
                             if (inFootnote)
                             {
                                 Logit.WriteError("ERROR: tag " + sf.tag + " is not allowed in a footnote." + book.bookCode + " " + chapterMark + ":" + verseMark);
@@ -3152,8 +3304,54 @@ namespace WordSend
                                 EndXref();
                                 fatalError = true;
                             }
+                            */
                             switch (sf.tag)
-						{
+						    {
+                                case "ca":
+									WriteWordMLParagraph("ChapterLabel", sf.text, "", "generated", 0, null);
+                                break;
+                                case "ca*":
+                                    WriteWordMLParagraph(currentParagraphStyle, sf.text, "");
+                                break;
+                                case "cp":
+								s = currentParagraphStyle;
+								chapterMark = sf.text;
+								if (inPsalms)
+								{
+                                    if (psalmPrefix.Length > 0)
+                                        chapterLabel = psalmPrefix + " " + sf.attribute;
+                                    else
+                                        chapterLabel = sf.attribute;
+                                    if (psalmSuffix.Length > 0)
+                                        chapterLabel = chapterLabel + " " + psalmSuffix;
+                                    if (markPsalm1 || (chapterMark != "1"))
+									{
+										chapterStart = true;
+										if (!dropCapPsalm)
+										{
+											WriteWordMLParagraph("PsalmLabel", chapterLabel, "", "generated", 0, null);
+										}
+									}
+								}
+								else
+								{
+                                    if (chapterPrefix.Length > 0)
+                                        chapterLabel = chapterPrefix + " " + sf.attribute;
+                                    else
+                                        chapterLabel = sf.attribute;
+                                    if (chapterSuffix.Length > 0)
+                                        chapterLabel = chapterLabel + " " + chapterSuffix;
+                                    if (markFirstChapter || (chapterMark != "1"))
+									{
+										chapterStart = true;
+										if (!dropCap)
+										{
+											WriteWordMLParagraph("ChapterLabel", chapterLabel, "", "generated", 0, null);
+										}
+									}
+								}
+								currentParagraphStyle = s;
+                                break;
 							case "c":
 								s = currentParagraphStyle;
 								chapterMark = sf.attribute;
@@ -3166,21 +3364,10 @@ namespace WordSend
 									currentChapter = 0;
 								}
 								verseMark = "";
-								if (embedUsfx)
-								{
-									EndWordMLTextRun();	// Observer proper mixed WordML & custom XML mixing rules.
-									// Logit.WriteLine("Starting element "+elementName);
-									xw.WriteStartElement(ns+"c");
-									xw.WriteAttributeString("id", sf.attribute);
-									xw.WriteEndElement();	// ns+c
-								}
 								if (inPsalms)
 								{
-									string cl = (string)dynVars["chapterLabel"];
-									if (cl == null)
-										cl = psalmPrefix;
 									if (psalmPrefix.Length > 0)
-										chapterLabel = cl + " " + sf.attribute;
+										chapterLabel = psalmPrefix + " " + sf.attribute;
 									else
 										chapterLabel = sf.attribute;
 									if (psalmSuffix.Length > 0)
@@ -3191,18 +3378,14 @@ namespace WordSend
 										if (!dropCapPsalm)
 										{
 											WriteWordMLParagraph("PsalmLabel", chapterLabel, "", "generated", 0, null);
-											//StartWordMLParagraph("Normal", "");
 											chapterStart = false;
 										}
 									}
 								}
 								else
 								{
-									string cl = (string)dynVars["chapterLabel"];
-									if (cl == null)
-										cl = chapterPrefix;
-									if (cl.Length > 0)
-										chapterLabel = cl + " " + sf.attribute;
+									if (chapterPrefix.Length > 0)
+										chapterLabel = chapterPrefix + " " + sf.attribute;
 									else
 										chapterLabel = sf.attribute;
 									if (chapterSuffix.Length > 0)
@@ -3213,7 +3396,6 @@ namespace WordSend
 										if (!dropCap)
 										{
 											WriteWordMLParagraph("ChapterLabel", chapterLabel, "", "generated", 0, null);
-											StartWordMLParagraph("Normal", "");
 											chapterStart = false;
 										}
 									}
@@ -3221,6 +3403,15 @@ namespace WordSend
 								currentParagraphStyle = s;
 								WriteWordMLTextRun(sf.text.TrimStart());
 								break;
+                           case "va":
+                           case "vp":
+                                WriteWordMLTextRun(versePrefix + verseMark + verseSuffix, "Versemarker");
+                                break;
+                           case "cp*":
+                           case "vp*":
+                           case "va*":
+                                WriteWordMLTextRun(sf.text, currentCharacterStyle);
+                                break;
 							case "v":
 								if (chapterStart)
 								{
@@ -3230,12 +3421,6 @@ namespace WordSend
 											(currentParagraphStyle == "Poetry line 1")))
 											currentParagraphStyle += "-ch";
 									}
-								}
-								if (embedUsfx)
-								{
-									if (!inPara)
-										ResumeWordMLParagraph(null, null);
-									StartUSFXElement("v", "id", sf.attribute, null);
 								}
 								verseMark = sf.attribute.Replace('-', '\u2011');	// Replace hyphens with non-breaking hyphens in verse markers.
 								if (bkRec.numChapters == 1)
@@ -3252,11 +3437,8 @@ namespace WordSend
 								{
 									WriteWordMLTextRun(versePrefix+verseMark+verseSuffix, "Versemarker");
 								}
-								if (embedUsfx)
-								{
-									EndUSFXElement();	// ns+v
-								}
 								WriteWordMLTextRun(sf.text, currentCharacterStyle);
+
 								if (mergeXref)
 								{
 									string xrefNote = xref.find(book.bookCode+" "+cvMark);
@@ -3295,8 +3477,6 @@ namespace WordSend
 								}
 								break;
 							case "nb":
-								if (embedUsfx)
-									StartUSFXParagraph(sf.tag, sf.level, sf.info.paragraphStyle, null);
 								if (inPara)
 								{
 									WriteWordMLTextRun(sf.text);
@@ -3305,59 +3485,35 @@ namespace WordSend
 									StartWordMLParagraph(currentParagraphStyle, sf.text, currentCharacterStyle, sf.tag, sf.level, sf.info.paragraphStyle);
 								break;
 							case "id":
-								if (embedUsfx)
-								{
-									EndWordMLParagraph();
-									StartUSFXElement(sf.tag, "id", sf.attribute, null);
-									WriteWordMLParagraph(sf.info.paragraphStyleID(), sf.text.Trim());
-									EndWordMLParagraph();
-									EndUSFXElement();
-								}
-								break;
 							case "ide":
-								if (embedUsfx)
-								{
-									EndWordMLParagraph();
-									StartUSFXElement(sf.tag, "charset", sf.attribute, null);
-									s = sf.text.Trim();
-									if (s != "")
-									{
-										WriteWordMLParagraph(sf.info.paragraphStyleID(), s);
-										EndWordMLParagraph();
-									}
-									EndUSFXElement();
-								}
 								break;
 							case "rem":
                             case "periph":
-                                if (embedUsfx)
-                                {
-                                    StartUSFXElement(sf.tag);
-                                    WriteWordMLParagraph(sf.info.paragraphStyleID(), sf.text.Trim());
-                                    EndUSFXElement();
-                                }
                                 break;
 							case "h":
 							case "e":
-								if (embedUsfx)
-								{
-									EndWordMLParagraph();
-									EndUSFXParagraph();
-									StartUSFXElement(sf.tag);
-									WriteWordMLParagraph(sf.info.paragraphStyleID(), sf.text.Trim());
-									EndWordMLParagraph();
-									EndUSFXElement();
-								}
+                            case "zref":
+                            case "zrefend":
+                            case "ztgt":
+                            case "zsrc":
+                            case "zw":
+                            case "zx":
+                            case "zws":
 								break;
-							case "cl":
-								if (embedUsfx)
-								{
-									EndWordMLParagraph();
-									StartUSFXElement(sf.tag, null, null, sf.text);
-									EndUSFXElement();
-								}
-								break;
+                            case "zref*":
+                            case "zrefend*":
+                            case "ztgt*":
+                            case "zsrc*":
+                            case "zw*":
+                            case "zx*":
+                            case "zws*":
+                            case "fdc":
+                            case "fdc*":
+                                WriteWordMLTextRun(sf.text);
+                                break;
+                            case "cl":
                             case "toc":
+                            case "ztoc":
                                 // TODO: store metadata and do something useful with it.
                                 break;
 							default:
@@ -3374,7 +3530,8 @@ namespace WordSend
 								break;
 						}
 							break;
-						case "note":
+                        case "dc":
+                        case "note":
 						switch (sf.tag)
 						{
 							case "f":	// Regular footnote
@@ -3439,6 +3596,10 @@ namespace WordSend
 								}
 								WriteWordMLTextRun(sf.text);
 								break;
+                            case "fdc":
+                                break;
+                            case "fdc*":
+                                break;
 							case "fe*":
 								EndEndnote();
 								EndUSFXNote();
@@ -3470,7 +3631,7 @@ namespace WordSend
 							}
 							else
 							{
-								if (!sf.info.nestingAllowed)
+								if (!(sf.info.nestingAllowed || sf.nested))
 								{
 									EndFootnoteCharStyle();
 									if (inUSFXNote)
@@ -3537,15 +3698,28 @@ namespace WordSend
                                                                         break;
                                                                     case "dc":
                                                                         break;
-                                                                    case "layout":
-                                                                        break;
                                                                     case "index":
                                                                         break;
                                                                     case "table":
                                                                         break;
                                         */
+                        case "layout":
+                            if (sf.tag == "pb")
+                            {
+                                WriteWordMLParagraph("PageBreak", sf.text);
+                            }
+                            break;
 						case "ignore":
 							break;
+                        case "table":
+                            Logit.WriteLine("WARNING: tables not yet implemented in WordML output! \\" + sf.tag + " IN " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                            WriteWordMLTextRun(" " + sf.text);
+                            if (projectOptions != null)
+                            {
+                                projectOptions.makeWordML = false;
+                                projectOptions.Write();
+                            }
+                            break;
 						default:
                             badsf = "\\" + sf.tag;
                             if (sf.level > 0)
@@ -3574,7 +3748,7 @@ namespace WordSend
 
         const string canonicalParagraphTags = "b q p pc ph phi pm pi pmc pmo pmr pr psi qc qm qr";
 
-        protected bool inTable, inTableRow, inTableColumn;
+        protected bool inTable, inTableRow, inTableColumn, inToc;
 
         protected void EndTableColumn()
         {
@@ -3609,9 +3783,108 @@ namespace WordSend
         {
             if (!inTable)
             {
+                EndUSFXParagraph();
                 StartUSFXElement("table");
                 inTable = true;
             }
+        }
+
+        /// <summary>
+        /// Check to make sure the previous ref element is closed, then start a new ref tag.
+        /// </summary>
+        protected void StartRefTag()
+        {
+            if ((inRefTag && !inUSFXNote) || (inRefTagNote && inUSFXNote))
+            {
+                Logit.WriteLine("Warning: starting xref tag before closing with xrefend at " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                EndRefTag();
+            }
+            StartUSFXElement("ref");
+            if (inUSFXNote)
+            {
+                inRefTagNote = true;
+            }
+            else
+            {
+                inRefTag = true;
+            }
+            hasRefTags = true;
+        }
+
+        /// <summary>
+        /// End a ref tag if it is open in this context (note or text).
+        /// </summary>
+        protected void EndRefTag()
+        {
+            if (inUSFXNote)
+            {
+                if (inRefTagNote)
+                {
+                    EndUSFXElement();   // </ref>
+                    inRefTagNote = false;
+                }
+            }
+            else
+            {
+                if (inRefTag)
+                {
+                    EndUSFXElement();   // </ref>
+                    inRefTag = false;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Check to make sure any previous word tag is closed, then start a word tag for Strong's number, morphology, etc., markup.
+        /// </summary>
+        protected void StartWordTag()
+        {
+            if ((inWordTag && !inUSFXNote) || (inWordTagNote && inUSFXNote))
+            {
+                Logit.WriteLine("Warning: starting zw tag before closing with zx tag at " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                EndWordTag();
+            }
+            StartUSFXElement("w");
+            if (inUSFXNote)
+            {
+                inWordTagNote = true;
+            }
+            else
+            {
+                inWordTag = true;
+            }
+        }
+
+        /// <summary>
+        /// End a word tag if it is open in this context.
+        /// </summary>
+        protected void EndWordTag()
+        {
+            if (inUSFXNote)
+            {
+                if (inWordTagNote)
+                {
+                    EndUSFXElement();   // zw
+                    inWordTagNote = false;
+                }
+            }
+            else
+            {
+                if (inWordTag)
+                {
+                    EndUSFXElement();   // zw
+                    inWordTag = false;
+                }
+            }
+        }
+
+        public bool hasRefTags;
+
+        protected const string EXCLUSIVETAGS = "xo xk xt xdc fr fk fq fqa fl fp ft fdc ";
+
+        public bool isUnclosedNoteTag(string sfm)
+        {
+            return EXCLUSIVETAGS.Contains(sfm + " ");
         }
 
 		protected void WriteUSFXBook(int bknum)
@@ -3621,349 +3894,458 @@ namespace WordSend
             inTable = false;
             inTableRow = false;
             inTableColumn = false;
+            inToc = false;
+            inUSFXNote = false;
+            embedUsfx = true;
+            string strongs, lemma, morphology;
             try
             {
                 activeCharacterStyle[0] = String.Empty;
 			    book = books[bknum];
-			    if ((bkInfo.bookArray[bknum] != null) && (book != null))
-			    {
-				    inPsalms = (book.bookCode == "PSA");
-				    bkRec = (BibleBookRecord)bkInfo.bookArray[bknum];
-				    if (bkRec == null)
-				    {
-					    Logit.WriteError("ERROR: BibleBookInfo array item "+bknum.ToString()+" missing.");
-                        fatalError = true;
-					    xw.WriteAttributeString("sortOrder", bknum.ToString());
-				    }
-				    sf = book.FirstSfm();
-				    xw.WriteStartElement(ns+"book");
-				    xw.WriteAttributeString("id", book.bookCode);
-				    // Logit.WriteLine("Starting book: "+book.vernacularName+" ("+book.bookCode+").");
-				    while (sf != null)
-				    {
-					    switch (sf.info.kind)
-					    {
-						    case "paragraph":
-                                if (inUSFXNote)
-                                {
-                                    if (sf.tag == "fp")
-                                    {
-                                        if (inFootnoteParagraph)
-                                        {
-                                            xw.WriteEndElement();   // fp
-                                        }
-                                        inFootnoteParagraph = true;
-                                        xw.WriteStartElement("fp");
-                                    }
-                                    else
-                                    {
-                                        Logit.WriteError("ERROR: paragraph tag " + sf.tag + " is not allowed in a footnote. " + book.bookCode + " " + chapterMark + ":" + verseMark);
-                                        EndFootnote();
-                                        fatalError = true;
-                                    }
-                                }
+                if (book == null)
+                    return;
+                if (String.IsNullOrEmpty(book.bookCode))
+                    return;
+                if (!projectOptions.allowedBookList.Contains(book.bookCode))
+                    return;
+				inPsalms = (book.bookCode == "PSA");
+				bkRec = (BibleBookRecord)bkInfo.bookArray[bknum];
+				if (bkRec == null)
+				{
+					Logit.WriteError("ERROR: BibleBookInfo array item "+bknum.ToString()+" missing.");
+                    fatalError = true;
+					xw.WriteAttributeString("sortOrder", bknum.ToString());
+				}
+				sf = book.FirstSfm();
+				xw.WriteStartElement(ns+"book");
+				xw.WriteAttributeString("id", book.bookCode);
+				// Logit.WriteLine("Starting book: "+book.vernacularName+" ("+book.bookCode+").");
 
-                                EndUsfxTable();
-                                EndUsfxVerse();
-							    StartUSFXParagraph(sf.tag, sf.level, sf.info.paragraphStyle, sf.text);
-							    break;
-						    case "meta":
-						        switch (sf.tag)
-						        {
-							        case "c":
-                                        EndUsfxVerse();
-                                        EndUSFXParagraph();
-                                        EndUsfxTable();
-								        chapterMark = sf.attribute;
-								        verseMark = "";
-                                        if (inUSFXNote)
-                                        {
-                                            EndUSFXNote();
-                                            Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
-                                                ":" + verseMark + "  (c)");
-                                            fatalError = true;
-                                        }
-								        StartUSFXElement("c", "id", sf.attribute, null);
-								        EndUSFXElement();	// ns+c
-								        WriteUSFXText(sf.text);
-								        break;
-                                    case "ca":
-                                        StartUSFXElement("ca");
-                                        WriteUSFXText(sf.text);
-                                        break;
-							        case "v":
-                                        EndUsfxVerse();
-                                        verseMark = sf.attribute;
-                                        inVerse = true;
-                                        if (inUSFXNote)
-                                        {
-                                            EndUSFXNote();
-                                            Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
-                                                ":" + verseMark + "  (v)");
-                                            fatalError = true;
-                                        }
-                                        if (usfxStyleCount > 0)
-                                        {
-                                            Logit.WriteError("Error: unclosed style " + currentCharacterStyle + " at " + book.bookCode + " " + chapterMark + ":" + verseMark + " ");
-                                            EndUSFXStyle();
-                                        }
-								        StartUSFXElement(sf.tag, "id", sf.attribute, null);
-								        EndUSFXElement();	// ns+v
-								        WriteUSFXText(sf.text);
-								        break;
-                                    case "va":
-                                    case "vp":
-                                        StartUSFXElement(sf.tag, null, null, sf.text);
-                                        break;
-                                    case "ca*":
-                                    case "va*":
-                                    case "vp*":
-                                        EndUSFXElement();
-                                        WriteUSFXText(sf.text);
-                                        break;
-							        case "nb":
-								        StartUSFXParagraph(sf.tag, sf.level, sf.info.paragraphStyle, sf.text);
-								        break;
-							        case "id":
-                                        verseMark = chapterMark = String.Empty;
-                                        if (inUSFXNote)
-                                        {
-                                            EndUSFXNote();
-                                            Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
-                                                ":" + verseMark + "  (id)");
-                                            fatalError = true;
-                                        }
-                                        EndUsfxVerse();
-                                        EndUSFXParagraph();
-								        StartUSFXElement(sf.tag, "id", sf.attribute, sf.text);
-								        EndUSFXElement();
-								        break;
-                                    case "ztoc":
-                                    case "toc":
-                                        EndUSFXParagraph();
-                                        StartUSFXElement("toc", "level", sf.level.ToString(), sf.text);
-                                        EndUSFXElement();
-                                        break;
-                                    case "ide":
-								        StartUSFXElement(sf.tag, "charset", sf.attribute, sf.text.Trim());
-								        EndUSFXElement();
-								        break;
-							        case "rem":
-                                    case "periph":
-                                        EndUSFXParagraph();
-                                        StartUSFXElement(sf.tag, null, null, sf.text);
-                                        EndUSFXElement();
-                                        break;
-                                    case "cp":
-                                        StartUSFXElement(sf.tag, "id", sf.attribute, null);
-                                        EndUSFXElement();
-                                        break;
-                                    case "sts":
-							        case "e":
-                                            // EndUSFXParagraph();
-								        StartUSFXElement(sf.tag, null, null, sf.text);
-								        EndUSFXElement();
-								        break;
-                                    case "cl":  // Vernacular name for "Chapter"
-                                    case "h":
-                                        EndUSFXParagraph();
-								        StartUSFXElement(sf.tag, null, null, sf.text);
-								        EndUSFXElement();
-                                        break;
-                                    case "zplural":
-                                        StartUSFXElement("w", "plural", "true", sf.text);
-                                        break;
-                                    case "zplural*":
-                                        EndUSFXElement();   // zw
-								        WriteUSFXText(sf.text);
-                                        break;
-                                    case "zw":
-                                        string strongs = sf.text.Trim();
-                                        if (strongs.Length > 1)
-                                        {
-                                            StartUSFXElement("w", "s", strongs, "");
-                                        }
-                                        break;
-                                    case "zw*":
-                                        WriteUSFXText(sf.text);
-                                        break;
-                                    case "zx":
-                                        EndUSFXElement();   // zw
-                                        if (sf.text.Trim().Length > 0)
-                                            Logit.WriteError("Warning: non-empty \\zx element at "  + book.bookCode + " " + chapterMark +
-                                                ":" + verseMark + "!");
-								        // WriteUSFXText(sf.text);
-                                        break;
-                                    case "zx*":
-                                        WriteUSFXText(sf.text);
-                                        break;
-							        default:
-                                        // in WriteUSFXBook
-								        WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, sf.text);
-                                        if (inFootnote)
-                                        {
-                                            Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
-                                                ":" + verseMark);
-                                            fatalError = true;
-                                        }
-								        break;
-
-						        }
-							    break;
-                            case "table":
-                                switch (sf.tag)
+				while (sf != null)
+				{
+                    switch (sf.info.kind)
+					{
+						case "paragraph":
+                            if (inToc)
+                            {
+                                EndUSFXElement();
+                                inToc = false;
+                            }
+                            if (inUSFXNote)
+                            {
+                                if (sf.tag == "fp")
                                 {
-                                    case "tr":
-                                        StartUsfxTable();
-                                        EndTableColumn();
-                                        EndUsfxTableRow();
-                                        StartUSFXElement("tr");
-                                        inTableRow = true;
-                                        break;
-                                    case "th":
-                                        EndTableColumn();
-                                        StartUSFXElement("th", "level", sf.level.ToString(), sf.text);
-                                        inTableColumn = true;
-                                        break;
-                                    case "thr":
-                                        EndTableColumn();
-                                        StartUSFXElement("th", "level", sf.level.ToString(), sf.text);
-                                        inTableColumn = true;
-                                        break;
-                                    case "tc":
-                                        EndTableColumn();
-                                        StartUSFXElement("tc", "level", sf.level.ToString(), sf.text);
-                                        inTableColumn = true;
-                                        break;
-                                    case "tcr":
-                                        EndTableColumn();
-                                        StartUSFXElement("tc", "level", sf.level.ToString(), sf.text);
-                                        inTableColumn = true;
-                                        break;
-                                }
-                                break;
-						    case "note":
-						    switch (sf.tag)
-						    {
-							    case "f":	// Regular footnote
-							    case "x":	// Cross reference footnote
-                                    StartUSFXNote(sf.tag, sf.attribute, sf.text);
-								    break;
-							    case "fe":	// End note
-                                    if (inUSFXNote)
-                                    {	// This test is for an error where someone used old PNGSFM syntax for ending a footnote.
-                                        // This should never happen with real USFM, as end notes are not allowed in footnotes.
-                                        // End notes are not recommended for use in minority language Bibles. I don't even like
-                                        // them in majority language Bibles.
-                                        EndUSFXNote();
-                                        WriteUSFXText(sf.text);
-                                    }
-                                    else
-                                    {	// A real end note
-                                        StartUSFXNote(sf.tag, sf.attribute, sf.text);
-                                    }
-								    break;
-							    case "f*":
-							    case "fe*":
-							    case "x*":
-								    EndUSFXNote();
-								    WriteUSFXText(sf.text);
-								    break;
-							    default:
-                               	    WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, sf.text);
-								    break;
-						    }
-							    break;
-						    case "character":
-							    if (sf.tag.EndsWith("*"))
-							    {
-								    if (inUSFXNote)
-								    {
-									    EndUSFXNoteStyle();
-								    }
-								    else
-								    {
-									    EndUSFXStyle();
-								    }
-								    WriteUSFXText(sf.text);
-							    }
-							    else
-							    {
-								    if (inUSFXNote)
-								    {
-									    StartUSFXNoteStyle(sf.tag, sf.text, sf.nested);
-								    }
-								    else
-								    {
-									    StartUSFXStyle(sf.tag, sf.text, sf.nested);
-								    }
-							    }
-							    break;
-                            case "figure":
-                                if (sf.tag == "fig")
-                                {
-                                    fig.figSpec = sf.text;
-                                    xw.WriteStartElement("fig");
-                                    xw.WriteElementString("description", fig.description);
-                                    xw.WriteElementString("catalog", fig.catalog);
-                                    xw.WriteElementString("size", fig.size);
-                                    xw.WriteElementString("location", fig.location);
-                                    xw.WriteElementString("copyright", fig.copyright);
-                                    xw.WriteElementString("caption", fig.caption);
-                                    xw.WriteElementString("reference", fig.reference);
-                                    xw.WriteEndElement();   // fig
-                                }
-                                else if (sf.tag == "fig*")
-                                {
-                                    if (sf.text.Length > 0)
-                                        xw.WriteString(sf.text);
+                                    xw.WriteStartElement("fp");
+                                    xw.WriteEndElement();
+                                    xw.WriteString(sf.text);
                                 }
                                 else
                                 {
-                                    Logit.WriteError("ERROR: INVALID FIGURE TAG \\" + sf.tag);
+                                    Logit.WriteError("ERROR: paragraph tag " + sf.tag + " is not allowed in a footnote. " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                                    EndFootnote();
                                     fatalError = true;
-                                    xw.WriteString("\\" + sf.tag + " " + sf.text);
+                                }
+                            }
+
+                            EndUsfxTable();
+                            EndUsfxVerse();
+							StartUSFXParagraph(sf.tag, sf.level, sf.info.paragraphStyle, sf.text);
+							break;
+						case "meta":
+						    switch (sf.tag)
+						    {
+							    case "c":
+                                    EndUsfxVerse();
+                                    EndUSFXParagraph();
+                                    EndUsfxTable();
+								    chapterMark = sf.attribute;
+								    verseMark = "";
+                                    if (inUSFXNote)
+                                    {
+                                        EndUSFXNote();
+                                        Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
+                                            ":" + verseMark + "  (c)");
+                                        fatalError = true;
+                                    }
+								    StartUSFXElement("c", "id", sf.attribute, null);
+								    EndUSFXElement();	// ns+c
+								    WriteUSFXText(sf.text);
+								    break;
+                                case "ca":
+                                    StartUSFXElement("ca");
+                                    WriteUSFXText(sf.text);
+                                    break;
+							    case "v":
+                                    EndUsfxVerse();
+                                    verseMark = sf.attribute;
+                                    inVerse = true;
+                                    if (inUSFXNote)
+                                    {
+                                        EndUSFXNote();
+                                        Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
+                                            ":" + verseMark + "  (v)");
+                                        fatalError = true;
+                                    }
+                                    EndWordTag();
+                                    EndRefTag();
+                                    while (usfxStyleCount > 0)
+                                    {
+                                        Logit.WriteError("Error: unclosed style " + activeCharacterStyle[usfxStyleCount] + " at " + book.bookCode + " " + chapterMark + ":" + verseMark + " ");
+                                        EndUSFXStyle();
+                                    }
+								    StartUSFXElement(sf.tag, "id", sf.attribute, null);
+								    EndUSFXElement();	// ns+v
+								    WriteUSFXText(sf.text);
+
+                                    break;
+                                case "va":
+                                case "vp":
+                                    StartUSFXElement(sf.tag, null, null, sf.text);
+                                    break;
+                                case "ca*":
+                                case "va*":
+                                case "vp*":
+                                    EndUSFXElement();
+                                    WriteUSFXText(sf.text);
+                                    break;
+							    case "nb":
+								    StartUSFXParagraph(sf.tag, sf.level, sf.info.paragraphStyle, sf.text);
+								    break;
+							    case "id":
+                                    verseMark = chapterMark = String.Empty;
+                                    if (inUSFXNote)
+                                    {
+                                        EndUSFXNote();
+                                        Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
+                                            ":" + verseMark + "  (id)");
+                                        fatalError = true;
+                                    }
+                                    EndUsfxVerse();
+                                    EndUSFXParagraph();
+								    StartUSFXElement(sf.tag, "id", sf.attribute, sf.text);
+								    EndUSFXElement();
+								    break;
+                                case "ztoc":
+                                case "toc":
+                                    if (inToc)
+                                    {
+                                        EndUSFXElement();
+                                    }
+                                    EndUSFXParagraph();
+                                    StartUSFXElement("toc", "level", sf.level.ToString(), sf.text);
+                                    inToc = true;
+                                    break;
+                                case "ide":
+								    StartUSFXElement(sf.tag, "charset", sf.attribute, sf.text.Trim());
+								    EndUSFXElement();
+								    break;
+							    case "rem":
+                                case "periph":
+                                    EndUSFXParagraph();
+                                    StartUSFXElement(sf.tag, null, null, sf.text);
+                                    EndUSFXElement();
+                                    break;
+                                case "cp":
+                                    StartUSFXElement(sf.tag, "id", sf.attribute, null);
+                                    EndUSFXElement();
+                                    break;
+                                case "sts":
+							    case "e":
+                                        // EndUSFXParagraph();
+								    StartUSFXElement(sf.tag, null, null, sf.text);
+								    EndUSFXElement();
+								    break;
+                                case "cl":  // Vernacular name for "Chapter"
+                                case "h":
+                                    EndUSFXParagraph();
+								    StartUSFXElement(sf.tag, null, null, sf.text);
+								    EndUSFXElement();
+                                    if (book.toc1 == "")
+                                    {
+                                        StartUSFXElement("toc", "level", "1", book.vernacularName);
+                                        EndUSFXElement();
+                                    }
+                                    if (book.toc2 == "")
+                                    {
+                                        StartUSFXElement("toc", "level", "2", book.vernacularHeader);
+                                        EndUSFXElement();
+                                    }
+                                    break;
+                                case "zplural":
+                                    StartUSFXElement("w", "plural", "true", sf.text);
+                                    break;
+                                case "zplural*":
+                                    EndUSFXElement();   // zw
+								    WriteUSFXText(sf.text);
+                                    break;
+                                case "zw":
+                                    StartWordTag();
+                                    strongs = sf.text.Trim();
+                                    if (strongs.Length > 1)
+                                    {
+                                        xw.WriteAttributeString("s", strongs);
+                                    }
+                                    break;
+                                case "zws":
+                                    strongs = sf.text.Trim();
+                                    if (strongs.Length > 1)
+                                        xw.WriteAttributeString("s", strongs);
+                                    break;
+                                case "zwl":
+                                    lemma = sf.text.Trim();
+                                    if (lemma.Length > 0)
+                                        xw.WriteAttributeString("l", lemma);
+                                    break;
+                                case "zwm":
+                                    morphology = sf.text.Trim();
+                                    if (morphology.Length > 0)
+                                        xw.WriteAttributeString("m", morphology);
+                                    break;
+                                case "zref":
+                                    StartRefTag();
+                                    break;
+                                case "zsrc":
+                                    xw.WriteAttributeString("src", sf.text.Trim());
+                                    break;
+                                case "ztgt":
+                                    xw.WriteAttributeString("tgt", sf.text.Trim());
+                                    break;
+                                case "zweb":
+                                    xw.WriteAttributeString("web", sf.text.Trim());
+                                    break;
+                                case "zrefend":
+                                    EndRefTag();
+                                    break;
+                                case "zsrc*":
+                                case "ztgt*":
+                                case "zweb*":
+                                case "zwl*":
+                                case "zws*":
+                                case "zwm*":
+                                    // discard text associated with these end tags.
+                                    if (sf.text.Trim().Length > 0)
+                                        Logit.WriteError("Warning: discarding text: [\\" + sf.tag + " " + sf.text + "] at " +
+                                            book.bookCode + " " + chapterMark + ":" + verseMark);
+                                    break;
+                                case "zref*":
+                                case "zw*":
+                                    WriteUSFXText(sf.text);
+                                    break;
+                                case "zrefend*":
+                                    EndRefTag();
+                                    WriteUSFXText(sf.text);
+                                    break;
+                                case "zx":
+                                    EndWordTag();
+                                    if (sf.text.Trim().Length > 0)
+                                        Logit.WriteError("Warning: non-empty \\zx element at " + book.bookCode + " " + chapterMark +
+                                            ":" + verseMark + "!");
+                                    break;
+                                case "zx*":
+                                    WriteUSFXText(sf.text);
+                                    break;
+							    default:
+                                    // in WriteUSFXBook
+								    WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, sf.text);
+                                    if (inFootnote)
+                                    {
+                                        Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
+                                            ":" + verseMark);
+                                        fatalError = true;
+                                    }
+								    break;
+
+						    }
+							break;
+                        case "table":
+                            switch (sf.tag)
+                            {
+                                case "tr":
+                                    StartUsfxTable();
+                                    EndTableColumn();
+                                    EndUsfxTableRow();
+                                    StartUSFXElement("tr");
+                                    inTableRow = true;
+                                    break;
+                                case "th":
+                                    EndTableColumn();
+                                    StartUSFXElement("th", "level", sf.level.ToString(), sf.text);
+                                    inTableColumn = true;
+                                    break;
+                                case "thr":
+                                    EndTableColumn();
+                                    StartUSFXElement("th", "level", sf.level.ToString(), sf.text);
+                                    inTableColumn = true;
+                                    break;
+                                case "tc":
+                                    EndTableColumn();
+                                    StartUSFXElement("tc", "level", sf.level.ToString(), sf.text);
+                                    inTableColumn = true;
+                                    break;
+                                case "tcr":
+                                    EndTableColumn();
+                                    StartUSFXElement("tc", "level", sf.level.ToString(), sf.text);
+                                    inTableColumn = true;
+                                    break;
+                            }
+                            break;
+						case "note":
+						switch (sf.tag)
+						{
+							case "f":	// Regular footnote
+							case "x":	// Cross reference footnote
+                                StartUSFXNote(sf.tag, sf.attribute, sf.text);
+								break;
+							case "fe":	// End note
+                                if (inUSFXNote)
+                                {	// This test is for an error where someone used old PNGSFM syntax for ending a footnote.
+                                    // This should never happen with real USFM, as end notes are not allowed in footnotes.
+                                    EndUSFXNote();
+                                    WriteUSFXText(sf.text);
+                                }
+                                else
+                                {	// A real end note
+                                    StartUSFXNote(sf.tag, sf.attribute, sf.text);
+                                }
+								break;
+							case "f*":
+							case "fe*":
+							case "x*":
+								EndUSFXNote();
+								WriteUSFXText(sf.text);
+								break;
+                            case "fp":
+                                if (inUSFXNote)
+                                {
+                                    xw.WriteStartElement("fp");
+                                    xw.WriteEndElement();
+                                    xw.WriteString(sf.text);
+                                }
+                                else
+                                {
+                                    Logit.WriteError("ERROR: tag " + sf.tag + " is only allowed in a footnote. " + book.bookCode + " " + chapterMark + ":" + verseMark);
                                 }
                                 break;
-                            /*							
-                                                                        case "sidebar":
-                                                                            break;
-                                                                        case "dc":
-                                                                            break;
-                                                                        case "layout":
-                                                                            break;
-                                                                        case "index":
-                                                                            break;
-                                                                        case "table":
-                                                                            break;
-                                            */
-						    case "ignore":
-							    break;
-						    default:
-							    WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, sf.text);
-							    break;
-					    }
-					    sf = book.NextSfm();
-				    }
-                    if (inUSFXNote)
-                    {
-                        EndUSFXNote();
-                        Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
-                            ":" + verseMark + "  (EOF)");
-                        fatalError = true;
-                    }
-                    if (usfxStyleCount > 0)
-                    {
-                        Logit.WriteError("Error: unclosed style at " + book.bookCode + " " + chapterMark + ":" + verseMark + " ");
-                        EndUSFXStyle();
-                        fatalError = true;
-                    }
-                    EndUsfxVerse();
-				    EndUSFXParagraph();
-				    xw.WriteEndElement();	// ns+book
-				    // Logit.WriteLine("END OF BOOK "+book.bookCode);
-			    }
+                            default:
+                               	WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, sf.text);
+								break;
+						}
+							break;
+						case "character":
+							if (sf.tag.EndsWith("*"))
+							{
+								if (inUSFXNote)
+								{
+									EndUSFXNoteStyle();
+								}
+								else
+								{
+									EndUSFXStyle();
+								}
+								WriteUSFXText(sf.text);
+							}
+							else
+							{
+                                if (sf.tag == "w")
+                                {
 
+                                }
+
+								if (inUSFXNote)
+								{
+									StartUSFXNoteStyle(sf.tag, sf.text, sf.nested);
+								}
+								else
+								{
+									StartUSFXStyle(sf.tag, sf.text, sf.nested);
+								}
+							}
+							break;
+                        case "figure":
+                            if (sf.tag == "fig")
+                            {
+                                fig.figSpec = sf.text;
+                                xw.WriteStartElement("fig");
+                                xw.WriteElementString("description", fig.description);
+                                xw.WriteElementString("catalog", fig.catalog);
+                                xw.WriteElementString("size", fig.size);
+                                xw.WriteElementString("location", fig.location);
+                                xw.WriteElementString("copyright", fig.copyright);
+                                xw.WriteElementString("caption", fig.caption);
+                                xw.WriteElementString("reference", fig.reference);
+                                xw.WriteEndElement();   // fig
+                            }
+                            else if (sf.tag == "fig*")
+                            {
+                                if (sf.text.Length > 0)
+                                    xw.WriteString(sf.text);
+                            }
+                            else
+                            {
+                                Logit.WriteError("ERROR: INVALID FIGURE TAG \\" + sf.tag);
+                                fatalError = true;
+                                xw.WriteString("\\" + sf.tag + " " + sf.text);
+                            }
+                            break;
+                        /*							
+                                                                    case "sidebar":
+                                                                        break;
+                                                                    case "layout":
+                                                                        break;
+                                                                    case "index":
+                                                                        break;
+                                        */
+                        case "dc":
+                            if (sf.tag.EndsWith("*"))
+                            {
+                                if (inUSFXNote)
+                                {
+                                    EndUSFXNoteStyle();
+                                }
+                                else
+                                {
+                                    EndUSFXStyle();
+                                }
+                                WriteUSFXText(sf.text);
+                            }
+                            else
+                            {
+                                if (inUSFXNote)
+                                {
+                                    StartUSFXNoteStyle(sf.tag, sf.text, sf.nested);
+                                }
+                                else
+                                {
+                                    StartUSFXStyle(sf.tag, sf.text, sf.nested);
+                                }
+                            }
+                            break;
+						case "ignore":
+							break;
+						default:
+							WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, sf.text);
+							break;
+					}
+					sf = book.NextSfm();
+				}
+                if (inUSFXNote)
+                {
+                    EndUSFXNote();
+                    Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
+                        ":" + verseMark + "  (EOF)");
+                    fatalError = true;
+                }
+                while (usfxStyleCount > 0)
+                {
+                    Logit.WriteError("Error: unclosed style at " + activeCharacterStyle[usfxStyleCount] + " at " + book.bookCode + " " + chapterMark + ":" + verseMark + " ");
+                    EndUSFXStyle();
+                    fatalError = true;
+                }
+                EndUsfxTable();
+                EndUsfxVerse();
+				EndUSFXParagraph();
+				xw.WriteEndElement();	// ns+book
+				// Logit.WriteLine("END OF BOOK "+book.bookCode);
             }
             catch (Exception ex)
             {
@@ -3972,7 +4354,7 @@ namespace WordSend
                 {
                     Logit.WriteError("handling \\" + sf.tag);
                 }
-                Logit.WriteError(ex.Message + "\r\n" + ex.StackTrace);
+                Logit.WriteError(ex.Message + Environment.NewLine + ex.StackTrace);
             }
 
 		}
@@ -4062,15 +4444,15 @@ namespace WordSend
 		}
 */
 
+        public Options projectOptions;
+
 		public void WriteToWordML(string fileName)
 		{
 			inserted = false;
             fatalError = false;
 			chapterLabel = "";
-			templateName = SFConverter.jobIni.ReadString("templateName",
-				Path.Combine(Path.GetDirectoryName(XMLini.ExecutableName()), "Scripture.xml"));
-			Logit.WriteLine("Reading template "+templateName);
-			currentParagraphStyle = "Normal";
+			Logit.UpdateStatus("Reading template "+templateName);
+            currentParagraphStyle = "Normal";
 			ns = "ns0:";
 
 			// Read in crossreference list, if the user wants to use it.
@@ -4079,13 +4461,13 @@ namespace WordSend
 			{
 				try
 				{
-					Logit.WriteLine("Reading "+xrefName);
+					Logit.UpdateStatus("Reading "+xrefName);
 					xref = new CrossReference(xrefName);
 				}
 				catch (System.Exception ex)
 				{
 					Logit.WriteError(ex.ToString());
-					Logit.WriteLine("Failed to read crossreferences from "+xrefName);
+					Logit.WriteError("Failed to read crossreferences from "+xrefName);
 					return;
 				}
 			}
@@ -4098,7 +4480,7 @@ namespace WordSend
 			int chsz = 0;
 			int chBefore = 0;
 			double lineHeight = 12.0;
-			Logit.WriteLine("Reading parameters from "+templateName);
+			Logit.UpdateStatus("Reading parameters from "+templateName);
 			try
 			{
 				xr = new XmlFileReader(templateName);
@@ -4229,7 +4611,7 @@ namespace WordSend
 				dropCapSpacing.Points = 2.0 * lineHeight;
 				dropCapSize.Points = 2.2 * lineHeight;
 				dropCapPosition.Points = -0.25-(0.1 * dropCapSize.Points);
-				Logit.WriteLine("Normal line spacing is "+lineHeight.ToString("f1")+
+				Logit.UpdateStatus("Normal line spacing is "+lineHeight.ToString("f1")+
 					" points; space before is "+dropCapBefore.Points.ToString("f1")+
 					" points.");
 			}
@@ -4302,8 +4684,8 @@ namespace WordSend
 								{
 									for (j = 64; j < BibleBookInfo.MAXNUMBOOKS; j++)
 										WriteWordMLBook(j);
-									WriteWordMLBook(19);
 									WriteWordMLBook(20);
+									WriteWordMLBook(21);
 								}
 								else
 								{
@@ -4321,7 +4703,7 @@ namespace WordSend
 						{
 							if (xr.NodePathContains("/w:sectPr/w:ftr/w:p/") && !xr.NodePathContains("/w:pPr/"))
 							{
-								Logit.WriteLine("Drawing crop marks in existing footer.");
+								Logit.UpdateStatus("Drawing crop marks in existing footer.");
 								DrawCropMarks(seedPaperWidth, seedPaperHeight, croppedPageWidth, croppedPageLength);
 								oneshot = false;
 								needsFooter = false;
@@ -4329,7 +4711,7 @@ namespace WordSend
 							else if (needsFooter && xr.NodePathContains("/w:sectPr/") &&
 								!xr.NodePathContains("/w:hdr/") && !xr.NodePathContains("/w:ftr/"))
 							{
-								Logit.WriteLine("Drawing crop marks in new footer.");
+								Logit.UpdateStatus("Drawing crop marks in new footer.");
 								InsertCropMarkedFooter("even");
 								InsertCropMarkedFooter("odd");
 								InsertCropMarkedFooter("first");
@@ -4352,7 +4734,7 @@ namespace WordSend
 						{
 							if (xr.Name == "w.sectPr")
 							{	// This code is unlikely to be executed.
-								Logit.WriteLine("Drawing crop marks into new footer."); // DEBUG
+                                Logit.UpdateStatus("Drawing crop marks into new footer...");
 								InsertCropMarkedFooter("even");
 								InsertCropMarkedFooter("odd");
 								InsertCropMarkedFooter("first");
@@ -4370,7 +4752,7 @@ namespace WordSend
 				}
 				xw.Close();
 				xr.Close();
-				Logit.WriteLine(fileName+" written.");
+				Logit.UpdateStatus(fileName+" written.");
 			}
 			catch (System.Exception ex)
 			{
@@ -4405,16 +4787,40 @@ namespace WordSend
             return xslt;
         }
 
+      
+        protected void EscapeParensInBookNames(string bookNames, string bookNamesA)
+        {
+            StreamReader sr = new StreamReader(bookNames);
+            string s = sr.ReadToEnd();
+            sr.Close();
+            StreamWriter sw = new StreamWriter(bookNamesA, false, Encoding.UTF8);
+            if (s.Contains("("))
+                Logit.WriteLine(" Parenthesis found in book names.");
+            sw.Write(s.Replace("(", @"\(").Replace(")", @"\)"));
+            sw.Close();
+        }
+
+        /*
         public void AddRefTags(string fileName)
         {
+            if (!projectOptions.makeHotLinks)
+            {
+                Logit.WriteLine("Hot link detection disabled; skipping.");
+                return;
+            }
+            File.Copy(fileName, Path.ChangeExtension(fileName, ".norefxml"));
             string command;
             string twoUp = Path.Combine("..", "..");
             string usfxDirectory = Path.GetDirectoryName(fileName);
+            string tempAname = Path.Combine(usfxDirectory, "BookNamesA.xml");
+            string temp0name = Path.Combine(usfxDirectory, "BookNamesWithPeriodAndWithout.html");
             string temp1name = Path.Combine(usfxDirectory, "listOfBookNames.html");
             string temp2name = Path.Combine(usfxDirectory, "listOfBookNamesStartingWithDigit.html");
-            string temp3name = Path.Combine(usfxDirectory, "temp3.usfx");
-            string temp4name = Path.Combine(usfxDirectory, "temp4.usfx");
-            string temp5name = Path.Combine(usfxDirectory, "tempusfx.xml");
+            string temp3name = Path.Combine(usfxDirectory, "temp3.xml");
+            string temp4name = Path.Combine(usfxDirectory, "temp4.xml");
+            string temp5name = Path.Combine(usfxDirectory, "temp5.xml");
+            string temp6name = Path.Combine(usfxDirectory, "temp6.xml");
+            //string temp7name = Path.Combine(usfxDirectory, "temp7.xml");
             string saxonJar = SFConverter.FindAuxFile("saxon9he.jar");
             string bookNames = Path.Combine(usfxDirectory, "BookNames.xml");
             if (!File.Exists(bookNames))
@@ -4422,19 +4828,49 @@ namespace WordSend
                 Logit.WriteError("Error: " + bookNames + " not found.");
                 return;
             }
-            string logFile = Path.Combine(usfxDirectory, "xsltlog.txt");
+            string logFile = Path.Combine(Path.Combine(usfxDirectory, ".."), "xsltlog.txt");
             try
             {
                 Directory.SetCurrentDirectory(usfxDirectory);
                 // Clean up temporary files from a possible earlier run that failed.
+                File.Delete(tempAname);
+                File.Delete(temp0name);
                 File.Delete(temp1name); // Note: it is not an error if the file doesn't already exist.
                 File.Delete(temp2name);
                 File.Delete(temp3name);
                 File.Delete(temp4name);
                 File.Delete(temp5name);
+                File.Delete(temp6name);
+                //File.Delete(temp7name);
 
-                // Extract book names
-                command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" 2> \"{4}\"", saxonJar, temp1name, bookNames,
+                // EscapeParensInBookNames(bookNames, tempAname);
+
+                // Step A: escape parens AND make sure all fields of BookNames.xml exist
+
+                command = string.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" 2> \"{4}\"", saxonJar, tempAname, bookNames,
+                    GetXslt("stepA.xsl", usfxDirectory), logFile);
+                if (!fileHelper.RunCommand(command, usfxDirectory))
+                {
+                    Logit.WriteError("Error running command " + command);
+                    Logit.WriteError(fileHelper.runCommandError);
+                    return;
+                }
+
+                // Step 0: Create abbreviation with period and without period.
+                // -o:%2\convert\BookNamesWithPeriodAndWithout.html %2\source\BookNames.xml XSLT\step0.xsl
+                command = string.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" 2>> \"{4}\"", saxonJar, temp0name, tempAname,
+                    GetXslt("step0.xsl", usfxDirectory), logFile);
+                if (!fileHelper.RunCommand(command, usfxDirectory))
+                {
+                    Logit.WriteError("Error running command " + command);
+                    Logit.WriteError(fileHelper.runCommandError);
+                    return;
+                }
+
+
+                // Step 1: Create list of possible references.
+                //  -o:%2\convert\listOfBookNames.html %2\convert\BookNamesWithPeriodAndWithout.html XSLT\step1.xsl
+                command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" 2>> \"{4}\"", saxonJar, temp1name, temp0name,
                     GetXslt("step1.xsl", usfxDirectory), logFile);
                 if (!fileHelper.RunCommand(command, usfxDirectory))
                 {
@@ -4442,7 +4878,8 @@ namespace WordSend
                     Logit.WriteError(fileHelper.runCommandError);
                     return;
                 }
-                // Extract book names that start with a digit
+                // Step 2: Create list of possible references starting with digit
+                //  -o:%2\convert\listOfBookNamesStartingWithDigit.html %2\source\BookNames.xml XSLT\step2.xsl
                 command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" 2>> \"{4}\"", saxonJar, temp2name, bookNames,
                     GetXslt("step2.xsl", usfxDirectory), logFile);
                 if (!fileHelper.RunCommand(command, usfxDirectory))
@@ -4451,17 +4888,92 @@ namespace WordSend
                     Logit.WriteError(fileHelper.runCommandError);
                     return;
                 }
-                // Mark fully identified canonical references
-                command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" bookNamesFile=\"{4}\" bookNamesXml=\"{5}\" 2>> \"{6}\"",
-                    saxonJar, temp3name,
-                    fileName, GetXslt("step3.xsl", usfxDirectory), "listOfBookNames.html", "BookNames.xml", logFile);
-                if (!fileHelper.RunCommand(command, usfxDirectory))
+                
+                if (languageCode == "pes")
                 {
-                    Logit.WriteError("Error running command " + command);
-                    Logit.WriteError(fileHelper.runCommandError);
-                    return;
+                    // step 3.1 Persian fixHyphen fix space around hypen error
+                    // -o:%2\convert\%1.step3.1Persian.xml c:\d\Kahuna\%2\source\%1 XSLT\step3.1Persian.xsl pathToFiles="C:\d\kahuna\" bookNamesFile="listOfBookNames.html"  bookNamesXml="BookNames.xml"
+                    command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" pathToFiles=\"{7}\" bookNamesFile=\"{4}\" bookNamesXml=\"{5}\" 2>> \"{6}\"",
+                        saxonJar, temp3name,
+                        fileName, GetXslt("step3.1Persian.xsl", usfxDirectory), temp1name, bookNames, logFile, usfxDirectory);
+                    if (!fileHelper.RunCommand(command, usfxDirectory))
+                    {
+                        Logit.WriteError("Error running command " + command);
+                        Logit.WriteError(fileHelper.runCommandError);
+                        return;
+                    }
+                    // step 3.2 Persian fix chapter verse error
+                    // -o:%2\convert\%1.step3.2Persian.xml %2\convert\%1.step3.1Persian.xml XSLT\step3.2Persian.xsl pathToFiles="C:\d\kahuna\" bookNamesFile="listOfBookNames.html"  bookNamesXml="BookNames.xml"
+                    command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" pathToFiles=\"{7}\" bookNamesFile=\"{4}\" bookNamesXml=\"{5}\" 2>> \"{6}\"",
+                        saxonJar, temp4name,
+                        temp3name, GetXslt("step3.2Persian.xsl", usfxDirectory), temp1name, bookNames, logFile, usfxDirectory);
+                    if (!fileHelper.RunCommand(command, usfxDirectory))
+                    {
+                        Logit.WriteError("Error running command " + command);
+                        Logit.WriteError(fileHelper.runCommandError);
+                        return;
+                    }
+
+                    File.Delete(temp3name);
+
+                    // step 3.3 - Persian mark fully identified canonical references
+                    // -o:%2\convert\%1.step3.3Persian.xml %2\convert\%1.step3.2Persian.xml XSLT\step3.3Persian.xsl pathToFiles="C:\d\kahuna\" bookNamesFile="listOfBookNames.html"  bookNamesXml="BookNames.xml"
+                    command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" pathToFiles=\"{7}\" bookNamesFile=\"{4}\" bookNamesXml=\"{5}\" 2>> \"{6}\"",
+                        saxonJar, temp3name,
+                        temp4name, GetXslt("step3.3Persian.xsl", usfxDirectory), temp1name, bookNames, logFile, usfxDirectory);
+                    if (!fileHelper.RunCommand(command, usfxDirectory))
+                    {
+                        Logit.WriteError("Error running command " + command);
+                        Logit.WriteError(fileHelper.runCommandError);
+                        return;
+                    }
+
+                    File.Delete(temp4name);
+
+                    // step 3.4 - Persian  find Psalm 18
+                    // -o:%2\convert\%1.step3.4Persian.xml %2\convert\%1.step3.3Persian.xml XSLT\step3.4Persian.xsl pathToFiles="C:\d\kahuna\" bookNamesFile="listOfBookNames.html"  bookNamesXml="BookNames.xml"
+                    command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" pathToFiles=\"{7}\" bookNamesFile=\"{4}\" bookNamesXml=\"{5}\" 2>> \"{6}\"",
+                        saxonJar, temp4name,
+                        temp3name, GetXslt("step3.4Persian.xsl", usfxDirectory), temp1name, bookNames, logFile, usfxDirectory);
+                    if (!fileHelper.RunCommand(command, usfxDirectory))
+                    {
+                        Logit.WriteError("Error running command " + command);
+                        Logit.WriteError(fileHelper.runCommandError);
+                        return;
+                    }
+
+                    File.Delete(temp3name);
+
+                    // step 3.5 - Persian fix verse bridge
+                    // -o:%2\convert\%1.step3.xml          %2\convert\%1.step3.4Persian.xml XSLT\step3.5Persian.xsl pathToFiles="C:\d\kahuna\" bookNamesFile="listOfBookNames.html"  bookNamesXml="BookNames.xml"
+                    command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" pathToFiles=\"{7}\" bookNamesFile=\"{4}\" bookNamesXml=\"{5}\" 2>> \"{6}\"",
+                        saxonJar, temp3name,
+                        temp4name, GetXslt("step3.5Persian.xsl", usfxDirectory), temp1name, bookNames, logFile, usfxDirectory);
+                    if (!fileHelper.RunCommand(command, usfxDirectory))
+                    {
+                        Logit.WriteError("Error running command " + command);
+                        Logit.WriteError(fileHelper.runCommandError);
+                        return;
+                    }
+
+                    File.Delete(temp4name);
                 }
-                // Correct error with (2) parenthesis
+                else
+                {
+                    // Step 3: Mark fully identified canonical references
+                    //  -o:%2\convert\%1.step3.xml c:\d\Kahuna\%2\source\%1 XSLT\step3.xsl pathToFiles="C:\d\kahuna\" bookNamesFile="listOfBookNames.html"  bookNamesXml="BookNames.xml"
+                    command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" pathToFiles=\"{7}\" bookNamesFile=\"{4}\" bookNamesXml=\"{5}\" 2>> \"{6}\"",
+                        saxonJar, temp3name,
+                        fileName, GetXslt("step3.xsl", usfxDirectory), temp1name, bookNames, logFile, usfxDirectory);
+                    if (!fileHelper.RunCommand(command, usfxDirectory))
+                    {
+                        Logit.WriteError("Error running command " + command);
+                        Logit.WriteError(fileHelper.runCommandError);
+                        return;
+                    }
+                }
+                // Step 4: Correct error with (2) parenthesis
+                //  -o:%2\convert\%1.step4.xml %2\convert\%1.step3.xml XSLT\step4.xsl
                 command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" numberedBookNamesFile=\"{4}\" 2>> \"{5}\"",
                     saxonJar, temp4name, temp3name,
                     GetXslt("step4.xsl", usfxDirectory), "listOfBookNamesStartingWithDigit.html", logFile);
@@ -4471,7 +4983,8 @@ namespace WordSend
                     Logit.WriteError(fileHelper.runCommandError);
                     return;
                 }
-                // Add missing book and chapter numbers to canonical references
+                // Step 5: Add missing book and chapter numbers to canonical references
+                // -o:%2\convert\%1.step5.xml %2\convert\%1.step4.xml XSLT\step5.xsl
                 command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" 2>> \"{4}\"", saxonJar, temp5name, temp4name,
                     GetXslt("step5.xsl", usfxDirectory), logFile);
                 if (!fileHelper.RunCommand(command, usfxDirectory))
@@ -4480,10 +4993,22 @@ namespace WordSend
                     Logit.WriteError(fileHelper.runCommandError);
                     return;
                 }
-                // Replace the original usfx.xml with the new file.
-                if (File.Exists(fileName) && File.Exists(temp5name))
+                // Step 6: OBA 8.1 fix
+                // -o:%2\convert\%1.step6.xml %2\convert\%1.step5.xml XSLT\step6.xsl
+                command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" 2>> \"{4}\"", saxonJar, temp6name, temp5name,
+                    GetXslt("step6.xsl", usfxDirectory), logFile);
+                if (!fileHelper.RunCommand(command, usfxDirectory))
                 {
-                    File.Replace(temp5name, fileName, fileName + ".bak");
+                    Logit.WriteError("Error running command " + command);
+                    Logit.WriteError(fileHelper.runCommandError);
+                    return;
+                }
+                //Logit.WriteLine(DateTime.Now.ToString() + " Replacing usfx.xml");
+                
+                // Replace the original usfx.xml with the new file.
+                if (File.Exists(fileName) && File.Exists(temp6name))
+                {
+                    File.Replace(temp6name, fileName, fileName + ".bak");
                 }
                 else
                 {
@@ -4500,20 +5025,29 @@ namespace WordSend
                     }
                     return;
                 }
-                
+
                 // Get rid of temporary files that are no longer needed.
+                
+                File.Delete(tempAname);
+                File.Delete(temp0name);
                 File.Delete(temp1name);
                 File.Delete(temp2name);
                 File.Delete(temp3name);
                 File.Delete(temp4name);
                 File.Delete(temp5name);
+                File.Delete(temp6name);
+                //File.Delete(temp7name);
                 File.Delete(fileName + ".bak");
+                File.Delete(Path.Combine(usfxDirectory, "step0.xsl"));
                 File.Delete(Path.Combine(usfxDirectory, "step1.xsl"));
                 File.Delete(Path.Combine(usfxDirectory, "step2.xsl"));
                 File.Delete(Path.Combine(usfxDirectory, "step3.xsl"));
                 File.Delete(Path.Combine(usfxDirectory, "step4.xsl"));
                 File.Delete(Path.Combine(usfxDirectory, "step5.xsl"));
+                File.Delete(Path.Combine(usfxDirectory, "step6.xsl"));
                 
+                //File.Delete(Path.Combine(usfxDirectory, "step7.xsl"));
+                // File.Delete(Path.Combine(usfxDirectory, "source-target.xml"));
             }
             catch (Exception ex)
             {
@@ -4521,6 +5055,555 @@ namespace WordSend
                 Logit.WriteError(ex.Message);
             }
         }
+        */
+
+        protected string level;
+        protected string style;
+        protected string sfm;
+        protected string id;
+        protected string bookTLA;
+        protected string defaultBook;
+        protected string chap;
+        protected string vs;
+        protected XmlTextReader usfx;
+        protected BibleBookRecord bookRecord;
+
+        /// <summary>
+        /// Get an attribute with the given name from the current usfx element, or an empty string if it is not present.
+        /// </summary>
+        /// <param name="attributeName">attribute name</param>
+        /// <returns>attribute value or an empty string if not found</returns>
+        protected string GetNamedAttribute(string attributeName)
+        {
+            string result = usfx.GetAttribute(attributeName);
+            if (result == null)
+                result = String.Empty;
+            return result;
+        }
+
+
+        /// <summary>
+        /// Checks to see if a given string (longpart) contains a substring (subpart)
+        /// starting at index start. Null or empty strings don't match anything.
+        /// </summary>
+        /// <param name="longpart">String to search</param>
+        /// <param name="start">Starting index of search</param>
+        /// <param name="subpart">Substring to look for</param>
+        /// <returns>true iff found at the specified position</returns>
+        public bool startsAt(string longpart, int start, string subpart)
+        {
+            if (string.IsNullOrEmpty(subpart))
+                return false;
+            if (string.IsNullOrEmpty(longpart))
+                return false;
+            if ((start >= longpart.Length - subpart.Length) || (start < 0))
+                return false;
+            int i = start;
+            int j = 0;
+            bool result = true;
+            for (i = start, j = 0; result && (j < subpart.Length); i++, j++)
+            {
+                if ((i >= longpart.Length) || (j >= subpart.Length))
+                {
+                    result = false;
+                }
+                else if (Char.ToUpperInvariant(longpart[i]) != Char.ToUpperInvariant(subpart[j]))
+                {
+                    result = false;
+                }
+            }
+            return result;
+        }
+                
+        // Variables used in parseReference and related functions
+        private StringBuilder stdRef;
+        private StringBuilder vernacularRef;
+        private StringBuilder before;
+        private StringBuilder after;
+        private StringBuilder numberString;
+        private string foundBook;
+        private int parseReferenceState;
+
+        /// <summary>
+        /// Subfunction of parseReference
+        /// </summary>
+        /// <param name="currentChar">last character checked while parsing</param>
+        private void rollBackReferenceSearch(char currentChar)
+        {
+            parseReferenceState = 0;
+            before.Append(vernacularRef.ToString());
+            vernacularRef.Clear();
+            numberString.Clear();
+            before.Append(currentChar);
+            stdRef.Clear();
+        }
+
+
+        private void WriteReference()
+        {
+            xw.WriteString(before.ToString());
+            before.Clear();
+            xw.WriteStartElement("ref");
+            xw.WriteAttributeString("tgt", stdRef.ToString());
+            stdRef.Clear();
+            xw.WriteString(vernacularRef.ToString());
+            vernacularRef.Clear();
+            numberString.Clear();
+            xw.WriteEndElement();   // ref
+            parseReferenceState = 0;
+        }
+
+        /// <summary>
+        /// Find chapter:verse references in the string, and mark them with a ref tags, with the target being just the first verse of the 
+        /// range or list of verses.
+        /// </summary>
+        /// <param name="s">String to parse</param>
+        protected void parseReference(string s)
+        {
+            stdRef = new StringBuilder();
+            vernacularRef = new StringBuilder();
+            before = new StringBuilder();
+            numberString = new StringBuilder();
+            foundBook = ""; // Could be defaultBook if we were guaranteed to have all book names input given to us.
+            BibleBookRecord foundBR;
+            bool wordStart = true;
+            bool found = false;
+            char stdDigit;
+            parseReferenceState = 0;
+            int bookIndex;
+            /*
+            if (!String.IsNullOrEmpty(defaultBook))
+            {
+                //parseReferenceState = 1;
+                foundBR = (BibleBookRecord)bkInfo.books[defaultBook];
+            }
+            else
+            {
+            */
+                foundBR = (BibleBookRecord)bkInfo.books[bookTLA];
+            /*
+            }
+            */
+            int stringPos;
+            for (stringPos = 0; stringPos < s.Length; stringPos++)
+            {
+                stdDigit = fileHelper.StandardDigit(s[stringPos]);
+                switch (parseReferenceState)
+                {
+                    case 0: // Looking for book (no default book applicable)
+                        found = false;
+                        if (wordStart)
+                        {
+                            for (bookIndex = 0; (bookIndex < bkInfo.bookMatchList.Count) && !found; bookIndex++)
+                            {
+                                if (bkInfo.bookMatchList[bookIndex] != null)
+                                {
+                                    if ((s.Length - stringPos) >= bkInfo.bookMatchList[bookIndex].bookName.Length)
+                                    {
+                                        if (startsAt(s, stringPos, bkInfo.bookMatchList[bookIndex].bookName))
+                                        {
+                                            found = true;
+                                            foundBook = bkInfo.bookMatchList[bookIndex].bookTLA;
+                                            foundBR = (BibleBookRecord)bkInfo.books[foundBook];
+                                            vernacularRef.Append(s.Substring(stringPos, bkInfo.bookMatchList[bookIndex].bookName.Length));
+                                            stringPos += bkInfo.bookMatchList[bookIndex].bookName.Length - 1; // The -1 is because 1 will be added in the for loop
+                                            parseReferenceState = 2;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (!found)
+                        {
+                            before.Append(s[stringPos]);
+                        }
+                        break;
+                    case 1: // Looking for book or first number: NOTE: this state is only used immediately following a reference with a book,
+                            // like Gen 1:1; 3:1.
+                        found = false;
+                        if (wordStart)
+                        {
+                            for (bookIndex = 0; (bookIndex < bkInfo.bookMatchList.Count) && !found; bookIndex++)
+                            {
+                                if ((s.Length - stringPos) >= bkInfo.bookMatchList[bookIndex].bookName.Length)
+                                {
+                                    if (startsAt(s, stringPos, bkInfo.bookMatchList[bookIndex].bookName))
+                                    {
+                                        found = true;
+                                        foundBook = bkInfo.bookMatchList[bookIndex].bookTLA;
+                                        foundBR = (BibleBookRecord)bkInfo.books[foundBook];
+                                        vernacularRef.Append(s.Substring(stringPos, bkInfo.bookMatchList[bookIndex].bookName.Length));
+                                        stringPos += bkInfo.bookMatchList[bookIndex].bookName.Length - 1; // The -1 is because 1 will be added in the for loop
+                                        parseReferenceState = 2;
+                                    }
+                                }
+                            }
+                        }
+                        if (!found)
+                        {   // Didn't find a book, look for a number
+                            if (Char.IsDigit(stdDigit))
+                            {
+                                numberString.Append(stdDigit);
+                                vernacularRef.Append(s[stringPos]);
+                                parseReferenceState = 5;
+                            }
+                            else
+                            {
+                                before.Append(s[stringPos]);
+                                if (before.Length > 4)
+                                {   // Forget the last found book as it fades from context.
+                                    parseReferenceState = 0;
+                                }
+                            }
+                        }
+                        break;
+                    case 2: // Looking for book chapter separator: assume single white space, possibly preceded by '.'.
+                        if (Char.IsWhiteSpace(s[stringPos]))
+                        {
+                            vernacularRef.Append(s[stringPos]);
+                            parseReferenceState = 4;
+                        }
+                        else if (s[stringPos] == '.')
+                        {
+                            vernacularRef.Append(s[stringPos]);
+                            parseReferenceState = 3;
+                        }
+                        else
+                        {   // Not a book after all: roll back to looking for a book.
+                            rollBackReferenceSearch(s[stringPos]);
+                        }
+                        break;
+                    case 3: // Looking for book chapter separator (single white space); passed . already.
+                        if (Char.IsWhiteSpace(s[stringPos]))
+                        {
+                            vernacularRef.Append(s[stringPos]);
+                            parseReferenceState = 4;  // Looking for chapter
+                        }
+                        else
+                        {   // Not a book after all: roll back to looking for a book.
+                            rollBackReferenceSearch(s[stringPos]);
+                        }
+                        break;
+                    case 4: // Looking for chapter
+                        if (Char.IsDigit(stdDigit))
+                        {
+                            vernacularRef.Append(s[stringPos]);
+                            numberString.Append(stdDigit);
+                            parseReferenceState = 5;
+                        }
+                        else
+                        {   // Roll back, didn't find a reference.
+                            rollBackReferenceSearch(s[stringPos]);
+                        }
+                        break;
+                    case 5: // In chapter
+                        if (char.IsDigit(stdDigit))
+                        {
+                            numberString.Append(stdDigit);
+                            if (numberString.Length > 3)    // Must be a date or something. No book has more than 3 digit chapter numbers.
+                            {   // Roll back, didn't find a reference.
+                                rollBackReferenceSearch(s[stringPos]);
+                            }
+                            else
+                            {
+                                vernacularRef.Append(s[stringPos]);
+                            }
+                        }
+                        else if (startsAt(s, stringPos, projectOptions.CVSeparator))
+                        {
+                            vernacularRef.Append(projectOptions.CVSeparator);
+                            stdRef.Append(foundBook + '.');
+                            stdRef.Append(numberString.ToString());
+                            stdRef.Append('.');
+                            numberString.Clear();
+                            stringPos += projectOptions.CVSeparator.Length - 1; // Just in case the separator is more than one character
+                            parseReferenceState = 6;
+                        }
+                        else
+                        {   // Is this a one-chapter book, meaning that was the verse number?
+                            if (foundBR.numChapters == 1)
+                            {
+                                stdRef.Append(foundBook + '.');
+                                stdRef.Append("1.");
+                                stdRef.Append(numberString.ToString());
+                                WriteReference();
+                                before.Append(s[stringPos]);
+                                parseReferenceState = 1;
+                            }
+                            else
+                            {
+                                rollBackReferenceSearch(s[stringPos]);
+                                parseReferenceState = 0;  // Looking for book
+                            }
+                        }
+                        break;
+                    case 6: // Looking for verse
+                        if (Char.IsDigit(stdDigit))
+                        {
+                            numberString.Append(stdDigit);
+                            vernacularRef.Append(s[stringPos]);
+                            parseReferenceState = 7;
+                        }
+                        else
+                        {
+                            rollBackReferenceSearch(s[stringPos]);
+                            parseReferenceState = 0;  // Looking for book
+                        }
+                        break;
+                    case 7: // In verse
+                        stdDigit = fileHelper.StandardDigit(s[stringPos]);
+                        if (Char.IsDigit(stdDigit))
+                        {
+                            vernacularRef.Append(s[stringPos]);
+                            numberString.Append(stdDigit);
+                            if (numberString.Length > 3)    // Must be a date or something. No book has more than 3 digit verse numbers.
+                            {   // Roll back, didn't find a reference.
+                                rollBackReferenceSearch(s[stringPos]);
+                                parseReferenceState = 0;
+                            }
+                        }
+                        else if (startsAt(s, stringPos, projectOptions.rangeSeparator))
+                        {
+                            vernacularRef.Append(projectOptions.rangeSeparator);
+                            stringPos += projectOptions.rangeSeparator.Length - 1; // Just in case the separator is more than one character
+                            parseReferenceState = 8;
+                        }
+                        else if (startsAt(s, stringPos, projectOptions.multiRefSameChapterSeparator))
+                        {
+                            vernacularRef.Append(projectOptions.multiRefSameChapterSeparator);
+                            stringPos += projectOptions.multiRefSameChapterSeparator.Length - 1; // Just in case the separator is more than one character
+                            parseReferenceState = 8;
+                        }
+                        else
+                        {   // We have a complete reference: write it out.
+                            stdRef.Append(numberString.ToString());
+                            WriteReference();
+                            before.Append(s[stringPos]);
+                            parseReferenceState = 1;
+                        }
+                        break;
+                    case 8: // In verse range or list
+                        if (Char.IsDigit(stdDigit))
+                        {
+                            vernacularRef.Append(s[stringPos]);
+                        }
+                        else if (startsAt(s, stringPos, projectOptions.rangeSeparator))
+                        {
+                            vernacularRef.Append(projectOptions.rangeSeparator);
+                            stringPos += projectOptions.rangeSeparator.Length - 1; // Just in case the separator is more than one character
+                        }
+                        else if (startsAt(s, stringPos, projectOptions.multiRefSameChapterSeparator))
+                        {
+                            vernacularRef.Append(projectOptions.multiRefSameChapterSeparator);
+                            stringPos += projectOptions.multiRefSameChapterSeparator.Length - 1; // Just in case the separator is more than one character
+                        }
+                        else
+                        {   // We have a complete reference: write it out.
+                            stdRef.Append(numberString.ToString());
+                            WriteReference();
+                            before.Append(s[stringPos]);
+                            parseReferenceState = 1;
+                        }
+                        break;
+                }
+                wordStart = (!char.IsLetter(s[stringPos])) && (!char.IsDigit(stdDigit));
+            }
+            if ((parseReferenceState >= 7) && (numberString.Length > 0))
+            {
+                stdRef.Append(numberString.ToString());
+                WriteReference();
+            }
+            if (before.Length > 0)
+            {
+                xw.WriteString(before.ToString());
+            }
+            if (vernacularRef.Length > 0)
+            {
+                xw.WriteString(vernacularRef.ToString());
+            }
+        }
+
+        public void ReadRefTags(string usfxName)
+        {
+            int attributeIndex;
+            string inFileName = Path.ChangeExtension(usfxName, ".norefxml");
+            string xName;
+            string xValue;
+            bool parseThis = false;
+            bool beforeFig = false;
+            try
+            {
+                File.Move(usfxName, inFileName);
+                usfx = new XmlTextReader(inFileName);
+                usfx.WhitespaceHandling = WhitespaceHandling.All;
+                languageCode = projectOptions.languageId;
+                OpenUsfx(usfxName);
+                while (usfx.Read())
+                {
+                    if (usfx.NodeType == XmlNodeType.Element)
+                    {
+                        if ((usfx.Name != "usfx") && (usfx.Name != "languageCode"))
+                        {
+                            xw.WriteStartElement(usfx.Name);
+                            if (usfx.HasAttributes)
+                            {
+                                for (attributeIndex = 0; attributeIndex < usfx.AttributeCount; attributeIndex++)
+                                {
+                                    usfx.MoveToAttribute(attributeIndex);
+                                    xName = usfx.Name;
+                                    xValue = usfx.Value;
+                                    if (usfx.Name != "bcv") // We will add bcv later
+                                        xw.WriteAttributeString(xName, xValue);
+                                    switch (xName)
+                                    {
+                                        case "id":
+                                            id = xValue;
+                                            break;
+                                        case "level":
+                                            level = xValue;
+                                            break;
+                                        case "sfm":
+                                            sfm = xValue;
+                                            break;
+                                        case "caller":
+                                            caller = xValue;
+                                            break;
+                                    }
+                                }
+                                usfx.MoveToElement(); // Done reading attributes.
+                            }
+                            if (usfx.Name == "v")
+                            {
+                                vs = id;
+                                xw.WriteAttributeString("bcv", (bookTLA + "." + chap + "." + vs).Replace("\u200f", ""));
+                            }
+                            if (usfx.IsEmptyElement)
+                                xw.WriteEndElement();
+                            switch (usfx.Name)
+                            {
+                                case "book":
+                                    if (id.Length > 2)
+                                    {
+                                        bookTLA = id;
+                                        bookRecord = (BibleBookRecord)bkInfo.books[bookTLA];
+                                        if (bookRecord == null)
+                                        {
+                                            Logit.WriteError("Cannot process unknown book: " + bookTLA);
+                                            return;
+                                        }
+                                        if ((bookRecord.testament == "o") || (bookRecord.testament == "n") || (bookRecord.testament == "a"))
+                                        {
+                                            defaultBook = bookTLA;
+                                            parseThis = false;
+                                        }
+                                        else
+                                        {
+                                            defaultBook = string.Empty;
+                                            parseThis = true;
+                                        }
+                                    }
+                                    chap = "0";
+                                    vs = "0";
+                                    break;
+                                case "id":
+                                    if (id != bookTLA)
+                                        Logit.WriteError("ERROR: book IDs don't match: " + id + " isn't " + bookTLA);
+                                    parseThis = false;
+                                    break;
+                                case "p":
+                                    if (sfm.StartsWith("i") || (bookRecord.testament == "x"))
+                                        parseThis = true;
+                                    else
+                                        parseThis = false;
+                                    break;
+                                case "q":
+                                    parseThis = false;
+                                    break;
+                                case "ref":
+                                    parseThis = false;  // Don't nest ref tags!
+                                    break;
+                                case "fig":
+                                    beforeFig = parseThis;
+                                    parseThis = false;
+                                    break;
+                                case "h":
+                                case "s":
+                                case "d":
+                                case "cl":
+                                    parseThis = false;
+                                    break;
+                                case "c":
+                                    chap = id;
+                                    vs = "0";
+                                    break;
+                                case "cp":
+                                case "ca":
+                                case "toc":
+                                case "xo":
+                                case "fr":
+                                    parseThis = false;
+                                    break;
+                                case "x":
+                                case "xt":
+                                case "f":
+                                case "ft":
+                                case "r":
+                                case "fe":
+                                case "rq":
+                                    parseThis = true;
+                                    break;
+                            }
+                        }
+                        else if (usfx.Name == "languageCode")
+                        {
+                            usfx.Read();    // Skip language code
+                            usfx.Read();    // Skip end element
+                        }
+                    }
+                    else if (usfx.NodeType == XmlNodeType.EndElement)
+                    {
+                        xw.WriteEndElement();
+                        switch(usfx.Name)
+                        {
+                            case "x":
+                            case "f":
+                            case "r":
+                            case "fe":
+                            case "rq":
+                                parseThis = false;
+                                break;
+                            case "xo":
+                            case "fr":
+                                parseThis = true;
+                                break;
+                            case "fig":
+                                parseThis = beforeFig;
+                                break;
+                    
+                        }
+                    }
+                    else if (usfx.NodeType == XmlNodeType.Text)
+                    {
+                        string s = usfx.Value;
+                        if (parseThis)
+                            parseReference(s);
+                        else
+                            xw.WriteString(s);
+                    }
+                    else if (usfx.NodeType == XmlNodeType.Whitespace)
+                    {
+                        xw.WriteString(usfx.Value);
+                    }
+                }
+                usfx.Close();
+                xw.Close();
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError("ERROR reading reference tags in " + usfxName + ": " + ex.Message);
+            }
+        }
+
 
         public string languageCode = "";
         protected string UsfxFileName;
@@ -4541,9 +5624,15 @@ namespace WordSend
         {
             usfxValid = false;
             if (error.Severity == XmlSeverityType.Error)
-                Logit.WriteError("ERROR in " + UsfxFileName + " at " + validationLocation + " after " + currentElement + "\r\n" + error.Message);
+            {
+                Logit.WriteError("ERROR in " + UsfxFileName + " at " + validationLocation + " after " + currentElement);
+                Logit.WriteError(" " + error.Message);
+            }
             else
-                Logit.WriteError("Warning in " + UsfxFileName + " at " + validationLocation + " after " + currentElement + "\r\n" + error.Message);
+            {
+                Logit.WriteError("Warning in " + UsfxFileName + " at " + validationLocation + " after " + currentElement);
+                Logit.WriteError(" " + error.Message);
+            }
         }
 
 
@@ -4553,28 +5642,36 @@ namespace WordSend
             // Validate this file against the Schema
             validationLocation = "header";
             currentElement = "";
-            Directory.SetCurrentDirectory(Path.GetDirectoryName(SFConverter.FindAuxFile(UsfxSchema)));
-            XmlTextReader ur = new XmlTextReader(UsfxFileName);
-            // XmlValidatingReader is used for compatibility with Mono, in spite of the warning message.
-            XmlValidatingReader reader = new XmlValidatingReader(ur);
-            // Hopefully Mono will support Microsoft's new way of doing XML validation before Microsoft
-            // chooses to break the "obsolete" XmlValidatingReader. Not safe to move on as of 1 Jan 2013.
-
-            // Set the validation event handle
-
-            reader.ValidationEventHandler += new ValidationEventHandler(UsfxValidationCallBack);
-
-            // Read XML data
-
-            while (reader.Read())
+            string schemaFilePath = SFConverter.FindAuxFile(UsfxSchema);
+            if (String.IsNullOrEmpty(schemaFilePath))
             {
-                if (reader.NodeType == XmlNodeType.Element)
+                Logit.WriteError("ERROR: " + UsfxSchema + " is missing from the distribution!");
+                return false;
+            }
+            string schemaFileDirectory = Path.GetDirectoryName(schemaFilePath);
+            if (!String.IsNullOrEmpty(schemaFileDirectory))
+                Directory.SetCurrentDirectory(schemaFileDirectory);
+            // An actual copy of the schema in the same directory as the USFX file is required by the Mono validator.
+            // (Microsoft .NET works fine without these next two lines, but Mono requires them.)
+            string localSchemaName = Path.Combine(Path.GetDirectoryName(fileName), UsfxSchema);
+            File.Copy(schemaFilePath, localSchemaName);
+
+            XmlReaderSettings settings = new XmlReaderSettings();
+            settings.Schemas.Add(null, schemaFilePath);
+            settings.ValidationType = ValidationType.Schema;
+            settings.ValidationFlags = XmlSchemaValidationFlags.ReportValidationWarnings;
+            settings.ValidationEventHandler += new ValidationEventHandler(UsfxValidationCallBack);
+            XmlReader mr = XmlTextReader.Create(UsfxFileName, settings);
+
+            while (mr.Read())
+            {
+                if (mr.NodeType == XmlNodeType.Element)
                 {
-                    currentElement = reader.Name;
-                    string id = reader.GetAttribute("id");
+                    currentElement = mr.Name;
+                    string id = mr.GetAttribute("id");
                     if (id != null)
                     {
-                        switch (reader.Name)
+                        switch (mr.Name)
                         {
                             case "book":
                                 validationBook = validationLocation = id;
@@ -4588,15 +5685,44 @@ namespace WordSend
                                 validationLocation = validationBook + "." + validationChapter + "." + validationVerse;
                                 break;
                         }
+                    Logit.ShowStatus("validating USFX " + validationLocation);
                     }
                 }
             }
-            reader.Close();
+            mr.Close();
+            File.Delete(localSchemaName);
             return usfxValid;
         }
 
-        protected const string UsfxSchema = "usfx-2013-08-05.xsd";  // File name only for speed; expected to be on the aux file path
-        protected const string UsfxNamespace = "http://eBible.org/usfx.xsd";    // This alias will point to the latest USFX schema, starting 1 January 2013.
+        protected const string UsfxSchema = "usfx.xsd";  // File name only for speed; expected to be on the aux file path
+        protected const string UsfxNamespace = "http://eBible.org/usfx.xsd";    // This alias will point to the latest USFX schema.
+
+        public void OpenUsfx(string fileName)
+        {
+            xw = new XmlTextWriter(fileName, System.Text.Encoding.UTF8);
+            xw.Namespaces = true;
+            xw.Formatting = Formatting.None;
+
+            xw.WriteStartDocument();
+            usfxNestLevel = 0;
+            inUsfxParagraph = false;
+            usfxStyleCount = 0;
+            activeCharacterStyle = new string[32];  // Guessing that this is much higher than the possible character nesting level in real data...
+            activeCharacterStyle[0] = String.Empty;
+            xw.WriteStartElement(ns + "usfx");
+            xw.WriteAttributeString("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", UsfxSchema);
+            if (languageCode.Length == 3)
+                xw.WriteElementString("languageCode", languageCode);
+        }
+
+        public void CloseUsfx()
+        {
+            xw.WriteEndElement();	// ns+usfx
+
+            xw.WriteEndDocument();
+            xw.Close();
+        }
 
         /// <summary>
         /// Write a USFX file from the USFM previously read in.
@@ -4607,38 +5733,18 @@ namespace WordSend
 			int j;
             UsfxFileName = fileName;
 
-			ns = SFConverter.jobIni.ReadString("nameSpace", "");
-			ns.Trim();
+            hasRefTags = false;
 			if ((ns.Length > 0) && (ns[ns.Length-1] != ':'))
 				ns = ns + ":";
 			xw = null;
 			try
 			{
-				xw = new XmlTextWriter(fileName, System.Text.Encoding.UTF8);
-				xw.Namespaces = true;
-                xw.Formatting = Formatting.None;
-
-				xw.WriteStartDocument();
-				usfxNestLevel = 0;
-				inUsfxParagraph = false;
-				usfxStyleCount = 0;
-                activeCharacterStyle = new string[32];  // Guessing that this is much higher than the possible character nesting level in real data...
-                activeCharacterStyle[0] = String.Empty;
-				xw.WriteStartElement(ns+"usfx");
-				// xw.WriteAttributeString("xmlns", "");
-				xw.WriteAttributeString("xmlns:xsi", UsfxNamespace);
-                xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", UsfxSchema);
-
-                if (languageCode.Length == 3)
-                    xw.WriteElementString("languageCode", languageCode);
+                OpenUsfx(fileName);
 				for (j = 0; j < BibleBookInfo.MAXNUMBOOKS; j++)
 				{
 					WriteUSFXBook(j);
 				}
-                xw.WriteEndElement();	// ns+usfx
-
-				xw.WriteEndDocument();
-				xw.Close();
+                CloseUsfx();
 //				Logit.WriteLine(fileName+" written.");
 
                 // Add <ref> tags based on human-readable references
@@ -4782,13 +5888,18 @@ namespace WordSend
 			}
 		}
 
-        public void USFXtoUSFM(string inFileName, string outDir, string outFileName)
+        const int STYLESTACKSIZE = 64;
+
+        public void USFXtoUSFM(string inFileName, string outDir, string outFileName, bool extendUsfm, Options m_options)
 		{
 			int i;
 			int quoteLevel = 0;
             int charStyleStackLevel = 0;
             int noteStyleStackLevel = 0;
-			string bookId = "000-aaa";
+            string[] csSfm = new string[STYLESTACKSIZE];
+            string[] noteSfm = new string[STYLESTACKSIZE];
+            string bookId = "000-aaa";
+            string shortName = "";
 			string chapter = "0";
 			string verse = "0";
 			string id = "";
@@ -4797,16 +5908,22 @@ namespace WordSend
 			string level = "";
 			string who = "";
 			string s = "";
-            //string tgt = "";
-            //string src = "";
-            //string web = "";
+            string lemma = "";
+            string morphology = "";
+            string tgt = "";
+            string src = "";
+            string web = "";
             string strongs = "";
             string plural = "";
+            string root = "";
 			Stack sfmPairStack = new Stack();
 			bool firstCol = true;
 			bool ignore = false;
 			bool afterBlankLine = false;
             bool stackTag = false;
+            bool needNoteTextMarker = false;
+            bool needXrefTextMarker = false;
+            bool foundXtOutsideOfXref = false;
 			SFWriter usfmFile;
             Figure fig = new Figure();
             inFootnote = false;
@@ -4838,8 +5955,8 @@ namespace WordSend
                     {
                         // The SFM name is the element name UNLESS sfm attribute overrides it.
                         sfm = usfxFile.Name;
-                        id = level = style = who = strongs = plural = "";
-                        //tgt = src = web = "";
+                        id = level = style = who = strongs = plural = lemma = morphology = root = "";
+                        tgt = src = web = "";
                         if (usfxFile.HasAttributes)
                         {
                             for (i = 0; i < usfxFile.AttributeCount; i++)
@@ -4879,18 +5996,28 @@ namespace WordSend
                                     case "plural":
                                         plural = usfxFile.Value;
                                         break;
+                                    case "l":
+                                        lemma = usfxFile.Value;
+                                        break;
+                                    case "m":
+                                        morphology = usfxFile.Value;
+                                        break;
                                     case "tgt":
-                                        //tgt = usfxFile.Value;
+                                        tgt = usfxFile.Value;
                                         break;
                                     case "src":
-                                        //src = usfxFile.Value;
+                                        src = usfxFile.Value;
                                         break;
                                     case "web":
-                                        //web = usfxFile.Value;
+                                        web = usfxFile.Value;
+                                        break;
+                                    case "root":
+                                        root = usfxFile.Value;
                                         break;
                                     case "xmlns:ns0":
                                     case "xmlns:xsi":
                                     case "xsi:noNamespaceSchemaLocation":
+                                    case "bcv":
                                         // ignore these
                                         break;
                                     default:
@@ -4918,6 +6045,8 @@ namespace WordSend
                                 {
                                     bookId = id;
                                     usfmFile.Open(Path.Combine(outDir, bkInfo.FilePrefix(bookId) + outFileName));
+                                    chapter = "1";
+                                    verse = "0";
                                 }
                                 break;
                             case "id":
@@ -4934,6 +6063,7 @@ namespace WordSend
                                 break;
                             case "c":
                                 chapter = id;
+                                verse = "0";
                                 usfmFile.WriteSFM(sfm, "", id, true);
                                 if (!usfxFile.IsEmptyElement)
                                 {
@@ -4942,11 +6072,19 @@ namespace WordSend
                                 break;
                             case "v":
                                 verse = id;
+                                usfmFile.VirtualSpace = false;
                                 usfmFile.WriteSFM(sfm, "", id, true);
                                 if (!usfxFile.IsEmptyElement)
                                 {
                                     ignore = true;
                                 }
+                                /*
+                                if ((bookId == "ACT") && (chapter == "11") && (verse == "11"))
+                                    Logit.WriteLine("Acts 11:11");
+                                 */
+                                if (!inFootnote && !inXref && (noteStyleStackLevel > 0))
+                                    Logit.WriteError("noteStyleStackLevel = " + noteStyleStackLevel.ToString() + " outside of note at " + bookId + " " + chapter + ":" + verse);
+
                                 break;
                             case "ve":
                                 // Verse end: there is no equivalent markup in USFM.
@@ -5000,6 +6138,10 @@ namespace WordSend
                                                     " at " + bookId + " " + chapter + ":" + verse);
                                                 break;
                                         }
+                                        if (m_options.RegenerateNoteOrigins && String.IsNullOrEmpty(fig.reference.Trim()))
+                                        {
+                                            fig.reference = shortName.Trim() + " " + fileHelper.LocalizeDigits(chapter) + m_options.CVSeparator + fileHelper.LocalizeDigits(verse);
+                                        }
                                     }
                                     else if (usfxFile.NodeType == XmlNodeType.EndElement)
                                     {
@@ -5039,7 +6181,26 @@ namespace WordSend
                                 */
                                 break;
                             case "ref":
-                                // Do nothing: USFM doesn't support this tag.
+                                if (extendUsfm)
+                                {
+                                    usfmFile.WriteSFM("zref", "", "", false, (charStyleStackLevel > 0) || inFootnote);
+                                    if (!String.IsNullOrEmpty(src))
+                                    {
+                                        usfmFile.WriteSFM("zsrc", "", src, false, true);
+                                        usfmFile.WriteSFM("zsrc*", "", "", false, true);
+                                    }
+                                    if (!String.IsNullOrEmpty(tgt))
+                                    {
+                                        usfmFile.WriteSFM("ztgt", "", tgt, false, true);
+                                        usfmFile.WriteSFM("ztgt*", "", "", false, true);
+                                    }
+                                    if (!String.IsNullOrEmpty(web))
+                                    {
+                                        usfmFile.WriteSFM("zweb", "", web, false, true);
+                                        usfmFile.WriteSFM("zweb*", "", "", false, true);
+                                    }
+                                    usfmFile.WriteSFM("zref*", "", "", false, (charStyleStackLevel > 0) || inFootnote);
+                                }
                                 break;
                             case "quoteRemind":
                                 /* Do nothing. Read the quotation mark from the element contents.
@@ -5114,40 +6275,217 @@ namespace WordSend
                                     languageCode = usfxFile.Value;
                                 break;
                             case "f":
-                            case "x":
+                            case "fe":
+                            case "ef":
+                                noteStyleStackLevel = 0;
                                 if (id == String.Empty)
                                     id = "+";
                                 usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag(), false);
                                 inFootnote = true;
+                                needNoteTextMarker = true;
+                                if (m_options.RegenerateNoteOrigins)
+                                {
+                                    usfmFile.WriteSFM("fr", "", chapter + m_options.CVSeparator + verse, false, false);
+                                }
+                                break;
+                            case "fr":
+                            case "xo":
+                                if (m_options.RegenerateNoteOrigins)
+                                {
+                                    if (!usfxFile.IsEmptyElement)
+                                    {
+                                        usfxFile.Read();    // Skip contents that we are overwriting
+                                    }
+                                }
+                                else
+                                {
+                                    //needNoteTextMarker = needXrefTextMarker = false;
+                                    if (inFootnote || inXref)
+                                    {
+                                        noteSfm[noteStyleStackLevel] = sfm;
+                                        noteStyleStackLevel++;
+                                        stackTag = noteStyleStackLevel > 1;
+                                        usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag(), stackTag);
+                                    }
+                                    else
+                                    {
+                                        Logit.WriteError(sfm + " outside of note at " + bookId + " " + chapter + ":" + verse);
+                                    }
+                                }
+                                break;
+                            case "ft":
+                                if (inFootnote || inXref)
+                                {
+                                    needNoteTextMarker = false;
+                                    noteSfm[noteStyleStackLevel] = sfm;
+                                    noteStyleStackLevel = 1;
+                                    stackTag = false;
+                                    usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag(), stackTag);
+                                }
+                                else
+                                {
+                                    Logit.WriteError(sfm + " outside of note at " + bookId + " " + chapter + ":" + verse);
+                                }
+                                break;
+                            case "fp":
+                                usfmFile.WriteSFM(sfm, "", "", true, false);
+                                break;    
+                            case "fqa":
+                            case "fq":
+                                usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag(), false);
+                                needNoteTextMarker = false;
+                                noteSfm[noteStyleStackLevel] = sfm;
+                                break;
+                            case "fv":
+                                noteStyleStackLevel++;
+                                usfmFile.WriteSFM(sfm, "", "", false, noteStyleStackLevel > 1);
+                                noteSfm[noteStyleStackLevel] = sfm;
+                                break;
+                            case "xt":
+                                if (inXref || inFootnote)
+                                {
+                                    needXrefTextMarker = false;
+                                    noteSfm[noteStyleStackLevel] = sfm;
+                                    noteStyleStackLevel = 1;
+                                    stackTag = false;
+                                    usfmFile.WriteSFM(sfm, level, id, false, stackTag);
+                                }
+                                else
+                                {
+                                    csSfm[charStyleStackLevel] = sfm;
+                                    if (!foundXtOutsideOfXref)
+                                    {
+                                        //Logit.WriteLine("\\xt outside of cross reference note at " + bookId + " " + chapter + ":" + verse);
+                                        foundXtOutsideOfXref = true;
+                                    }
+                                    if (charStyleStackLevel > 5)
+                                    {
+                                        Logit.WriteError("Unexpected nesting of characters at " + bookId + " " + chapter + ":" + verse);
+                                        int k;
+                                        for (k = 0; k < charStyleStackLevel; k++)
+                                            Logit.WriteError(" Style " + k.ToString() + ": " + csSfm[k]);
+                                    }
+                                    charStyleStackLevel++;
+                                    if (charStyleStackLevel >= STYLESTACKSIZE - 1)
+                                        charStyleStackLevel = STYLESTACKSIZE - 2;
+                                    stackTag = charStyleStackLevel > 1;
+                                    usfmFile.WriteSFM(sfm, level, id, false, stackTag);
+                                }
+                                break;
+                            case "x":
+                                if (id == String.Empty)
+                                    id = "+";
+                                usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag(), false);
+                                inXref = true;
+                                needXrefTextMarker = true;
+                                if (m_options.RegenerateNoteOrigins)
+                                {
+                                    usfmFile.WriteSFM("xo", "", chapter + m_options.CVSeparator + verse, false, false);
+                                }
                                 break;
                             case "zw":
                             case "w":
-                                usfmFile.WriteSFM("zw", "", "", false, (charStyleStackLevel > 0));
-                                usfmFile.WriteString(strongs);
-                                usfmFile.WriteSFM("zw*", "", "", false, (charStyleStackLevel > 0));
+                                if (extendUsfm)
+                                {
+                                    if (plural == "true")
+                                    {
+                                        usfmFile.WriteSFM("zplural");
+                                    }
+                                    if (!(String.IsNullOrEmpty(strongs) && String.IsNullOrEmpty(lemma) && String.IsNullOrEmpty(morphology)))
+                                    {
+                                        usfmFile.WriteSFM("zw", "", "", false, (charStyleStackLevel > 0) || inFootnote);
+                                        if (!String.IsNullOrEmpty(strongs))
+                                        {
+                                            usfmFile.WriteSFM("zws", "", strongs, false, true);
+                                            usfmFile.WriteSFM("zws*", "", "", false, true);
+                                        }
+                                        if (!String.IsNullOrEmpty(lemma))
+                                        {
+                                            usfmFile.WriteSFM("zwl", "", lemma, false, true);
+                                            usfmFile.WriteSFM("zwl*", "", "", false, true);
+                                        }
+                                        if (!String.IsNullOrEmpty(morphology))
+                                        {
+                                            usfmFile.WriteSFM("zwm", "", morphology, false, true);
+                                            usfmFile.WriteSFM("zwm*", "", "", false, true);
+                                        }
+                                        usfmFile.WriteSFM("zw*", "", "", false, (charStyleStackLevel > 0) || inFootnote);
+                                        if (usfxFile.IsEmptyElement)
+                                        {
+                                            usfmFile.WriteSFM("zx", "", "", false, (charStyleStackLevel > 0) || inFootnote);
+                                            usfmFile.WriteSFM("zx*", "", "", false, (charStyleStackLevel > 0) || inFootnote);
+                                        }
+                                    }
+                                }
                                 break;
                             case "ztoc":
                             case "toc":
-                                int levelInt = 0;
-                                if (Int32.TryParse(level, out levelInt) && (levelInt >= 4))
+                                int levelInt;
+                                if (!Int32.TryParse(level, out levelInt))
+                                    levelInt = 0;
+                                if (levelInt >= 4)
+                                {
                                     usfmFile.WriteSFM("ztoc", level, id, true, false);
+                                }
                                 else
+                                {
                                     usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag(), stackTag);
+                                    if ((levelInt == 2) && !usfxFile.IsEmptyElement)
+                                    {
+                                        usfxFile.Read();
+                                        usfmFile.WriteString(usfxFile.Value);
+                                        shortName = usfxFile.Value;
+                                    }
+                                }
                                 break;
-                            default:
+                            case "h":
+                                    if (!usfxFile.IsEmptyElement)
+                                    {
+                                        usfmFile.WriteSFM(sfm, "", "", true, false);
+                                        usfxFile.Read();
+                                        usfmFile.WriteString(usfxFile.Value);
+                                        shortName = usfxFile.Value;
+                                    }
+                                break;
+                            default:    // Includes "cs" and "gw"
                                 if (tags.info(sfm).kind == "character")
                                 {
-                                    if (inFootnote)
+
+                                    if (inFootnote && needNoteTextMarker)
                                     {
+                                        needNoteTextMarker = false;
+                                        if (!sfm.StartsWith("f") && !sfm.StartsWith("x"))
+                                        {
+                                            usfmFile.WriteSFM("ft", "", false);
+                                            noteSfm[noteStyleStackLevel] = "ft";
+                                            noteStyleStackLevel = 1;
+                                        }
+                                    }
+                                    else if (inXref && needXrefTextMarker)
+                                    {
+                                        if (!sfm.StartsWith("f") && !sfm.StartsWith("x"))
+                                        {
+                                            needXrefTextMarker = false;
+                                            usfmFile.WriteSFM("xt", "", false);
+                                            noteSfm[noteStyleStackLevel] = "xt";
+                                            noteStyleStackLevel = 1;
+                                        }
+                                    }
+                                    if (inFootnote || inXref)
+                                    {
+                                        noteSfm[noteStyleStackLevel] = sfm;
                                         noteStyleStackLevel++;
                                         stackTag = noteStyleStackLevel > 1;
                                     }
                                     else
                                     {
+                                        csSfm[charStyleStackLevel] = sfm;
                                         charStyleStackLevel++;
                                         stackTag = charStyleStackLevel > 1;
                                     }
                                 }
+                                if (noteStyleStackLevel > 8)
+                                    Logit.WriteLine("Unexpected noteStyleStackLevel " + noteStyleStackLevel.ToString());
                                 usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag(), stackTag);
                                 break;
                         }
@@ -5187,37 +6525,109 @@ namespace WordSend
                                 break;
                             case "zw":
                             case "w":
-                                usfmFile.WriteSFM("zx", "", "", false, (charStyleStackLevel > 0));
-                                usfmFile.WriteSFM("zx*", "", "", false, (charStyleStackLevel > 0));
+                                if (extendUsfm)
+                                {
+                                    usfmFile.WriteSFM("zx", "", "", false, (charStyleStackLevel > 0) || inFootnote);
+                                    usfmFile.WriteSFM("zx*", "", "", false, (charStyleStackLevel > 0) || inFootnote);
+                                }
                                 break;
                             case "quoteStart":
                             case "quoteRemind":
                             case "quoteEnd":
+                                break;
                             case "ref":
-                                // Do nothing.
+                                if (extendUsfm)
+                                {
+                                    usfmFile.WriteSFM("zrefend", "", "", false, (charStyleStackLevel > 0) || inFootnote);
+                                    usfmFile.WriteSFM("zrefend*", "", "", false, (charStyleStackLevel > 0) || inFootnote);
+                                }
+                                break;
+
+                            case "ft":
+                            case "xt":
+                                if (inXref || inFootnote)
+                                {
+                                    noteStyleStackLevel = 0;
+                                    //needNoteTextMarker = true;
+                                }
+                                else
+                                {
+                                    if (!foundXtOutsideOfXref)
+                                    {
+                                        Logit.WriteLine(sfm + " outside of cross reference note at " + bookId + " " + chapter + ":" + verse);
+                                        foundXtOutsideOfXref = true;
+                                    }
+                                    if (charStyleStackLevel > 0)
+                                        charStyleStackLevel--;
+                                    if (String.IsNullOrEmpty(sfm))
+                                        Logit.WriteError("Unexpected empty sfm on character style stack!");
+                                    stackTag = charStyleStackLevel > 0;
+                                    usfmFile.WriteSFM(sfm + "*", "", "", false, stackTag);
+                                }
+                                break;
+                            case "fr":
+                            case "fk":
+                            case "fq":
+                            case "fqa":
+                            case "fl":
+                                noteStyleStackLevel = 0;
+                                needNoteTextMarker = true;
+                                break;
+                            case "xo":
+                            case "xk":
+                            case "xq":
+                                noteStyleStackLevel = 0;
+                                //  Omit these end markers, as Paratext now chokes on them.
+                                needXrefTextMarker = true;
+                                break;
+                            case "fv":
+                                usfmFile.WriteSFM(sfm + "*", "", "", false, noteStyleStackLevel > 1);
+                                noteStyleStackLevel--;
+                                if (noteStyleStackLevel < 0)
+                                    noteStyleStackLevel = 0;
                                 break;
                             case "f":
                             case "x":
+                            case "fe":
+                            case "ef":
                                 usfmFile.WriteSFM(sfm+"*", "", "", false, false);
                                 inFootnote = false;
+                                inXref = false;
                                 noteStyleStackLevel = 0;
                                 break;
                             default:
-                                if (tags.info(sfm).hasEndTag())
+                                if ((sfm == "gw") && (!string.IsNullOrEmpty(root)))
                                 {
-                                    if (inFootnote)
+                                    usfmFile.WriteString("|" + root);
+                                }
+                                if (inFootnote)
+                                {
+                                    if (noteStyleStackLevel > 0)
+                                        noteStyleStackLevel--;
+                                    if ((sfm == "cs") || (sfm == "gw"))
+                                        sfm = noteSfm[noteStyleStackLevel];
+                                    if (String.IsNullOrEmpty(sfm))
+                                        Logit.WriteError("Unexpected empty sfm on character note style stack!");
+                                    stackTag = noteStyleStackLevel > 0;
+
+                                    if (tags.info(sfm).hasEndTag())
                                     {
-                                        if (noteStyleStackLevel > 0)
-                                            noteStyleStackLevel--;
-                                        stackTag = noteStyleStackLevel > 0;
-                                        if (!(sfm.StartsWith("f")) || (sfm.StartsWith("x")))    // Omit explicit end markers in notes
+
+                                        if ((!sfm.StartsWith("f")) && (!sfm.StartsWith("x")))    // Omit explicit end markers in notes
                                             usfmFile.WriteSFM(sfm + "*", "", "", false, stackTag);
                                     }
-                                    else
+                                }
+                                else
+                                {
+                                    if (charStyleStackLevel > 0)
+                                        charStyleStackLevel--;
+                                    if ((sfm == "cs") || (sfm == "gw"))
+                                        sfm = csSfm[charStyleStackLevel];
+                                    if (String.IsNullOrEmpty(sfm))
+                                        Logit.WriteError("Unexpected empty sfm on character style stack!");
+                                    stackTag = charStyleStackLevel > 0;
+                                    if (tags.info(sfm).hasEndTag())
                                     {
-                                        if (charStyleStackLevel > 0)
-                                            charStyleStackLevel--;
-                                        stackTag = charStyleStackLevel > 0;
                                         usfmFile.WriteSFM(sfm + "*", "", "", false, stackTag);
                                     }
                                 }
@@ -5228,6 +6638,20 @@ namespace WordSend
                     }
                     else if (usfxFile.NodeType == XmlNodeType.Text)
                     {
+                        if (inFootnote && needNoteTextMarker)
+                        {
+                            needNoteTextMarker = false;
+                            usfmFile.WriteSFM("ft", "", false);
+                            noteSfm[noteStyleStackLevel] = "ft";
+                            noteStyleStackLevel++;
+                        }
+                        else if (inXref && needXrefTextMarker)
+                        {
+                            needXrefTextMarker = false;
+                            usfmFile.WriteSFM("xt", "", false);
+                            noteSfm[noteStyleStackLevel] = "xt";
+                            noteStyleStackLevel++;
+                        }
                         s = usfxFile.Value;
                         if (!ignore)
                         {
@@ -5249,7 +6673,7 @@ namespace WordSend
 			}
 			catch (System.Exception ex)
 			{
-				Logit.WriteError("Conversion of USFX file "+inFileName+" to USFM files in "+outDir+" (named"+outFileName+") FAILED.");
+				Logit.WriteError("Conversion of USFX file "+inFileName+" to USFM files in "+outDir+" (named *"+outFileName+") FAILED.");
 				Logit.WriteLine(ex.ToString());
 			}
 		}

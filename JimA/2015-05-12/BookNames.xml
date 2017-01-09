@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE BookNames>
+<BookNames>
+  <book code="GEN" abbr="پیدایش" short="پیدایش" long="کتاب پیدایش" alt="" />
+  <book code="EXO" abbr="خروج" short="خروج" long="کتاب خروج" alt="" />
+  <book code="LEV" abbr="لاویان" short="لاویان" long="کتاب لاویان" alt="" />
+  <book code="LEV" abbr="لاویان" short="لاویان" long="کتاب لاویان" alt="" /><!-- adeded to match text -->
+ ‏<book code="NUM" abbr="اعداد" short="اعداد" long="کتاب اعداد" alt="" />
+  <book code="DEU" abbr="تثنیه" short="تثنیه" long="کتاب تثنیه" alt="" />
+  <book code="JOS" abbr="یوشع" short="یوشع" long="یـوشــع" alt="" />
+  <book code="JDG" abbr="داوران" short="داوران" long="داوران" alt="" />
+  <book code="RUT" abbr="روت" short="روت" long="كتاب روت" alt="" />
+  <book code="1SA" abbr="اول سموئیل" short="اول سموئیل" long="كتاب اول سموئیل" alt="" />
+  <book code="2SA" abbr="دوم سموئیل" short="دوم سموئیل" long="کتاب دوم سموئیل" alt="" />
+  <book code="1KI" abbr="اول پادشاهان" short="اول پادشاهان" long="کتاب اول پادشاهان" alt="" />
+  <book code="2KI" abbr="دوم پادشاهان" short="دوم پادشاهان" long="کتاب دوم پادشاهان" alt="" />
+  <book code="1CH" abbr="اول تواریخ" short="اول تواریخ" long="کتاب اول تواریخ" alt="" /> <!-- added to make match work -->
+  <book code="1CH" abbr="اول تواریخ" short="اول تواریخ" long="کتاب اول تواریخ" alt="" /> <!-- compare abbreviations. It might be a nonbreading space -->
+  <book code="1CH" abbr="اول تواریخ" short="اول تواریخ" long="کتاب اول تواریخ" alt="" />
+  <book code="1CH" abbr="اول تواریخ" short="اول تواریخ" long="کتاب اول تواریخ" alt="" />
+  <book code="1CH" abbr="نسل سعیر‏" short="ل تواریخ‌ ‏‏‏)" long="ل تواریخ‌ ‏‏‏)" alt="" />
+  ‌<book code="1CH" abbr="اول تواریخ‌ ‏‏" short="اول تواریخ" long="کتاب اول تواریخ" alt="" />
+  ‌<book code="1CH" abbr="اول تواری ‏‏ ‏" short="اول تواریخ‌ ‏‏ ‏" long="کتاب اول تواریخ" alt="" />
+  ‌
+  ‌
+  <book code="2CH" abbr="دوم تواریخ" short="دوم تواریخ" long="کتاب دوم تواریخ" alt="" />
+  <book code="2CH" abbr="دوم تورایخ" short="دوم تواریخ" long="کتاب دوم تواریخ" alt="" /><!-- extra made to handle variations -->
+  اول تواریخ ‏‏ ‏
+
+  <book code="EZR" abbr="عزرا" short="عزرا" long="کتاب عزرا" alt="" />
+  <book code="NEH" abbr="نحمیا" short="نحمیا" long="کتاب نحمیا" alt="" />
+  <book code="EST" abbr="استر" short="استر" long="کتاب استر" alt="" />
+  <book code="JOB" abbr="ایّوب" short="ایّوب" long="کتاب ایّوب" alt="" />
+  <book code="PSA" abbr="مزامیر" short="مزامیر" long="کتاب مزامیر" alt="" />
+  <book code="PSA" abbr="‏‏‏مزمور ‏‏‏" short="مزامیر" long="کتاب مزامیر" alt="" /><!-- added to handle alternate ... this is the singular psalm -->
+  
+  
+  <book code="PRO" abbr="امثال" short="امثال" long="کتاب امثال سلیمان" alt="" />
+  <book code="ECC" abbr="جامعه" short="جامعه" long="کتاب جامعه" alt="" />
+  <book code="SNG" abbr="غزل غزلها" short="غزل غزلها" long="غزل غزلهای سلیمان" alt="" />
+  <book code="ISA" abbr="اشعیا" short="اشعیا" long="کتاب اشعیای نبی" alt="" />
+  <book code="JER" abbr="ارمیا" short="ارمیا" long="کتاب ارمیای نبی" alt="" />
+  <book code="LAM" abbr="سوگنامه" short="سوگنامه" long="سوگنامهٔ ارمیا" alt="" />
+  <book code="EZK" abbr="حزقیال" short="حزقیال" long="کتاب حزقیال نبی" alt="" />
+  <book code="DAN" abbr="دانیال" short="دانیال" long="کتاب دانیال" alt="" />
+  <book code="HOS" abbr="هوشع" short="هوشع" long="کتاب هوشع نبی" alt="" />
+  <book code="JOL" abbr="یوئیل" short="یوئیل" long="کتاب یوئیل نبی" alt="" />
+  <book code="AMO" abbr="عاموس" short="عاموس" long="کتاب عاموس" alt="" />
+  <book code="OBA" abbr="عوبدیا" short="عوبدیا" long="کتاب عوبدیای نبی" alt="" />
+  <book code="JON" abbr="یونس" short="یونس" long="کتاب یونس نبی" alt="" />
+  <book code="MIC" abbr="میکا" short="میکا" long="کتاب میکای نبی" alt="" />
+  <book code="NAM" abbr="ناحوم" short="ناحوم" long="کتاب ناحوم نبی" alt="" />
+  <book code="HAB" abbr="حبقوق" short="حبقوق" long="کتاب حبقوق نبی" alt="" />
+  <book code="ZEP" abbr="صَفَنیا" short="صَفَنیا" long="کتاب صَفَنیای نبی" alt="" />
+  <book code="HAG" abbr="حَجّای" short="حَجّای" long="کتاب حَجّای نبی" alt="" />
+  <book code="ZEC" abbr="زکریا" short="زکریا" long="کتاب زکریای نبی" alt="" />
+  <book code="MAL" abbr="ملاکی" short="ملاکی" long="کتاب ملاکی نبی" alt="" />
+  <book code="MAT" abbr="متّی" short="متّی" long="انجیل متّی" alt="" />
+  <book code="MRK" abbr="مرقس" short="مرقس" long="انجیل مَرقُس" alt="" />
+  <book code="LUK" abbr="لوقا" short="لوقا" long="انجیل لوقا" alt="" />
+  <book code="JHN" abbr="یوحنا" short="یوحنا" long="انجیل یوحنا" alt="" />
+  <book code="ACT" abbr="کارهای رسولان" short="کارهای رسولان" long="كارهای رسولان" alt="" />
+  <book code="ROM" abbr="رومیان" short="رومیان" long="نامهٔ پولس رسول به کلیسای شهر روم" alt="" />
+  <book code="1CO" abbr="اول قرنتیان" short="اول قرنتیان" long="نامهٔ اول پولس رسول به کلیسای شهر قرنتس" alt="" />
+  <book code="2CO" abbr="دوم قرنتیان" short="دوم قرنتیان" long="نامهٔ دوم پولس رسول به کلیسای شهر قرنتس" alt="" />
+  <book code="GAL" abbr="غلاطیان" short="غلاطیان" long="نامهٔ پولس رسول به کلیساهای استان غلاطیه" alt="" />
+  <book code="EPH" abbr="افسسیان" short="افسسیان" long="نامهٔ پولس رسول به کلیسای شهر افسس" alt="" />
+  <book code="PHP" abbr="فیلیپیان" short="فیلیپیان" long="نامهٔ پولس رسول به کلیسای شهر فیلپی" alt="" />
+  <book code="COL" abbr="کولسیان" short="کولسیان" long="نامهٔ پولس رسول به کلیسای شهر كولسیه" alt="" />
+  <book code="1TH" abbr="اول تسالونیکیان" short="اول تسالونیکیان" long="نامهٔ اول پولس رسول به کلیسای شهر تسالونیكی" alt="" />
+  <book code="2TH" abbr="دوم تسالونیکیان" short="دوم تسالونیکیان" long="نامهٔ دوم پولس رسول به کلیسای شهر تسالونیكی" alt="" />
+  <book code="1TI" abbr="اول تیموتاؤس" short="اول تیموتاؤس" long="نامهٔ اول پولس رسول به تیموتاؤس" alt="" />
+  <book code="2TI" abbr="دوم تیموتاؤس" short="دوم تیموتاؤس" long="نامهٔ دوم پولس رسول به تیموتاؤس" alt="" />
+  <book code="TIT" abbr="تیطُس" short="تیطُس" long="نامهٔ پولس رسول به تیطُس" alt="" />
+  <book code="PHM" abbr="فِلیمُون" short="فِلیمُون" long="نامهٔ پولس رسول به فِلیمُون" alt="" />
+  <book code="HEB" abbr="عبرانیان" short="عبرانیان" long="نامه‌ای به مسیحیان یهودی‌نژاد (عبرانیان)" alt="" />
+  <book code="JAS" abbr="یعقوب" short="یعقوب" long="نامهٔ یعقوب" alt="" />
+  <book code="1PE" abbr="اول پطرس" short="اول پطرس" long="نامهٔ اول پطرس رسول" alt="" />
+  <book code="2PE" abbr="دوم پطرس" short="دوم پطرس" long="نامهٔ دوم پطرس رسول" alt="" />
+  <book code="1JN" abbr="اول یوحنا" short="اول یوحنا" long="نامهٔ اول یوحنای رسول" alt="" />
+  <book code="2JN" abbr="دوم یوحنا" short="دوم یوحنا" long="نامهٔ دوم یوحنای رسول" alt="" />
+  <book code="3JN" abbr="سوم یوحنا" short="سوم یوحنا" long="نامهٔ سوم یوحنای رسول" alt="" />
+  <book code="JUD" abbr="یهودا" short="یهودا" long="نامهٔ یهودا" alt="" />
+  <book code="REV" abbr="مکاشفهٔ یوحنا" short="مکاشفهٔ یوحنا" long="مكاشفهٔ یوحنای رسول" alt="" />
+</BookNames>

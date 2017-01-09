@@ -1,0 +1,52 @@
+E:\Documents\source\prophero\usfx2mosis\bin\Release\usfx2mosis.exe
+E:\Documents\source\prophero\usfx2mosis\bin\Release\usfx2mosis.pdb
+E:\Documents\source\prophero\usfx2mosis\bin\Release\BibleFileLib.dll
+E:\Documents\source\prophero\usfx2mosis\obj\Release\usfx2mosis.csprojResolveAssemblyReference.cache
+E:\Documents\source\prophero\usfx2mosis\obj\Release\usfx2mosis.exe
+E:\Documents\source\prophero\usfx2mosis\obj\Release\usfx2mosis.pdb
+C:\e\Documents\source\prophero\usfx2mosis\bin\Release\usfx2mosis.exe
+C:\e\Documents\source\prophero\usfx2mosis\bin\Release\usfx2mosis.pdb
+C:\e\Documents\source\prophero\usfx2mosis\bin\Release\BibleFileLib.dll
+C:\e\Documents\source\prophero\usfx2mosis\obj\Release\usfx2mosis.exe
+C:\e\Documents\source\prophero\usfx2mosis\obj\Release\usfx2mosis.pdb
+C:\e\Documents\source\prophero\usfx2mosis\obj\Release\usfx2mosis.csprojResolveAssemblyReference.cache
+\\vmware-host\Shared Folders\Documents\source\prophero\usfx2mosis\bin\Release\usfx2mosis.exe
+\\vmware-host\Shared Folders\Documents\source\prophero\usfx2mosis\bin\Release\usfx2mosis.pdb
+\\vmware-host\Shared Folders\Documents\source\prophero\usfx2mosis\bin\Release\BibleFileLib.dll
+\\vmware-host\Shared Folders\Documents\source\prophero\usfx2mosis\obj\Release\usfx2mosis.exe
+\\vmware-host\Shared Folders\Documents\source\prophero\usfx2mosis\obj\Release\usfx2mosis.pdb
+C:\Users\MICHAEL\Documents\source\prophero\usfx2mosis\bin\Release\usfx2mosis.exe
+C:\Users\MICHAEL\Documents\source\prophero\usfx2mosis\bin\Release\usfx2mosis.pdb
+C:\Users\MICHAEL\Documents\source\prophero\usfx2mosis\bin\Release\BibleFileLib.dll
+C:\Users\MICHAEL\Documents\source\prophero\usfx2mosis\obj\Release\usfx2mosis.csprojResolveAssemblyReference.cache
+C:\Users\MICHAEL\Documents\source\prophero\usfx2mosis\obj\Release\usfx2mosis.exe
+C:\Users\MICHAEL\Documents\source\prophero\usfx2mosis\obj\Release\usfx2mosis.pdb
+C:\e\Documents\source\prophero\usfx2mosis\bin\Release\Newtonsoft.Json.dll
+C:\e\Documents\source\prophero\usfx2mosis\bin\Release\Newtonsoft.Json.xml
+\\vmware-host\Shared Folders\Documents\source\prophero\usfx2mosis\bin\Release\Newtonsoft.Json.dll
+\\vmware-host\Shared Folders\Documents\source\prophero\usfx2mosis\bin\Release\Newtonsoft.Json.xml
+C:\e\Documents\source\prophero\usfx2mosis\bin\Release\usfx2mosis.exe.config
+C:\e\Documents\source\prophero\usfx2mosis\bin\Release\ICSharpCode.SharpZipLib.dll
+\\vmware-host\Shared Folders\Documents\source\prophero\usfx2mosis\bin\Release\usfx2mosis.exe.config
+\\vmware-host\Shared Folders\Documents\source\prophero\usfx2mosis\bin\Release\ICSharpCode.SharpZipLib.dll
+Z:\Documents\source\prophero\usfx2mosis\bin\Release\usfx2mosis.exe.config
+Z:\Documents\source\prophero\usfx2mosis\bin\Release\usfx2mosis.exe
+Z:\Documents\source\prophero\usfx2mosis\bin\Release\usfx2mosis.pdb
+Z:\Documents\source\prophero\usfx2mosis\bin\Release\BibleFileLib.dll
+Z:\Documents\source\prophero\usfx2mosis\bin\Release\Newtonsoft.Json.dll
+Z:\Documents\source\prophero\usfx2mosis\bin\Release\ICSharpCode.SharpZipLib.dll
+Z:\Documents\source\prophero\usfx2mosis\bin\Release\Newtonsoft.Json.xml
+Z:\Documents\source\prophero\usfx2mosis\obj\Release\usfx2mosis.exe
+Z:\Documents\source\prophero\usfx2mosis\obj\Release\usfx2mosis.pdb
+\\vmware-host\Shared Folders\Documents\source\prophero\usfx2mosis\obj\Release\usfx2mosis.csprojResolveAssemblyReference.cache
+\\KMPJX\source\prophero\usfx2mosis\bin\Release\usfx2mosis.exe.config
+\\KMPJX\source\prophero\usfx2mosis\bin\Release\usfx2mosis.exe
+\\KMPJX\source\prophero\usfx2mosis\bin\Release\usfx2mosis.pdb
+\\KMPJX\source\prophero\usfx2mosis\bin\Release\BibleFileLib.dll
+\\KMPJX\source\prophero\usfx2mosis\bin\Release\Newtonsoft.Json.dll
+\\KMPJX\source\prophero\usfx2mosis\bin\Release\ICSharpCode.SharpZipLib.dll
+\\KMPJX\source\prophero\usfx2mosis\bin\Release\Newtonsoft.Json.xml
+\\KMPJX\source\prophero\usfx2mosis\obj\Release\usfx2mosis.csprojResolveAssemblyReference.cache
+\\KMPJX\source\prophero\usfx2mosis\obj\Release\usfx2mosis.exe
+\\KMPJX\source\prophero\usfx2mosis\obj\Release\usfx2mosis.pdb
+Z:\Documents\source\prophero\usfx2mosis\obj\Release\usfx2mosis.csprojResolveAssemblyReference.cache

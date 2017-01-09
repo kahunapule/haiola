@@ -1,0 +1,65 @@
+C:\source\hg\wordsend\usfx2usfm\bin\Release\usfx2usfm.exe
+C:\source\hg\wordsend\usfx2usfm\bin\Release\BibleFileLib.dll
+C:\source\hg\wordsend\usfx2usfm\obj\Release\ResolveAssemblyReference.cache
+C:\source\hg\wordsend\usfx2usfm\obj\Release\usfx2usfm.exe
+\\vmware-host\Shared Folders\Documents\source\wordsend\usfx2usfm\bin\Release\usfx2usfm.exe
+\\vmware-host\Shared Folders\Documents\source\wordsend\usfx2usfm\bin\Release\BibleFileLib.dll
+\\vmware-host\Shared Folders\Documents\source\wordsend\usfx2usfm\obj\Release\ResolveAssemblyReference.cache
+\\vmware-host\Shared Folders\Documents\source\wordsend\usfx2usfm\obj\Release\usfx2usfm.exe
+\\vmware-host\Shared Folders\Documents\source\wordsend\usfx2usfm\bin\Release\usfx2usfm.exe.config
+Z:\Documents\SugarSync\source\prophero\usfx2usfm\bin\Release\usfx2usfm.exe.config
+Z:\Documents\SugarSync\source\prophero\usfx2usfm\bin\Release\usfx2usfm.exe
+Z:\Documents\SugarSync\source\prophero\usfx2usfm\bin\Release\BibleFileLib.dll
+Z:\Documents\SugarSync\source\prophero\usfx2usfm\obj\Release\ResolveAssemblyReference.cache
+Z:\Documents\SugarSync\source\prophero\usfx2usfm\obj\Release\usfx2usfm.exe
+Z:\Documents\source\prophero\usfx2usfm\bin\Release\usfx2usfm.exe.config
+Z:\Documents\source\prophero\usfx2usfm\bin\Release\usfx2usfm.exe
+Z:\Documents\source\prophero\usfx2usfm\bin\Release\BibleFileLib.dll
+Z:\Documents\source\prophero\usfx2usfm\obj\Release\usfx2usfm.exe
+C:\Users\MICHAEL\Documents\source\prophero\usfx2usfm\bin\Release\usfx2usfm.exe.config
+C:\Users\MICHAEL\Documents\source\prophero\usfx2usfm\bin\Release\usfx2usfm.exe
+C:\Users\MICHAEL\Documents\source\prophero\usfx2usfm\bin\Release\BibleFileLib.dll
+C:\Users\MICHAEL\Documents\source\prophero\usfx2usfm\obj\Release\usfx2usfm.csprojResolveAssemblyReference.cache
+C:\Users\MICHAEL\Documents\source\prophero\usfx2usfm\obj\Release\usfx2usfm.exe
+\\vmware-host\Shared Folders\Documents\source\prophero\usfx2usfm\bin\Release\usfx2usfm.exe.config
+\\vmware-host\Shared Folders\Documents\source\prophero\usfx2usfm\bin\Release\usfx2usfm.exe
+\\vmware-host\Shared Folders\Documents\source\prophero\usfx2usfm\bin\Release\BibleFileLib.dll
+\\vmware-host\Shared Folders\Documents\source\prophero\usfx2usfm\obj\Release\usfx2usfm.exe
+C:\Users\MICHAEL\Documents\Dropbox\source\prophero\usfx2usfm\bin\Release\usfx2usfm.exe.config
+C:\Users\MICHAEL\Documents\Dropbox\source\prophero\usfx2usfm\bin\Release\usfx2usfm.exe
+C:\Users\MICHAEL\Documents\Dropbox\source\prophero\usfx2usfm\bin\Release\BibleFileLib.dll
+C:\Users\MICHAEL\Documents\Dropbox\source\prophero\usfx2usfm\obj\Release\usfx2usfm.csprojResolveAssemblyReference.cache
+C:\Users\MICHAEL\Documents\Dropbox\source\prophero\usfx2usfm\obj\Release\usfx2usfm.exe
+\\vmware-host\Shared Folders\Documents\Dropbox\source\prophero\usfx2usfm\bin\Release\usfx2usfm.exe.config
+\\vmware-host\Shared Folders\Documents\Dropbox\source\prophero\usfx2usfm\bin\Release\usfx2usfm.exe
+\\vmware-host\Shared Folders\Documents\Dropbox\source\prophero\usfx2usfm\bin\Release\BibleFileLib.dll
+\\vmware-host\Shared Folders\Documents\Dropbox\source\prophero\usfx2usfm\obj\Release\usfx2usfm.exe
+E:\Documents\source\prophero\usfx2usfm\bin\Release\usfx2usfm.exe.config
+E:\Documents\source\prophero\usfx2usfm\bin\Release\usfx2usfm.exe
+E:\Documents\source\prophero\usfx2usfm\bin\Release\BibleFileLib.dll
+E:\Documents\source\prophero\usfx2usfm\obj\Release\usfx2usfm.csprojResolveAssemblyReference.cache
+E:\Documents\source\prophero\usfx2usfm\obj\Release\usfx2usfm.exe
+C:\e\Documents\source\prophero\usfx2usfm\bin\Release\usfx2usfm.exe.config
+C:\e\Documents\source\prophero\usfx2usfm\bin\Release\usfx2usfm.exe
+C:\e\Documents\source\prophero\usfx2usfm\bin\Release\BibleFileLib.dll
+C:\e\Documents\source\prophero\usfx2usfm\obj\Release\usfx2usfm.exe
+C:\e\Documents\source\prophero\usfx2usfm\bin\Release\Newtonsoft.Json.dll
+C:\e\Documents\source\prophero\usfx2usfm\bin\Release\Newtonsoft.Json.xml
+\\vmware-host\Shared Folders\Documents\source\prophero\usfx2usfm\bin\Release\Newtonsoft.Json.dll
+\\vmware-host\Shared Folders\Documents\source\prophero\usfx2usfm\bin\Release\Newtonsoft.Json.xml
+C:\e\Documents\source\prophero\usfx2usfm\bin\Release\ICSharpCode.SharpZipLib.dll
+\\vmware-host\Shared Folders\Documents\source\prophero\usfx2usfm\bin\Release\ICSharpCode.SharpZipLib.dll
+C:\e\Documents\source\prophero\usfx2usfm\obj\Release\usfx2usfm.csprojResolveAssemblyReference.cache
+Z:\Documents\source\prophero\usfx2usfm\bin\Release\Newtonsoft.Json.dll
+Z:\Documents\source\prophero\usfx2usfm\bin\Release\ICSharpCode.SharpZipLib.dll
+Z:\Documents\source\prophero\usfx2usfm\bin\Release\Newtonsoft.Json.xml
+Z:\Documents\source\prophero\usfx2usfm\obj\Release\usfx2usfm.csprojResolveAssemblyReference.cache
+\\vmware-host\Shared Folders\Documents\source\prophero\usfx2usfm\obj\Release\usfx2usfm.csprojResolveAssemblyReference.cache
+\\KMPJX\source\prophero\usfx2usfm\bin\Release\usfx2usfm.exe.config
+\\KMPJX\source\prophero\usfx2usfm\bin\Release\usfx2usfm.exe
+\\KMPJX\source\prophero\usfx2usfm\bin\Release\BibleFileLib.dll
+\\KMPJX\source\prophero\usfx2usfm\bin\Release\Newtonsoft.Json.dll
+\\KMPJX\source\prophero\usfx2usfm\bin\Release\ICSharpCode.SharpZipLib.dll
+\\KMPJX\source\prophero\usfx2usfm\bin\Release\Newtonsoft.Json.xml
+\\KMPJX\source\prophero\usfx2usfm\obj\Release\usfx2usfm.csprojResolveAssemblyReference.cache
+\\KMPJX\source\prophero\usfx2usfm\obj\Release\usfx2usfm.exe

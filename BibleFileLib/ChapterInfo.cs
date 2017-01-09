@@ -12,8 +12,10 @@ using System.Diagnostics;
 
 namespace WordSend
 {
+
     public class ChapterInfo
     {
+        public const int MAXNUMVERSES = 301;    // Maximum number of verses in a chapter + 1; larger number allows for non-Scripture texts in "extra" books
         public int chapterInteger; // Chapter number as an integer
         public string actual;  // Monotonically increasing integer as a string
         public string published;   // Published chapter number/name
@@ -22,6 +24,22 @@ namespace WordSend
         public string alternate;    // Alternate chapter number
         public int maxVerse;    // Highest verse number actually found in the chapter
         public int verseCount;  // Number of verse markers actually found
+        public VerseInfo[] verses = new VerseInfo[MAXNUMVERSES];
         public BibleBookRecord bookRecord; // Pointer to information about the book this chapter resides in.
+    }
+
+    public class VerseInfo
+    {
+        public int startVerse;  // First or only verse of verse range
+        public int endVerse;    // Last or only verse of verse range
+        public string verse;    // String verse as given in verse marker
+    }
+
+    public class BCVInfo
+    {
+        public bool exists;
+        public BibleBookRecord bkInfo;
+        public ChapterInfo chapInfo;
+        public VerseInfo vsInfo;
     }
 }

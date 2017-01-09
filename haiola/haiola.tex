@@ -1,0 +1,257 @@
+\HeaderFont
+\pagestyle{myheadings}
+\makeatletter
+\def\@evenhead{}%
+\def\@oddhead{}%
+\renewcommand\tableofcontents{\@starttoc{toc}}
+\makeatother
+\linespread{0.75}
+\sloppy\hyphenpenalty=2000
+\renewcommand{\thepage}{\HeaderFont\arabic{page}}
+\renewcommand\thesection{}
+\makeatletter
+\renewcommand{\@makefnmark}{\hbox{\raisebox{2pt}{\FnMarkFont{\@thefnmark}}}}
+\makeatother
+\newcommand{\ParIndent}{1em}
+\newcommand{\IndentA}{2em}
+\newcommand{\IndentB}{3em}
+\newcommand{\IndentC}{4em}
+\newcommand{\IndentD}{5em}
+\newcommand{\IndentE}{6em}
+\newcommand{\ThisFont}{\ScriptureFontFace}
+\newcommand{\GRC}{\renewcommand{\ThisFont}{Gentium Plus}\SetFont}
+\newcommand{\HEB}{\renewcommand{\ThisFont}{Ezra SIL}\SetFont}
+\newcommand{\LatinFont}{\renewcommand{\ThisFont}{FreeSerif}\SetFont}
+\newcommand{\ChineseFont}{\renewcommand{\ThisFont}{Bitstream Cyberbit}\SetFont}
+\newcommand{\GentiumFont}{\renewcommand{\ThisFont}{Gentium Plus}\SetFont}
+\newcommand{\SymbolFont}{\renewcommand{\ThisFont}{FreeSerif}\SetFont}
+\newcommand{\Bold}{}
+\newcommand{\Italicize}{}
+\newcommand{\FontSize}{\TextSize}
+\newcommand{\FontColor}{\TextColor}
+\newcommand{\SMCP}{-smcp}
+\newcommand{\SmallCaps}{\renewcommand{\SMCP}{,+smcp}}
+\newcommand{\NormalCaps}{\renewcommand{\SMCP}{,-smcp}}
+\newcommand{\SetFont}{\font\Z="\ThisFont\Bold\Italicize \FontColor\SMCP" at \FontSize \Z }
+\newcommand{\ITB}{\renewcommand{\Italicize}{/I}\SetFont}
+\newcommand{\ITE}{\renewcommand{\Italicize}{}\SetFont}
+\newcommand{\BDB}{\renewcommand{\Bold}{/B}\SetFont}
+\newcommand{\BDE}{\renewcommand{\Bold}{}\SetFont}
+\newcommand{\Red}{\renewcommand{\FontColor}{\WJColor}\SetFont}
+\newcommand{\Black}{\renewcommand{\FontColor}{\TextColor}\SetFont}
+\newcommand{\Blue}{\renewcommand{\FontColor}{\IntroColor}\SetFont}
+\newcommand{\NormalFont}{\renewcommand{\ThisFont}{\ScriptureFontFace}\renewcommand{\Bold}{}\renewcommand{\Italicize}{}\renewcommand{\FontSize}{\TextSize}\Black}
+\NormalFont
+\setDefaultTransitions{\NormalFont}{}
+\setTransitionsForSymbols{\SymbolFont}{}
+\setTransitionsForChinese{\ChineseFont}{}
+\setTransitionsForCJK{\ChineseFont}{}
+\setTransitionsForCyrillics{\GentiumFont}{}
+\setTransitionsForGreek{\GRC}{}
+\setTransitionTo{Arabic}{\NormalFont}
+\setTransitionTo{ArabicExtendedA}{\NormalFont}
+\setTransitionTo{ArabicPresentationFormsA}{\NormalFont}
+\setTransitionTo{ArabicPresentationFormsB}{\NormalFont}
+\setTransitionTo{ArabicSupplement}{\NormalFont}
+\setTransitionTo{ArabicMathematicalAlphabeticSymbols}{\NormalFont}
+\setTransitionTo{Armenian}{\SymbolFont}
+\setTransitionTo{Arrows}{\SymbolFont}
+\setTransitionTo{BasicLatin}{\GentiumFont}
+\setTransitionTo{Coptic}{\renewcommand{\ThisFont}{New Athena Unicode}\SetFont}
+\setTransitionTo{CopticEpactNumbers}{\renewcommand{\ThisFont}{New Athena Unicode}\SetFont}
+\setTransitionTo{Bengali}{\renewcommand{\ThisFont}{Mukti}\SetFont}
+\setTransitionTo{GeneralPunctuation}{\GentiumFont}
+\setTransitionTo{Gujarati}{\renewcommand{\ThisFont}{Rekha}\SetFont}
+\setTransitionTo{Devanagari}{\renewcommand{\ThisFont}{Annapurna SIL}\SetFont}
+\setTransitionTo{Dingbats}{\ITE\SymbolFont}
+\setTransitionTo{Ethiopic}{\renewcommand{\ThisFont}{Abyssinica SIL}\SetFont}
+\setTransitionTo{EthiopicExtended}{\renewcommand{\ThisFont}{Abyssinica SIL}\SetFont}
+\setTransitionTo{EthiopicExtendedA}{\renewcommand{\ThisFont}{Abyssinica SIL}\SetFont}
+\setTransitionTo{EthiopicSupplement}{\renewcommand{\ThisFont}{Abyssinica SIL}\SetFont}
+\setTransitionTo{Hebrew}{\HEB}
+\setTransitionTo{Kannada}{\renewcommand{\ThisFont}{Akshar Unicode}\SetFont}
+\setTransitionTo{Khmer}{\renewcommand{\ThisFont}{Hanuman}\SetFont}
+\setTransitionTo{KhmerSymbols}{\renewcommand{\ThisFont}{Hanuman}\SetFont}
+\setTransitionTo{LatinExtendedA}{\GentiumFont}
+\setTransitionTo{LatinExtendedB}{\GentiumFont}
+\setTransitionTo{LatinExtendedC}{\GentiumFont}
+\setTransitionTo{LatinExtendedD}{\GentiumFont}
+\setTransitionTo{LatinExtendedE}{\GentiumFont}
+\setTransitionTo{LatinSupplement}{\GentiumFont}
+\setTransitionTo{LetterlikeSymbols}{\SymbolFont}
+\setTransitionTo{Limbu}{\renewcommand{\ThisFont}{Namdhinggo SIL}\SetFont}
+\setTransitionTo{MiscellaneousTechnical}{\SymbolFont}
+\setTransitionTo{MiscellaneousSymbols}{\SymbolFont}
+\setTransitionTo{MiscellaneousSymbolsAndArrows}{\SymbolFont}
+\setTransitionTo{MiscellaneousSymbolsAndPictographs}{\SymbolFont}
+\setTransitionTo{Mynmar}{\renewcommand{\ThisFont}{Padauk}\SetFont}
+\setTransitionTo{MynmarExtendedA}{\renewcommand{\ThisFont}{Padauk}\SetFont}
+\setTransitionTo{MynmarExtendedB}{\renewcommand{\ThisFont}{Padauk}\SetFont}
+\setTransitionTo{Syriac}{\renewcommand{\ThisFont}{Estrangelo Edessa}\SetFont}
+\setTransitionTo{Tamil}{\renewcommand{\ThisFont}{Uni Ila.Sundaram-08}\SetFont}
+\setTransitionTo{Telugu}{\renewcommand{\ThisFont}{Akshar Unicode}\SetFont}
+\setTransitionTo{Thai}{\renewcommand{\ThisFont}{Noto Serif Thai}\SetFont}
+\renewcommand{\cfttoctitlefont}{\font\Z="\OtherFontFace:color="000000" at \MTBSize \Z }
+\renewcommand{\cftchapfont}{\font\Z="\OtherFontFace:color="000000" at \TextSize \Z }
+\renewcommand{\cftsecfont}{\font\Z="\OtherFontFace:color="000000" at \TextSize \Z }
+\renewcommand{\cftchappagefont}{\font\Z="\OtherFontFace:color="000000" at \TextSize \Z }
+\renewcommand{\cftsecpagefont}{\font\Z="\OtherFontFace:color="000000" at \TextSize \Z }
+\newcommand{\ShortTitle}[1]{\vfill\eject\clearpage\par\def\webbook{#1}\setcounter{footnote}{0}\def\webchap{}\section[#1]{ }}
+\newcommand{\PeriphTitle}[1]{\vfill\eject\clearpage\par\def\webbook{#1}\setcounter{footnote}{0}\def\webchap{}\markboth{\HeaderFont\webbook}{\HeaderFont\webbook}\NormalFont}
+\newcommand{\PsalmChap}[1]{{\vspace{1.5ex plus 3ex}\centering\renewcommand{\FontSize}{\MTSize}\BDB\parindent=0mm #1\nopagebreak\par}\def\webchap{#1:}}
+\newcommand{\PoetryChap}[1]{{\vspace{1.5ex plus 3ex}\centering\renewcommand{\FontSize}{\MTSize}\BDB\parindent=0mm #1\nopagebreak\par}\def\webchap{#1:}}
+\newcommand{\Chap}[1]{{\vspace{1.5ex plus 3ex}\centering\renewcommand{\FontSize}{\MTSize}\BDB\parindent=0mm #1\nopagebreak\par}\def\webchap{#1:}\nopagebreak}
+\newcommand{\OneChap}{\vspace{1.5ex plus 3ex}\def\webchap{}}
+\newcommand{\ChapOne}[1]{\vspace{1.5ex plus 3ex}\def\webchap{#1:}}
+\newcommand{\VS}[1]{{\renewcommand{\FontSize}{\VerseFontSize}\Blue{\raisebox{\RaiseVerse}{#1}~}}\markboth{\HeaderFont\webbook\ \webchap #1}{\HeaderFont\webbook\ \webchap #1}\NormalFont}	% Verse number
+\newcommand{\VP}[1]{{\renewcommand{\FontSize}{\VerseFontSize}\Blue{\raisebox{\RaiseVerse}{(#1)}~}}\NormalFont}	% Verse number published
+\newcommand{\VA}[1]{{\renewcommand{\FontSize}{\VerseFontSize}\Blue{\raisebox{\RaiseVerse}{[#1]}~}}\NormalFont}	% Alternate verse number
+\newcommand{\FV}[1]{{\renewcommand{\FontSize}{\VerseFontSize}\Blue{\raisebox{\RaiseVerse}{#1}~}}\NormalFont}	% Verse number in footnote
+\newcommand{\FM}{\renewcommand{\FontSize}{\VerseFontSize}\Blue\raisebox{\RaiseVerse}}	% Extra footnote marker
+\newcommand{\VerseOne}[1]{\VS{#1}}
+\newcommand{\PPE}{\par\parindent=\ParIndent}
+\newcommand{\CAPT}{\parindent=0mm\hangindent=0mm\renewcommand{\FontSize}{\FnSize}\Blue}
+\newcommand{\CAPTCOPR}{\parindent=0mm\hangindent=0mm\renewcommand{\FontSize}{6pt}\Blue}
+\newcommand{\CAPTREF}{\parindent=0mm\hangindent=0mm\renewcommand{\FontSize}{\FnSize}\renewcommand{\Italicize}{/I}\Blue}
+\newcommand{\Q}{\vspace{0ex plus 1ex}\par\parindent=0mm\hangafter=1\hangindent=\IndentB\NormalFont}
+\newcommand{\QB}{\par\parindent=\IndentA\hangafter=1\hangindent=\IndentB\NormalFont}
+\newcommand{\QC}{\par\parindent=\IndentC\hangafter=1\hangindent=\IndentD\NormalFont}
+\newcommand{\QD}{\par\parindent=\IndentD\hangafter=1\hangindent=\IndentE\NormalFont}
+\newcommand{\QM}{\vspace{0ex plus 1ex}\par\parindent=\ParIndent\hangafter=1\hangindent=\IndentC\NormalFont}
+\newcommand{\QMB}{\par\parindent=\IndentB\hangafter=1\hangindent=\IndentC\NormalFont}
+\newcommand{\QMC}{\par\parindent=\IndentD\hangafter=1\hangindent=\IndentD\NormalFont}
+\newcommand{\PP}{\vspace{0ex plus 1ex}\parindent=\ParIndent\Black}
+\newcommand{\MM}{\parindent=0mm\Black}
+\newcommand{\D}{\parindent=0mm\NormalFont\nopagebreak[3]}
+\newcommand{\MI}{\parindent=\ParIndent\hangafter=1\hangindent=\ParIndent\Black}
+\newcommand{\IMI}{\parindent=\ParIndent\hangafter=1\hangindent=\ParIndent\Blue}
+\newcommand{\PC}{\parindent=0mm\centering\Black}
+\newcommand{\QA}{\parindent=0mm\centering\renewcommand{\Italicize}{/I}\Blue}
+\newcommand{\PI}{\parindent=\IndentA\hangafter=1\hangindent=\ParIndent\Black}
+\newcommand{\PIB}{\parindent=\IndentB\hangafter=1\hangindent=\IndentA\Black}
+\newcommand{\PIC}{\parindent=\IndentC\hangafter=1\hangindent=\IndentB\Black}
+\newcommand{\PMO}{\PI}
+\newcommand{\PM}{\PI}
+\newcommand{\PMC}{\PI}
+\newcommand{\PMR}{\Black\raggedleft}
+\newcommand{\PR}{\PMR}
+\newcommand{\QR}{\PMR}
+\newcommand{\CLS}{\PMR}
+\newcommand{\LI}{\parindent=\ParIndent\hangafter=1\hangindent=\IndentA\Black}
+\newcommand{\LIB}{\parindent=\IndentA\hangafter=1\hangindent=\IndentB\Black}
+\newcommand{\LIC}{\parindent=\IndentB\hangafter=1\hangindent=\IndentC\Black}
+\newcommand{\LID}{\parindent=\IndentC\hangafter=1\hangindent=\IndentD\Black}
+\newcommand{\PH}{\LI}
+\newcommand{\PHB}{\LIB}
+\newcommand{\PHC}{\LIC}
+\newcommand{\LBR}{\\}
+\newcommand{\FTST}{}
+\newcommand{\FNSymbol}{*}
+\newcommand{\FTNT}[2]{\renewcommand{\FNSymbol}{{#1}}\footnote{\renewcommand{\ThisFont}{\OtherFontFace}\renewcommand{\FontSize}{\FnSize}\renewcommand{\Bold}{}\renewcommand{\Italicize}{}\Blue #2}}
+\newcommand{\XREF}[2]{\renewcommand{\FNSymbol}{{#1}}\footnote{\renewcommand{\ThisFont}{\OtherFontFace}\renewcommand{\FontSize}{\FnSize}\renewcommand{\Bold}{}\renewcommand{\Italicize}{}\Blue #2}}
+\newcommand{\FT}{\renewcommand{\ThisFont}{\OtherFontFace}\renewcommand{\FontSize}{\FnSize}\renewcommand{\Bold}{}\renewcommand{\Italicize}{}\Blue}
+\renewcommand{\thefootnote}{\FNSymbol}
+\newcommand{\FR}{\BDB}
+\newcommand{\XO}{\BDB}
+\newcommand{\WJ}{\Red}
+\newcommand{\PsalmBookTitle}[1]{\goodbreak\bigskip{\Large\hangindent=0mm\parindent=0mm\textsf #1}\nobreak\nopagebreak[3]}
+\newcommand{\PsalmTitle}[1]{\nopagebreak{\medskip\hangindent=0mm\parindent=5mm #1\nobreak\par\nobreak\medskip\nopagebreak[3]}}
+\newcommand{\Speaker}[1]{#1}
+\newcommand{\MT}{\renewcommand{\FontSize}{\MTSize}\renewcommand{\Bold}{/B}\Black\parindent=0mm\centering\nopagebreak[3]}
+\newcommand{\MTB}{\renewcommand{\FontSize}{\MTBSize}\renewcommand{\Bold}{/B}\Black\parindent=0mm\centering\nopagebreak[3]}
+\newcommand{\MTC}{\renewcommand{\FontSize}{\MTCSize}\renewcommand{\Bold}{/B}\Black\parindent=0mm\centering\nopagebreak[3]}
+\newcommand{\MTE}{\MT}
+\newcommand{\MTEB}{\MTB}
+\newcommand{\MTEC}{\MTC}
+\newcommand{\IMT}{\renewcommand{\FontSize}{\MTSize}\renewcommand{\Bold}{/B}\Blue\parindent=0mm\centering\nopagebreak[3]}
+\newcommand{\IMTB}{\renewcommand{\FontSize}{\MTBSize}\renewcommand{\Bold}{/B}\Blue\parindent=0mm\centering\nopagebreak[3]}
+\newcommand{\IMTC}{\renewcommand{\FontSize}{\MTCSize}\renewcommand{\Bold}{/B}\Blue\parindent=0mm\centering\nopagebreak[3]}
+\newcommand{\IMTD}{\renewcommand{\FontSize}{\MTDSize}\renewcommand{\Bold}{/B}\Blue\parindent=0mm\centering\nopagebreak[3]}
+\newcommand{\MR}{\renewcommand{\FontColor}{\IntroColor}\ITB}
+\newcommand{\SR}{\MR\nopagebreak[4]}
+\newcommand{\R}{\MR\nopagebreak[4]}
+\newcommand{\MS}{\renewcommand{\FontSize}{\MTBSize}\renewcommand{\Bold}{/B}\Blue\parindent=0mm\centering}
+\newcommand{\MSB}{\renewcommand{\FontSize}{\MTCSize}\renewcommand{\Bold}{/B}\Blue\parindent=0mm\centering}
+\newcommand{\MSC}{\renewcommand{\FontSize}{\MTCSize}\renewcommand{\Bold}{}\Blue\parindent=0mm\centering}
+\newcommand{\BB}{\NormalFont\vspace{2ex}}
+\newcommand{\IB}{\Blue}
+\newcommand{\QS}{\hfill }
+\newcommand{\SP}{\parindent=0mm\Blue\ITB\nopagebreak[3] }
+\newcommand{\SH}{\vspace{1ex plus 4ex}\renewcommand{\FontColor}{\IntroColor}\ITB\nopagebreak[4]}
+\newcommand{\SHB}{\vspace{1ex plus 4ex}\renewcommand{\FontColor}{\IntroColor}\ITB\nopagebreak[3]}
+\newcommand{\SHC}{\SHB\nopagebreak[3]}
+\newcommand{\SHD}{\SHB\nopagebreak[3]}
+\newcommand{\IS}{\SH}
+\newcommand{\ISB}{\SH}
+\newcommand{\ISC}{\SH}
+\newcommand{\ISD}{\SH}
+\newcommand{\IP}{\vspace{0ex plus 1ex}\parindent=\ParIndent\Blue}
+\newcommand{\IPI}{\parindent=\IndentA\hangafter=1\hangindent=\ParIndent\Blue}
+\newcommand{\IPQ}{\parindent=\IndentA\hangindent=\ParIndent\Blue}
+\newcommand{\IM}{\parindent=0mm\Blue}
+\newcommand{\IMQ}{\parindent=\ParIndent\hangindent=\ParIndent\Blue}
+\newcommand{\TINY}{\parindent=0mm\renewcommand{\ThisFont}{\OtherFontFace}\renewcommand{\FontSize}{\TinyFontSize}\Blue}
+\newcommand{\TINYLI}{\parindent=\ParIndent\hangafter=1\hangindent=\IndentA\renewcommand{\ThisFont}{\OtherFontFace}\renewcommand{\FontSize}{\TinyFontSize}\Blue}
+\newcommand{\TINYIMT}{\renewcommand{\FontSize}{12pt}\renewcommand{\Bold}{/B}\Blue\parindent=0mm\centering}
+\newcommand{\TINYIMTB}{\renewcommand{\FontSize}{10pt}\renewcommand{\Bold}{/B}\Blue\parindent=0mm\centering}
+\newcommand{\TINYIMTC}{\renewcommand{\FontSize}{8pt}\renewcommand{\Bold}{/B}\Blue\parindent=0mm\centering}
+\newcommand{\TINYIMTD}{\renewcommand{\FontSize}{\TinyFontSize}\renewcommand{\Bold}{/B}\Blue\parindent=0mm\centering}
+\newcommand{\IPR}{\Blue\raggedleft}
+\newcommand{\IQ}{\par\parindent=0mm\hangafter=1\hangindent=\IndentB\Blue}
+\newcommand{\IQB}{\par\parindent=\IndentA\hangafter=1\hangindent=\IndentB\Blue}
+\newcommand{\IQC}{\par\parindent=\IndentC\hangafter=1\hangindent=\IndentD\Blue}
+\newcommand{\ILI}{\parindent=\ParIndent\hangindent=\IndentA\Blue}
+\newcommand{\ILIB}{\parindent=\IndentA\hangindent=\IndentB\Blue}
+\newcommand{\ILIC}{\parindent=\IndentB\hangindent=\IndentC\Blue}
+\newcommand{\ILID}{\parindent=\IndentB\hangindent=\IndentD\Blue}
+\newcommand{\IOT}{\parindent=0mm\renewcommand{\FontColor}{\IntroColor}\BDB}
+\newcommand{\IO}{\parindent=\ParIndent\hangindent=\IndentA\Blue}
+\newcommand{\IOB}{\parindent=\IndentA\hangindent=\IndentB\Blue}
+\newcommand{\IOC}{\parindent=\IndentB\hangindent=\IndentC\Blue}
+\newcommand{\IOD}{\parindent=\IndentC\hangindent=\IndentD\Blue}
+\newcommand{\IOR}{\ITB}
+\newcommand{\IEX}{\parindent=\ParIndent\Blue}
+\newcommand{\CD}{\IEX}
+\newcommand{\IQT}{\ITB}
+\newcommand{\IMTE}{\IMT}
+\newcommand{\IMTEB}{\IMTB}
+\newcommand{\IMTEC}{\IMTC}
+\newcommand{\IE}{\Black}
+\newcommand{\QAC}{\ITB}
+\newcommand{\FK}{\BDB}
+\newcommand{\XK}{\FK}
+\newcommand{\FQ}{\ITB}
+\newcommand{\XQ}{\FQ}
+\newcommand{\XT}{\FT}
+\newcommand{\FQA}{\ITB}
+\newcommand{\FL}{\ITB}
+\newcommand{\FP}{\par}
+\newcommand{\FDC}{}
+\newcommand{\XOT}{}
+\newcommand{\XNT}{}
+\newcommand{\XDC}{}
+\newcommand{\RQ}{\hfill\Blue\ITB}
+\newcommand{\ADD}{\ITB}
+\newcommand{\BK}{\ITB}
+\newcommand{\DC}{}
+\newcommand{\K}[1]{\markboth{\HeaderFont\webbook\ #1}{\HeaderFont\webbook\ #1}\NormalFont\BDB #1}
+\newcommand{\LIT}{\RQ}
+\newcommand{\ND}{\SmallCaps}
+\newcommand{\ORD}[1]{$^#1$}
+\newcommand{\SLS}{\ITB}
+\newcommand{\TL}{\ITB}
+\newcommand{\EM}{\BDB}
+\newcommand{\IT}{\ITB}
+\newcommand{\BDIT}{\BDB\IT}
+\newcommand{\NO}{\NormalFont}
+\newcommand{\SC}{\SmallCaps}
+\newcommand{\PN}{\underline}
+\newcommand{\QT}{\ITB}
+\newcommand{\SIG}{\ITB}
+\newcommand{\BD}{\BDB}
+\newcommand{\NDX}{}
+\newcommand{\PRO}{}
+\newcommand{\W}{}
+\newcommand{\WG}{}
+\newcommand{\WH}{}
+\newcommand{\HR}{\par \hrulefill }

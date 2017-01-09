@@ -18,6 +18,7 @@
 							<xs:element name="sortOrder" type="xs:integer"/>
 							<xs:element name="numChapters" type="xs:integer"/>
 							<xs:element name="shortCode" type="xs:string"/>
+							<xs:element minOccurs="0" name="bibleworksCode" type="xs:string"/>
 						</xs:sequence>
 						<xs:attribute name="testament" type="xs:string" use="optional"/>
 					</xs:complexType>

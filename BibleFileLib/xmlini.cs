@@ -20,78 +20,100 @@ namespace WordSend
 		private string fileName;
 		private Hashtable hashTbl;
 
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
-		/// Initializes a new instance of the <see cref="XMLini"/> class.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		public XMLini(string iniName)
-		{
-			XmlTextReader xml = null;
-			hashTbl = new Hashtable();
+        private bool ReadIniFile(string fName)
+        {
+            XmlTextReader xml = null;
+            string k = null;
+            string v = null;
+            string elementName = null;
+            bool result = false;
 
-			string k = null;
-			string v = null;
-			string elementName = null;
-			
+            if (!File.Exists(fName))
+                return false;
+            try
+            {
+                xml = new XmlTextReader(fName);
+                xml.WhitespaceHandling = WhitespaceHandling.None;
+                xml.MoveToContent();
+                while (xml.Read())
+                {
+                    switch (xml.NodeType)
+                    {
+                        case XmlNodeType.Element:
+                            elementName = xml.Name;
+                            if (elementName == "entry")
+                            {
+                                k = v = "";
+                            }
+                            break;
+                        case XmlNodeType.Text:
+                            if (elementName == "key")
+                                k += xml.Value;
+                            else if (elementName == "value")
+                                v += xml.Value;
+                            break;
+                        case XmlNodeType.EntityReference:
+                            if (elementName == "key")
+                                k += xml.Value;
+                            else if (elementName == "value")
+                                v += xml.Value;
+                            break;
+                        case XmlNodeType.EndElement:
+                            if (xml.Name == "entry")
+                                hashTbl[k] = v;
+                            break;
+                    }
+                }
+                result = true;
+            }
+            catch
+            {
+                Logit.WriteError("Bad input format in file " + fName + "; using defaults.");
+            }
+            finally
+            {
+                if (xml != null)
+                    xml.Close();
+            }
+            return result;
+        }
+
+        /// -----------------------------------------------------------------------------------
+        /// <summary>
+        /// Initializes a new instance of the <see cref="XMLini"/> class.
+        /// </summary>
+        /// -----------------------------------------------------------------------------------
+        public XMLini(string iniName)
+		{
+			hashTbl = new Hashtable();
+            string bakName = Path.ChangeExtension(iniName, ".bak");
 			string dirName = Path.GetDirectoryName(iniName);
-            if (!Directory.Exists(dirName))
+            if ((!String.IsNullOrEmpty(dirName)) && (!Directory.Exists(dirName)))
                 Directory.CreateDirectory(dirName);
 
             // Open the named XML file and read in all entries into keys and values
 			// arrays.
-			fileName = iniName;			
-			if (File.Exists(fileName))
-			{
-				try
-				{
-					xml = new XmlTextReader(fileName);
-					xml.WhitespaceHandling = WhitespaceHandling.None;
-					xml.MoveToContent();
-                    try
+			fileName = iniName;
+            
+            if (File.Exists(fileName))
+            {
+                if (!ReadIniFile(fileName))
+                {
+                    System.Threading.Thread.Sleep(1000);
+                    hashTbl = new Hashtable();
+                    if (!ReadIniFile(fileName))
                     {
-                        while (xml.Read())
-                        {
-                            switch (xml.NodeType)
-                            {
-                                case XmlNodeType.Element:
-                                    elementName = xml.Name;
-                                    if (elementName == "entry")
-                                    {
-                                        k = v = "";
-                                    }
-                                    break;
-                                case XmlNodeType.Text:
-                                    if (elementName == "key")
-                                        k += xml.Value;
-                                    else if (elementName == "value")
-                                        v += xml.Value;
-                                    break;
-                                case XmlNodeType.EntityReference:
-                                    if (elementName == "key")
-                                        k += xml.Value;
-                                    else if (elementName == "value")
-                                        v += xml.Value;
-                                    break;
-                                case XmlNodeType.EndElement:
-                                    if (xml.Name == "entry")
-                                        hashTbl[k] = v;
-                                    break;
-                            }
-                        }
+                        hashTbl = new Hashtable();
+                        ReadIniFile(bakName);
                     }
-                    catch
-                    {
-                        Logit.WriteError("Bad input format in file " + fileName + "; using defaults.");
-                    }
-				}
-				finally
-				{
-					if (xml != null)
-						xml.Close();
-				}
-			}
+                }
+            }
+            else if (File.Exists(bakName))
+            {
+                ReadIniFile(bakName);
+            }
 		}
+
         /// <summary>
         /// Using ~ as an escape character, ensure the output string has no less than, greater than, or ampersand characters
         /// in a reversible way. Expands the string when any of those 4 characters are in it.
@@ -102,7 +124,8 @@ namespace WordSend
         {
             if ((s == null) || (s == String.Empty))
                 return String.Empty;
-            string result = s.Replace("~", "~~");
+            string result = fileHelper.fromPUA(s);
+            result = result.Replace("~", "~~");
             result = result.Replace("<", "~l");
             result = result.Replace(">", "~g");
             result = result.Replace("&", "~a");
@@ -118,7 +141,8 @@ namespace WordSend
         {
             if ((s == null) || (s == String.Empty))
                 return s;
-            string result = s.Replace("~a", "&");
+            string result = fileHelper.fromPUA(s);
+            result = result.Replace("~a", "&");
             result = result.Replace("~g", ">");
             result = result.Replace("~l", "<");
             result = result.Replace("~~", "~");
@@ -257,14 +281,18 @@ namespace WordSend
         {
             XmlTextWriter xml = null;
             bool result = false;
+            string bakFileName = Path.ChangeExtension(fileName, "bak");
             try
             {
+                if (File.Exists(bakFileName))
+                    File.Delete(bakFileName);
+                if (File.Exists(fileName))
+                    File.Move(fileName, bakFileName);
                 try
                 {
                     xml = new XmlTextWriter(fileName, System.Text.Encoding.UTF8);
                     xml.WriteStartDocument();
                     xml.Formatting = Formatting.Indented;
-                    xml.WriteDocType("ini", null, null/* "ini.dtd" */, null);
                     xml.WriteStartElement("ini");
 
                     IDictionaryEnumerator enu = hashTbl.GetEnumerator();

@@ -82,6 +82,7 @@ namespace phrasetrans
         protected string currentBook = String.Empty;
         protected string currentChapter = "0";
         protected string currentVerse = "0";
+        public bool isPohnpeianUpdate = false;
 
 
         /// <summary>
@@ -161,7 +162,15 @@ namespace phrasetrans
                 }
             }
             charsRead += sb.Length;
-            return sb.ToString();
+            s = sb.ToString();
+            if (isPohnpeianUpdate)
+            {
+                if (!(s.StartsWith("<") || s.StartsWith("&")))
+                {
+                    s = s.Replace('j', 's').Replace('J', 'S');
+                }
+            }
+            return s;
         }
 
         public void filter(string inFileName, string outFileName, string transFileName)
@@ -309,9 +318,16 @@ namespace phrasetrans
         static transPhrases tp;
         static void Main(string[] args)
         {
-            if (args.Length == 3)
+            if (args.Length >= 3)
             {
                 tp = new transPhrases();
+                if (args.Length == 4)
+                {
+                    if (args[3] == "-pon")
+                    {
+                        tp.isPohnpeianUpdate = true;
+                    }
+                }
                 tp.filter(args[0], args[1], args[2]);
                 showBanner = false;
             }
@@ -326,7 +342,7 @@ substfile.txt is the text file with substitutions to make. Longer matches
   take priority over shorter ones. The substition file contains one line per
   substitution, with fields separated by whatever character is first on the
   line. There are 3 fields: find text, replace text, and optional comment.
-  Matches will always be on word boundaries. HTML tokens delimited by < and >
+  Matches will always be on word boundaries. XML tokens delimited by < and >
   or & and ; count as a word. The log files phrasetranslist.txt and
   phrasetranslog.txt are written to the same folder as the output file.
 ");

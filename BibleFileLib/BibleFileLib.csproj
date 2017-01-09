@@ -28,7 +28,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -53,6 +53,7 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -76,14 +77,20 @@
     <WarningLevel>4</WarningLevel>
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\net-20\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
@@ -100,8 +107,15 @@
     <Compile Include="BibleFileLib.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="bookmatch.cs" />
     <Compile Include="ChapterInfo.cs" />
+    <Compile Include="readssf.cs" />
+    <Compile Include="Versification.cs" />
+    <Compile Include="epub.cs" />
+    <Compile Include="ethnologue.cs" />
+    <Compile Include="Usfx2MobileHtml.cs" />
     <Compile Include="haiola_options.cs" />
+    <Compile Include="osis2usfx.cs" />
     <Compile Include="Usfx2XeTeX.cs" />
     <Compile Include="ConcFrameGenerator.cs" />
     <Compile Include="ConcGenerator.cs" />
@@ -115,6 +129,7 @@
     <Compile Include="UsfxToFramedHtmlConverter.cs" />
     <Compile Include="usfxtomosis.cs" />
     <Compile Include="usfxToXhtmlConverter.cs" />
+    <Compile Include="Usx2Usfx.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="WordformInfo.cs" />
     <Compile Include="WordOccurrence.cs" />

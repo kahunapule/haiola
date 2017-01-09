@@ -1,0 +1,10 @@
+The files in this set are designed to be use to convert to other formats. See 
+http://ubs-icap.org/usfm for information about the format. 
+___ 
+You may use the sha1sum and gpg programs to verify the integrity of the text in this archive. 
+Use sha1sum -c to check each of the files listed below. http://en.wikipedia.org/wiki/Sha1sum 
+Use Gnu Privacy Guard to check that this file has not been altered. http://gnupg.org/ 
+The public key to use to verify this signature is at http://eBible.org/web/keys.asc for you to 
+import into your gpg keyring before verifying this signature with gpg. 
+The system cannot accept the date entered.
+Enter the new date: (mm-dd-yy) 

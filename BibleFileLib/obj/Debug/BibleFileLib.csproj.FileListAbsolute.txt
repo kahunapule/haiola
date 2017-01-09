@@ -1,0 +1,78 @@
+C:\Users\Kahunapule\Documents\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.dll
+C:\Users\Kahunapule\Documents\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.pdb
+C:\Users\Kahunapule\Documents\source\prophero\BibleFileLib\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Kahunapule\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.dll
+C:\Users\Kahunapule\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.pdb
+Y:\Documents\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.dll
+Y:\Documents\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.pdb
+Y:\Documents\source\prophero\BibleFileLib\obj\Debug\ResolveAssemblyReference.cache
+Y:\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.dll
+Y:\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.pdb
+W:\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.dll
+W:\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.pdb
+W:\source\prophero\BibleFileLib\obj\Debug\ResolveAssemblyReference.cache
+W:\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.dll
+W:\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.pdb
+N:\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.dll
+N:\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.pdb
+N:\source\prophero\BibleFileLib\obj\Debug\ResolveAssemblyReference.cache
+N:\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.dll
+N:\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.pdb
+E:\Documents\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.dll
+E:\Documents\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.pdb
+E:\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.dll
+E:\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.pdb
+W:\Documents\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.dll
+W:\Documents\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.pdb
+W:\Documents\source\prophero\BibleFileLib\obj\Debug\ResolveAssemblyReference.cache
+W:\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.dll
+W:\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.pdb
+X:\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.dll
+X:\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.pdb
+X:\source\prophero\BibleFileLib\obj\Debug\ResolveAssemblyReference.cache
+X:\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.dll
+X:\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.pdb
+\\vmware-host\Shared Folders\Documents\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.dll
+\\vmware-host\Shared Folders\Documents\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.pdb
+\\vmware-host\Shared Folders\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.dll
+\\vmware-host\Shared Folders\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.pdb
+Z:\Documents\SugarSync\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.dll
+Z:\Documents\SugarSync\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.pdb
+Z:\Documents\SugarSync\source\prophero\BibleFileLib\obj\Debug\ResolveAssemblyReference.cache
+Z:\Documents\SugarSync\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.dll
+Z:\Documents\SugarSync\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.pdb
+Z:\Documents\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.dll
+Z:\Documents\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.pdb
+Z:\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.dll
+Z:\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.pdb
+C:\Users\MICHAEL\Documents\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.dll
+C:\Users\MICHAEL\Documents\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.pdb
+C:\Users\MICHAEL\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.dll
+C:\Users\MICHAEL\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.pdb
+C:\Users\MICHAEL\Documents\Dropbox\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.dll
+C:\Users\MICHAEL\Documents\Dropbox\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.pdb
+C:\Users\MICHAEL\Documents\Dropbox\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.dll
+C:\Users\MICHAEL\Documents\Dropbox\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.pdb
+\\vmware-host\Shared Folders\Documents\Dropbox\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.dll
+\\vmware-host\Shared Folders\Documents\Dropbox\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.pdb
+\\vmware-host\Shared Folders\Documents\Dropbox\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.dll
+\\vmware-host\Shared Folders\Documents\Dropbox\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.pdb
+C:\Users\MICHAEL\Documents\Dropbox\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.csprojResolveAssemblyReference.cache
+C:\Users\MICHAEL\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.csprojResolveAssemblyReference.cache
+E:\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.csprojResolveAssemblyReference.cache
+C:\e\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.dll
+C:\e\Documents\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.dll
+C:\e\Documents\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.pdb
+C:\e\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.pdb
+\\vmware-host\Shared Folders\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.csprojResolveAssemblyReference.cache
+C:\e\Documents\source\prophero\BibleFileLib\bin\Debug\ICSharpCode.SharpZipLib.dll
+\\vmware-host\Shared Folders\Documents\source\prophero\BibleFileLib\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\e\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.csprojResolveAssemblyReference.cache
+Z:\Documents\source\prophero\BibleFileLib\bin\Debug\ICSharpCode.SharpZipLib.dll
+Z:\Documents\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.csprojResolveAssemblyReference.cache
+\\KMPJX\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.dll
+\\KMPJX\source\prophero\BibleFileLib\bin\Debug\BibleFileLib.pdb
+\\KMPJX\source\prophero\BibleFileLib\bin\Debug\ICSharpCode.SharpZipLib.dll
+\\KMPJX\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.csprojResolveAssemblyReference.cache
+\\KMPJX\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.dll
+\\KMPJX\source\prophero\BibleFileLib\obj\Debug\BibleFileLib.pdb

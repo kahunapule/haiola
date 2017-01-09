@@ -1,0 +1,10 @@
+Z:\Documents\source\prophero\xlat\bin\Release\xlat.exe.config
+Z:\Documents\source\prophero\xlat\bin\Release\xlat.exe
+Z:\Documents\source\prophero\xlat\bin\Release\xlat.pdb
+Z:\Documents\source\prophero\xlat\bin\Release\BibleFileLib.dll
+Z:\Documents\source\prophero\xlat\bin\Release\Newtonsoft.Json.dll
+Z:\Documents\source\prophero\xlat\bin\Release\ICSharpCode.SharpZipLib.dll
+Z:\Documents\source\prophero\xlat\bin\Release\Newtonsoft.Json.xml
+Z:\Documents\source\prophero\xlat\obj\x86\Release\xlat.csprojResolveAssemblyReference.cache
+Z:\Documents\source\prophero\xlat\obj\x86\Release\xlat.exe
+Z:\Documents\source\prophero\xlat\obj\x86\Release\xlat.pdb

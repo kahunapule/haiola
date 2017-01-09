@@ -1,0 +1,8 @@
+bin\Release\BibleFileLib.dll
+obj\Release\ResolveAssemblyReference.cache
+obj\Release\BibleFileLib.dll
+bin\Debug\BibleFileLib.dll
+bin\Debug\BibleFileLib.pdb
+obj\Debug\ResolveAssemblyReference.cache
+obj\Debug\BibleFileLib.dll
+obj\Debug\BibleFileLib.pdb

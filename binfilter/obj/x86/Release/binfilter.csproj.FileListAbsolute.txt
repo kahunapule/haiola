@@ -1,0 +1,7 @@
+Z:\Documents\source\prophero\binfilter\bin\Release\binfilter.exe.config
+Z:\Documents\source\prophero\binfilter\bin\Release\binfilter.exe
+Z:\Documents\source\prophero\binfilter\bin\Release\binfilter.pdb
+Z:\Documents\source\prophero\binfilter\bin\Release\Newtonsoft.Json.dll
+Z:\Documents\source\prophero\binfilter\bin\Release\Newtonsoft.Json.xml
+Z:\Documents\source\prophero\binfilter\obj\x86\Release\binfilter.exe
+Z:\Documents\source\prophero\binfilter\obj\x86\Release\binfilter.pdb

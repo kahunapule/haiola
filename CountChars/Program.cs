@@ -54,6 +54,13 @@ namespace CountChars
 
         static void Main(string[] args)
         {
+            Console.WriteLine(
+@"CountChars.exe is a quick way to find the frequency of occurrence of letters
+in all .htm files in the specified folder and its subfolders.
+Syntax:
+   CountChars.exe name(s)
+   where each name is the name of a .htm file or a directory containing one
+   or more .htm files.");
             charList = new SortedList();
             foreach (string fileName in args)
             {
@@ -74,7 +81,7 @@ namespace CountChars
             htm.WriteLine("<body class=\"mainDoc\"{0}>");
             htm.WriteLine("<div class=\"main\">");
             htm.WriteLine("<h1>Character List</h1>");
-            htm.WriteLine("<table border=\"2\" cellpadding=\"2\" cellspacing=\"2\"><tbody>");
+            htm.WriteLine("<table border=\"2\"><tbody>");
             htm.WriteLine("<tr><td>Unicode</td><td>Char</td><td>Count</td></tr>");
             for (i = 0; i < charList.Count; i++)
             {

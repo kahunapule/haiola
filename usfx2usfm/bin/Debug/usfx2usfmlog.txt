@@ -1,0 +1,17 @@
+
+This is part of Haiola open source software.
+Please see http://haiola.org for copyright information.
+
+Syntax:
+usfx2usfm [-o Output] [-?] [-l logname] [-i] inputfile
+ Output = output USFM path and file name suffix
+      default is .sfm
+      book code will be added, i. e. pdg.sfm -> MATpdg.sfm
+      and subdir\eng.sfm -> subdir\MATeng.sfm
+ logname is name of log file to write, default is usfx2usfmlog.txt
+ -h or -? = show this information.
+ inputfile = name of USFX file to convert to USFM
+File names with embedded spaces must be surrounded by quotes.
+Do not use - as the first character of a path or file name.
+
+

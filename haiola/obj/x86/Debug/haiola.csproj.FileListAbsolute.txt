@@ -1,0 +1,15 @@
+Z:\Documents\source\prophero\haiola\bin\Debug\haiola.exe.config
+Z:\Documents\source\prophero\haiola\bin\Debug\haiola.exe
+Z:\Documents\source\prophero\haiola\bin\Debug\haiola.pdb
+Z:\Documents\source\prophero\haiola\bin\Debug\BibleFileLib.dll
+Z:\Documents\source\prophero\haiola\bin\Debug\Newtonsoft.Json.dll
+Z:\Documents\source\prophero\haiola\bin\Debug\ICSharpCode.SharpZipLib.dll
+Z:\Documents\source\prophero\haiola\bin\Debug\BibleFileLib.pdb
+Z:\Documents\source\prophero\haiola\bin\Debug\Newtonsoft.Json.xml
+Z:\Documents\source\prophero\haiola\obj\x86\Debug\haiola.csprojResolveAssemblyReference.cache
+Z:\Documents\source\prophero\haiola\obj\x86\Debug\haiola.haiolaForm.resources
+Z:\Documents\source\prophero\haiola\obj\x86\Debug\WordSend.Properties.Resources.resources
+Z:\Documents\source\prophero\haiola\obj\x86\Debug\WordSend.SetupForm.resources
+Z:\Documents\source\prophero\haiola\obj\x86\Debug\haiola.csproj.GenerateResource.Cache
+Z:\Documents\source\prophero\haiola\obj\x86\Debug\haiola.exe
+Z:\Documents\source\prophero\haiola\obj\x86\Debug\haiola.pdb

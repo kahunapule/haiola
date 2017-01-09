@@ -22,7 +22,9 @@ namespace WordSend
     /// </summary>
     public class ExtractSearchText
     {
+        public int LongestWordLength;
         protected string currentBook;
+        protected string BibleWorksBook;
         protected string currentChapter;
         protected string currentVerse;
         protected string currentPlace;
@@ -30,12 +32,15 @@ namespace WordSend
         protected string osisVerse;
         protected XmlTextReader usfx;
         protected XmlTextWriter verseFile;
+        protected XmlTextWriter lemmaFile;
+        protected StreamWriter vplFile;
         bool inVerse;
         bool inPsalmTitle;
         bool verseEndedWithSpace;
         BibleBookInfo bookInfo;
         BibleBookRecord bookRecord;
         StringBuilder verseText;
+        StringBuilder lemmaText;
 
         /// <summary>
         /// Initialize this instance of ExtractSearchText
@@ -50,6 +55,7 @@ namespace WordSend
             inPsalmTitle = false;
             verseEndedWithSpace = false;
             bookInfo = new BibleBookInfo();
+            LongestWordLength = 0;
         }
 
         /// <summary>
@@ -72,6 +78,8 @@ namespace WordSend
         /// </summary>
         protected void EndVerse()
         {
+            int wordLength;
+
             if (inVerse)
             {
                 // Normalize regular white spaces
@@ -93,15 +101,31 @@ namespace WordSend
                     currentVerse = currentVerse.Substring(0, dashPos);
                 osisVerse = osisBook + "." + currentChapter + "." + currentVerse;
                 string s = verseText.ToString();
+                wordLength = Utils.MaxWordLength(s);
+                if (wordLength > LongestWordLength)
+                    LongestWordLength = wordLength;
                 if (verseEndedWithSpace)
                     s = s.TrimStart(null);
-                verseFile.WriteString(s);
+                if (BibleWorksBook.Length == 3)
+                {
+                    vplFile.WriteLine("{0} {1}:{2} {3}", BibleWorksBook, currentChapter, currentVerse, s.Replace("  ", " ").Trim());
+                }
+                verseFile.WriteString(s.Replace("[", "").Replace("]", ""));
                 verseEndedWithSpace = s.EndsWith(" ");
                 verseFile.WriteEndElement();    // v
                 inVerse = false;
                 verseText.Length = 0;
+                lemmaFile.WriteStartElement("v");
+                lemmaFile.WriteAttributeString("b", currentBook);
+                lemmaFile.WriteAttributeString("c", currentChapter);
+                lemmaFile.WriteAttributeString("v", currentVerse);
+                lemmaFile.WriteString(lemmaText.ToString().Replace(',',' ').Trim());
+                lemmaFile.WriteEndElement();    // v
+                lemmaText.Length = 0;
             }
         }
+
+        Encoding utf8encoding;
 
         /// <summary>
         /// Reads a USFX file and prepares it for full text search (or concordance generation)
@@ -121,14 +145,22 @@ namespace WordSend
             string sfm = String.Empty;
             string caller = String.Empty;
             string id = String.Empty;
+            string strongs = String.Empty;
             verseText = new StringBuilder();
+            lemmaText = new StringBuilder();
             bool result = false;
 
             try
             {
+                utf8encoding = new UTF8Encoding(false);
+                vplFile = new StreamWriter(Path.ChangeExtension(verseFileName, ".vpltxt"), false, utf8encoding);   
+                lemmaFile = new XmlTextWriter(Path.ChangeExtension(verseFileName, ".lemma"), utf8encoding);
+                lemmaFile.Formatting = Formatting.Indented;
+                lemmaFile.WriteStartDocument();
+                lemmaFile.WriteStartElement("lemmaFile");
                 usfx = new XmlTextReader(usfxFileName);
                 usfx.WhitespaceHandling = WhitespaceHandling.All;
-                verseFile = new XmlTextWriter(verseFileName, Encoding.UTF8);
+                verseFile = new XmlTextWriter(verseFileName, utf8encoding);
                 verseFile.Formatting = Formatting.Indented;
                 verseFile.WriteStartDocument();
                 verseFile.WriteStartElement("verseFile");
@@ -154,6 +186,7 @@ namespace WordSend
                                     currentBook = id;
                                     bookRecord = (BibleBookRecord)bookInfo.books[currentBook];
                                     osisBook = bookRecord.osisName;
+                                    BibleWorksBook = bookRecord.bibleworksCode;
                                 }
                                 if ((bookRecord == null) || (id.Length != 3))
                                 {
@@ -203,6 +236,12 @@ namespace WordSend
                             case "d":   // Make canonical psalm titles searchable
                                 inPsalmTitle = true;
                                 break;
+                            case "add":
+                                verseText.Append("[");
+                                break;
+                            case "nd":
+                                //verseText.Append("{");
+                                break;
                             case "languageCode":
                             case "f":   //  footnote
                             case "fe":  // End note. Rarely used, fortunately, but in the standards.
@@ -227,6 +266,11 @@ namespace WordSend
                             case "rq":
                             case "s":
                                 SkipElement();
+                                break;
+                            case "w":
+                                strongs = fileHelper.GetNamedAttribute(usfx, "s");
+                                if (!String.IsNullOrEmpty(strongs))
+                                    lemmaText.Append(strongs + " ");
                                 break;
                             case "p":
                                 if (sfm.StartsWith("i"))
@@ -275,6 +319,12 @@ namespace WordSend
                             case "d":
                                 inPsalmTitle = false;
                                 break;
+                            case "add":
+                                verseText.Append("]");
+                                break;
+                            case "nd":
+                                // verseText.Append("}");
+                                break;
                         }
                     }
                     else if (usfx.NodeType == XmlNodeType.Text)
@@ -290,7 +340,10 @@ namespace WordSend
                 }
                 Logit.ShowStatus("writing " + verseFileName);
                 verseFile.WriteEndElement();    // verseFile
+                lemmaFile.WriteEndElement();    // lemmaFile
                 verseFile.Close();
+                lemmaFile.Close();
+                vplFile.Close();
                 usfx.Close();
                 result = true;
             }
@@ -299,6 +352,82 @@ namespace WordSend
                 Logit.WriteError(ex.Message);
             }
             return result;
-        } 
+        }
+
+
+        /// <summary>
+        /// Write an SQL file for MySQL from the VPL XML search text file.
+        /// </summary>
+        /// <param name="verseFileName">Name of the XML verse per line file.</param>
+        /// <param name="translationId">Bible translation ID</param>
+        /// <param name="sqlName">Name of the SQL file to write.</param>
+        public void WriteSearchSql(string verseFileName, string translationId, string sqlName)
+        {
+            Hashtable verseDupCheck = new Hashtable(64007);
+            string tableName = Path.GetFileNameWithoutExtension(sqlName).Replace('-','_');
+            XmlTextReader searchTextXml = new XmlTextReader(verseFileName);
+            string book, bk, ch, vs, startVerse, endVerse, verseID, verseText, canon_order;
+            int i;
+            int dup = 0;
+            StreamWriter sqlFile = new StreamWriter(sqlName, false, System.Text.Encoding.UTF8);
+            sqlFile.WriteLine("USE sofia;");
+            sqlFile.WriteLine("DROP TABLE IF EXISTS sofia.{0};", tableName);
+            sqlFile.WriteLine(@"CREATE TABLE {0} (
+  verseID VARCHAR(16) NOT NULL PRIMARY KEY,
+  canon_order VARCHAR(12) NOT NULL,
+  book VARCHAR(3) NOT NULL,
+  chapter VARCHAR(3) NOT NULL,
+  startVerse VARCHAR(3) NOT NULL,
+  endVerse VARCHAR(3) NOT NULL,
+  verseText TEXT CHARACTER SET UTF8 NOT NULL) ENGINE=MyISAM;", tableName);
+            sqlFile.WriteLine("LOCK TABLES {0} WRITE;", tableName);
+            while (searchTextXml.Read())
+            {
+                if ((searchTextXml.NodeType == XmlNodeType.Element) && (searchTextXml.Name == "v"))
+                {
+                    book = fileHelper.GetNamedAttribute(searchTextXml, "b");
+                    bk = bookInfo.getShortCode(book);
+                    ch = fileHelper.GetNamedAttribute(searchTextXml, "c");
+                    vs = endVerse = startVerse = fileHelper.GetNamedAttribute(searchTextXml, "v");
+                    // Verse numbers might be verse bridges, like "20-22" or simple numbers, like "20".
+                    i = vs.IndexOf('-');
+                    if (i > 0)
+                    {
+                        startVerse = startVerse.Substring(0, i);
+                        if (vs.Length > i)
+                            endVerse = vs.Substring(i+1);
+                    }
+                    verseID = bk + ch + "_" + startVerse;
+                    canon_order = ((BibleBookRecord)bookInfo.books[book]).sortOrder.ToString("000")+"_"+ch+"_"+startVerse;
+                    if (verseDupCheck[verseID] != null)
+                    {
+                        Logit.WriteError("Duplicate verse ID: " + verseID);
+                        dup++;
+                        verseID = verseID + "_" + dup.ToString();
+                    }
+                    verseDupCheck[verseID] = vs;
+                    searchTextXml.Read();
+                    if (searchTextXml.NodeType == XmlNodeType.Text)
+                    {
+                        verseText = searchTextXml.Value;
+                        sqlFile.WriteLine("INSERT INTO {0} VALUES (\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\");",
+                            tableName,
+                            verseID,
+                            canon_order,
+                            book,
+                            ch,
+                            startVerse,
+                            endVerse,
+                            verseText.Replace("\"","\\\""));
+                    }
+                }
+            }
+            searchTextXml.Close();
+            sqlFile.WriteLine("ALTER TABLE {0} ADD FULLTEXT(verseText);", tableName);
+            sqlFile.WriteLine("UNLOCK TABLES;");
+            sqlFile.Close();
+        }
+
+
     }
 }

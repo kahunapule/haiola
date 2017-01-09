@@ -1,0 +1,3 @@
+Converting imp file c:\e\Documents\source\prophero\imposis2xml\bin\Debug\LEB.imp to imp xml file c:\e\Documents\source\prophero\imposis2xml\bin\Debug\LEB_usfx.xml.tMpXmL
+Converting from c:\e\Documents\source\prophero\imposis2xml\bin\Debug\LEB_usfx.xml.tMpXmL to USFX file c:\e\Documents\source\prophero\imposis2xml\bin\Debug\LEB_usfx.xml
+Parsing c:\e\Documents\source\prophero\imposis2xml\bin\Debug\LEB_usfx.xml.tMpXmL as imp xml.

@@ -1,0 +1,7 @@
+Z:\Documents\source\prophero\massregex\bin\Release\massregex.exe.config
+Z:\Documents\source\prophero\massregex\bin\Release\massregex.exe
+Z:\Documents\source\prophero\massregex\bin\Release\massregex.pdb
+Z:\Documents\source\prophero\massregex\bin\Release\Newtonsoft.Json.dll
+Z:\Documents\source\prophero\massregex\bin\Release\Newtonsoft.Json.xml
+Z:\Documents\source\prophero\massregex\obj\x86\Release\massregex.exe
+Z:\Documents\source\prophero\massregex\obj\x86\Release\massregex.pdb

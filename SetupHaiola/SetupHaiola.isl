@@ -341,19 +341,36 @@
 		<col def="S0">ISDotNetInstallerArgsCommit</col>
 		<col def="S0">ISDotNetInstallerArgsUninstall</col>
 		<col def="S0">ISDotNetInstallerArgsRollback</col>
-		<row><td>BibleFileLib.Primary_output</td><td>{9E7F9F9B-105E-4044-9241-CDE7C291661C}</td><td>INSTALLDIR</td><td>2</td><td/><td>biblefilelib.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>CountChars.Primary_output</td><td>{137D2EAF-293F-4405-9E47-F3F2BE01E3E0}</td><td>INSTALLDIR</td><td>2</td><td/><td>countchars.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>BibleFileLib.Primary_output</td><td>{735093BD-8D51-42AA-973B-8DC1F8246F87}</td><td>INSTALLDIR</td><td>2</td><td/><td>biblefilelib.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>BibleFileLib.Primary_output1</td><td>{489606BF-1022-4F2D-A7A2-FD051A067E11}</td><td>INSTALLDIR</td><td>2</td><td/><td>biblefilelib.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>CountChars.Primary_output</td><td>{F394B413-9EA7-4C78-A6BB-0244D6655B92}</td><td>INSTALLDIR</td><td>2</td><td/><td>countchars.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISO19770_LocalTag</td><td>{157953C4-4A19-4300-A2F4-01EF59188524}</td><td>INSTALLDIR</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISO19770_SystemTag</td><td>{0618391E-9BDE-4BF0-8768-8CE8D760403E}</td><td>CommonAppDataFolder</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT</td><td>{7FFBD0D3-0AC6-49F8-B34A-3BAC6A37FEA7}</td><td>INSTALLDIR</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>binfilter.Primary_output</td><td>{2698BD20-C4A8-4B91-ACF8-9BC28FF4B3CD}</td><td>INSTALLDIR</td><td>2</td><td/><td>binfilter.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>haiola.Content_Files</td><td>{77631691-9A86-4C89-ABAD-24C19F5714FA}</td><td>INSTALLDIR</td><td>2</td><td/><td>haiola.content_files</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>haiola.Primary_output</td><td>{36FADF0E-04C0-4D94-8878-7EF04A0C845D}</td><td>INSTALLDIR</td><td>2</td><td/><td>haiola.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>massregex.Primary_output</td><td>{F567F527-BB6B-4146-9CA3-54B6F846E976}</td><td>INSTALLDIR</td><td>2</td><td/><td>massregex.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>phrasetrans.Primary_output</td><td>{CE9D9371-2720-4E49-83B7-10AF9005B8EE}</td><td>INSTALLDIR</td><td>2</td><td/><td>phrasetrans.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>usfm2usfx.Primary_output</td><td>{43591DE8-B53E-4DD9-9CC1-0A3A77A47925}</td><td>INSTALLDIR</td><td>2</td><td/><td>usfm2usfx.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>usfx2usfm.Content_Files</td><td>{80FB0A4B-4ECA-4497-9B22-0F6D40C77333}</td><td>INSTALLDIR</td><td>2</td><td/><td>usfx2usfm.content_files</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>usfx2usfm.Primary_output</td><td>{B896E5CE-F25A-42E0-8E95-E47DE561DE2D}</td><td>INSTALLDIR</td><td>2</td><td/><td>usfx2usfm.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>binfilter.Primary_output</td><td>{2118DB80-4F9F-4C7B-9A27-715E89D0A042}</td><td>INSTALLDIR</td><td>2</td><td/><td>binfilter.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>bww2sfm.Primary_output</td><td>{7FA6D01B-E314-4D60-857B-14749D83A270}</td><td>INSTALLDIR</td><td>2</td><td/><td>bww2sfm.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>haiola.Content_Files</td><td>{AD314781-DADC-4055-A8D7-1206483D2D7C}</td><td>INSTALLDIR</td><td>2</td><td/><td>haiola.content_files</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>haiola.Content_Files1</td><td>{2479BA1C-FD4E-4969-AC90-796D1155396F}</td><td>INSTALLDIR</td><td>2</td><td/><td>haiola.content_files</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>haiola.Primary_output</td><td>{64FB8943-CFEA-4ECE-B5E8-99581AEDD677}</td><td>INSTALLDIR</td><td>2</td><td/><td>haiola.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>haiola.Primary_output1</td><td>{0B9922B4-A627-470E-AA99-025D8AE2786D}</td><td>INSTALLDIR</td><td>2</td><td/><td>haiola.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>imposis2xml.Primary_output</td><td>{9D2B6780-4F1B-44B2-958B-74DAD00E342B}</td><td>INSTALLDIR</td><td>2</td><td/><td>imposis2xml.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>imposis2xml.Primary_output1</td><td>{137FC820-1960-485C-9320-828809831683}</td><td>INSTALLDIR</td><td>2</td><td/><td>imposis2xml.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>massregex.Primary_output</td><td>{81B598AB-DA08-4C45-A570-F6A5019636D1}</td><td>INSTALLDIR</td><td>2</td><td/><td>massregex.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>massregex.Primary_output1</td><td>{F7A1A9A7-DA25-4991-9C37-91A1230DFA54}</td><td>INSTALLDIR</td><td>2</td><td/><td>massregex.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>phrasetrans.Primary_output</td><td>{96598445-3233-4789-B290-AC0816FC418B}</td><td>INSTALLDIR</td><td>2</td><td/><td>phrasetrans.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>phrasetrans.Primary_output1</td><td>{952F2EF2-7843-42C9-9AB7-BDF100123CE7}</td><td>INSTALLDIR</td><td>2</td><td/><td>phrasetrans.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>unbound2sfm.Primary_output</td><td>{134EA752-85A6-48A8-AA71-82637B65D164}</td><td>INSTALLDIR</td><td>2</td><td/><td>unbound2sfm.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>usfm2usfx.Primary_output</td><td>{5D6460E7-3023-4E94-BCF9-2C8CA642A5CF}</td><td>INSTALLDIR</td><td>2</td><td/><td>usfm2usfx.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>usfm2usfx.Primary_output1</td><td>{DCB78C2B-29B7-4B30-BC4F-4C2021689F5D}</td><td>INSTALLDIR</td><td>2</td><td/><td>usfm2usfx.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>usfm2word.Content_Files</td><td>{8DAF1DF0-1670-4B77-9036-8E19E168A14F}</td><td>INSTALLDIR</td><td>2</td><td/><td>usfm2word.content_files</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>usfm2word.Primary_output</td><td>{31A9DCD8-86F0-4189-998C-71F370D7BD28}</td><td>INSTALLDIR</td><td>2</td><td/><td>usfm2word.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>usfx2mosis.Primary_output</td><td>{F83C6496-32B3-4655-B6DC-CE6881AF787D}</td><td>INSTALLDIR</td><td>2</td><td/><td>usfx2mosis.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>usfx2mosis.Primary_output1</td><td>{74513EC3-15F9-423D-BC8C-1D0863A33D2D}</td><td>INSTALLDIR</td><td>2</td><td/><td>usfx2mosis.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>usfx2usfm.Content_Files</td><td>{8815A395-0352-4EB9-8883-DBE5507A9887}</td><td>INSTALLDIR</td><td>2</td><td/><td>usfx2usfm.content_files</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>usfx2usfm.Content_Files1</td><td>{C8A29881-47F5-4465-89BF-907135A4C142}</td><td>INSTALLDIR</td><td>2</td><td/><td>usfx2usfm.content_files</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>usfx2usfm.Primary_output</td><td>{805EE22C-E789-4D3C-A0FC-6463D5E5B9EE}</td><td>INSTALLDIR</td><td>2</td><td/><td>usfx2usfm.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>xlat.Primary_output</td><td>{68E43CCE-BEF3-4CD5-ADC4-111897124C1E}</td><td>INSTALLDIR</td><td>2</td><td/><td>xlat.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>xlat.Primary_output1</td><td>{E0E29A09-D1B4-45F9-BAFF-93587A50C67F}</td><td>INSTALLDIR</td><td>2</td><td/><td>xlat.primary_output</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 	</table>
 
 	<table name="Condition">
@@ -564,7 +581,7 @@
 		<row><td>LicenseAgreement</td><td>DlgLine</td><td>Line</td><td>48</td><td>234</td><td>326</td><td>0</td><td>1</td><td/><td/><td/><td/><td>0</td><td/><td/><td/></row>
 		<row><td>LicenseAgreement</td><td>DlgTitle</td><td>Text</td><td>13</td><td>6</td><td>292</td><td>25</td><td>65539</td><td/><td>##IDS__IsLicenseDlg_LicenseAgreement##</td><td/><td/><td>0</td><td/><td/><td/></row>
 		<row><td>LicenseAgreement</td><td>ISPrintButton</td><td>PushButton</td><td>301</td><td>188</td><td>65</td><td>17</td><td>3</td><td/><td>##IDS_PRINT_BUTTON##</td><td>Agree</td><td/><td>0</td><td/><td/><td/></row>
-		<row><td>LicenseAgreement</td><td>Memo</td><td>ScrollableText</td><td>8</td><td>55</td><td>358</td><td>130</td><td>7</td><td/><td/><td/><td/><td>0</td><td/><td>E:\Documents\source\prophero\haiola\lgpl.rtf</td><td/></row>
+		<row><td>LicenseAgreement</td><td>Memo</td><td>ScrollableText</td><td>8</td><td>55</td><td>358</td><td>130</td><td>7</td><td/><td/><td/><td/><td>0</td><td/><td>C:\e\Documents\source\prophero\haiola\lgpl.rtf</td><td/></row>
 		<row><td>LicenseAgreement</td><td>Next</td><td>PushButton</td><td>230</td><td>243</td><td>66</td><td>17</td><td>3</td><td/><td>##IDS_NEXT##</td><td>Cancel</td><td/><td>0</td><td/><td/><td/></row>
 		<row><td>MaintenanceType</td><td>Back</td><td>PushButton</td><td>164</td><td>243</td><td>66</td><td>17</td><td>3</td><td/><td>##IDS_BACK##</td><td>Next</td><td/><td>0</td><td/><td/><td/></row>
 		<row><td>MaintenanceType</td><td>Banner</td><td>Bitmap</td><td>0</td><td>0</td><td>374</td><td>44</td><td>1</td><td/><td/><td/><td/><td>0</td><td/><td/><td>NewBinary1</td></row>
@@ -1878,18 +1895,35 @@
 		<col key="yes" def="s38">Feature_</col>
 		<col key="yes" def="s72">Component_</col>
 		<row><td>AlwaysInstall</td><td>BibleFileLib.Primary_output</td></row>
+		<row><td>AlwaysInstall</td><td>BibleFileLib.Primary_output1</td></row>
 		<row><td>AlwaysInstall</td><td>CountChars.Primary_output</td></row>
 		<row><td>AlwaysInstall</td><td>ISO19770_LocalTag</td></row>
 		<row><td>AlwaysInstall</td><td>ISO19770_SystemTag</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT</td></row>
 		<row><td>AlwaysInstall</td><td>binfilter.Primary_output</td></row>
+		<row><td>AlwaysInstall</td><td>bww2sfm.Primary_output</td></row>
 		<row><td>AlwaysInstall</td><td>haiola.Content_Files</td></row>
+		<row><td>AlwaysInstall</td><td>haiola.Content_Files1</td></row>
 		<row><td>AlwaysInstall</td><td>haiola.Primary_output</td></row>
+		<row><td>AlwaysInstall</td><td>haiola.Primary_output1</td></row>
+		<row><td>AlwaysInstall</td><td>imposis2xml.Primary_output</td></row>
+		<row><td>AlwaysInstall</td><td>imposis2xml.Primary_output1</td></row>
 		<row><td>AlwaysInstall</td><td>massregex.Primary_output</td></row>
+		<row><td>AlwaysInstall</td><td>massregex.Primary_output1</td></row>
 		<row><td>AlwaysInstall</td><td>phrasetrans.Primary_output</td></row>
+		<row><td>AlwaysInstall</td><td>phrasetrans.Primary_output1</td></row>
+		<row><td>AlwaysInstall</td><td>unbound2sfm.Primary_output</td></row>
 		<row><td>AlwaysInstall</td><td>usfm2usfx.Primary_output</td></row>
+		<row><td>AlwaysInstall</td><td>usfm2usfx.Primary_output1</td></row>
+		<row><td>AlwaysInstall</td><td>usfm2word.Content_Files</td></row>
+		<row><td>AlwaysInstall</td><td>usfm2word.Primary_output</td></row>
+		<row><td>AlwaysInstall</td><td>usfx2mosis.Primary_output</td></row>
+		<row><td>AlwaysInstall</td><td>usfx2mosis.Primary_output1</td></row>
 		<row><td>AlwaysInstall</td><td>usfx2usfm.Content_Files</td></row>
+		<row><td>AlwaysInstall</td><td>usfx2usfm.Content_Files1</td></row>
 		<row><td>AlwaysInstall</td><td>usfx2usfm.Primary_output</td></row>
+		<row><td>AlwaysInstall</td><td>xlat.Primary_output</td></row>
+		<row><td>AlwaysInstall</td><td>xlat.Primary_output1</td></row>
 	</table>
 
 	<table name="File">
@@ -1904,56 +1938,82 @@
 		<col def="S255">ISBuildSourcePath</col>
 		<col def="I4">ISAttributes</col>
 		<col def="S72">ISComponentSubFolder_</col>
-		<row><td>biblebookinfo.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>BIBLEB~1.XML|BibleBookInfo.xml</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\BibleBookInfo.xml</td><td>1</td><td/></row>
-		<row><td>biblebookinfo.xsd</td><td>ISX_DEFAULTCOMPONENT</td><td>BIBLEB~1.XSD|BibleBookInfo.xsd</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\BibleBookInfo.xsd</td><td>1</td><td/></row>
-		<row><td>biblefilelib.primary_output</td><td>BibleFileLib.Primary_output</td><td>BibleFileLib.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;BibleFileLib&gt;|Built</td><td>3</td><td/></row>
-		<row><td>binfilter.primary_output</td><td>binfilter.Primary_output</td><td>binfilter.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;binfilter&gt;|Built</td><td>3</td><td/></row>
-		<row><td>bookorder.txt</td><td>ISX_DEFAULTCOMPONENT</td><td>BOOKOR~1.TXT|bookorder.txt</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\bookorder.txt</td><td>1</td><td/></row>
-		<row><td>countchars.primary_output</td><td>CountChars.Primary_output</td><td>CountChars.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;CountChars&gt;|Built</td><td>3</td><td/></row>
-		<row><td>crossreference.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>CROSSR~1.XML|crossreference.xml</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\crossreference.xml</td><td>1</td><td/></row>
-		<row><td>crossreferences.xsd</td><td>ISX_DEFAULTCOMPONENT</td><td>CROSSR~1.XSD|crossreferences.xsd</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\crossreferences.xsd</td><td>1</td><td/></row>
-		<row><td>display.css</td><td>ISX_DEFAULTCOMPONENT</td><td>display.css</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\display.css</td><td>1</td><td/></row>
-		<row><td>download.htm</td><td>ISX_DEFAULTCOMPONENT</td><td>download.htm</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\download.htm</td><td>1</td><td/></row>
-		<row><td>fixquotes.re</td><td>ISX_DEFAULTCOMPONENT</td><td>FIXQUO~1.RE|fixquotes.re</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\fixquotes.re</td><td>1</td><td/></row>
-		<row><td>framefuncs.js</td><td>ISX_DEFAULTCOMPONENT</td><td>FRAMEF~1.JS|frameFuncs.js</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\frameFuncs.js</td><td>1</td><td/></row>
-		<row><td>haiola.content_files</td><td>haiola.Content_Files</td><td>haiola.Content Files</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;haiola&gt;|ContentFiles</td><td>3</td><td/></row>
-		<row><td>haiola.css</td><td>ISX_DEFAULTCOMPONENT</td><td>haiola.css</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\haiola.css</td><td>1</td><td/></row>
-		<row><td>haiola.htm</td><td>ISX_DEFAULTCOMPONENT</td><td>haiola.htm</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\haiola.htm</td><td>1</td><td/></row>
-		<row><td>haiola.primary_output</td><td>haiola.Primary_output</td><td>haiola.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;haiola&gt;|Built</td><td>3</td><td/></row>
-		<row><td>index.htm</td><td>ISX_DEFAULTCOMPONENT</td><td>index.htm</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\index.htm</td><td>1</td><td/></row>
-		<row><td>langnames.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>LANGNA~1.XML|langnames.xml</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\langnames.xml</td><td>1</td><td/></row>
-		<row><td>lgpl.rtf</td><td>ISX_DEFAULTCOMPONENT</td><td>lgpl.rtf</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\lgpl.rtf</td><td>1</td><td/></row>
-		<row><td>lgpl.txt</td><td>ISX_DEFAULTCOMPONENT</td><td>lgpl.txt</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\lgpl.txt</td><td>1</td><td/></row>
-		<row><td>lgpl_3.0_standalone.html</td><td>ISX_DEFAULTCOMPONENT</td><td>LGPL-3~1.HTM|lgpl-3.0-standalone.html</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\lgpl-3.0-standalone.html</td><td>1</td><td/></row>
-		<row><td>massregex.primary_output</td><td>massregex.Primary_output</td><td>massregex.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;massregex&gt;|Built</td><td>3</td><td/></row>
-		<row><td>messianicorder.txt</td><td>ISX_DEFAULTCOMPONENT</td><td>MESSIA~1.TXT|messianicorder.txt</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\messianicorder.txt</td><td>1</td><td/></row>
-		<row><td>minus.gif</td><td>ISX_DEFAULTCOMPONENT</td><td>minus.gif</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\minus.gif</td><td>1</td><td/></row>
-		<row><td>mktree.css</td><td>ISX_DEFAULTCOMPONENT</td><td>mktree.css</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\mktree.css</td><td>1</td><td/></row>
-		<row><td>navigation.htm</td><td>ISX_DEFAULTCOMPONENT</td><td>NAVIGA~1.HTM|Navigation.htm</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\Navigation.htm</td><td>1</td><td/></row>
-		<row><td>navigation.js</td><td>ISX_DEFAULTCOMPONENT</td><td>NAVIGA~1.JS|Navigation.js</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\Navigation.js</td><td>1</td><td/></row>
-		<row><td>onecolumnsans.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>ONECOL~1.XML|OneColumnSans.xml</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\OneColumnSans.xml</td><td>1</td><td/></row>
-		<row><td>onecolumnserif.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>ONECOL~1.XML|OneColumnSerif.xml</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\OneColumnSerif.xml</td><td>1</td><td/></row>
-		<row><td>order.txt</td><td>ISX_DEFAULTCOMPONENT</td><td>order.txt</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\order.txt</td><td>1</td><td/></row>
-		<row><td>osiscore.2.1.1.xsd</td><td>ISX_DEFAULTCOMPONENT</td><td>OSISCO~1.XSD|osisCore.2.1.1.xsd</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\osisCore.2.1.1.xsd</td><td>1</td><td/></row>
-		<row><td>phrasetrans.primary_output</td><td>phrasetrans.Primary_output</td><td>phrasetrans.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;phrasetrans&gt;|Built</td><td>3</td><td/></row>
-		<row><td>plus.gif</td><td>ISX_DEFAULTCOMPONENT</td><td>plus.gif</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\plus.gif</td><td>1</td><td/></row>
-		<row><td>protestantorder.txt</td><td>ISX_DEFAULTCOMPONENT</td><td>PROTES~1.TXT|protestantorder.txt</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\protestantorder.txt</td><td>1</td><td/></row>
-		<row><td>rcbookorder.txt</td><td>ISX_DEFAULTCOMPONENT</td><td>RCBOOK~1.TXT|rcbookorder.txt</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\rcbookorder.txt</td><td>1</td><td/></row>
-		<row><td>saxon9he.jar</td><td>ISX_DEFAULTCOMPONENT</td><td>saxon9he.jar</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\saxon9he.jar</td><td>1</td><td/></row>
-		<row><td>sfminfo.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>SFMInfo.xml</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\SFMInfo.xml</td><td>1</td><td/></row>
-		<row><td>sfminfo.xsd</td><td>ISX_DEFAULTCOMPONENT</td><td>SFMInfo.xsd</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\SFMInfo.xsd</td><td>1</td><td/></row>
-		<row><td>step1.xsl</td><td>ISX_DEFAULTCOMPONENT</td><td>step1.xsl</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\step1.xsl</td><td>1</td><td/></row>
-		<row><td>step2.xsl</td><td>ISX_DEFAULTCOMPONENT</td><td>step2.xsl</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\step2.xsl</td><td>1</td><td/></row>
-		<row><td>step3.xsl</td><td>ISX_DEFAULTCOMPONENT</td><td>step3.xsl</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\step3.xsl</td><td>1</td><td/></row>
-		<row><td>step4.xsl</td><td>ISX_DEFAULTCOMPONENT</td><td>step4.xsl</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\step4.xsl</td><td>1</td><td/></row>
-		<row><td>step5.xsl</td><td>ISX_DEFAULTCOMPONENT</td><td>step5.xsl</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\step5.xsl</td><td>1</td><td/></row>
-		<row><td>textfuncs.js</td><td>ISX_DEFAULTCOMPONENT</td><td>TEXTFU~1.JS|TextFuncs.js</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\TextFuncs.js</td><td>1</td><td/></row>
-		<row><td>twocolumnsans.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>TWOCOL~1.XML|TwoColumnSans.xml</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\TwoColumnSans.xml</td><td>1</td><td/></row>
-		<row><td>twocolumnserif.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>TWOCOL~1.XML|TwoColumnSerif.xml</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\TwoColumnSerif.xml</td><td>1</td><td/></row>
-		<row><td>usfm2usfx.primary_output</td><td>usfm2usfx.Primary_output</td><td>usfm2usfx.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;usfm2usfx&gt;|Built</td><td>3</td><td/></row>
-		<row><td>usfx2usfm.content_files</td><td>usfx2usfm.Content_Files</td><td>usfx2usfm.Content Files</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;usfx2usfm&gt;|ContentFiles</td><td>3</td><td/></row>
-		<row><td>usfx2usfm.primary_output</td><td>usfx2usfm.Primary_output</td><td>usfx2usfm.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;usfx2usfm&gt;|Built</td><td>3</td><td/></row>
-		<row><td>usfx_2013_08_05.xsd</td><td>ISX_DEFAULTCOMPONENT</td><td>USFX-2~1.XSD|usfx-2013-08-05.xsd</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Documents\source\prophero\haiola\usfx-2013-08-05.xsd</td><td>1</td><td/></row>
+		<row><td>biblebookinfo.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>BIBLEB~1.XML|BibleBookInfo.xml</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\BibleBookInfo.xml</td><td>1</td><td/></row>
+		<row><td>biblebookinfo.xsd</td><td>ISX_DEFAULTCOMPONENT</td><td>BIBLEB~1.XSD|BibleBookInfo.xsd</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\BibleBookInfo.xsd</td><td>1</td><td/></row>
+		<row><td>biblefilelib.primary_output</td><td>BibleFileLib.Primary_output1</td><td>BibleFileLib.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;BibleFileLib1&gt;|Built</td><td>3</td><td/></row>
+		<row><td>binfilter.primary_output</td><td>binfilter.Primary_output</td><td>binfilter.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;binfilter1&gt;|Built</td><td>3</td><td/></row>
+		<row><td>bookorder.txt</td><td>ISX_DEFAULTCOMPONENT</td><td>BOOKOR~1.TXT|bookorder.txt</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\bookorder.txt</td><td>1</td><td/></row>
+		<row><td>bww2sfm.primary_output</td><td>bww2sfm.Primary_output</td><td>bww2sfm.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;bww2sfm&gt;|Built</td><td>3</td><td/></row>
+		<row><td>countchars.primary_output</td><td>CountChars.Primary_output</td><td>CountChars.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;CountChars1&gt;|Built</td><td>3</td><td/></row>
+		<row><td>countrycodes.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>COUNTR~1.XML|CountryCodes.xml</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\CountryCodes.xml</td><td>1</td><td/></row>
+		<row><td>covertemplate.svg</td><td>ISX_DEFAULTCOMPONENT</td><td>COVERT~1.SVG|covertemplate.svg</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\covertemplate.svg</td><td>1</td><td/></row>
+		<row><td>crossreference.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>CROSSR~1.XML|crossreference.xml</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\crossreference.xml</td><td>1</td><td/></row>
+		<row><td>crossreferences.xsd</td><td>ISX_DEFAULTCOMPONENT</td><td>CROSSR~1.XSD|crossreferences.xsd</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\crossreferences.xsd</td><td>1</td><td/></row>
+		<row><td>display.css</td><td>ISX_DEFAULTCOMPONENT</td><td>display.css</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\display.css</td><td>1</td><td/></row>
+		<row><td>dochtml.css</td><td>ISX_DEFAULTCOMPONENT</td><td>docHtml.css</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\docHtml.css</td><td>1</td><td/></row>
+		<row><td>download.htm</td><td>ISX_DEFAULTCOMPONENT</td><td>download.htm</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\download.htm</td><td>1</td><td/></row>
+		<row><td>fixquotes.re</td><td>ISX_DEFAULTCOMPONENT</td><td>FIXQUO~1.RE|fixquotes.re</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\fixquotes.re</td><td>1</td><td/></row>
+		<row><td>framefuncs.js</td><td>ISX_DEFAULTCOMPONENT</td><td>FRAMEF~1.JS|frameFuncs.js</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\frameFuncs.js</td><td>1</td><td/></row>
+		<row><td>gpl_3.0_standalone.html</td><td>ISX_DEFAULTCOMPONENT</td><td>GPL-30~1.HTM|gpl-3.0-standalone.html</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\gpl-3.0-standalone.html</td><td>1</td><td/></row>
+		<row><td>haiola.content_files</td><td>haiola.Content_Files1</td><td>haiola.Content Files</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;haiola1&gt;|ContentFiles</td><td>3</td><td/></row>
+		<row><td>haiola.css</td><td>ISX_DEFAULTCOMPONENT</td><td>haiola.css</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\haiola.css</td><td>1</td><td/></row>
+		<row><td>haiola.htm</td><td>ISX_DEFAULTCOMPONENT</td><td>haiola.htm</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\haiola.htm</td><td>1</td><td/></row>
+		<row><td>haiola.primary_output</td><td>haiola.Primary_output1</td><td>haiola.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;haiola1&gt;|Built</td><td>3</td><td/></row>
+		<row><td>imposis2xml.primary_output</td><td>imposis2xml.Primary_output1</td><td>imposis2xml.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;imposis2xml1&gt;|Built</td><td>3</td><td/></row>
+		<row><td>index.htm</td><td>ISX_DEFAULTCOMPONENT</td><td>index.htm</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\index.htm</td><td>1</td><td/></row>
+		<row><td>langnames.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>LANGNA~1.XML|langnames.xml</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\langnames.xml</td><td>1</td><td/></row>
+		<row><td>languagecodes.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>LANGUA~1.XML|LanguageCodes.xml</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\LanguageCodes.xml</td><td>1</td><td/></row>
+		<row><td>languagecountry.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>LANGUA~1.XML|languagecountry.xml</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\languagecountry.xml</td><td>1</td><td/></row>
+		<row><td>lgpl.rtf</td><td>ISX_DEFAULTCOMPONENT</td><td>lgpl.rtf</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\lgpl.rtf</td><td>1</td><td/></row>
+		<row><td>lgpl.txt</td><td>ISX_DEFAULTCOMPONENT</td><td>lgpl.txt</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\lgpl.txt</td><td>1</td><td/></row>
+		<row><td>lgpl_3.0_standalone.html</td><td>ISX_DEFAULTCOMPONENT</td><td>LGPL-3~1.HTM|lgpl-3.0-standalone.html</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\lgpl-3.0-standalone.html</td><td>1</td><td/></row>
+		<row><td>massregex.primary_output</td><td>massregex.Primary_output1</td><td>massregex.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;massregex1&gt;|Built</td><td>3</td><td/></row>
+		<row><td>messianicorder.txt</td><td>ISX_DEFAULTCOMPONENT</td><td>MESSIA~1.TXT|messianicorder.txt</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\messianicorder.txt</td><td>1</td><td/></row>
+		<row><td>metadatawbt_1.3.rnc</td><td>ISX_DEFAULTCOMPONENT</td><td>METADA~1.RNC|metadataWbt-1.3.rnc</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\metadataWbt-1.3.rnc</td><td>1</td><td/></row>
+		<row><td>minus.gif</td><td>ISX_DEFAULTCOMPONENT</td><td>minus.gif</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\minus.gif</td><td>1</td><td/></row>
+		<row><td>mktree.css</td><td>ISX_DEFAULTCOMPONENT</td><td>mktree.css</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\mktree.css</td><td>1</td><td/></row>
+		<row><td>mosiscore.2.1.1.xsd</td><td>ISX_DEFAULTCOMPONENT</td><td>MOSISC~1.XSD|mosisCore.2.1.1.xsd</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\mosisCore.2.1.1.xsd</td><td>1</td><td/></row>
+		<row><td>navigation.htm</td><td>ISX_DEFAULTCOMPONENT</td><td>NAVIGA~1.HTM|Navigation.htm</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\Navigation.htm</td><td>1</td><td/></row>
+		<row><td>navigation.js</td><td>ISX_DEFAULTCOMPONENT</td><td>NAVIGA~1.JS|Navigation.js</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\Navigation.js</td><td>1</td><td/></row>
+		<row><td>normal.tex</td><td>ISX_DEFAULTCOMPONENT</td><td>normal.tex</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\normal.tex</td><td>1</td><td/></row>
+		<row><td>onecolumnsans.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>ONECOL~1.XML|OneColumnSans.xml</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\OneColumnSans.xml</td><td>1</td><td/></row>
+		<row><td>onecolumnserif.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>ONECOL~1.XML|OneColumnSerif.xml</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\OneColumnSerif.xml</td><td>1</td><td/></row>
+		<row><td>order.txt</td><td>ISX_DEFAULTCOMPONENT</td><td>order.txt</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\order.txt</td><td>1</td><td/></row>
+		<row><td>osiscore.2.1.1.xsd</td><td>ISX_DEFAULTCOMPONENT</td><td>OSISCO~1.XSD|osisCore.2.1.1.xsd</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\osisCore.2.1.1.xsd</td><td>1</td><td/></row>
+		<row><td>phrasetrans.primary_output</td><td>phrasetrans.Primary_output1</td><td>phrasetrans.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;phrasetrans1&gt;|Built</td><td>3</td><td/></row>
+		<row><td>plus.gif</td><td>ISX_DEFAULTCOMPONENT</td><td>plus.gif</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\plus.gif</td><td>1</td><td/></row>
+		<row><td>protestantorder.txt</td><td>ISX_DEFAULTCOMPONENT</td><td>PROTES~1.TXT|protestantorder.txt</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\protestantorder.txt</td><td>1</td><td/></row>
+		<row><td>rcbookorder.txt</td><td>ISX_DEFAULTCOMPONENT</td><td>RCBOOK~1.TXT|rcbookorder.txt</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\rcbookorder.txt</td><td>1</td><td/></row>
+		<row><td>saxon9he.jar</td><td>ISX_DEFAULTCOMPONENT</td><td>saxon9he.jar</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\saxon9he.jar</td><td>1</td><td/></row>
+		<row><td>scripture.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>SCRIPT~1.XML|Scripture.xml</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\Scripture.xml</td><td>1</td><td/></row>
+		<row><td>sfminfo.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>SFMInfo.xml</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\SFMInfo.xml</td><td>1</td><td/></row>
+		<row><td>sfminfo.xsd</td><td>ISX_DEFAULTCOMPONENT</td><td>SFMInfo.xsd</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\SFMInfo.xsd</td><td>1</td><td/></row>
+		<row><td>step0.xsl</td><td>ISX_DEFAULTCOMPONENT</td><td>step0.xsl</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\step0.xsl</td><td>1</td><td/></row>
+		<row><td>step1.xsl</td><td>ISX_DEFAULTCOMPONENT</td><td>step1.xsl</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\step1.xsl</td><td>1</td><td/></row>
+		<row><td>step2.xsl</td><td>ISX_DEFAULTCOMPONENT</td><td>step2.xsl</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\step2.xsl</td><td>1</td><td/></row>
+		<row><td>step3.1persian.xsl</td><td>ISX_DEFAULTCOMPONENT</td><td>STEP31~1.XSL|step3.1Persian.xsl</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\step3.1Persian.xsl</td><td>1</td><td/></row>
+		<row><td>step3.2persian.xsl</td><td>ISX_DEFAULTCOMPONENT</td><td>STEP32~1.XSL|step3.2Persian.xsl</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\step3.2Persian.xsl</td><td>1</td><td/></row>
+		<row><td>step3.3persian.xsl</td><td>ISX_DEFAULTCOMPONENT</td><td>STEP33~1.XSL|step3.3Persian.xsl</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\step3.3Persian.xsl</td><td>1</td><td/></row>
+		<row><td>step3.4persian.xsl</td><td>ISX_DEFAULTCOMPONENT</td><td>STEP34~1.XSL|step3.4Persian.xsl</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\step3.4Persian.xsl</td><td>1</td><td/></row>
+		<row><td>step3.5persian.xsl</td><td>ISX_DEFAULTCOMPONENT</td><td>STEP35~1.XSL|step3.5Persian.xsl</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\step3.5Persian.xsl</td><td>1</td><td/></row>
+		<row><td>step3.xsl</td><td>ISX_DEFAULTCOMPONENT</td><td>step3.xsl</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\step3.xsl</td><td>1</td><td/></row>
+		<row><td>step4.xsl</td><td>ISX_DEFAULTCOMPONENT</td><td>step4.xsl</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\step4.xsl</td><td>1</td><td/></row>
+		<row><td>step5.xsl</td><td>ISX_DEFAULTCOMPONENT</td><td>step5.xsl</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\step5.xsl</td><td>1</td><td/></row>
+		<row><td>step6.xsl</td><td>ISX_DEFAULTCOMPONENT</td><td>step6.xsl</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\step6.xsl</td><td>1</td><td/></row>
+		<row><td>step7.xsl</td><td>ISX_DEFAULTCOMPONENT</td><td>step7.xsl</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\step7.xsl</td><td>1</td><td/></row>
+		<row><td>textfuncs.js</td><td>ISX_DEFAULTCOMPONENT</td><td>TEXTFU~1.JS|TextFuncs.js</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\TextFuncs.js</td><td>1</td><td/></row>
+		<row><td>twocolumnsans.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>TWOCOL~1.XML|TwoColumnSans.xml</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\TwoColumnSans.xml</td><td>1</td><td/></row>
+		<row><td>twocolumnserif.xml</td><td>ISX_DEFAULTCOMPONENT</td><td>TWOCOL~1.XML|TwoColumnSerif.xml</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\TwoColumnSerif.xml</td><td>1</td><td/></row>
+		<row><td>unbound2sfm.primary_output</td><td>unbound2sfm.Primary_output</td><td>unbound2sfm.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;unbound2sfm&gt;|Built</td><td>3</td><td/></row>
+		<row><td>usfm2usfx.primary_output</td><td>usfm2usfx.Primary_output1</td><td>usfm2usfx.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;usfm2usfx1&gt;|Built</td><td>3</td><td/></row>
+		<row><td>usfm2word.content_files</td><td>usfm2word.Content_Files</td><td>usfm2word.Content Files</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;usfm2word&gt;|ContentFiles</td><td>3</td><td/></row>
+		<row><td>usfm2word.primary_output</td><td>usfm2word.Primary_output</td><td>usfm2word.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;usfm2word&gt;|Built</td><td>3</td><td/></row>
+		<row><td>usfx.xsd</td><td>ISX_DEFAULTCOMPONENT</td><td>usfx.xsd</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\usfx.xsd</td><td>1</td><td/></row>
+		<row><td>usfx2mosis.primary_output</td><td>usfx2mosis.Primary_output1</td><td>usfx2mosis.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;usfx2mosis&gt;|Built</td><td>3</td><td/></row>
+		<row><td>usfx2usfm.content_files</td><td>usfx2usfm.Content_Files1</td><td>usfx2usfm.Content Files</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;usfx2usfm1&gt;|ContentFiles</td><td>3</td><td/></row>
+		<row><td>usfx2usfm.primary_output</td><td>usfx2usfm.Primary_output</td><td>usfx2usfm.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;usfx2usfm1&gt;|Built</td><td>3</td><td/></row>
+		<row><td>validate.xsl</td><td>ISX_DEFAULTCOMPONENT</td><td>validate.xsl</td><td>0</td><td/><td/><td/><td>1</td><td>C:\e\Documents\source\prophero\haiola\validate.xsl</td><td>1</td><td/></row>
+		<row><td>xlat.primary_output</td><td>xlat.Primary_output1</td><td>xlat.Primary output</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;xlat1&gt;|Built</td><td>3</td><td/></row>
 	</table>
 
 	<table name="FileSFPCatalog">
@@ -2210,19 +2270,36 @@
 		<col def="S0">FTPLocation</col>
 		<col def="S0">HTTPLocation</col>
 		<col def="S0">Miscellaneous</col>
-		<row><td>BibleFileLib.Primary_output</td><td/><td/><td>_4F9A05B5_7D93_4BC9_A0B9_72A12966CF71_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>CountChars.Primary_output</td><td/><td/><td>_26ED110D_C92D_4B8C_B414_6247342F50D5_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>BibleFileLib.Primary_output</td><td/><td/><td>_D8E071FD_47DA_43D2_A365_35D754C6E1CA_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>BibleFileLib.Primary_output1</td><td/><td/><td>_4452CDB5_34A6_4CED_964C_EA865FD053D8_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>CountChars.Primary_output</td><td/><td/><td>_D64250B3_F165_4284_B40A_95C57B8F00DB_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISO19770_LocalTag</td><td/><td/><td>_A09A9BC1_D87D_4601_AFDB_5C85049D8E9C_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISO19770_SystemTag</td><td/><td/><td>_469931B4_6B8C_4A1A_B98C_CB6E17CA6F8F_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT</td><td/><td/><td>_2E4977A0_8251_42AD_BF00_6F7DFD61F9AB_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>binfilter.Primary_output</td><td/><td/><td>_37114472_2D81_4D10_9DAD_C5299E07D090_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>haiola.Content_Files</td><td/><td/><td>_972B96DD_DC06_49EE_A9EF_5212631DD283_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>haiola.Primary_output</td><td/><td/><td>_D34D66B7_E4BD_471E_8FE2_EE04E89FEB8D_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>massregex.Primary_output</td><td/><td/><td>_83CB7259_51C4_4BAA_A2E4_18CA5A63FCC5_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>phrasetrans.Primary_output</td><td/><td/><td>_EB8EEF97_5327_4FBF_BEFE_2B47FEE05664_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>usfm2usfx.Primary_output</td><td/><td/><td>_439A3A5A_C5D3_40BE_861C_3A2E85AED030_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>usfx2usfm.Content_Files</td><td/><td/><td>_7FCE5AAF_C71E_4D5E_8717_55F87ABD1F5A_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>usfx2usfm.Primary_output</td><td/><td/><td>_6D38233C_3FA2_438F_978C_3ADA0DAA7DEA_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>binfilter.Primary_output</td><td/><td/><td>_43E42C4F_1F66_461D_B385_A80F2E17A689_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>bww2sfm.Primary_output</td><td/><td/><td>_8E5F76DD_FC00_4261_8C55_78EF893248D9_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>haiola.Content_Files</td><td/><td/><td>_357C113F_BDB5_42A2_B548_D84E70BC8823_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>haiola.Content_Files1</td><td/><td/><td>_999F616F_3B90_40F4_BDB3_A9935D2E2858_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>haiola.Primary_output</td><td/><td/><td>_8994C53E_997D_40F7_9F64_09131C7A83DB_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>haiola.Primary_output1</td><td/><td/><td>_4A44CB8E_E3A4_4534_AEFD_CA0A1BB811C1_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>imposis2xml.Primary_output</td><td/><td/><td>_37C54C8A_F33F_4E9F_9112_77AA5EBD6C9E_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>imposis2xml.Primary_output1</td><td/><td/><td>_74644F43_6D93_4CD1_8995_72FB9730523C_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>massregex.Primary_output</td><td/><td/><td>_3B662DC1_CF32_41D7_9DE5_44D41887AA72_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>massregex.Primary_output1</td><td/><td/><td>_B68B7676_D709_4BE0_8699_08814BCAE9D5_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>phrasetrans.Primary_output</td><td/><td/><td>_8E0F63B5_480E_4854_956A_DF4407011E88_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>phrasetrans.Primary_output1</td><td/><td/><td>_A03F92AF_4466_4FE9_85FA_6C39AB496632_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>unbound2sfm.Primary_output</td><td/><td/><td>_C315847E_E82D_49F8_8AD0_73A17BB91C31_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>usfm2usfx.Primary_output</td><td/><td/><td>_5E110731_C227_4292_A009_AF42D859E98F_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>usfm2usfx.Primary_output1</td><td/><td/><td>_0F35A6E7_F091_49CE_A45F_88E93D8FAF13_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>usfm2word.Content_Files</td><td/><td/><td>_6623555C_63D3_44D0_85DE_96B2E9F33737_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>usfm2word.Primary_output</td><td/><td/><td>_F093CCFC_523F_4D5F_95EB_D12297D97A92_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>usfx2mosis.Primary_output</td><td/><td/><td>_827AEC63_D080_4B0E_A135_9225E042D4A7_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>usfx2mosis.Primary_output1</td><td/><td/><td>_897B5C48_84E3_43CD_B689_4EF8339F002B_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>usfx2usfm.Content_Files</td><td/><td/><td>_A009AEFB_5D86_4DEB_89B4_6A8CBA1555E2_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>usfx2usfm.Content_Files1</td><td/><td/><td>_2B67AC1A_5C2F_4A21_AE63_0DD6382DFD8A_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>usfx2usfm.Primary_output</td><td/><td/><td>_78A195C5_A908_414D_B3DD_5062ADE53000_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>xlat.Primary_output</td><td/><td/><td>_6D31D6B1_A0D5_4C90_98B5_AA6A601BC82F_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>xlat.Primary_output1</td><td/><td/><td>_D3AB2F7E_376C_468B_B9BE_9B9A083CAA19_FILTER</td><td/><td/><td/><td/></row>
 	</table>
 
 	<table name="ISCustomActionReference">
@@ -2548,15 +2625,23 @@
 		<row><td>WindowsFolder</td><td/><td/><td>1</td></row>
 		<row><td>binfilter</td><td>binfilter\binfilter.csproj</td><td/><td>2</td></row>
 		<row><td>binfilter1</td><td>..\prophero\binfilter\binfilter.csproj</td><td/><td>2</td></row>
+		<row><td>bww2sfm</td><td>..\prophero\bww2sfm\bww2sfm.csproj</td><td/><td>2</td></row>
 		<row><td>haiola</td><td>haiola\haiola.csproj</td><td/><td>2</td></row>
 		<row><td>haiola1</td><td>..\prophero\haiola\haiola.csproj</td><td/><td>2</td></row>
+		<row><td>imposis2xml</td><td>imposis2xml\imposis2xml.csproj</td><td/><td>2</td></row>
+		<row><td>imposis2xml1</td><td>..\prophero\imposis2xml\imposis2xml.csproj</td><td/><td>2</td></row>
+		<row><td>inscriptcontents</td><td>inscriptcontents\inscriptcontents.csproj</td><td/><td>2</td></row>
+		<row><td>isfallback</td><td>isfallback\isfallback.csproj</td><td/><td>2</td></row>
 		<row><td>massregex</td><td>massregex\massregex.csproj</td><td/><td>2</td></row>
 		<row><td>massregex1</td><td>..\prophero\massregex\massregex.csproj</td><td/><td>2</td></row>
 		<row><td>phrasetrans</td><td>phrasetrans\phrasetrans.csproj</td><td/><td>2</td></row>
 		<row><td>phrasetrans1</td><td>..\prophero\phrasetrans\phrasetrans.csproj</td><td/><td>2</td></row>
 		<row><td>proprietary</td><td>proprietary\proprietary.csproj</td><td/><td>2</td></row>
+		<row><td>unbound2sfm</td><td>..\prophero\unbound2sfm\unbound2sfm.csproj</td><td/><td>2</td></row>
 		<row><td>usfm2usfx</td><td>usfm2usfx\usfm2usfx.csproj</td><td/><td>2</td></row>
 		<row><td>usfm2usfx1</td><td>..\prophero\usfm2usfx\usfm2usfx.csproj</td><td/><td>2</td></row>
+		<row><td>usfm2word</td><td>..\prophero\wordsend\usfm2word\usfm2word.csproj</td><td/><td>2</td></row>
+		<row><td>usfx2mosis</td><td>..\prophero\usfx2mosis\usfx2mosis.csproj</td><td/><td>2</td></row>
 		<row><td>usfx2usfm</td><td>usfx2usfm\usfx2usfm.csproj</td><td/><td>2</td></row>
 		<row><td>usfx2usfm1</td><td>..\prophero\usfx2usfm\usfx2usfm.csproj</td><td/><td>2</td></row>
 		<row><td>xlat</td><td>xlat\xlat.csproj</td><td/><td>2</td></row>
@@ -2836,7 +2921,7 @@
 		<col def="I2">Order</col>
 		<col def="I2">ISSetupLocation</col>
 		<col def="S255">ISReleaseFlags</col>
-		<row><td>_4748E57E_EDF0_4013_AC1A_C6F537338FFC_</td><td>Microsoft .NET Framework 3.5 SP1 (Web Download).prq</td><td/><td/><td/></row>
+		<row><td>_EB88E793_F7FA_4279_AC14_275BFECDDC3C_</td><td>Microsoft .NET Framework 4.5 Web.prq</td><td/><td/><td/></row>
 	</table>
 
 	<table name="ISSetupType">
@@ -2870,7 +2955,7 @@
 		<col def="I2">Encoded</col>
 		<col def="S0">Comment</col>
 		<col def="I4">TimeStamp</col>
-		<row><td>COMPANY_NAME</td><td>1033</td><td>eBible.org</td><td>0</td><td/><td>740396553</td></row>
+		<row><td>COMPANY_NAME</td><td>1033</td><td>eBible.org</td><td>0</td><td/><td>-1507752527</td></row>
 		<row><td>DN_AlwaysInstall</td><td>1033</td><td>Always Install</td><td>0</td><td/><td>-73290637</td></row>
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_COLOR</td><td>1033</td><td>The color settings of your system are not adequate for running [ProductName].</td><td>0</td><td/><td>-73290637</td></row>
 		<row><td>IDPROP_EXPRESS_LAUNCH_CONDITION_DOTNETVERSION35SP1</td><td>1033</td><td>Microsoft .NET Framework 3.5 SP1 needs to be installed for this installation to continue.</td><td>0</td><td/><td>-73331533</td></row>
@@ -3973,10 +4058,11 @@
 		<row><td>IDS__TargetReq_DESC_PROCESSOR</td><td>1033</td><td>The processor is not adequate for running [ProductName].</td><td>0</td><td/><td>-73290637</td></row>
 		<row><td>IDS__TargetReq_DESC_RAM</td><td>1033</td><td>The amount of RAM is not adequate for running [ProductName].</td><td>0</td><td/><td>-73290637</td></row>
 		<row><td>IDS__TargetReq_DESC_RESOLUTION</td><td>1033</td><td>The screen resolution is not adequate for running [ProductName].</td><td>0</td><td/><td>-73290637</td></row>
-		<row><td>ID_STRING1</td><td>1033</td><td>http://haiola.org</td><td>0</td><td/><td>740368779</td></row>
-		<row><td>ID_STRING2</td><td>1033</td><td>eBible.org</td><td>0</td><td/><td>740396553</td></row>
+		<row><td>ID_STRING1</td><td>1033</td><td>http://haiola.org</td><td>0</td><td/><td>-1256026265</td></row>
+		<row><td>ID_STRING10</td><td>1033</td><td>http://haiola.org</td><td>0</td><td/><td>-1256046584</td></row>
+		<row><td>ID_STRING2</td><td>1033</td><td>eBible.org</td><td>0</td><td/><td>-1507752527</td></row>
 		<row><td>ID_STRING3</td><td>1033</td><td>Launch |Built</td><td>0</td><td/><td>-73278189</td></row>
-		<row><td>ID_STRING4</td><td>1033</td><td>http://haiola.org</td><td>0</td><td/><td>740368779</td></row>
+		<row><td>ID_STRING4</td><td>1033</td><td>http://haiola.org</td><td>0</td><td/><td>-1256013977</td></row>
 		<row><td>ID_STRING5</td><td>1033</td><td>Launch |Built</td><td>0</td><td/><td>740388425</td></row>
 		<row><td>ID_STRING6</td><td>1033</td><td>*=-PATH</td><td>0</td><td/><td>1294019855</td></row>
 		<row><td>ID_STRING7</td><td>1033</td><td>[~];;[INSTALLDIR];C:\Program Files (x86)\Java\jre7\bin</td><td>0</td><td/><td>-719228181</td></row>
@@ -4090,7 +4176,7 @@
 		<col def="V0">Data</col>
 		<col def="S255">ISBuildSourcePath</col>
 		<col def="I2">ISIconIndex</col>
-		<row><td>ARPPRODUCTICON.exe</td><td/><td>E:\Documents\source\prophero\haiola\Trumpet.ico</td><td>0</td></row>
+		<row><td>ARPPRODUCTICON.exe</td><td/><td>C:\e\Documents\source\prophero\haiola\Trumpet.ico</td><td>0</td></row>
 	</table>
 
 	<table name="IniFile">
@@ -4223,7 +4309,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>ISTheme</td><td>InstallShield Blue.theme</td></row>
 		<row><td>ISUSLock</td><td>{226B4E82-25A2-404A-8FA2-7685F8ABBD72}</td></row>
 		<row><td>ISUSSignature</td><td>{2CA2FB9C-1D3D-4C24-BEF1-F9B11DD4A424}</td></row>
-		<row><td>ISVisitedViews</td><td>viewAssistant,viewAppFiles,viewISToday,viewProject,viewObjects,viewSupportFiles,viewRelease,viewEnvironmentVariables,viewRealSetupDesign</td></row>
+		<row><td>ISVisitedViews</td><td>viewAssistant,viewAppFiles,viewISToday,viewProject,viewObjects,viewSupportFiles,viewRelease,viewEnvironmentVariables,viewRealSetupDesign,viewSetupDesign,viewSetupTypes,viewTextMessages,viewFeatureFiles</td></row>
 		<row><td>Limited</td><td>1</td></row>
 		<row><td>LockPermissionMode</td><td>1</td></row>
 		<row><td>MsiExecCmdLineOptions</td><td/></row>
@@ -4536,6 +4622,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>ARPPRODUCTICON</td><td>ARPPRODUCTICON.exe</td><td/></row>
 		<row><td>ARPSIZE</td><td/><td/></row>
 		<row><td>ARPURLINFOABOUT</td><td>##ID_STRING1##</td><td/></row>
+		<row><td>ARPURLUPDATEINFO</td><td>##ID_STRING10##</td><td/></row>
 		<row><td>AgreeToLicense</td><td>No</td><td/></row>
 		<row><td>ApplicationUsers</td><td>AllUsers</td><td/></row>
 		<row><td>DWUSINTERVAL</td><td>30</td><td/></row>
