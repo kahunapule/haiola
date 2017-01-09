@@ -2,6 +2,8 @@
 *.user
 *.suo
 *.bak
+*.dll
+*.exe
 *~
 *.o
 bin/*
