@@ -9,3 +9,14 @@ Z:\Documents\source\prophero\wordsend\usfm2word\obj\Release\usfm2word.csproj.Res
 Z:\Documents\source\prophero\wordsend\usfm2word\obj\Release\WordSend.MainForm.resources
 Z:\Documents\source\prophero\wordsend\usfm2word\obj\Release\usfm2word.csproj.GenerateResource.Cache
 Z:\Documents\source\prophero\wordsend\usfm2word\obj\Release\usfm2word.exe
+Z:\Documents\source\haiola\wordsend\usfm2word\bin\Release\usfm2word.exe.config
+Z:\Documents\source\haiola\wordsend\usfm2word\bin\Release\usfm2word.exe
+Z:\Documents\source\haiola\wordsend\usfm2word\bin\Release\BibleFileLib.dll
+Z:\Documents\source\haiola\wordsend\usfm2word\bin\Release\Newtonsoft.Json.dll
+Z:\Documents\source\haiola\wordsend\usfm2word\bin\Release\ICSharpCode.SharpZipLib.dll
+Z:\Documents\source\haiola\wordsend\usfm2word\bin\Release\Newtonsoft.Json.xml
+Z:\Documents\source\haiola\wordsend\usfm2word\obj\Release\usfm2word.csprojResolveAssemblyReference.cache
+Z:\Documents\source\haiola\wordsend\usfm2word\obj\Release\usfm2word.csproj.ResolveComReference.cache
+Z:\Documents\source\haiola\wordsend\usfm2word\obj\Release\WordSend.MainForm.resources
+Z:\Documents\source\haiola\wordsend\usfm2word\obj\Release\usfm2word.csproj.GenerateResource.Cache
+Z:\Documents\source\haiola\wordsend\usfm2word\obj\Release\usfm2word.exe
