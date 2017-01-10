@@ -1,5 +1,0 @@
-Z:\Documents\source\prophero\CountChars\bin\Release\CountChars.exe.config
-Z:\Documents\source\prophero\CountChars\bin\Release\CountChars.exe
-Z:\Documents\source\prophero\CountChars\bin\Release\CountChars.pdb
-Z:\Documents\source\prophero\CountChars\obj\x86\Release\CountChars.exe
-Z:\Documents\source\prophero\CountChars\obj\x86\Release\CountChars.pdb

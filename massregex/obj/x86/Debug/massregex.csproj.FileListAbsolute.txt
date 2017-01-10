@@ -1,8 +1,0 @@
-Z:\Documents\source\prophero\massregex\bin\Debug\massregex.exe.config
-Z:\Documents\source\prophero\massregex\bin\Debug\massregex.exe
-Z:\Documents\source\prophero\massregex\bin\Debug\massregex.pdb
-Z:\Documents\source\prophero\massregex\bin\Debug\Newtonsoft.Json.dll
-Z:\Documents\source\prophero\massregex\bin\Debug\Newtonsoft.Json.xml
-Z:\Documents\source\prophero\massregex\obj\x86\Debug\massregex.csprojResolveAssemblyReference.cache
-Z:\Documents\source\prophero\massregex\obj\x86\Debug\massregex.exe
-Z:\Documents\source\prophero\massregex\obj\x86\Debug\massregex.pdb

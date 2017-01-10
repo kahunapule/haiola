@@ -1,7 +1,0 @@
-Z:\Documents\source\prophero\phrasetrans\bin\Release\phrasetrans.exe.config
-Z:\Documents\source\prophero\phrasetrans\bin\Release\phrasetrans.exe
-Z:\Documents\source\prophero\phrasetrans\bin\Release\phrasetrans.pdb
-Z:\Documents\source\prophero\phrasetrans\bin\Release\Newtonsoft.Json.dll
-Z:\Documents\source\prophero\phrasetrans\bin\Release\Newtonsoft.Json.xml
-Z:\Documents\source\prophero\phrasetrans\obj\x86\Release\phrasetrans.exe
-Z:\Documents\source\prophero\phrasetrans\obj\x86\Release\phrasetrans.pdb

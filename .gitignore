@@ -6,8 +6,12 @@
 *.exe
 *~
 *.o
-bin/*
-obj/*
-dist/*
+**/bin/*
+**/bin/Release/*
+**/bin/Debug/*
+**/obj/*
+**/obj/**
+**/dist/*
+**/dist/**
 proprietary/*
 .DS_Store
