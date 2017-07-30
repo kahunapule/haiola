@@ -170,11 +170,13 @@ namespace WordSend
             set { ini.WriteString("isbn13", value); }
         }
 
+        /*
         public string isbn10
         {
             get { return ini.ReadString("isbn10", String.Empty); }
             set { ini.WriteString("isbn10", value); }
         }
+        */
 
         public bool makeEub
         {
@@ -216,6 +218,12 @@ namespace WordSend
         {
             get { return ini.ReadBool("customPermissions", false); }
             set { ini.WriteBool("customPermissions", value); }
+        }
+
+        public bool dbshelp
+        {
+            get { return ini.ReadBool("dbshelp", false); }
+            set { ini.WriteBool("dbshelp", value); }
         }
 
         public bool commonChars
@@ -617,6 +625,12 @@ namespace WordSend
         {
             get { return ini.ReadString("paratextProject", String.Empty); }
             set { ini.WriteString("paratextProject", String.IsNullOrEmpty(value) ? String.Empty : value.Trim()); }
+        }
+
+        public string paratext8Project
+        {
+            get { return ini.ReadString("paratext8Project", String.Empty); }
+            set { ini.WriteString("paratext8Project", String.IsNullOrEmpty(value) ? String.Empty : value.Trim()); }
         }
 
         public string paratextUniqueId
@@ -1046,9 +1060,19 @@ namespace WordSend
 
 		public string homeDomain
 		{
-			get { return ini.ReadString("homeDomain", String.Empty); }
-			set { ini.WriteString("homeDomain", value); }
-		}
+			get
+            {
+                string s = ini.ReadString("homeDomain", string.Empty);
+                if (s == "pngscriptures.org")
+                    s = "png.bible";
+                ini.WriteString("homeDomain", s);
+                return s;
+                // return ini.ReadString("homeDomain", string.Empty);
+            }
+			set
+            {
+                ini.WriteString("homeDomain", value); }
+		    }
 
         /*
 		public bool useKhmerDigits
@@ -1070,6 +1094,11 @@ namespace WordSend
             set { ini.WriteBool("lastRunResult", value); }
         }
 
+        public bool warningsFound
+        {
+            get { return ini.ReadBool("warningsFound", false); }
+            set { ini.WriteBool("warningsFound", value); }
+        }
 
         public string numberSystem
         {
@@ -1545,8 +1574,8 @@ namespace WordSend
         public string m_copyrightLink = "<a href=\"copyright.htm\">©</a>";
         public string m_homeLink = "<a href=\"../index.htm\"><img alt=\"^\" src=\"../css/home_sm.png\" border=\"0\" /></a>";
         public string m_footerHtml = string.Empty;
-        public string m_indexHtml = "<div class=\"toc1\"><a href=\"http://pngscriptures.org/{0}/{0}_html.zip\">{0}_html.zip</a></div>"+Environment.NewLine+
-"<div class=\"toc1\"><a href=\"http://pngscriptures.org/resources.php?id={0}\">More downloads</a></div>"+Environment.NewLine+
+        public string m_indexHtml = "<div class=\"toc1\"><a href=\"http://png.bible/{0}/{0}_html.zip\">{0}_html.zip</a></div>"+Environment.NewLine+
+"<div class=\"toc1\"><a href=\"http://png.bible/resources.php?id={0}\">More downloads</a></div>"+Environment.NewLine+
 //"<div class=\"toc1\"><a href=\"http://pnglanguages.org/pacific/png/show_lang_entry.asp?id={0}\">Linguistic publications</a></div>"+Environment.NewLine+
 "<div class=\"toc1\"><a href=\"http://www.ethnologue.org/language/{0}\">Ethnologue</a></div>"+Environment.NewLine;
         public string m_licenseHtml = String.Empty;

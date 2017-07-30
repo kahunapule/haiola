@@ -17,57 +17,17 @@ namespace haiola
     public partial class haiolaForm : Form
     {
         public static haiolaForm MasterInstance;
-        private const string kFootnotesProcess = "footnotes.process"; // identifier for the (so far only one) file transformation process built into Haiola
-        public XMLini xini;    // Main program XML initialization file
-        private string m_currentTemplate;   // Current template project
-        public string dataRootDir; // Default is BibleConv in the user's Documents folder
-        public string m_inputDirectory; // Always under dataRootDir, defaults to Documents/BibleConv/input
-        public string m_outputDirectory; // curently Site, always under dataRootDir
-        public string m_inputProjectDirectory; //e.g., full path to BibleConv\input\Kupang
-        public string m_outputProjectDirectory; // e.g., full path to BibleConv\output\Kupang
-        public string m_swordSuffix
-        {
-            get { return xini.ReadString("swordSuffix", String.Empty); }
-            set { xini.WriteString("swordSuffix", value); }
-        }
-        public string m_project = String.Empty; // e.g., Kupang
-        public string currentConversion;   // e.g., "Preprocessing" or "Portable HTML"
-        public string m_xiniPath;  // e.g., BibleConv\input\Kupang\options.xini
-        public XMLini projectXini;
-        public Options m_options;
-        public BibleBookInfo bkInfo;
-        public DateTime sourceDate = new DateTime(1611, 1, 1);
-        public bool getFCBHkeys;
+        public global globe;
         public PluginManager plugin;
-
-        protected string GuessParatextProjectsDir()
-        {
-            string path;
-            path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "My Paratext Projects");
-            if (File.Exists(Path.Combine(path, "usfm.sty")))
-                return path;
-            path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ParatextProjects");
-            if (File.Exists(Path.Combine(path, "usfm.sty")))
-                return path;
-            path = "~/ParatextProjects";
-            if (File.Exists(Path.Combine(path, "usfm.sty")))
-                return path;
-            path = "C:\\My Paratext Projects";
-            if (File.Exists(Path.Combine(path, "usfm.sty")))
-                return path;
-            return string.Empty;
-        }
-
-        public string paratextProjectsDir
-        {
-            get { return xini.ReadString("paratextProjectsDir", GuessParatextProjectsDir()); }
-            set { xini.WriteString("paratextProjectsDir", value.Trim()); }
-        }
-
+        public string currentConversion;   // e.g., "Preprocessing" or "Portable HTML"
 
         public haiolaForm()
         {
             InitializeComponent();
+            globe = new global();
+            globe.UpdateStatus = updateConversionProgress;
+            globe.GUIWriteString = showMessageString;
+
             MasterInstance = this;
             plugin = new PluginManager();
             batchLabel.Text = String.Format("Haiola version {0}.{1} © 2003-{2} SIL, EBT, && eBible.org. Released under Gnu LGPL 3 or later.",
@@ -88,15 +48,15 @@ namespace haiola
         public bool GetRootDirectory()
         {
             FolderBrowserDialog dlg = new FolderBrowserDialog();
-            dlg.SelectedPath = dataRootDir;
+            dlg.SelectedPath = globe.dataRootDir;
             dlg.Description =
                 @"Please select a folder to contain your working directories.";
             dlg.ShowNewFolderButton = true;
             if (dlg.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                 return false;
-            dataRootDir = dlg.SelectedPath;
-            xini.WriteString("dataRootDir", dataRootDir);
-            xini.Write();
+            globe.dataRootDir = dlg.SelectedPath;
+            globe.xini.WriteString("globe.dataRootDir", globe.dataRootDir);
+            globe.xini.Write();
             return true;
         }
 
@@ -112,11 +72,13 @@ namespace haiola
             setup.ShowDialog();
         }
 
+        /* Function deprecated due to input file not being maintained.
+
         private Hashtable fcbhDbsIds;
 
         private void readFcbhIds()
         {
-            string fcbhIdFileName = Path.Combine(m_inputDirectory, "fcbhids.csv");
+            string fcbhIdFileName = Path.Combine(globe.inputDirectory, "fcbhids.csv");
             string line;
             string [] fields;
             if (File.Exists(fcbhIdFileName))
@@ -140,6 +102,7 @@ namespace haiola
                 }
             }
         }
+        */
 
         public LanguageCodeInfo languageCodes;
 
@@ -148,22 +111,20 @@ namespace haiola
         private void haiolaForm_Load(object sender, EventArgs e)
         {
             int i;
-            xini = new XMLini(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "haiola"),
+            globe.xini = new XMLini(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "haiola"),
     "haiola.xini"));
-            dataRootDir = xini.ReadString("dataRootDir", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "BibleConv"));
-            xini.WriteString("dataRootDir", dataRootDir);
-            xini.Write();
-            m_inputDirectory = Path.Combine(dataRootDir, "input");
-            if (!Directory.Exists(m_inputDirectory))
+            globe.dataRootDir = globe.xini.ReadString("globe.dataRootDir", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "BibleConv"));
+            globe.xini.WriteString("globe.dataRootDir", globe.dataRootDir);
+            globe.xini.Write();
+            globe.inputDirectory = Path.Combine(globe.dataRootDir, "input");
+            if (!Directory.Exists(globe.inputDirectory))
                 if (!GetRootDirectory())
                     Application.Exit();
-            dbsLogo = Path.Combine(m_inputDirectory, "dbs.jpg");
-            pngbtaLogo = Path.Combine(m_inputDirectory, "pngbta.jpg");
-            readFcbhIds();
+            dbsLogo = Path.Combine(globe.inputDirectory, "dbs.jpg");
+            pngbtaLogo = Path.Combine(globe.inputDirectory, "pngbta.jpg");
             eth = new Ethnologue();
             languageCodes = new LanguageCodeInfo();
             LoadWorkingDirectory(false, false, false);
-            getFCBHkeys = xini.ReadBool("downloadFcbhAudio", false);
             Application.DoEvents();
             triggerautorun = Program.autorun;
             if (triggerautorun)
@@ -191,7 +152,7 @@ namespace haiola
         /// <param name="fileName">Name of file to find.</param>
         public void EnsureTemplateFile(string fileName)
         {
-        	EnsureTemplateFile(fileName, m_inputDirectory);
+        	EnsureTemplateFile(fileName, globe.inputDirectory);
         }
  
         /// <summary>
@@ -212,7 +173,7 @@ namespace haiola
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error ensuring " + fileName + " is in " + m_inputDirectory);
+                MessageBox.Show(ex.Message, "Error ensuring " + fileName + " is in " + globe.inputDirectory);
             }
         }
 
@@ -241,51 +202,52 @@ namespace haiola
             readssf Ssf = new readssf();
             SaveOptions();
             LoadParatextProjectList();
+            LoadParatext8ProjectList();
             m_projectsList.BeginUpdate();
             m_projectsList.Items.Clear();
             m_projectsList.Sorted = false;
-            m_inputDirectory = Path.Combine(dataRootDir, "input");
-            m_outputDirectory = Path.Combine(dataRootDir, "output");
-            fileHelper.EnsureDirectory(dataRootDir);
-            fileHelper.EnsureDirectory(m_inputDirectory);
-            fileHelper.EnsureDirectory(m_outputDirectory);
+            globe.inputDirectory = Path.Combine(globe.dataRootDir, "input");
+            globe.outputDirectory = Path.Combine(globe.dataRootDir, "output");
+            fileHelper.EnsureDirectory(globe.dataRootDir);
+            fileHelper.EnsureDirectory(globe.inputDirectory);
+            fileHelper.EnsureDirectory(globe.outputDirectory);
 
             EnsureTemplateFile("haiola.css");
             EnsureTemplateFile("prophero.css");
             EnsureTemplateFile("fixquotes.re");
 
-            foreach (string path in Directory.GetDirectories(m_inputDirectory))
+            foreach (string path in Directory.GetDirectories(globe.inputDirectory))
             {
                 string project = Path.GetFileName(path);
                 m_projectsList.Items.Add(project);
                 projCount++;
-                m_project = project;
-                m_inputProjectDirectory = Path.Combine(m_inputDirectory, m_project);
-                m_outputProjectDirectory = Path.Combine(m_outputDirectory, m_project);
-                m_xiniPath = Path.Combine(m_inputProjectDirectory, "options.xini");
-                if (m_options == null)
+                globe.currentProject = project;
+                globe.inputProjectDirectory = Path.Combine(globe.inputDirectory, globe.currentProject);
+                globe.outputProjectDirectory = Path.Combine(globe.outputDirectory, globe.currentProject);
+                globe.projectXiniPath = Path.Combine(globe.inputProjectDirectory, "options.xini");
+                if (globe.projectOptions == null)
                 {
-                    m_options = new Options(m_xiniPath);
+                    globe.projectOptions = new Options(globe.projectXiniPath);
                 }
                 else
                 {
-                    m_options.Reload(m_xiniPath);
+                    globe.projectOptions.Reload(globe.projectXiniPath);
                 }
 
                 bool gotParatextProject = false;
-                if (!String.IsNullOrEmpty(paratextProjectsDir))
+                if (!String.IsNullOrEmpty(globe.paratextProjectsDir))
                 {
-                    if (!String.IsNullOrEmpty(m_options.paratextProject))
+                    if (!String.IsNullOrEmpty(globe.projectOptions.paratextProject))
                     {
-                        string ParatextProjectDir = Path.Combine(paratextProjectsDir, m_options.paratextProject);
+                        string ParatextProjectDir = Path.Combine(globe.paratextProjectsDir, globe.projectOptions.paratextProject);
                         if (Directory.Exists(ParatextProjectDir))
                         {
                             gotParatextProject = true;
-                            Ssf.ReadParatextSsf(m_options, ParatextProjectDir + ".ssf");
+                            Ssf.ReadParatextSsf(globe.projectOptions, ParatextProjectDir + ".ssf");
                         }
                     }
                 }
-                if ((!String.IsNullOrEmpty(m_options.languageId)) && 
+                if ((!String.IsNullOrEmpty(globe.projectOptions.languageId)) && 
                     (gotParatextProject ||
                     Directory.Exists(Path.Combine(path, "Source")) ||
                     Directory.Exists(Path.Combine(path, "usfx")) ||
@@ -300,32 +262,32 @@ namespace haiola
                 }
                 if (none)
                 {
-                    m_options.selected = false;
+                    globe.projectOptions.selected = false;
                 }
                 else if (all)
                 {
                     if (thisIndex == nextIndex)
                     {
-                        m_options.selected = isReady;
+                        globe.projectOptions.selected = isReady;
                         nextIndex += increment;
                     }
                     else
                     {
-                        m_options.selected = false;
+                        globe.projectOptions.selected = false;
                     }
                     thisIndex++;
                 }
                 else if (failed)
                 {
-                    m_options.selected = isReady && !m_options.lastRunResult;
+                    globe.projectOptions.selected = isReady && !globe.projectOptions.lastRunResult;
                 }
                 else
                 {
-                    m_options.selected = isReady && m_options.selected;
+                    globe.projectOptions.selected = isReady && globe.projectOptions.selected;
                 }
-                m_projectsList.SetItemChecked(m_projectsList.Items.Count - 1, m_options.selected);
-                m_options.Write();
-                if (m_options.selected)
+                m_projectsList.SetItemChecked(m_projectsList.Items.Count - 1, globe.projectOptions.selected);
+                globe.projectOptions.Write();
+                if (globe.projectOptions.selected)
                     projSelected++;
             }
             dependsComboBox.BeginUpdate();
@@ -346,7 +308,7 @@ namespace haiola
             }
             else
             {
-                MessageBox.Show(this, "No projects found in " + m_inputDirectory
+                MessageBox.Show(this, "No projects found in " + globe.inputDirectory
                                       +
                                       ". You should create a folder there for your project and place your input files in the appropriate subdirectory. Press the 'Help' button.",
                                 "No Projects", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -355,486 +317,8 @@ namespace haiola
             loadingDirectory = false;
         }
 
-        /// <summary>
-        /// Reads the \id line to get the standard abbreviation of this file to figure out what
-        /// a good name for its standardized file name might be.
-        /// </summary>
-        /// <param name="pathName">Full path to the file to read the \id line from.</param>
-        /// <returns>Sort order plus 3-letter abbreviation of the Bible book (or front/back matter), upper case,
-        /// unless the file lacks an \id line, in which case in returns and empty string.</returns>
-        public string MakeUpUsfmFileName(string pathName, out string id)
-        {
-            if (bkInfo == null)
-                bkInfo = new WordSend.BibleBookInfo();
-            // Use the ID line.
-            string result = "";
-            id = "";
-            string line;
-            string chap = "";
-            StreamReader sr = new StreamReader(pathName);
-            while ((!sr.EndOfStream) && (result.Length < 1))
-            {
-                line = sr.ReadLine();
-                if (line.StartsWith(@"\id ") && (line.Length > 6))
-                {
-                    id = result = line.Substring(4, 3).ToUpper(System.Globalization.CultureInfo.InvariantCulture);
-                }
-                else if ((line.StartsWith(@"\c ")) && (line.Length > 3))
-                {
-                    chap = line.Substring(3).Trim();
-                    int pos = chap.IndexOf(' ');
-                    if (pos >= 0)
-                    {
-                        chap = chap.Substring(0, pos);
-                    }
-                }
-            }
-            sr.Close();
-            if (chap == "1")
-                chap = "";
-            if (result.Length > 0)
-            {
-                result = bkInfo.Order(result).ToString("D2") + "-" + result + chap;
-            }
-            return result;
-        }
-        
-
-        private void PreprocessOneFile(string inputPath, List<string> tablePaths, string outputPath)
-		{
-            DateTime fileDate;
-            fileDate = File.GetLastWriteTimeUtc(inputPath);
-            if (fileDate > sourceDate)
-            {
-                sourceDate = fileDate;
-                m_options.SourceFileDate = sourceDate;
-            }
-			string input;
-			// Read file into input
-            // Instead of asking the user what the character encoding is, we guess that it is either
-            // Windows 1252 or UTF-8, and choose which one of those based on the assumed presence of
-            // surrogates in UTF-8, unless there is a byte-order mark.
-            Encoding enc = fileHelper.IdentifyFileCharset(inputPath);
-            // MessageBox.Show(inputPath + " is encoded as " + enc.ToString());
-			StreamReader reader = new StreamReader(inputPath, enc /* Encoding.GetEncoding(m_options.InputEncoding) */);
-			input = reader.ReadToEnd() + "\0";
-			reader.Close();
-
-			// Copy input into buffer
-			byte[] inputBytes = Encoding.UTF8.GetBytes(input); // replaced by previous output for subsequent iterations.
-			int cbyteInput = inputBytes.Length; // replaced by output length for subsequent iterations
-			byte[] outBuffer = inputBytes; // in case 0 iterations
-			int nOutLen = inputBytes.Length;
-			foreach (string tp in tablePaths)
-			{
-                if (tp.EndsWith(".process"))
-                {
-                    // This will become a switch if we get more processes
-                    if (tp == kFootnotesProcess)
-                    {
-                        FixMultipleFootnotes(ref inputBytes, ref cbyteInput);
-                        outBuffer = inputBytes; // in case last pass
-                        nOutLen = cbyteInput; // in case last pass.
-                    }
-                    else
-                    {
-                        MessageBox.Show(this, "Process " + tp + " not known", "Error");
-                        return;
-                    }
-                    continue;
-                }
-			    string tablePath = Path.Combine(m_inputProjectDirectory, tp);
-                if (!File.Exists(tablePath))
-                {
-                    tablePath = Path.Combine(m_inputDirectory, tp);
-                }
-                if (!File.Exists(tablePath))
-                {
-                    tablePath = SFConverter.FindAuxFile(tp);
-                }
-                if (File.Exists(tablePath))
-                {
-                    if (tablePath.EndsWith(".re"))
-                    {
-                        // Apply a regular expression substitution
-                        string temp = Encoding.UTF8.GetString(inputBytes, 0, cbyteInput - 1); // leave out final null
-                        StreamReader tableReader = new StreamReader(tablePath, Encoding.UTF8);
-                        fileDate = File.GetLastWriteTimeUtc(tablePath);
-                        if (fileDate > sourceDate)
-                        {
-                            sourceDate = fileDate;
-                            m_options.SourceFileDate = sourceDate;
-                        }
-                        while (!tableReader.EndOfStream)
-                        {
-                            string source = tableReader.ReadLine();
-                            if (source.Trim().Length == 0)
-                                continue;
-
-                            char delim = source[0];
-                            if (delim == ':')
-                                temp = DoRangeReplacement(source, temp);
-                            else
-                            {
-                                string[] parts = source.Split(new char[] {delim});
-                                string pattern = parts[1]; // parts[0] is the empty string before the first delimiter
-                                string replacement = parts[2];
-                                replacement = replacement.Replace("$r", "\r"); // Allow $r in replacement to become a true cr
-                                replacement = replacement.Replace("$n", "\n"); // Allow (literal) $n in replacement to become a true newline
-                                temp = System.Text.RegularExpressions.Regex.Replace(temp, pattern, replacement);
-                            }
-                        }
-                        tableReader.Close();
-                        temp = temp + "\0";
-                        outBuffer = Encoding.UTF8.GetBytes(temp);
-                        inputBytes = outBuffer;
-                        cbyteInput = nOutLen = inputBytes.Length;
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Can't find preprocessing file " + tp, "Error in preprocessing file list");
-                }
-			}
-
-            // Convert the output back to a file
-        	Directory.CreateDirectory(Path.GetDirectoryName(outputPath)); // make sure it exists.
-			StreamWriter output = new StreamWriter(outputPath, false, Encoding.UTF8);
-			// Make sure no trailing nulls get written to file.
-			while (nOutLen > 0 && outBuffer[nOutLen - 1] == 0)
-				nOutLen--;
-			string outputString = Encoding.UTF8.GetString(outBuffer, 0, nOutLen);
-			output.Write(outputString);
-			output.Close();
-
-            // Eradicate depricated PUA characters
-            fileHelper.revisePua(outputPath);
-		}
-
-        /// <summary>
-        /// This does a range-restricted replacement.
-        /// 1. Find a match for first pattern.
-        /// 2. Find next match for second pattern.
-        /// 3. Replace the text between (but not including) the matches with the result
-        /// of doing a substitution of the third pattern with the fourth
-        /// 4. Continue the search starting after the end match.
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        string DoRangeReplacement(string source, string input)
-        {
-            string temp = input;
-            char delim = source[1];
-            string[] parts = source.Split(new char[] {delim});
-            var start = new Regex(parts[1]); // parts[0] is the colon before the first delimiter
-            var finish = new Regex(parts[2]);
-            var pattern = new Regex(parts[3]);
-            string replacement = parts[4];
-            replacement = replacement.Replace("$r", "\r"); // Allow $r in replacement to become a true cr
-            replacement = replacement.Replace("$n", "\n"); // Allow (literal) $n in replacement to become a true newline
-
-            int startIndex = 0;
-            while (startIndex < temp.Length)
-            {
-                var nextMatch = start.Match(temp, startIndex);
-                if (!nextMatch.Success)
-                    break;
-                startIndex = nextMatch.Index + nextMatch.Length;
-                nextMatch = finish.Match(temp, startIndex);
-                if (!nextMatch.Success)
-                    break;
-                int finishIndex = nextMatch.Index;
-                string substitute = pattern.Replace(temp.Substring(startIndex, finishIndex - startIndex), replacement);
-                temp = temp.Substring(0, startIndex) + substitute + temp.Substring(finishIndex);
-                startIndex = startIndex + substitute.Length + nextMatch.Length;
-            }
-            return temp;
-        }
-
-        /// <summary>
-        /// States for state machine in FixMultipleFootnotes
-        /// </summary>
-        enum FnStates
-        {
-            fnsAwaitingVt,
-            fnsProcessingVt,
-            fnsCollectingFt
-        }
-
-        /// <summary>
-        /// We're looking for patterns like this:
-        /// 
-        /// \vt verse text |fn more verse text |fn still more
-        /// \ft first footnote body
-        /// \ft second footnote body
-        /// \x
-        /// 
-        /// And converting to have only one |fn in a \vt, by moving the rest of the \vt into a new \vt after the first \ft, like this
-        /// \vt verse text |fn
-        /// \ft first footnote body
-        /// \vt more verse text |fn still more
-        /// \ft second footnote body
-        /// \x
-        /// 
-        /// It should handle even more then two.
-        /// 
-        /// This works because OW input always has all the \ft's for a \vt, each on a line by itself, right after
-        /// the \vt field (after an earlier process stripped out the associated \btvt and \btft). Also, adjacent \vt blocks just get merged...
-        /// in fact the next step strips out the \vt markers...and the \ft material gets moved to the bottom somewhere.
-        /// 
-        /// It is done because the later RE-based processing steps can't handle more than one |fn before the associated \ft.
-        /// </summary>
-        /// <param name="inputBytes"></param>
-        /// <param name="cbyteInput"></param>
-        private void FixMultipleFootnotes(ref byte[] inputBytes, ref int cbyteInput)
-        {
-            byte[] outBuffer = new byte[cbyteInput * 2 + 100]; // super-generous
-            int cbyteOut = 0;
-            byte[] marker = Encoding.UTF8.GetBytes(@"\vt ");
-            int i = 0;
-            byte[] anchor = Encoding.UTF8.GetBytes("|fn");
-            byte[] footnote = Encoding.UTF8.GetBytes(@"\ft ");
-            List<int> anchors = new List<int>(); // places within the current \vt where we found |fn
-            List<int> footnotes = new List<int>(); // places within the current \vt where we found \ft
-            FnStates state = FnStates.fnsAwaitingVt;
-            int ichStartVt = -1; // will cause crash if accidentally used before otherwise initialized.
-            while (i < cbyteInput - 2)// 2 is length of shortest target
-            {
-                switch (state)
-                {
-                    case FnStates.fnsAwaitingVt:
-                        if (FindMarker(inputBytes, i, marker))
-                        {
-                            state = FnStates.fnsProcessingVt;
-                            ichStartVt = i;
-                        }
-                        else
-                        {
-                            outBuffer[cbyteOut++] = inputBytes[i];
-                        }
-                        break;
-                    case FnStates.fnsProcessingVt:
-                        if (FindMarker(inputBytes, i, footnote))
-                        {
-                            footnotes.Add(i); // note it
-                            state = FnStates.fnsCollectingFt;
-                        }
-                        else if (FindMarker(inputBytes, i, anchor))
-                        {
-                            anchors.Add(i);
-                        }
-                        else if (i > 0 && inputBytes[i - 1] == 10 && inputBytes[i] == 92) // backslash at start of line
-                        {
-                            // We found some marker that terminates things. Note that it MIGHT be another \vt.
-                            cbyteOut = HandleEndOfVtBlock(inputBytes, outBuffer, cbyteOut, marker, i, anchor, anchors, footnotes, ichStartVt);
-                            state = FnStates.fnsAwaitingVt;
-                            continue; // SKIP i++ so we can check to see whether this marker is \vt and starts a new block.
-                        }
-                        break;
-                    case FnStates.fnsCollectingFt:
-                        if (FindMarker(inputBytes, i, footnote))
-                        {
-                            footnotes.Add(i); // note it
-                        }
-                        else if (i > 0 && inputBytes[i - 1] == 10 && inputBytes[i] == 92) // backslash at start of line
-                        {
-                            cbyteOut = HandleEndOfVtBlock(inputBytes, outBuffer, cbyteOut, marker, i, anchor, anchors, footnotes, ichStartVt);
-                            state = FnStates.fnsAwaitingVt;
-                            continue; // SKIP i++ so we can check to see whether this marker is \vt and starts a new block.
-                        }
-                        break;
-                }
-                i++;
-            }
-            if (state != FnStates.fnsAwaitingVt)
-            {
-                // input terminated within a \vt block. Include the remaining text
-                cbyteOut = HandleEndOfVtBlock(inputBytes, outBuffer, cbyteOut, marker, cbyteInput, anchor, anchors, footnotes, ichStartVt);
-            }
-            else
-            {
-                // Copy the last few bytes
-                while (i < cbyteInput)
-                    outBuffer[cbyteOut++] = inputBytes[i++];
-            }
-            // switch buffers and counts.
-            inputBytes = outBuffer;
-            cbyteInput = cbyteOut;
-        }
-
-        private static int HandleEndOfVtBlock(byte[] inputBytes, byte[] outBuffer, int cbyteOut, byte[] marker, int i, byte[] anchor, List<int> anchors, List<int> footnotes, int ichStartVt)
-        {
-            // If all is not consistent, give up and let it fail at next stage.
-            // If only one anchor, no need to fix.
-            if (anchors.Count != footnotes.Count || anchors.Count < 2)
-            {
-                // no need to re-arrange, just copy everything since \vt
-                cbyteOut = CopySegToOutput(inputBytes, outBuffer, cbyteOut, ichStartVt, i);
-            }
-            else
-            {
-                // Re-arrange so only one anchor per \vt.
-                // First copy everything from \vt to the end of the first |fn
-                cbyteOut = CopySegToOutput(inputBytes, outBuffer, cbyteOut, ichStartVt, anchors[0] + anchor.Length);
-                // the -1 should put a newline before the first \ft; copying up to footnotes[1] ends with a newline, too.
-                cbyteOut = CopySegToOutput(inputBytes, outBuffer, cbyteOut, footnotes[0] - 1, footnotes[1]);
-                footnotes.Add(i); // last footnote terminates at current character position.
-                for (int ifn = 1; ifn < anchors.Count; ifn++)
-                {
-                    // Copy an extra \vt.
-                    cbyteOut = CopySegToOutput(inputBytes, outBuffer, cbyteOut, ichStartVt, ichStartVt + marker.Length);
-                    // Copy the text between the previous footnote and this one, including the |f
-                    int ichStart = anchors[ifn - 1] + anchor.Length;
-                    // Drop one leading space or newline; newline between \vt blocks is equivalent.
-                    if (inputBytes[ichStart] == 32 || inputBytes[ichStart] == 10)
-                        ichStart++;
-                    cbyteOut = CopySegToOutput(inputBytes, outBuffer, cbyteOut, ichStart, anchors[ifn] + anchor.Length);
-                    // Copy the next footnote, including the preceding and following newlines
-                    cbyteOut = CopySegToOutput(inputBytes, outBuffer, cbyteOut, footnotes[ifn] - 1, footnotes[ifn + 1]);
-                }
-                if (anchors[anchors.Count - 1] + anchor.Length + 1 < footnotes[0])
-                {
-                    int ichStart = anchors[anchors.Count - 1] + anchor.Length;
-                    // Drop one leading space or newline; newline between \vt blocks is equivalent.
-                    if (inputBytes[ichStart] == 32 || inputBytes[ichStart] == 10)
-                        ichStart++;
-                    if (ichStart + 1 < footnotes[0]) // further check in case ONLY one space
-                    {
-                        // We have text following the last anchor. Make yet another \vt
-                        cbyteOut = CopySegToOutput(inputBytes, outBuffer, cbyteOut, ichStartVt, ichStartVt + marker.Length);
-                        // And copy the trailing text. It runs from after the last anchor to before the first footnote body.
-                        cbyteOut = CopySegToOutput(inputBytes, outBuffer, cbyteOut, ichStart, footnotes[0]);
-                    }
-                }
-            }
-            anchors.Clear();
-            footnotes.Clear();
-            return cbyteOut;
-        }
-
-        /// <summary>
-        /// Helper function for FixMultipleFootnotes. Copies characters from ichMin to (but not including) ichLim
-        /// from inputBytes to outBuffer, starting at cbyteOut. Returns a new value for cbyteOut, the next character
-        /// after the material copied.
-        /// </summary>
-        /// <param name="inputBytes"></param>
-        /// <param name="outBuffer"></param>
-        /// <param name="cbyteOut"></param>
-        /// <param name="ichStart"></param>
-        /// <param name="ichLim"></param>
-        /// <returns></returns>
-        private static int CopySegToOutput(byte[] inputBytes, byte[] outBuffer, int cbyteOut, int ichStart, int ichLim)
-        {
-            for (int k = ichStart; k < ichLim; k++)
-                outBuffer[cbyteOut++] = inputBytes[k];
-            return cbyteOut;
-        }
-
-        /// <summary>
-        /// Helper function for FixMultipleFootnotes. Determines whether the byte sequence target occurs at offset i in inputBytes.
-        /// </summary>
-        /// <param name="inputBytes"></param>
-        /// <param name="i"></param>
-        /// <param name="target"></param>
-        /// <returns></returns>
-        private static bool FindMarker(byte[] inputBytes, int i, byte[] target)
-        {
-            bool gotIt = true;
-            for (int j = 0; j < target.Length; j++)
-            {
-                if (inputBytes[i + j] != target[j])
-                {
-                    gotIt = false;
-                    break;
-                }
-            }
-            return gotIt;
-        }
 
 
-        public void PreprocessUsfmFiles(string SourceDir)
-        {
-            // First, copy BookNames.xml for ready reference. We will update it later.
-            string bookNamesCopy = Path.Combine(m_outputProjectDirectory, "BookNames.xml");
-            string bookNamesSource = Path.Combine(SourceDir, "BookNames.xml");
-            if (File.Exists(bookNamesSource))
-                File.Copy(bookNamesSource, bookNamesCopy, true);
-
-            // Now, get on with preprocessing the USFM files.
-            Logit.GUIWriteString = showMessageString;
-            Logit.OpenFile(Path.Combine(m_outputProjectDirectory, "preprocesslog.txt"));
-            // string SourceDir = Path.Combine(m_inputProjectDirectory, "Source");
-            /*
-            StreamReader sr = new StreamReader(orderFile);
-            string allowedBookList = sr.ReadToEnd();
-            sr.Close();
-            */
-            string bookId;
-            string UsfmDir = Path.Combine(m_outputProjectDirectory, "extendedusfm");
-            if (!Directory.Exists(SourceDir))
-            {
-                MessageBox.Show(this, SourceDir + " not found!", "ERROR");
-                return;
-            }
-            // Start with an EMPTY USFM directory to avoid problems with old files 
-            Utils.DeleteDirectory(UsfmDir);
-            fileHelper.EnsureDirectory(UsfmDir);
-            string[] inputFileNames = Directory.GetFiles(SourceDir);
-            if (inputFileNames.Length == 0)
-            {
-                MessageBox.Show(this, "No files found in " + SourceDir, "ERROR");
-                return;
-            }
-
-            foreach (string inputFile in inputFileNames)
-            {
-                string filename = Path.GetFileName(inputFile);
-                string lowerName = filename.ToLower();
-                string fileType = Path.GetExtension(filename).ToUpper();
-                if ((fileType != ".BAK") && (fileType != ".LDS") &&
-                    (fileType != ".SSF") && (fileType != ".DBG") &&
-                    (fileType != ".WDL") && (fileType != ".STY") &&
-                    (fileType != ".XML") && (fileType != ".HTM") &&
-                    (fileType != ".KB2") && (fileType != ".HTML") &&
-                    (fileType != ".CSS") && (fileType != ".SWP") &&
-                    (fileType != ".ID") && (fileType != ".DIC") &&
-                    (fileType != ".VRS") && (fileType != ".INI") && (fileType != ".CSV") &&
-                    (fileType != ".CCT") && (!inputFile.EndsWith("~")) &&
-                    (lowerName != "autocorrect.txt") &&
-                    (lowerName != "tmp.txt") &&
-                    (lowerName != "changes.txt") &&
-                    (lowerName != "hyphenatedWords.txt") &&
-                    (lowerName != "wordboundariesoutput.txt") &&
-                    (lowerName != "printdraftchanges.txt"))
-                {
-                    currentConversion = "preprocessing " + filename;
-                    Application.DoEvents();
-                    if (!fileHelper.fAllRunning)
-                        break;
-                    string outputFileName = MakeUpUsfmFileName(inputFile, out bookId) + ".usfm";
-                    if (outputFileName.Length < 8)
-                    {
-                        if (fileType != ".TXT")
-                            Logit.WriteLine("No proper \\id line found in " + inputFile);
-                    }
-                    else
-                    {
-                        if (m_options.allowedBookList.Contains(bookId))
-                        {
-                            string outputFilePath = Path.Combine(UsfmDir, outputFileName);
-                            PreprocessOneFile(inputFile, m_options.preprocessingTables, outputFilePath);
-                        }
-                        /*
-                        else
-                        {
-                            Logit.WriteLine("Skipping book " + bookId + " (not in " + orderFile + ")");
-                        }
-                        */
-                    }
-                }
-            }
-        }
 
         private int loggedLineCount = 0;
 
@@ -855,7 +339,12 @@ namespace haiola
             if (Logit.loggedError)
             {
                 BackColor = messagesListBox.BackColor = Color.LightPink;
-                m_options.lastRunResult = false;
+                globe.projectOptions.lastRunResult = false;
+            }
+            else if (Logit.loggedWarning)
+            {
+                BackColor = messagesListBox.BackColor = Color.Yellow;
+                globe.projectOptions.warningsFound = true;
             }
             Application.DoEvents();
             return fileHelper.fAllRunning;
@@ -866,17 +355,18 @@ namespace haiola
             loggedLineCount = 0;
             messagesListBox.Items.Add(DateTime.Now.ToString() + " " + s);
             messagesListBox.SelectedIndex = messagesListBox.Items.Count - 1;
-            m_options.lastRunResult = true;
+            globe.projectOptions.lastRunResult = true;
+            globe.projectOptions.warningsFound = false;
         }
 
         private void ConvertUsfmToUsfx()
         {
-            string UsfmDir = Path.Combine(m_outputProjectDirectory, "extendedusfm");
+            string UsfmDir = Path.Combine(globe.outputProjectDirectory, "extendedusfm");
             string UsfxPath = GetUsfxDirectoryPath();
             string usfxName = GetUsfxFilePath();
             if (!Directory.Exists(UsfmDir))
             {
-                UsfmDir = Path.Combine(m_outputProjectDirectory, "usfm");
+                UsfmDir = Path.Combine(globe.outputProjectDirectory, "usfm");
             }
             if (!Directory.Exists(UsfmDir))
             {
@@ -889,48 +379,49 @@ namespace haiola
             currentConversion = "converting from USFM to USFX; reading USFM";
             Application.DoEvents();
             Utils.DeleteDirectory(UsfxPath);
-            if ((m_options.languageId.Length < 3) || (m_options.translationId.Length < 3))
+            if ((globe.projectOptions.languageId.Length < 3) || (globe.projectOptions.translationId.Length < 3))
             {
                 MessageBox.Show(this,
                                 string.Format(
                                     "language and translation ids (%0 and %1) must be at least three characters each",
-                                    m_options.languageId, m_options.translationId),
+                                    globe.projectOptions.languageId, globe.projectOptions.translationId),
                                 "ERROR");
                 return;
             }
             Utils.EnsureDirectory(UsfxPath);
-            string logFile = Path.Combine(m_outputProjectDirectory, "ConversionReports.txt");
+            string logFile = Path.Combine(globe.outputProjectDirectory, "ConversionReports.txt");
             Logit.OpenFile(logFile);
             Logit.UpdateStatus = updateConversionProgress;
             Logit.GUIWriteString = showMessageString;
-            SFConverter.scripture = new Scriptures(m_options);
+            SFConverter.scripture = new Scriptures(globe.projectOptions);
             Logit.loggedError = false;
+            Logit.loggedWarning = false;
             // Read a copy of BookNames.xml copied from the source USFM directory, if any.
-            SFConverter.scripture.bkInfo.ReadDefaultBookNames(Path.Combine(m_outputProjectDirectory, "BookNames.xml"));
-            SFConverter.scripture.assumeAllNested = m_options.relaxUsfmNesting;
+            SFConverter.scripture.bkInfo.ReadDefaultBookNames(Path.Combine(globe.outputProjectDirectory, "BookNames.xml"));
+            SFConverter.scripture.assumeAllNested = globe.projectOptions.relaxUsfmNesting;
             // Read the input USFM files into internal data structures.
             SFConverter.ProcessFilespec(Path.Combine(UsfmDir, "*.usfm"), Encoding.UTF8);
             currentConversion = "converting from USFM to USFX; writing USFX";
             Application.DoEvents();
 
             // Write out the USFX file.
-            SFConverter.scripture.languageCode = m_options.languageId;
+            SFConverter.scripture.languageCode = globe.projectOptions.languageId;
             SFConverter.scripture.WriteUSFX(usfxName);
-            SFConverter.scripture.bkInfo.ReadUsfxVernacularNames(Path.Combine(Path.Combine(m_outputProjectDirectory, "usfx"), "usfx.xml"));
-            string bookNames = Path.Combine(m_outputProjectDirectory, "BookNames.xml");
+            SFConverter.scripture.bkInfo.ReadUsfxVernacularNames(Path.Combine(Path.Combine(globe.outputProjectDirectory, "usfx"), "usfx.xml"));
+            string bookNames = Path.Combine(globe.outputProjectDirectory, "BookNames.xml");
             SFConverter.scripture.bkInfo.WriteDefaultBookNames(bookNames);
-            File.Copy(bookNames, Path.Combine(Path.Combine(m_outputProjectDirectory, "usfx"), "BookNames.xml"), true);
-            bool runResult = m_options.lastRunResult;
+            File.Copy(bookNames, Path.Combine(Path.Combine(globe.outputProjectDirectory, "usfx"), "BookNames.xml"), true);
+            bool runResult = globe.projectOptions.lastRunResult;
             bool errorState = Logit.loggedError;
             fileHelper.revisePua(usfxName);
             if (!SFConverter.scripture.hasRefTags)
             {
-                m_options.makeHotLinks = true;
+                globe.projectOptions.makeHotLinks = true;
                 SFConverter.scripture.ReadRefTags(usfxName);
             }
             if (!SFConverter.scripture.ValidateUsfx(usfxName))
             {
-                if (m_options.makeHotLinks && File.Exists(Path.ChangeExtension(usfxName, ".norefxml")))
+                if (globe.projectOptions.makeHotLinks && File.Exists(Path.ChangeExtension(usfxName, ".norefxml")))
                 {
                     File.Move(usfxName, Path.ChangeExtension(usfxName, ".bad"));
                     File.Move(Path.ChangeExtension(usfxName, ".norefxml"), usfxName);
@@ -938,9 +429,9 @@ namespace haiola
                     if (SFConverter.scripture.ValidateUsfx(usfxName))
                     {
                         Logit.loggedError = errorState;
-                        m_options.lastRunResult = runResult;
+                        globe.projectOptions.lastRunResult = runResult;
                         Logit.WriteLine("Validation passed without expanded references.");
-                        m_options.makeHotLinks = false;
+                        globe.projectOptions.makeHotLinks = false;
                     }
                     else
                     {
@@ -955,7 +446,11 @@ namespace haiola
             Logit.CloseFile();
             if (Logit.loggedError)
             {
-                m_options.lastRunResult = false;
+                globe.projectOptions.lastRunResult = false;
+            }
+            if (Logit.loggedWarning)
+            {
+                globe.projectOptions.warningsFound = true;
             }
             currentConversion = "converted USFM to USFX.";
             Application.DoEvents();
@@ -968,7 +463,7 @@ namespace haiola
 
     	private string GetUsfxDirectoryPath()
     	{
-    		return Path.Combine(m_outputProjectDirectory, "usfx");
+    		return Path.Combine(globe.outputProjectDirectory, "usfx");
     	}
 
 
@@ -976,41 +471,41 @@ namespace haiola
 
         /// <summary>
         /// Sets the shortCopyrightMessage, longCopyrightMessage, and copyrightLink variables based on the
-        /// current m_options values.
+        /// current globe.m_options values.
         /// </summary>
         public void SetCopyrightStrings()
         {
-            if (m_options.publicDomain)
+            if (globe.projectOptions.publicDomain)
             {
                 shortCopyrightMessage = longCopyrightMessage = "Public Domain";
                 copyrightLink = "<a href='http://en.wikipedia.org/wiki/Public_domain'>Public Domain</a>";
             }
-            else if (m_options.silentCopyright)
+            else if (globe.projectOptions.silentCopyright)
             {
                 longCopyrightMessage = shortCopyrightMessage = copyrightLink = String.Empty;
             }
-            else if (m_options.copyrightOwnerAbbrev.Length > 0)
+            else if (globe.projectOptions.copyrightOwnerAbbrev.Length > 0)
             {
-                shortCopyrightMessage = "© " + m_options.copyrightYears + " " + m_options.copyrightOwnerAbbrev;
-                longCopyrightMessage = "Copyright © " + m_options.copyrightYears + " " + m_options.copyrightOwner;
-                if (m_options.copyrightOwnerUrl.Length > 11)
-                    copyrightLink = "copyright © " + m_options.copyrightYears + " <a href=\"" + m_options.copyrightOwnerUrl + "\">" + usfxToHtmlConverter.EscapeHtml(m_options.copyrightOwner) + "</a>";
+                shortCopyrightMessage = "© " + globe.projectOptions.copyrightYears + " " + globe.projectOptions.copyrightOwnerAbbrev;
+                longCopyrightMessage = "Copyright © " + globe.projectOptions.copyrightYears + " " + globe.projectOptions.copyrightOwner;
+                if (globe.projectOptions.copyrightOwnerUrl.Length > 11)
+                    copyrightLink = "copyright © " + globe.projectOptions.copyrightYears + " <a href=\"" + globe.projectOptions.copyrightOwnerUrl + "\">" + usfxToHtmlConverter.EscapeHtml(globe.projectOptions.copyrightOwner) + "</a>";
                 else
                     copyrightLink = longCopyrightMessage;
             }
             else
             {
-                shortCopyrightMessage = "© " + m_options.copyrightYears + " " + m_options.copyrightOwner;
+                shortCopyrightMessage = "© " + globe.projectOptions.copyrightYears + " " + globe.projectOptions.copyrightOwner;
                 longCopyrightMessage = "Copyright " + shortCopyrightMessage;
-                if (m_options.copyrightOwnerUrl.Length > 11)
-                    copyrightLink = "copyright © " + m_options.copyrightYears + " <a href=\"" + m_options.copyrightOwnerUrl + "\">" + usfxToHtmlConverter.EscapeHtml(m_options.copyrightOwner) + "</a>";
+                if (globe.projectOptions.copyrightOwnerUrl.Length > 11)
+                    copyrightLink = "copyright © " + globe.projectOptions.copyrightYears + " <a href=\"" + globe.projectOptions.copyrightOwnerUrl + "\">" + usfxToHtmlConverter.EscapeHtml(globe.projectOptions.copyrightOwner) + "</a>";
                 else
                     copyrightLink = longCopyrightMessage;
             }
-            if (m_options.AudioCopyrightNotice.Length > 1)
+            if (globe.projectOptions.AudioCopyrightNotice.Length > 1)
             {
-                longCopyrightMessage = longCopyrightMessage + "; ℗ " + usfxToHtmlConverter.EscapeHtml(m_options.AudioCopyrightNotice);
-                copyrightLink = copyrightLink + "<br />℗ " + usfxToHtmlConverter.EscapeHtml(m_options.AudioCopyrightNotice);
+                longCopyrightMessage = longCopyrightMessage + "; ℗ " + usfxToHtmlConverter.EscapeHtml(globe.projectOptions.AudioCopyrightNotice);
+                copyrightLink = copyrightLink + "<br />℗ " + usfxToHtmlConverter.EscapeHtml(globe.projectOptions.AudioCopyrightNotice);
             }
         }
 
@@ -1022,47 +517,47 @@ namespace haiola
         public string expandPercentEscapes(string s)
         {
             string distributionScope;
-            if (m_options.privateProject)
-                m_options.redistributable = m_options.downloadsAllowed = false;
-            if (m_options.redistributable)
+            if (globe.projectOptions.privateProject)
+                globe.projectOptions.redistributable = globe.projectOptions.downloadsAllowed = false;
+            if (globe.projectOptions.redistributable)
                 distributionScope = "redistributable";
-            else if (m_options.downloadsAllowed)
+            else if (globe.projectOptions.downloadsAllowed)
                 distributionScope = "downloadable";
             else
                 distributionScope = "restricted";
-            s = s.Replace("%d", m_project);
-            s = s.Replace("%e", m_options.languageId);
-            s = s.Replace("%h", m_options.homeDomain);
+            s = s.Replace("%d", globe.currentProject);
+            s = s.Replace("%e", globe.projectOptions.languageId);
+            s = s.Replace("%h", globe.projectOptions.homeDomain);
             s = s.Replace("%c", shortCopyrightMessage);
             s = s.Replace("%C", copyrightLink);
-            s = s.Replace("%l", m_options.languageName);
-            s = s.Replace("%L", m_options.languageNameInEnglish);
-            s = s.Replace("%D", m_options.dialect);
-            s = s.Replace("%a", m_options.contentCreator);
-            s = s.Replace("%A", m_options.contributor);
-            s = s.Replace("%v", m_options.vernacularTitle);
-            s = s.Replace("%f", "<a href=\"" + m_options.facebook + "\">" + m_options.facebook + "</a>");
-            s = s.Replace("%F", m_options.fcbhId);
-            s = s.Replace("%n", m_options.EnglishDescription);
-            s = s.Replace("%N", m_options.lwcDescription);
-            s = s.Replace("%p", m_options.privateProject ? "private" : "public");
+            s = s.Replace("%l", globe.projectOptions.languageName);
+            s = s.Replace("%L", globe.projectOptions.languageNameInEnglish);
+            s = s.Replace("%D", globe.projectOptions.dialect);
+            s = s.Replace("%a", globe.projectOptions.contentCreator);
+            s = s.Replace("%A", globe.projectOptions.contributor);
+            s = s.Replace("%v", globe.projectOptions.vernacularTitle);
+            s = s.Replace("%f", "<a href=\"" + globe.projectOptions.facebook + "\">" + globe.projectOptions.facebook + "</a>");
+            s = s.Replace("%F", globe.projectOptions.fcbhId);
+            s = s.Replace("%n", globe.projectOptions.EnglishDescription);
+            s = s.Replace("%N", globe.projectOptions.lwcDescription);
+            s = s.Replace("%p", globe.projectOptions.privateProject ? "private" : "public");
             s = s.Replace("%r", distributionScope);
-            s = s.Replace("%T", m_options.contentUpdateDate.ToString("yyyy-MM-dd"));
-            s = s.Replace("%o", m_options.rightsStatement);
-            s = s.Replace("%x", m_options.promoHtml);
-            s = s.Replace("%w", m_options.printPublisher);
-            s = s.Replace("%i", m_options.electronicPublisher);
-            s = s.Replace("%P", m_options.AudioCopyrightNotice);
-            s = s.Replace("%t", m_options.translationId);
+            s = s.Replace("%T", globe.projectOptions.contentUpdateDate.ToString("yyyy-MM-dd"));
+            s = s.Replace("%o", globe.projectOptions.rightsStatement);
+            s = s.Replace("%x", globe.projectOptions.promoHtml);
+            s = s.Replace("%w", globe.projectOptions.printPublisher);
+            s = s.Replace("%i", globe.projectOptions.electronicPublisher);
+            s = s.Replace("%P", globe.projectOptions.AudioCopyrightNotice);
+            s = s.Replace("%t", globe.projectOptions.translationId);
             string result = s.Replace("%%", "%");
             return result;
         }
 
         public string GetEpubID()
         {
-            if (String.IsNullOrEmpty(m_options.epubId))
+            if (String.IsNullOrEmpty(globe.projectOptions.epubId))
             {
-                string hash = Utils.SHA1HashString(m_options.translationId + "|" + m_options.fcbhId + "|" + DateTime.UtcNow.ToString("dd M yyyy HH:mm:ss.fffffff") + " http://Haiola.org ");
+                string hash = Utils.SHA1HashString(globe.projectOptions.translationId + "|" + globe.projectOptions.fcbhId + "|" + DateTime.UtcNow.ToString("dd M yyyy HH:mm:ss.fffffff") + " http://Haiola.org ");
                 StringBuilder uuid = new StringBuilder(hash);
                 uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
                 uuid[14] = '5';
@@ -1090,47 +585,47 @@ namespace haiola
                         break;
                 }
                 uuid.Length = 36;   // Truncate
-                m_options.epubId = uuid.ToString();
-                m_options.Write();
+                globe.projectOptions.epubId = uuid.ToString();
+                globe.projectOptions.Write();
             }
-            return m_options.epubId;
+            return globe.projectOptions.epubId;
         }
 
         public string copyrightPermissionsStatement()
         {
-            string fontClass = m_options.fontFamily.ToLower().Replace(' ', '_');
-            if (m_options.customPermissions)
-                return expandPercentEscapes(m_options.licenseHtml);
+            string fontClass = globe.projectOptions.fontFamily.ToLower().Replace(' ', '_');
+            if (globe.projectOptions.customPermissions)
+                return expandPercentEscapes(globe.projectOptions.licenseHtml);
             StringBuilder copr = new StringBuilder();
             copr.Append(String.Format("<h1 class='{2}'>{0}</h1>\n<h2>{1}</h2>\n",
-                usfxToHtmlConverter.EscapeHtml(m_options.vernacularTitle), 
-                usfxToHtmlConverter.EscapeHtml(m_options.EnglishDescription), fontClass));
-            if (!String.IsNullOrEmpty(m_options.lwcDescription))
-                copr.Append(String.Format("<h2>{0}</h2>\n", usfxToHtmlConverter.EscapeHtml(m_options.lwcDescription)));
+                usfxToHtmlConverter.EscapeHtml(globe.projectOptions.vernacularTitle), 
+                usfxToHtmlConverter.EscapeHtml(globe.projectOptions.EnglishDescription), fontClass));
+            if (!String.IsNullOrEmpty(globe.projectOptions.lwcDescription))
+                copr.Append(String.Format("<h2>{0}</h2>\n", usfxToHtmlConverter.EscapeHtml(globe.projectOptions.lwcDescription)));
             copr.Append(String.Format("<p>{0}<br />\n",copyrightLink));
-            if (!String.IsNullOrEmpty(m_options.rightsStatement))
-                copr.Append(String.Format("{0}<br />\n", m_options.rightsStatement));
+            if (!String.IsNullOrEmpty(globe.projectOptions.rightsStatement))
+                copr.Append(String.Format("{0}<br />\n", globe.projectOptions.rightsStatement));
             copr.Append(String.Format("Language: <a href='http://www.ethnologue.org/language/{0}' class='{2}' target='_blank'>{1}",
-                m_options.languageId, m_options.languageName, fontClass));
-            if (m_options.languageName != m_options.languageNameInEnglish)
-                copr.Append(String.Format(" ({0})", usfxToHtmlConverter.EscapeHtml(m_options.languageNameInEnglish)));
+                globe.projectOptions.languageId, globe.projectOptions.languageName, fontClass));
+            if (globe.projectOptions.languageName != globe.projectOptions.languageNameInEnglish)
+                copr.Append(String.Format(" ({0})", usfxToHtmlConverter.EscapeHtml(globe.projectOptions.languageNameInEnglish)));
             copr.Append("</a><br />\n");
-            if (!String.IsNullOrEmpty(m_options.dialect))
-                copr.Append(String.Format("Dialect: {0}<br />", usfxToHtmlConverter.EscapeHtml(m_options.dialect)));
+            if (!String.IsNullOrEmpty(globe.projectOptions.dialect))
+                copr.Append(String.Format("Dialect: {0}<br />", usfxToHtmlConverter.EscapeHtml(globe.projectOptions.dialect)));
             /*
-            if (!String.IsNullOrEmpty(m_options.printPublisher))
-                copr.Append(String.Format("Primary print publisher: {0}<br />\n", usfxToHtmlConverter.EscapeHtml(m_options.printPublisher)));
-            if (!String.IsNullOrEmpty(m_options.electronicPublisher))
-                copr.Append(String.Format("Electronic publisher: {0}<br />\n", usfxToHtmlConverter.EscapeHtml(m_options.electronicPublisher)));
+            if (!String.IsNullOrEmpty(globe.m_options.printPublisher))
+                copr.Append(String.Format("Primary print publisher: {0}<br />\n", usfxToHtmlConverter.EscapeHtml(globe.m_options.printPublisher)));
+            if (!String.IsNullOrEmpty(globe.m_options.electronicPublisher))
+                copr.Append(String.Format("Electronic publisher: {0}<br />\n", usfxToHtmlConverter.EscapeHtml(globe.m_options.electronicPublisher)));
             */
-            if (!String.IsNullOrEmpty(m_options.contentCreator))
-                copr.Append(String.Format("Translation by: {0}<br />\n", usfxToHtmlConverter.EscapeHtml(m_options.contentCreator)));
-            if ((!String.IsNullOrEmpty(m_options.contributor)) && (m_options.contentCreator != m_options.contributor))
-                copr.Append(String.Format("Contributor: {0}<br />\n", usfxToHtmlConverter.EscapeHtml(m_options.contributor)));
+            if (!String.IsNullOrEmpty(globe.projectOptions.contentCreator))
+                copr.Append(String.Format("Translation by: {0}<br />\n", usfxToHtmlConverter.EscapeHtml(globe.projectOptions.contentCreator)));
+            if ((!String.IsNullOrEmpty(globe.projectOptions.contributor)) && (globe.projectOptions.contentCreator != globe.projectOptions.contributor))
+                copr.Append(String.Format("Contributor: {0}<br />\n", usfxToHtmlConverter.EscapeHtml(globe.projectOptions.contributor)));
             copr.Append("</p>\n");
-            if (!String.IsNullOrEmpty(m_options.promoHtml))
-                copr.Append(m_options.promoHtml);
-            if (m_options.ccbyndnc)
+            if (!String.IsNullOrEmpty(globe.projectOptions.promoHtml))
+                copr.Append(globe.projectOptions.promoHtml);
+            if (globe.projectOptions.ccbyndnc)
             {
                 copr.Append(@"<p>This translation is made available to you under the terms of the
 <a href='http://creativecommons.org/licenses/by-nc-nd/4.0/'>Creative Commons Attribution-Noncommercial-No Derivatives license 4.0.</a></p>
@@ -1144,7 +639,7 @@ namespace haiola
 For other uses, please contact the respective copyright owners.</p>
 ");
             }
-            if (m_options.ccbysa)
+            if (globe.projectOptions.ccbysa)
             {
                 copr.Append(@"<p>This translation is made available to you under the terms of the
 <a href='http://creativecommons.org/licenses/by-sa/4.0/'>Creative Commons Attribution Share-Alike license 4.0.</a></p>
@@ -1159,7 +654,7 @@ For other uses, please contact the respective copyright owners.</p>
 <p>Note that in addition to the rules above, revising and adapting God's Word involves a great responsibility to be true to God's Word. See Revelation 22:18-19.</p>
 ");
             }
-            if (m_options.ccbynd)
+            if (globe.projectOptions.ccbynd)
             {
                 copr.Append(@"<p>This translation is made available to you under the terms of the
 <a href='http://creativecommons.org/licenses/by-nd/4.0/'>Creative Commons Attribution-No Derivatives license 4.0.</a></p>
@@ -1172,37 +667,37 @@ For other uses, please contact the respective copyright owners.</p>
 For other uses, please contact the respective copyright owners.</p>
 ");
             }
-            copr.Append(String.Format("<p>{0}</p>\n", m_options.contentUpdateDate.ToString("yyyy-MM-dd")));
+            copr.Append(String.Format("<p>{0}</p>\n", globe.projectOptions.contentUpdateDate.ToString("yyyy-MM-dd")));
             return copr.ToString();
         }
 
         private void ConvertUsfxToEPub()
         {
-            if ((m_options.languageId.Length < 3) || (m_options.translationId.Length < 3))
+            if ((globe.projectOptions.languageId.Length < 3) || (globe.projectOptions.translationId.Length < 3))
                 return;
             currentConversion = "writing ePub";
-            string UsfxPath = Path.Combine(m_outputProjectDirectory, "usfx");
-            string epubPath = Path.Combine(m_outputProjectDirectory, "epub");
+            string UsfxPath = Path.Combine(globe.outputProjectDirectory, "usfx");
+            string epubPath = Path.Combine(globe.outputProjectDirectory, "epub");
             string htmlPath = Path.Combine(epubPath, "OEBPS");
             if (!Directory.Exists(UsfxPath))
             {
                 MessageBox.Show(this, UsfxPath + " not found!", "ERROR");
                 return;
             }
-            Utils.EnsureDirectory(m_outputDirectory);
-            Utils.EnsureDirectory(m_outputProjectDirectory);
+            Utils.EnsureDirectory(globe.outputDirectory);
+            Utils.EnsureDirectory(globe.outputProjectDirectory);
             Utils.EnsureDirectory(epubPath);
             Utils.EnsureDirectory(htmlPath);
             string epubCss = Path.Combine(htmlPath, "epub.css");
-            string logFile = Path.Combine(m_outputProjectDirectory, "epubConversionReport.txt");
+            string logFile = Path.Combine(globe.outputProjectDirectory, "epubConversionReport.txt");
             Logit.OpenFile(logFile);
             Logit.GUIWriteString = showMessageString;
             Logit.UpdateStatus = updateConversionProgress;
 
-            string fontSource = Path.Combine(dataRootDir, "fonts");
-            string fontName = m_options.fontFamily.ToLower().Replace(' ', '_');
+            string fontSource = Path.Combine(globe.dataRootDir, "fonts");
+            string fontName = globe.projectOptions.fontFamily.ToLower().Replace(' ', '_');
             // Copy cascading style sheet from project directory, or if not there, create a font specification section and append it to BibleConv/input/epub.
-            string specialCss = Path.Combine(m_inputProjectDirectory, "epub.css");
+            string specialCss = Path.Combine(globe.inputProjectDirectory, "epub.css");
             if (File.Exists(specialCss))
             {
                 File.Copy(specialCss, epubCss);
@@ -1210,7 +705,7 @@ For other uses, please contact the respective copyright owners.</p>
             else
             {
                 StreamReader sr;
-                specialCss = Path.Combine(m_inputDirectory, "epub.css");
+                specialCss = Path.Combine(globe.inputDirectory, "epub.css");
                 if (File.Exists(specialCss))
                     sr = new StreamReader(specialCss);
                 else
@@ -1220,13 +715,13 @@ For other uses, please contact the respective copyright owners.</p>
                 StreamWriter sw = new StreamWriter(epubCss);
                 sw.WriteLine("@font-face {{font-family:'{0}';src: url('{0}.ttf') format('truetype');src: url('{0}.woff') format('woff');font-weight:normal;font-style:normal}}",
                     fontName);
-                sw.WriteLine("html,body,div.main,div.footnote,div,ol.nav,h1,ul.tnav {{font-family:'{0}','{1}','Liberation Sans','liberationsans_regular','sans-serif'}}",fontName, m_options.fontFamily);
-                if (m_options.commonChars)
+                sw.WriteLine("html,body,div.main,div.footnote,div,ol.nav,h1,ul.tnav {{font-family:'{0}','{1}','Liberation Sans','liberationsans_regular','sans-serif'}}",fontName, globe.projectOptions.fontFamily);
+                if (globe.projectOptions.commonChars)
                 {
                     sw.WriteLine(".chapterlabel,.mt,.tnav,h1.title,a.xx,a.oo,a.nn {{'Liberation Sans','liberationsans_regular','sans-serif'}}");
                 }
                 sw.WriteLine("* {margin:0;padding:0}");
-                sw.WriteLine("html,body	{0}height:100%;font-size:1.0em;line-height:{1}em{2}", "{", (m_options.script.ToLowerInvariant() == "latin")?"1.2":"2.5", "}");
+                sw.WriteLine("html,body	{0}height:100%;font-size:1.0em;line-height:{1}em{2}", "{", (globe.projectOptions.script.ToLowerInvariant() == "latin")?"1.2":"2.5", "}");
                 sw.Write(epubStyleSheet);
                 sw.Close();
             }
@@ -1235,135 +730,134 @@ For other uses, please contact the respective copyright owners.</p>
             fileHelper.CopyFile(Path.Combine(fontSource, "liberationsans_regular.woff"), Path.Combine(htmlPath, "liberationsans_regular.woff"));
             fileHelper.CopyFile(Path.Combine(fontSource, "liberationsans_regular.ttf"), Path.Combine(htmlPath, "liberationsans_regular.ttf"));
             ePubWriter toEpub = new ePubWriter();
-            toEpub.projectOptions = m_options;
-            toEpub.projectOutputDir = m_outputProjectDirectory;
+            toEpub.projectOptions = globe.projectOptions;
+            toEpub.projectOutputDir = globe.outputProjectDirectory;
             toEpub.epubDirectory = epubPath;
-            toEpub.redistributable = m_options.redistributable;
+            toEpub.redistributable = globe.projectOptions.redistributable;
             toEpub.epubIdentifier = GetEpubID();
             toEpub.stripPictures = false;
             toEpub.indexDate = DateTime.UtcNow;
-            if (File.Exists(dbsLogo) && !m_options.privateProject)
+            if (globe.projectOptions.DBSandeBible && !globe.projectOptions.privateProject)
             {
-                toEpub.indexDateStamp = "ePub generated by <a href='http://eBible.org'>eBible.org</a> in cooperation with the <a href='http://dbs.org' target='_blank'>Digital Bible Society</a> " + toEpub.indexDate.ToString("d MMM yyyy") +
-                    " from source files dated " + sourceDate.ToString("d MMM yyyy") +
-                    "<br/><a href='http://www.dbs.org' target='_blank'><img src='dbs.jpg' alt='Digital Bible Society' width='410' height='100' title='Published by the Digital Bible Society'/></a>";
-                fileHelper.CopyFile(dbsLogo, Path.Combine(htmlPath, "dbs.jpg"));
-                if (m_options.redistributable)
+                toEpub.indexDateStamp = "ePub generated by <a href='http://eBible.org'>eBible.org</a> using <a href='http://haiola.org'>Haiola</a> on " + toEpub.indexDate.ToString("d MMM yyyy") +
+                        " from source files dated " + globe.sourceDate.ToString("d MMM yyyy") +
+                        "<br/>";
+                if (globe.projectOptions.countryCode == "PG" && File.Exists(pngbtaLogo) && globe.projectOptions.redistributable)
                 {
-                    toEpub.indexDateStamp = toEpub.indexDateStamp + "<br/>Also available on <a href='http://eBible.org'>eBible.org</a>.";
+                    toEpub.indexDateStamp = "<a href='pngbta.org'><img src='pngbta.jpg' alt='PNG Bible Translation Association' title='Published by the PNG Bible Translation Association'/></a><br/>Posted on <a href='http://png.bible'>png.bible</a> and <a href='http://TokPlesBaibel.org'>TokPlesBaibel.org</a> by the <a href='http://pngbta.org'>PNG Bible Translation Association</a>.<br/>" + toEpub.indexDateStamp;
+                    fileHelper.CopyFile(pngbtaLogo, Path.Combine(htmlPath, "pngbta.jpg"));
                 }
             }
             else
             {
-                toEpub.indexDateStamp = "ePub generated " + toEpub.indexDate.ToString("d MMM yyyy") +
-                    " from source files dated " + sourceDate.ToString("d MMM yyyy");
+                toEpub.indexDateStamp = "ePub generated by <a href='http://haiola.org'>Haiola</a> " + toEpub.indexDate.ToString("d MMM yyyy") +
+                    " from source files dated " + globe.sourceDate.ToString("d MMM yyyy");
             }
-            if (m_options.countryCode == "PG" && File.Exists(pngbtaLogo) && m_options.redistributable)
-            {
-                toEpub.indexDateStamp = "<a href='pngbta.org'><img src='pngbta.jpg' alt='PNG Bible Translation Association' title='Published by the PNG Bible Translation Association'/></a><br/>Posted on <a href='http://PNGScriptures.org'>PNGScriptures.org</a> and <a href='http://TokPlesBaibel.org'>TokPlesBaibel.org</a> by the <a href='http://pngbta.org'>PNG Bible Translation Association</a>.<br/>" + toEpub.indexDateStamp;
-                fileHelper.CopyFile(pngbtaLogo, Path.Combine(htmlPath, "pngbta.jpg"));
-            }
-            toEpub.GeneratingConcordance = m_options.GenerateConcordance || m_options.UseFrames;
-            toEpub.CrossRefToFilePrefixMap = m_options.CrossRefToFilePrefixMap;
-            toEpub.contentCreator = m_options.contentCreator;
-            toEpub.contributor = m_options.contributor;
+            toEpub.GeneratingConcordance = globe.projectOptions.GenerateConcordance || globe.projectOptions.UseFrames;
+            toEpub.CrossRefToFilePrefixMap = globe.projectOptions.CrossRefToFilePrefixMap;
+            toEpub.contentCreator = globe.projectOptions.contentCreator;
+            toEpub.contributor = globe.projectOptions.contributor;
             string usfxFilePath = Path.Combine(UsfxPath, "usfx.xml");
             toEpub.bookInfo.ReadPublicationOrder(orderFile);
-            toEpub.MergeXref(Path.Combine(m_inputProjectDirectory, "xref.xml"));
+            toEpub.MergeXref(Path.Combine(globe.inputProjectDirectory, "xref.xml"));
             //TODO: eliminate side effects in expandPercentEscapes
             // Side effect: expandPercentEscapes sets longCopyrightMessage and shortCopyrightMessage.
             toEpub.sourceLink = expandPercentEscapes("<a href=\"http://%h/%t\">%v</a>");
             toEpub.longCopr = longCopyrightMessage;
             toEpub.shortCopr = shortCopyrightMessage;
-            toEpub.textDirection = m_options.textDir;
+            toEpub.textDirection = globe.projectOptions.textDir;
             toEpub.customCssName = "epub.css";
-            toEpub.stripManualNoteOrigins = m_options.stripNoteOrigin;
-            toEpub.noteOriginFormat = m_options.xoFormat;
-            toEpub.englishDescription = m_options.EnglishDescription;
-            toEpub.preferredFont = m_options.fontFamily;
-            toEpub.fcbhId = m_options.fcbhId;
+            toEpub.stripManualNoteOrigins = globe.projectOptions.stripNoteOrigin;
+            toEpub.noteOriginFormat = globe.projectOptions.xoFormat;
+            toEpub.englishDescription = globe.projectOptions.EnglishDescription;
+            toEpub.preferredFont = globe.projectOptions.fontFamily;
+            toEpub.fcbhId = globe.projectOptions.fcbhId;
             toEpub.coverName = Path.GetFileName(preferredCover);
             string coverPath = Path.Combine(htmlPath, toEpub.coverName);
             File.Copy(preferredCover, coverPath);
-            if (m_options.PrepublicationChecks &&
-                (m_options.publicDomain || m_options.redistributable || File.Exists(Path.Combine(m_inputProjectDirectory, "certify.txt"))) &&
+            if (globe.projectOptions.PrepublicationChecks &&
+                (globe.projectOptions.publicDomain || globe.projectOptions.redistributable || File.Exists(Path.Combine(globe.inputProjectDirectory, "certify.txt"))) &&
                 File.Exists(certified))
             {
                 File.Copy(certified, Path.Combine(htmlPath, "eBible.org_certified.jpg"));
                 toEpub.indexDateStamp = toEpub.indexDateStamp + "<br /><a href='http://eBible.org/certified/' target='_blank'><img src='eBible.org_certified.jpg' alt='eBible.org certified' /></a>";
             }
-            toEpub.xrefCall.SetMarkers(m_options.xrefCallers);
-            toEpub.footNoteCall.SetMarkers(m_options.footNoteCallers);
-            toEpub.projectInputDir = m_inputProjectDirectory;
+            toEpub.xrefCall.SetMarkers(globe.projectOptions.xrefCallers);
+            toEpub.footNoteCall.SetMarkers(globe.projectOptions.footNoteCallers);
+            toEpub.projectInputDir = globe.inputProjectDirectory;
             toEpub.ConvertUsfxToHtml(usfxFilePath, htmlPath,
-                m_options.vernacularTitle,
-                m_options.languageId,
-                m_options.translationId,
-                m_options.chapterLabel,
-                m_options.psalmLabel,
+                globe.projectOptions.vernacularTitle,
+                globe.projectOptions.languageId,
+                globe.projectOptions.translationId,
+                globe.projectOptions.chapterLabel,
+                globe.projectOptions.psalmLabel,
                 "<a class='xx' href='copyright.xhtml'>" +  usfxToHtmlConverter.EscapeHtml(shortCopyrightMessage) + "</a>",
-                expandPercentEscapes(m_options.homeLink),
-                expandPercentEscapes(m_options.footerHtml),
-                expandPercentEscapes(m_options.indexHtml),
+                expandPercentEscapes(globe.projectOptions.homeLink),
+                expandPercentEscapes(globe.projectOptions.footerHtml),
+                expandPercentEscapes(globe.projectOptions.indexHtml),
                 copyrightPermissionsStatement(),
-                m_options.ignoreExtras,
-                m_options.goText);
-            toEpub.bookInfo.RecordStats(m_options);
-            m_options.commonChars = toEpub.commonChars;
-            m_options.Write();
+                globe.projectOptions.ignoreExtras,
+                globe.projectOptions.goText);
+            toEpub.bookInfo.RecordStats(globe.projectOptions);
+            globe.projectOptions.commonChars = toEpub.commonChars;
+            globe.projectOptions.Write();
             LoadStatisticsTab();
             Logit.CloseFile();
             if (Logit.loggedError)
             {
-                m_options.lastRunResult = false;
+                globe.projectOptions.lastRunResult = false;
+            }
+            if (Logit.loggedWarning)
+            {
+                globe.projectOptions.warningsFound = true;
             }
         }
 
-    	private void ConvertUsfxToPortableHtml()
+        private void ConvertUsfxToPortableHtml()
         {
             int i;
-            if ((m_options.languageId.Length < 3) || (m_options.translationId.Length < 3))
+            if ((globe.projectOptions.languageId.Length < 3) || (globe.projectOptions.translationId.Length < 3))
                 return;
             currentConversion = "writing portable HTML";
-            string UsfxPath = Path.Combine(m_outputProjectDirectory, "usfx");
-            string htmlPath = Path.Combine(m_outputProjectDirectory, "html");
+            string UsfxPath = Path.Combine(globe.outputProjectDirectory, "usfx");
+            string htmlPath = Path.Combine(globe.outputProjectDirectory, "html");
             if (!Directory.Exists(UsfxPath))
             {
                 MessageBox.Show(this, UsfxPath + " not found!", "ERROR");
                 return;
             }
-            Utils.EnsureDirectory(m_outputDirectory);
-            Utils.EnsureDirectory(m_outputProjectDirectory);
+            Utils.EnsureDirectory(globe.outputDirectory);
+            Utils.EnsureDirectory(globe.outputProjectDirectory);
             Utils.EnsureDirectory(htmlPath);
-            string propherocss = Path.Combine(htmlPath, m_options.customCssFileName);
-            if (File.Exists(propherocss))
-                File.Delete(propherocss);
+            string propherocss = Path.Combine(htmlPath, globe.projectOptions.customCssFileName);
+
+                Utils.DeleteFile(propherocss);
             // Copy cascading style sheet from project directory, or if not there, BibleConv/input/.
-            string specialCss = Path.Combine(m_inputProjectDirectory, m_options.customCssFileName);
+            string specialCss = Path.Combine(globe.inputProjectDirectory, globe.projectOptions.customCssFileName);
             if (File.Exists(specialCss))
                 File.Copy(specialCss, propherocss);
             else
-                File.Copy(Path.Combine(m_inputDirectory, m_options.customCssFileName), propherocss);
+                File.Copy(Path.Combine(globe.inputDirectory, globe.projectOptions.customCssFileName), propherocss);
 
             // Copy any extra files from the htmlextras directory in the project directory to the output.
             // This is for introduction files, pictures, etc.
-            string htmlExtras = Path.Combine(m_inputProjectDirectory, "htmlextras");
+            string htmlExtras = Path.Combine(globe.inputProjectDirectory, "htmlextras");
             if (Directory.Exists(htmlExtras))
             {
                 WordSend.fileHelper.CopyDirectory(htmlExtras, htmlPath);
             }
             
             usfxToHtmlConverter toHtm;
-			if (m_options.UseFrames)
+			if (globe.projectOptions.UseFrames)
 			{
 				var framedConverter = new UsfxToFramedHtmlConverter();
-				framedConverter.HideNavigationButtonText = m_options.HideNavigationButtonText;
-				framedConverter.ShowNavigationButtonText = m_options.ShowNavigationButtonText;
+				framedConverter.HideNavigationButtonText = globe.projectOptions.HideNavigationButtonText;
+				framedConverter.ShowNavigationButtonText = globe.projectOptions.ShowNavigationButtonText;
 				toHtm = framedConverter;
 			}
 			else
 			{
-                if (m_options.GenerateMobileHtml)
+                if (globe.projectOptions.GenerateMobileHtml)
                 {
                     toHtm = new usfx2MobileHtml();
                 }
@@ -1372,54 +866,51 @@ For other uses, please contact the respective copyright owners.</p>
                     toHtm = new usfxToHtmlConverter();
                 }
 			}
-            toHtm.Jesusfilmlink = m_options.JesusFilmLinkTarget;
-            toHtm.Jesusfilmtext = m_options.JesusFilmLinkText;
+            toHtm.Jesusfilmlink = globe.projectOptions.JesusFilmLinkTarget;
+            toHtm.Jesusfilmtext = globe.projectOptions.JesusFilmLinkText;
             toHtm.stripPictures = false;
-            toHtm.htmlextrasDir = Path.Combine(m_inputProjectDirectory, "htmlextras");
-            string logFile = Path.Combine(m_outputProjectDirectory, "HTMLConversionReport.txt");
+            toHtm.htmlextrasDir = Path.Combine(globe.inputProjectDirectory, "htmlextras");
+            string logFile = Path.Combine(globe.outputProjectDirectory, "HTMLConversionReport.txt");
             Logit.OpenFile(logFile);
             Logit.GUIWriteString = showMessageString;
             Logit.UpdateStatus = updateConversionProgress;
             string theIndexDate = toHtm.indexDate.ToString("d MMM yyyy");
-            string theSourceDate = sourceDate.ToString("d MMM yyyy");
-            if (File.Exists(dbsLogo) && !m_options.privateProject)
+            string thesourceDate = globe.sourceDate.ToString("d MMM yyyy");
+            if (File.Exists(dbsLogo) && !globe.projectOptions.privateProject)
             {
-                toHtm.indexDateStamp = "HTML generated by <a href='http://eBible.org'>eBible.org in cooperation with the <a href='http://dbs.org' target='_blank'>Digital Bible Society</a> " + theIndexDate +
-                    " from source files dated " + theSourceDate +
-                    "<br/><a href='http://www.dbs.org' target='_blank'><img src='dbs.jpg' alt='Digital Bible Society' width='410' height='100' title='Published by the Digital Bible Society'/></a>";
-                fileHelper.CopyFile(dbsLogo, Path.Combine(htmlPath, "dbs.jpg"));
-                if (m_options.redistributable)
+                toHtm.indexDateStamp = "HTML generated with <a href='http://haiola.org'>Haiola</a> by <a href='http://eBible.org'>eBible.org</a> " +
+                    toHtm.indexDate.ToString("d MMM yyyy") +
+                    " from source files dated " + globe.sourceDate.ToString("d MMM yyyy") +
+                    "</a><br/>";
+                //fileHelper.CopyFile(dbsLogo, Path.Combine(htmlPath, "dbs.jpg"));
+                if (globe.projectOptions.countryCode == "PG" && File.Exists(pngbtaLogo) && globe.projectOptions.redistributable)
                 {
-                    toHtm.indexDateStamp = toHtm.indexDateStamp + "<br/>Also available on <a href='http://eBible.org'>eBible.org</a>.";
+                    toHtm.indexDateStamp = "<a href='pngbta.org'><img src='pngbta.jpg' alt='PNG Bible Translation Association' title='Published by the PNG Bible Translation Association'/></a><br/>Posted on <a href='http://png.bible'>png.bible</a> and <a href='http://TokPlesBaibel.org'>TokPlesBaibel.org</a> by the <a href='http://pngbta.org'>PNG Bible Translation Association</a>.<br/>" + toHtm.indexDateStamp;
+                    fileHelper.CopyFile(pngbtaLogo, Path.Combine(htmlPath, "pngbta.jpg"));
                 }
             }
             else
             {
-                toHtm.indexDateStamp = "HTML generated " + toHtm.indexDate.ToString("d MMM yyyy") +
-                    " from source files dated " + sourceDate.ToString("d MMM yyyy");
+                toHtm.indexDateStamp = "HTML generated by <a href='http://haiola.org'>Haiola</a> " + toHtm.indexDate.ToString("d MMM yyyy") +
+                    " from source files dated " + globe.sourceDate.ToString("d MMM yyyy");
             }
-            if (m_options.countryCode == "PG" && File.Exists(pngbtaLogo) && m_options.redistributable)
-            {
-                toHtm.indexDateStamp = "<a href='pngbta.org'><img src='pngbta.jpg' alt='PNG Bible Translation Association' title='Published by the PNG Bible Translation Association'/></a><br/>Posted on <a href='http://PNGScriptures.org'>PNGScriptures.org</a> and <a href='http://TokPlesBaibel.org'>TokPlesBaibel.org</a> by the <a href='http://pngbta.org'>PNG Bible Translation Association</a>.<br/>" + toHtm.indexDateStamp;
-                fileHelper.CopyFile(pngbtaLogo, Path.Combine(htmlPath, "pngbta.jpg"));
-            }
-        	toHtm.GeneratingConcordance = m_options.GenerateConcordance || m_options.UseFrames;
-    		toHtm.CrossRefToFilePrefixMap = m_options.CrossRefToFilePrefixMap;
+        	toHtm.GeneratingConcordance = globe.projectOptions.GenerateConcordance || globe.projectOptions.UseFrames;
+    		toHtm.CrossRefToFilePrefixMap = globe.projectOptions.CrossRefToFilePrefixMap;
     		string usfxFilePath = Path.Combine(UsfxPath, "usfx.xml");
             toHtm.bookInfo.ReadPublicationOrder(orderFile);
-            toHtm.MergeXref(Path.Combine(m_inputProjectDirectory, "xref.xml"));
+            toHtm.MergeXref(Path.Combine(globe.inputProjectDirectory, "xref.xml"));
             toHtm.sourceLink = expandPercentEscapes("<a href=\"http://%h/%t\">%v</a>");
-            toHtm.textDirection = m_options.textDir;
-            toHtm.customCssName = m_options.customCssFileName;
-            toHtm.stripManualNoteOrigins = m_options.stripNoteOrigin;
-            toHtm.noteOriginFormat = m_options.xoFormat;
-            toHtm.englishDescription = m_options.EnglishDescription;
-            toHtm.preferredFont = m_options.fontFamily;
-            toHtm.fcbhId = m_options.fcbhId;
-            toHtm.redistributable = m_options.redistributable;
+            toHtm.textDirection = globe.projectOptions.textDir;
+            toHtm.customCssName = globe.projectOptions.customCssFileName;
+            toHtm.stripManualNoteOrigins = globe.projectOptions.stripNoteOrigin;
+            toHtm.noteOriginFormat = globe.projectOptions.xoFormat;
+            toHtm.englishDescription = globe.projectOptions.EnglishDescription;
+            toHtm.preferredFont = globe.projectOptions.fontFamily;
+            toHtm.fcbhId = globe.projectOptions.fcbhId;
+            toHtm.redistributable = globe.projectOptions.redistributable;
             toHtm.coverName = String.Empty;// = Path.GetFileName(preferredCover);
-            toHtm.projectOutputDir = m_outputProjectDirectory;
-            toHtm.projectOptions = m_options;
+            toHtm.projectOutputDir = globe.outputProjectDirectory;
+            toHtm.projectOptions = globe.projectOptions;
 
             //string coverPath = Path.Combine(htmlPath, toHtm.coverName);
             //File.Copy(preferredCover, coverPath);
@@ -1436,29 +927,29 @@ For other uses, please contact the respective copyright owners.</p>
                     Logit.WriteLine(ex.Message);
                 }
             }
-            toHtm.xrefCall.SetMarkers(m_options.xrefCallers);
-            toHtm.projectInputDir = m_inputProjectDirectory;
-            toHtm.footNoteCall.SetMarkers(m_options.footNoteCallers);
+            toHtm.xrefCall.SetMarkers(globe.projectOptions.xrefCallers);
+            toHtm.projectInputDir = globe.inputProjectDirectory;
+            toHtm.footNoteCall.SetMarkers(globe.projectOptions.footNoteCallers);
             toHtm.ConvertUsfxToHtml(usfxFilePath, htmlPath,
-                m_options.vernacularTitle,
-                m_options.languageId,
-                m_options.translationId,
-                m_options.chapterLabel,
-                m_options.psalmLabel,
+                globe.projectOptions.vernacularTitle,
+                globe.projectOptions.languageId,
+                globe.projectOptions.translationId,
+                globe.projectOptions.chapterLabel,
+                globe.projectOptions.psalmLabel,
                 "<a href='copyright.htm'>" + usfxToHtmlConverter.EscapeHtml(shortCopyrightMessage) + "</a>",
-                expandPercentEscapes(m_options.homeLink),
-                expandPercentEscapes(m_options.footerHtml),
-                expandPercentEscapes(m_options.indexHtml),
+                expandPercentEscapes(globe.projectOptions.homeLink),
+                expandPercentEscapes(globe.projectOptions.footerHtml),
+                expandPercentEscapes(globe.projectOptions.indexHtml),
                 copyrightPermissionsStatement(),
-                m_options.ignoreExtras,
-                m_options.goText);
-            toHtm.bookInfo.RecordStats(m_options);
-            m_options.commonChars = toHtm.commonChars;
-            m_options.Write();
+                globe.projectOptions.ignoreExtras,
+                globe.projectOptions.goText);
+            toHtm.bookInfo.RecordStats(globe.projectOptions);
+            globe.projectOptions.commonChars = toHtm.commonChars;
+            globe.projectOptions.Write();
             string fontsDir = Path.Combine(htmlPath, "fonts");
             fileHelper.EnsureDirectory(fontsDir);
-            string fontSource = Path.Combine(dataRootDir, "fonts");
-            string fontName = m_options.fontFamily.ToLower().Replace(' ', '_');
+            string fontSource = Path.Combine(globe.dataRootDir, "fonts");
+            string fontName = globe.projectOptions.fontFamily.ToLower().Replace(' ', '_');
             fileHelper.CopyFile(Path.Combine(fontSource, fontName + ".ttf"), Path.Combine(fontsDir, fontName + ".ttf"));
             fileHelper.CopyFile(Path.Combine(fontSource, fontName + ".woff"), Path.Combine(fontsDir, fontName + ".woff"));
             fileHelper.CopyFile(Path.Combine(fontSource, fontName + ".eot"), Path.Combine(fontsDir, fontName + ".eot"));
@@ -1466,7 +957,11 @@ For other uses, please contact the respective copyright owners.</p>
             Logit.CloseFile();
             if (Logit.loggedError)
             {
-                m_options.lastRunResult = false;
+                globe.projectOptions.lastRunResult = false;
+            }
+            if (Logit.loggedWarning)
+            {
+                globe.projectOptions.warningsFound = true;
             }
 
             currentConversion = "Writing auxilliary metadata files.";
@@ -1477,7 +972,7 @@ For other uses, please contact the respective copyright owners.</p>
             // We currently have the information handy to write some auxilliary XML files
             // that contain metadata. We will put these in the USFX directory.
 
-            XmlTextWriter xml = new XmlTextWriter(Path.Combine(UsfxPath, m_options.translationId + "-VernacularParms.xml"), System.Text.Encoding.UTF8);
+            XmlTextWriter xml = new XmlTextWriter(Path.Combine(UsfxPath, globe.projectOptions.translationId + "-VernacularParms.xml"), System.Text.Encoding.UTF8);
             xml.Formatting = System.Xml.Formatting.Indented;
             xml.WriteStartDocument();
             xml.WriteStartElement("vernacularParms");
@@ -1516,107 +1011,107 @@ For other uses, please contact the respective copyright owners.</p>
             xml.WriteAttributeString("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
             xml.WriteAttributeString("xsi:schemaLocation", "http://dublincore.org/schemas/xmls/qdc/2008/02/11/dc.xsd");
             xml.WriteAttributeString("xmlns:dc", "http://purl.org/dc/elements/1.1/");
-            xml.WriteElementString("dc:creator", m_options.contentCreator);
-            xml.WriteElementString("dc:contributor", m_options.contributor);
-            string title = m_options.vernacularTitle;
+            xml.WriteElementString("dc:creator", globe.projectOptions.contentCreator);
+            xml.WriteElementString("dc:contributor", globe.projectOptions.contributor);
+            string title = globe.projectOptions.vernacularTitle;
             if (title.Length == 0)
-                title = m_options.EnglishDescription;
+                title = globe.projectOptions.EnglishDescription;
             xml.WriteElementString("dc:title", title);
-            xml.WriteElementString("dc:description", m_options.EnglishDescription);
-            xml.WriteElementString("dc:date", m_options.contentUpdateDate.ToString("yyyy-MM-dd"));
+            xml.WriteElementString("dc:description", globe.projectOptions.EnglishDescription);
+            xml.WriteElementString("dc:date", globe.projectOptions.contentUpdateDate.ToString("yyyy-MM-dd"));
             xml.WriteElementString("dc:format", "digital");
-            xml.WriteElementString("dc:language", m_options.languageId);
-            xml.WriteElementString("dc:publisher", m_options.electronicPublisher);
+            xml.WriteElementString("dc:language", globe.projectOptions.languageId);
+            xml.WriteElementString("dc:publisher", globe.projectOptions.electronicPublisher);
             string rights = String.Empty;
-            string shortRights = m_options.translationId + " Scripture ";
-            string copyright = "Copyright © " + m_options.copyrightYears + " " +  m_options.copyrightOwner;
-            if (m_options.publicDomain)
+            string shortRights = globe.projectOptions.translationId + " Scripture ";
+            string copyright = "Copyright © " + globe.projectOptions.copyrightYears + " " +  globe.projectOptions.copyrightOwner;
+            if (globe.projectOptions.publicDomain)
             {
                 copyright = rights = "Public Domain";
                 shortRights = shortRights + "is in the Public Domain.";
             }
-            else if (m_options.ccbyndnc)
+            else if (globe.projectOptions.ccbyndnc)
             {
                 rights = copyright + @"
 This work is made available to you under the terms of the Creative Commons Attribution-Noncommercial-No Derivative Works license at http://creativecommons.org/licenses/by-nc-nd/4.0/.
 You may convert the text to different file formats or make extracts, as long as you don't change any of the text or punctuation of the content." +
-                Environment.NewLine + m_options.rightsStatement;
+                Environment.NewLine + globe.projectOptions.rightsStatement;
                 shortRights = shortRights + copyright + " Creative Commons BY-NC-ND license.";
             }
-            else if (m_options.ccbynd)
+            else if (globe.projectOptions.ccbynd)
             {
                 rights = copyright + @"
 This work is made available to you under the terms of the Creative Commons Attribution-No Derivative Works license at http://creativecommons.org/licenses/by-nd/4.0/." +
-                Environment.NewLine + m_options.rightsStatement;
+                Environment.NewLine + globe.projectOptions.rightsStatement;
                 shortRights = shortRights + copyright + " Creative Commons BY-ND license.";
             }
-            else if (m_options.ccbysa)
+            else if (globe.projectOptions.ccbysa)
             {
                 rights = copyright + @"
 This work is made available to you under the terms of the Creative Commons Attribution-Share-Alike license at http://creativecommons.org/licenses/by-sa/4.0/." +
-                Environment.NewLine + m_options.rightsStatement;
+                Environment.NewLine + globe.projectOptions.rightsStatement;
                 shortRights = shortRights + copyright + " Creative Commons BY-SA license.";
             }
-            else if (m_options.otherLicense)
+            else if (globe.projectOptions.otherLicense)
             {
-                rights = copyright + Environment.NewLine + m_options.rightsStatement;
+                rights = copyright + Environment.NewLine + globe.projectOptions.rightsStatement;
                 shortRights = shortRights + copyright;
             }
-            else if (m_options.allRightsReserved)
+            else if (globe.projectOptions.allRightsReserved)
             {
                 rights = copyright + " All rights reserved.";
                 shortRights = shortRights + rights;
-                if (m_options.rightsStatement.Length > 0)
-                    rights = rights + Environment.NewLine + m_options.rightsStatement;
+                if (globe.projectOptions.rightsStatement.Length > 0)
+                    rights = rights + Environment.NewLine + globe.projectOptions.rightsStatement;
             }
             xml.WriteElementString("dc:rights", rights);
             xml.WriteElementString("dc:identifier", String.Empty);
             xml.WriteElementString("dc:type", String.Empty);
             xml.WriteEndElement();  // dcMeta
-            xml.WriteElementString("numberSystem", m_options.numberSystem);
-            xml.WriteElementString("chapterAndVerseSeparator", m_options.CVSeparator);
-            xml.WriteElementString("rangeSeparator", m_options.rangeSeparator);
-            xml.WriteElementString("multiRefSameChapterSeparator", m_options.multiRefSameChapterSeparator);
-            xml.WriteElementString("multiRefDifferentChapterSeparator", m_options.multiRefDifferentChapterSeparator);
-            xml.WriteElementString("verseNumberLocation", m_options.verseNumberLocation);
-            xml.WriteElementString("footnoteMarkerStyle", m_options.footnoteMarkerStyle);
-            xml.WriteElementString("footnoteMarkerResetAt", m_options.footnoteMarkerResetAt);
-            xml.WriteElementString("footnoteMarkers", m_options.footNoteCallers);
-            xml.WriteElementString("BookSourceForMarkerXt", m_options.BookSourceForMarkerXt);
-            xml.WriteElementString("BookSourceForMarkerR", m_options.BookSourceForMarkerR);
-            xml.WriteElementString("iso", m_options.languageId);
-            xml.WriteElementString("isoVariant", m_options.dialect);
-            xml.WriteElementString("langName", m_options.languageName);
-            xml.WriteElementString("textDir", m_options.textDir);
-            xml.WriteElementString("hasNotes", (!m_options.ignoreExtras).ToString()); //TODO: check to see if translation has notes or not.
-            xml.WriteElementString("coverTitle", m_options.vernacularTitle);
+            xml.WriteElementString("numberSystem", globe.projectOptions.numberSystem);
+            xml.WriteElementString("chapterAndVerseSeparator", globe.projectOptions.CVSeparator);
+            xml.WriteElementString("rangeSeparator", globe.projectOptions.rangeSeparator);
+            xml.WriteElementString("multiRefSameChapterSeparator", globe.projectOptions.multiRefSameChapterSeparator);
+            xml.WriteElementString("multiRefDifferentChapterSeparator", globe.projectOptions.multiRefDifferentChapterSeparator);
+            xml.WriteElementString("verseNumberLocation", globe.projectOptions.verseNumberLocation);
+            xml.WriteElementString("footnoteMarkerStyle", globe.projectOptions.footnoteMarkerStyle);
+            xml.WriteElementString("footnoteMarkerResetAt", globe.projectOptions.footnoteMarkerResetAt);
+            xml.WriteElementString("footnoteMarkers", globe.projectOptions.footNoteCallers);
+            xml.WriteElementString("BookSourceForMarkerXt", globe.projectOptions.BookSourceForMarkerXt);
+            xml.WriteElementString("BookSourceForMarkerR", globe.projectOptions.BookSourceForMarkerR);
+            xml.WriteElementString("iso", globe.projectOptions.languageId);
+            xml.WriteElementString("isoVariant", globe.projectOptions.dialect);
+            xml.WriteElementString("langName", globe.projectOptions.languageName);
+            xml.WriteElementString("textDir", globe.projectOptions.textDir);
+            xml.WriteElementString("hasNotes", (!globe.projectOptions.ignoreExtras).ToString()); //TODO: check to see if translation has notes or not.
+            xml.WriteElementString("coverTitle", globe.projectOptions.vernacularTitle);
             xml.WriteEndElement();	// vernacularParms
             xml.WriteEndDocument();
             xml.Close();
 
-            xml = new XmlTextWriter(Path.Combine(UsfxPath, m_options.translationId + "-VernacularAdditional.xml"), System.Text.Encoding.UTF8);
+            xml = new XmlTextWriter(Path.Combine(UsfxPath, globe.projectOptions.translationId + "-VernacularAdditional.xml"), System.Text.Encoding.UTF8);
             xml.Formatting = System.Xml.Formatting.Indented;
             xml.WriteStartDocument();
             xml.WriteStartElement("vernacularParmsMiscellaneous");
-            xml.WriteElementString("translationId", m_options.translationId);
+            xml.WriteElementString("translationId", globe.projectOptions.translationId);
             // xml.WriteElementString("otmlId", " ");
-            xml.WriteElementString("versificationScheme", m_options.versificationScheme);
+            xml.WriteElementString("versificationScheme", globe.projectOptions.versificationScheme);
             xml.WriteElementString("checkVersification", "No");
-            // xml.WriteElementString("osis2SwordOptions", m_options.osis2SwordOptions);
-            // xml.WriteElementString("otmlRenderChapterNumber", m_options.otmlRenderChapterNumber);
+            // xml.WriteElementString("osis2SwordOptions", globe.m_options.osis2SwordOptions);
+            // xml.WriteElementString("otmlRenderChapterNumber", globe.m_options.otmlRenderChapterNumber);
             xml.WriteElementString("copyright", shortRights);
             xml.WriteEndElement();	// vernacularParmsMiscellaneous
             xml.WriteEndDocument();
             xml.Close();
 
             // Write the ETEN DBL MetaData.xml file in the usfx directory.
-            string metaXmlName = Path.Combine(UsfxPath, m_options.translationId + "metadata.xml");
+            string metaXmlName = Path.Combine(UsfxPath, globe.projectOptions.translationId + "metadata.xml");
             xml = new XmlTextWriter(metaXmlName, System.Text.Encoding.UTF8);
             xml.Formatting = System.Xml.Formatting.Indented;
             xml.WriteStartDocument();
             // xml.WriteProcessingInstruction("xml-model", "href=\"metadataWbt-1.3.rnc\" type=\"application/relax-ng-compact-syntax\"");
             xml.WriteStartElement("DBLMetadata");
-            string etendblid = m_options.paratextGuid;
+            string etendblid = globe.projectOptions.paratextGuid;
             if (etendblid.Length > 16)
                 etendblid = etendblid.Substring(0, 16);
             xml.WriteAttributeString("id", etendblid);
@@ -1624,21 +1119,21 @@ This work is made available to you under the terms of the Creative Commons Attri
             xml.WriteAttributeString("type", "text");
             xml.WriteAttributeString("typeVersion", "1.5");
             xml.WriteStartElement("identification");
-            xml.WriteElementString("name", m_options.shortTitle);
-            xml.WriteElementString("nameLocal", m_options.vernacularTitle);
-            xml.WriteElementString("abbreviation", m_options.translationId);
-            string abbreviationLocal = m_options.translationTraditionalAbbreviation;
+            xml.WriteElementString("name", globe.projectOptions.shortTitle);
+            xml.WriteElementString("nameLocal", globe.projectOptions.vernacularTitle);
+            xml.WriteElementString("abbreviation", globe.projectOptions.translationId);
+            string abbreviationLocal = globe.projectOptions.translationTraditionalAbbreviation;
             if (abbreviationLocal.Length < 2)
             {
-                abbreviationLocal = m_options.translationId.ToUpperInvariant();
+                abbreviationLocal = globe.projectOptions.translationId.ToUpperInvariant();
             }
             xml.WriteElementString("abbreviationLocal", abbreviationLocal);
             string scope = "Portion only";
-            if (m_options.ntBookCount == 27)
+            if (globe.projectOptions.ntBookCount == 27)
             {
-                if (m_options.otBookCount == 39)
+                if (globe.projectOptions.otBookCount == 39)
                 {
-                    if (m_options.adBookCount > 0)
+                    if (globe.projectOptions.adBookCount > 0)
                     {
                         scope = "Bible with Deuterocanon";
                     }
@@ -1647,9 +1142,9 @@ This work is made available to you under the terms of the Creative Commons Attri
                         scope = "Bible without Deuterocanon";
                     }
                 }
-                else if (m_options.otBookCount > 0)
+                else if (globe.projectOptions.otBookCount > 0)
                 {
-                    if ((m_options.otBookCount == 1) && (m_options.otChapCount == 150))
+                    if ((globe.projectOptions.otBookCount == 1) && (globe.projectOptions.otChapCount == 150))
                         scope = "New Testament and Psalms";
                     else
                         scope = "New Testament and Shorter Old Testament";
@@ -1659,25 +1154,25 @@ This work is made available to you under the terms of the Creative Commons Attri
                     scope = "NT";   // "New Testament only" is also allowed here.
                 }
             }
-            else if (m_options.otBookCount == 39)
+            else if (globe.projectOptions.otBookCount == 39)
             {
-                if (m_options.ntBookCount == 0)
+                if (globe.projectOptions.ntBookCount == 0)
                 {
-                    if (m_options.adBookCount > 0)
+                    if (globe.projectOptions.adBookCount > 0)
                         scope = "Old Testament with Deuterocanon";
                     else
                         scope = "Old Testament only";
                 }
             }
             xml.WriteElementString("scope", scope);
-            xml.WriteElementString("description", m_options.EnglishDescription);
-            string yearCompleted = m_options.copyrightYears.Trim();
+            xml.WriteElementString("description", globe.projectOptions.EnglishDescription);
+            string yearCompleted = globe.projectOptions.copyrightYears.Trim();
             if (yearCompleted.Length > 4)
                 yearCompleted = yearCompleted.Substring(yearCompleted.Length - 4);
             xml.WriteElementString("dateCompleted", yearCompleted);
             xml.WriteStartElement("systemId");
-            xml.WriteAttributeString("fullname", m_options.shortTitle);
-            xml.WriteAttributeString("name", m_options.paratextProject);
+            xml.WriteAttributeString("fullname", globe.projectOptions.shortTitle);
+            xml.WriteAttributeString("name", globe.projectOptions.paratextProject);
             xml.WriteAttributeString("type", "paratext");
 
             xml.WriteEndElement();
@@ -1687,31 +1182,31 @@ This work is made available to you under the terms of the Creative Commons Attri
             /*
             xml.WriteStartElement("agencies");
             string etenPartner = "WBT";
-            if ((m_options.publicDomain == true) || m_options.copyrightOwner.ToUpperInvariant().Contains("EBIBLE"))
+            if ((globe.m_options.publicDomain == true) || globe.m_options.copyrightOwner.ToUpperInvariant().Contains("EBIBLE"))
                 etenPartner = "eBible.org";
-            else if (m_options.copyrightOwner.ToUpperInvariant().Contains("SOCIETY"))
+            else if (globe.m_options.copyrightOwner.ToUpperInvariant().Contains("SOCIETY"))
                 etenPartner = "UBS";
-            else if (m_options.copyrightOwner.ToUpperInvariant().Contains("BIBLICA"))
+            else if (globe.m_options.copyrightOwner.ToUpperInvariant().Contains("BIBLICA"))
                 etenPartner = "Biblica";
-            else if (m_options.copyrightOwnerAbbrev.ToUpperInvariant().Contains("PBT"))
+            else if (globe.m_options.copyrightOwnerAbbrev.ToUpperInvariant().Contains("PBT"))
                 etenPartner = "PBT";
-            else if (m_options.copyrightOwnerAbbrev.ToUpperInvariant().Contains("SIM"))
+            else if (globe.m_options.copyrightOwnerAbbrev.ToUpperInvariant().Contains("SIM"))
                 etenPartner = "SIM";
             xml.WriteElementString("etenPartner", etenPartner);
-            xml.WriteElementString("creator", m_options.contentCreator);
-            xml.WriteElementString("publisher", m_options.electronicPublisher);
-            xml.WriteElementString("contributor", m_options.contributor);
+            xml.WriteElementString("creator", globe.m_options.contentCreator);
+            xml.WriteElementString("publisher", globe.m_options.electronicPublisher);
+            xml.WriteElementString("contributor", globe.m_options.contributor);
             xml.WriteEndElement();  // agencies
             */
             xml.WriteStartElement("language");
-            xml.WriteElementString("iso", m_options.languageId);
-            xml.WriteElementString("name", m_options.languageNameInEnglish);
-            xml.WriteElementString("nameLocal", m_options.languageName);
-            xml.WriteElementString("ldml", m_options.ldml);
-            xml.WriteElementString("rod", m_options.rodCode);
-            xml.WriteElementString("script", m_options.script);
-            xml.WriteElementString("scriptDirection", m_options.textDir.ToUpperInvariant());
-            string numerals = m_options.numberSystem;
+            xml.WriteElementString("iso", globe.projectOptions.languageId);
+            xml.WriteElementString("name", globe.projectOptions.languageNameInEnglish);
+            xml.WriteElementString("nameLocal", globe.projectOptions.languageName);
+            xml.WriteElementString("ldml", globe.projectOptions.ldml);
+            xml.WriteElementString("rod", globe.projectOptions.rodCode);
+            xml.WriteElementString("script", globe.projectOptions.script);
+            xml.WriteElementString("scriptDirection", globe.projectOptions.textDir.ToUpperInvariant());
+            string numerals = globe.projectOptions.numberSystem;
             if (numerals == "Arabic")
             {
                 numerals = "Hindi";
@@ -1723,11 +1218,11 @@ This work is made available to you under the terms of the Creative Commons Attri
             xml.WriteElementString("numerals", numerals);
             xml.WriteEndElement();  // language
             xml.WriteStartElement("country");
-            xml.WriteElementString("iso", m_options.countryCode);
-            xml.WriteElementString("name", m_options.country);
+            xml.WriteElementString("iso", globe.projectOptions.countryCode);
+            xml.WriteElementString("name", globe.projectOptions.country);
             xml.WriteEndElement();  // country
             xml.WriteStartElement("type");
-            if (m_options.copyrightYears.Length > 4)
+            if (globe.projectOptions.copyrightYears.Length > 4)
                 xml.WriteElementString("translationType", "Revision");
             else
                 xml.WriteElementString("translationType", "New");
@@ -1751,12 +1246,12 @@ This work is made available to you under the terms of the Creative Commons Attri
             xml.WriteStartElement("bookList");
             xml.WriteAttributeString("default", "true");
             xml.WriteAttributeString("id", "1");
-            xml.WriteElementString("name", m_options.shortTitle);
-            xml.WriteElementString("nameLocal", m_options.vernacularTitle);
-            xml.WriteElementString("abbreviation", m_options.translationId);
+            xml.WriteElementString("name", globe.projectOptions.shortTitle);
+            xml.WriteElementString("nameLocal", globe.projectOptions.vernacularTitle);
+            xml.WriteElementString("abbreviation", globe.projectOptions.translationId);
             xml.WriteElementString("abbreviationLocal", abbreviationLocal);
-            xml.WriteElementString("description", m_options.canonTypeEnglish);    // Book list description, like common, Protestant, or Catholic
-            xml.WriteElementString("descriptionLocal", m_options.canonTypeLocal);
+            xml.WriteElementString("description", globe.projectOptions.canonTypeEnglish);    // Book list description, like common, Protestant, or Catholic
+            xml.WriteElementString("descriptionLocal", globe.projectOptions.canonTypeLocal);
             xml.WriteStartElement("books");
             foreach (WordSend.BibleBookRecord br in WordSend.usfxToHtmlConverter.bookList)
             {
@@ -1784,18 +1279,18 @@ This work is made available to you under the terms of the Creative Commons Attri
             }
             xml.WriteEndElement();  // progress
             */
-            if (!m_options.publicDomain)
+            if (!globe.projectOptions.publicDomain)
             {
                 xml.WriteStartElement("contact");
-                xml.WriteElementString("rightsHolder", m_options.copyrightOwner);
-                string localRights = m_options.localRightsHolder.Trim();
+                xml.WriteElementString("rightsHolder", globe.projectOptions.copyrightOwner);
+                string localRights = globe.projectOptions.localRightsHolder.Trim();
                 if (localRights.Length == 0)
-                    localRights = m_options.copyrightOwner;
+                    localRights = globe.projectOptions.copyrightOwner;
                 xml.WriteElementString("rightsHolderLocal", localRights);
-                string rightsHolderAbbreviation = m_options.copyrightOwnerAbbrev.Trim();
+                string rightsHolderAbbreviation = globe.projectOptions.copyrightOwnerAbbrev.Trim();
                 if (rightsHolderAbbreviation.Length < 1)
                 {
-                    string s = m_options.copyrightOwner.Trim().ToUpperInvariant().Replace(" OF ", " ");
+                    string s = globe.projectOptions.copyrightOwner.Trim().ToUpperInvariant().Replace(" OF ", " ");
                     if (s.StartsWith("THE "))
                         s = s.Substring(4);
                     if (s.EndsWith("."))
@@ -1820,13 +1315,13 @@ This work is made available to you under the terms of the Creative Commons Attri
                     }
                 }
                 xml.WriteElementString("rightsHolderAbbreviation", rightsHolderAbbreviation);
-                string ownerUrl = m_options.copyrightOwnerUrl;
+                string ownerUrl = globe.projectOptions.copyrightOwnerUrl;
                 if (ownerUrl.ToUpperInvariant().StartsWith("HTTPS://"))
                     ownerUrl = ownerUrl.Substring(8);
                 if (ownerUrl.ToUpperInvariant().StartsWith("HTTP://"))
                     ownerUrl = ownerUrl.Substring(7);
                 xml.WriteElementString("rightsHolderURL", ownerUrl);
-                xml.WriteElementString("rightsHolderFacebook", m_options.facebook);
+                xml.WriteElementString("rightsHolderFacebook", globe.projectOptions.facebook);
                 xml.WriteEndElement();  // contact
             }
             xml.WriteStartElement("copyright");
@@ -1838,22 +1333,22 @@ This work is made available to you under the terms of the Creative Commons Attri
             xml.WriteStartElement("promotion");
             xml.WriteStartElement("promoVersionInfo");
             xml.WriteAttributeString("contentType", "xhtml");
-            if (m_options.promoHtml.Trim().Length > 3)
-                xml.WriteString(m_options.promoHtml);
+            if (globe.projectOptions.promoHtml.Trim().Length > 3)
+                xml.WriteString(globe.projectOptions.promoHtml);
             else
                 xml.WriteElementString("p", rights);
             xml.WriteEndElement();  // promoVersionInfo
             xml.WriteStartElement("promoEmail");
             xml.WriteAttributeString("contentType", "xhtml");
             xml.WriteString(@"Thank you for downloading ");
-            xml.WriteString(m_options.vernacularTitle);
+            xml.WriteString(globe.projectOptions.vernacularTitle);
             xml.WriteString(@"! Now you'll have anytime, anywhere access to God's Word on your mobile device—even if 
 you're outside of service coverage or not connected to the Internet. It also means faster service whenever you read that version since it's 
 stored on your device. Enjoy! This download was made possible by ");
-            xml.WriteString(m_options.copyrightOwner.Trim(new char[]{' ', '.'}));
+            xml.WriteString(globe.projectOptions.copyrightOwner.Trim(new char[]{' ', '.'}));
             xml.WriteString(@". We really appreciate their passion for making the Bible available to millions of people around the world. Because of 
 their generosity, people like you can open up the Bible and hear from God no matter where you are. You can learn more about them at ");
-            xml.WriteString(m_options.copyrightOwnerUrl);
+            xml.WriteString(globe.projectOptions.copyrightOwnerUrl);
             xml.WriteString(@".");
             xml.WriteEndElement();  // promoEmail
             xml.WriteEndElement();  // promotion
@@ -1867,49 +1362,8 @@ their generosity, people like you can open up the Bible and hear from God no mat
             xml.WriteEndElement();  // DBLMetadata
             xml.Close();
 
-            /*
-            string rncVersion = "metadataWbt-1.3.rnc";
-            string rnc = SFConverter.FindAuxFile(rncVersion);
-            File.Copy(rnc, Path.Combine(UsfxPath, rncVersion));
 
-            if (m_options.paratextProject.Length > 0)
-            {   // If this project is from Paratext, send the metadata back to the Paratext project shared directory if it isn't there already.
-                if (Directory.Exists(paratextProjectsDir))
-                {
-                    string sharedDir = Path.Combine(Path.Combine(paratextProjectsDir, m_options.paratextProject), "shared");
-                    Utils.EnsureDirectory(sharedDir);
-                    string rncTarget = Path.Combine(sharedDir, rncVersion);
-                    if (!File.Exists(rncTarget))
-                        File.Copy(rnc, rncTarget, true);
-                    string metaxml = Path.Combine(sharedDir, m_options.translationId + "MetaData.xml");
-                    if (!File.Exists(metaxml))
-                        File.Copy(metaXmlName, metaxml);
-                    string licenseName = Path.Combine(sharedDir, m_options.translationId + "License.xml");
-                    if (!File.Exists(licenseName))
-                    {
-                        xml = new XmlTextWriter(licenseName, Encoding.UTF8);
-                        xml.WriteStartDocument();
-                        xml.WriteStartElement("license");
-                        xml.WriteAttributeString("id", "");
-                        DateTime yetzt = DateTime.UtcNow;
-                        xml.WriteElementString("dateLicense", yetzt.ToString("yyyy'-'MM'-'dd"));
-                        yetzt = yetzt.AddYears(100);
-                        xml.WriteElementString("dateLicenseExpiry", yetzt.ToString("yyyy'-'MM'-'dd"));
-                        xml.WriteStartElement("publicationRights");
-                        xml.WriteElementString("allowOffline", "true");
-                        xml.WriteElementString("allowIntroductions", "true");
-                        xml.WriteElementString("allowFootnotes", "true");
-                        xml.WriteElementString("allowCrossreferences", "true");
-                        xml.WriteElementString("allowExtendedNotes", "true");
-                        xml.WriteEndElement();  // publicationRights
-                        xml.WriteEndElement();  // license
-                        xml.Close();
-                    }
-                }
-            }
-            */
-
-            if (m_options.UseFrames)
+            if (globe.projectOptions.UseFrames)
 			{
 				// Look for Introduction files in the output. (They were copied htmlextras earlier.)
                 // Do this before making the chapter index, since we tell it to look for them there.
@@ -1921,8 +1375,8 @@ their generosity, people like you can open up the Bible and hear from God no mat
 				// Generate the ChapterIndex file
 				var ciMaker = new UsfxToChapterIndex();
 				ciMaker.IntroductionDirectory = htmlPath;
-				ciMaker.IntroductionLinkText = m_options.IntroductionLinkText;
-    			ciMaker.ConcordanceLinkText = m_options.ConcordanceLinkText;
+				ciMaker.IntroductionLinkText = globe.projectOptions.IntroductionLinkText;
+    			ciMaker.ConcordanceLinkText = globe.projectOptions.ConcordanceLinkText;
 				string chapIndexPath = Path.Combine(htmlPath, UsfxToChapterIndex.ChapIndexFileName);
 				ciMaker.Generate(usfxFilePath, chapIndexPath);
 				EnsureTemplateFile("chapIndex.css", htmlPath);
@@ -1931,7 +1385,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
 			}
 
 			// Todo JohnT: move this to a new method, and the condition to the method that calls this.
-			if (m_options.GenerateConcordance || m_options.UseFrames)
+			if (globe.projectOptions.GenerateConcordance || globe.projectOptions.UseFrames)
 			{
                 /*****
 				currentConversion = "generate XHTML for concordance";
@@ -1939,26 +1393,26 @@ their generosity, people like you can open up the Bible and hear from God no mat
 				Logit.OpenFile(Path.Combine(m_outputProjectDirectory, "XHTMLConversionReport.txt"));
 
 				toXhtm.indexDateStamp = "XHTML generated " + DateTime.UtcNow.ToString("d MMM yyyy") +
-				                       " from source files dated " + sourceDate.ToString("d MMM yyyy");
+				                       " from source files dated " + globe.sourceDate.ToString("d MMM yyyy");
 				string xhtmlPath = Path.Combine(m_outputProjectDirectory, "xhtml");
 				Utils.EnsureDirectory(xhtmlPath);
 				// No point in doing this...doesn't change the concordance generated, just makes generation slower.
 				// Reinstate it if the XHTML is used for anything besides generating the concordance.
-				//toXhtm.CrossRefToFilePrefixMap = m_options.CrossRefToFilePrefixMap;
+				//toXhtm.CrossRefToFilePrefixMap = globe.m_options.CrossRefToFilePrefixMap;
 				toXhtm.ConvertUsfxToHtml(usfxFilePath, xhtmlPath,
-				                        m_options.vernacularTitle,
-				                        m_options.languageId,
-				                        m_options.translationId,
-				                        m_options.chapterLabel,
-				                        m_options.psalmLabel,
-				                        m_options.copyrightLink,
-				                        m_options.homeLink,
-				                        m_options.footerHtml,
-				                        m_options.indexHtml,
-				                        m_options.licenseHtml,
-				                        m_options.useKhmerDigits,
-				                        m_options.ignoreExtras,
-				                        m_options.goText);
+				                        globe.m_options.vernacularTitle,
+				                        globe.m_options.languageId,
+				                        globe.m_options.translationId,
+				                        globe.m_options.chapterLabel,
+				                        globe.m_options.psalmLabel,
+				                        globe.m_options.copyrightLink,
+				                        globe.m_options.homeLink,
+				                        globe.m_options.footerHtml,
+				                        globe.m_options.indexHtml,
+				                        globe.m_options.licenseHtml,
+				                        globe.m_options.useKhmerDigits,
+				                        globe.m_options.ignoreExtras,
+				                        globe.m_options.goText);
 				Logit.CloseFile();
                 ******/
 				currentConversion = "Concordance";
@@ -1970,19 +1424,19 @@ their generosity, people like you can open up the Bible and hear from God no mat
 				string excludedClasses =
 					"toc toc1 toc2 navButtons pageFooter chapterlabel r verse"; // from old prophero: "verse chapter notemark crmark crossRefNote parallel parallelSub noteBackRef popup crpopup overlap";
 				string headingClasses = "mt mt2 s"; // old prophero: "sectionheading maintitle2 footnote sectionsubheading";
-				var concGenerator = new ConcGenerator(m_inputProjectDirectory, concordanceDirectory)
+				var concGenerator = new ConcGenerator(globe.inputProjectDirectory, concordanceDirectory)
 				                    	{
 											// Currently configurable options
-											MergeCase = m_options.MergeCase,
-											MaxContextLength = m_options.MaxContextLength,
-											MinContextLength =  m_options.MinContextLength,
-											WordformingChars = m_options.WordformingChars,
-											MaxFrequency = m_options.MaxFrequency,
-											Phrases = m_options.Phrases,
-											ExcludeWords = new HashSet<string>(m_options.ExcludeWords.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)),
-											ReferenceAbbeviationsMap = m_options.ReferenceAbbeviationsMap,
-											BookChapText = m_options.BooksAndChaptersLinkText,
-											ConcordanceLinkText = m_options.ConcordanceLinkText,
+											MergeCase = globe.projectOptions.MergeCase,
+											MaxContextLength = globe.projectOptions.MaxContextLength,
+											MinContextLength =  globe.projectOptions.MinContextLength,
+											WordformingChars = globe.projectOptions.WordformingChars,
+											MaxFrequency = globe.projectOptions.MaxFrequency,
+											Phrases = globe.projectOptions.Phrases,
+											ExcludeWords = new HashSet<string>(globe.projectOptions.ExcludeWords.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)),
+											ReferenceAbbeviationsMap = globe.projectOptions.ReferenceAbbeviationsMap,
+											BookChapText = globe.projectOptions.BooksAndChaptersLinkText,
+											ConcordanceLinkText = globe.projectOptions.ConcordanceLinkText,
 
 											// Options we may want to make configurable for localization.
 											// Todo: configure comparison function
@@ -1999,11 +1453,11 @@ their generosity, people like you can open up the Bible and hear from God no mat
 				// concGenerator.Run(new List<string>(Directory.GetFiles(xhtmlPath)));
                 statusNow("Generating concordance.");
                 
-                concGenerator.Run(Path.Combine(Path.Combine(m_outputProjectDirectory, "search"), "verseText.xml"));
+                concGenerator.Run(Path.Combine(Path.Combine(globe.outputProjectDirectory, "search"), "verseText.xml"));
 
 				var concFrameGenerator = new ConcFrameGenerator()
-				                         	{ConcDirectory = concordanceDirectory, LangName = m_options.vernacularTitle};
-                concFrameGenerator.customCssName = m_options.customCssFileName;
+				                         	{ConcDirectory = concordanceDirectory, LangName = globe.projectOptions.vernacularTitle};
+                concFrameGenerator.customCssName = globe.projectOptions.customCssFileName;
 				concFrameGenerator.Run();
 				EnsureTemplateFile("mktree.css", concordanceDirectory);
 				EnsureTemplateFile("plus.gif", concordanceDirectory);
@@ -2081,7 +1535,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
         {
             string s = GetEpubID().Substring(0, 6);
             int color = Convert.ToInt32(s, 16);
-            switch (m_options.epubId[7])
+            switch (globe.projectOptions.epubId[7])
             {
                 case '0':
                 case '7':
@@ -2123,7 +1577,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 color += 0xc0c0c0;
                 light = "#" + color.ToString("x6");
             }
-            return Convert.ToInt32(m_options.epubId.Substring(10, 1), 16) & 3;
+            return Convert.ToInt32(globe.projectOptions.epubId.Substring(10, 1), 16) & 3;
         }
 
 
@@ -2140,13 +1594,13 @@ their generosity, people like you can open up the Bible and hear from God no mat
         {
             string dark, light, svgPath, pngPath;
             StreamWriter sw;
-            string coverOutput = Path.Combine(m_outputProjectDirectory, "cover");
+            string coverOutput = Path.Combine(globe.outputProjectDirectory, "cover");
             if (!small)
                 Utils.DeleteDirectory(coverOutput);
             Utils.EnsureDirectory(coverOutput);
 
             // Get the best cover.svg available.
-            string coverIn = Path.Combine(m_inputProjectDirectory, "cover.svg");
+            string coverIn = Path.Combine(globe.inputProjectDirectory, "cover.svg");
             string coverOut = Path.Combine(coverOutput, "cover.svg");
             svgPath = coverOut;
             if (File.Exists(coverIn))
@@ -2163,23 +1617,23 @@ their generosity, people like you can open up the Bible and hear from God no mat
                     sr.Close();
                     Char[] newLine = new Char[] { '\n' };
                     string[] mainTitle;
-                    if (m_options.vernacularTitle.Length > 50)
+                    if (globe.projectOptions.vernacularTitle.Length > 50)
                     {
                         svg = svg.Replace("font-size=\"100\"", "font-size=\"60\"");
-                        mainTitle = ShortWordWrap(m_options.vernacularTitle, 48).Split(newLine);
+                        mainTitle = ShortWordWrap(globe.projectOptions.vernacularTitle, 48).Split(newLine);
                     }
-                    else if (m_options.vernacularTitle.Length < 24)
+                    else if (globe.projectOptions.vernacularTitle.Length < 24)
                     {
                         svg = svg.Replace("font-size=\"100\"", "font-size=\"140\"");
-                        mainTitle = ShortWordWrap(m_options.vernacularTitle, 17).Split(newLine);
+                        mainTitle = ShortWordWrap(globe.projectOptions.vernacularTitle, 17).Split(newLine);
                     }
                     else
                     {
-                        mainTitle = ShortWordWrap(m_options.vernacularTitle, 20).Split(newLine);
+                        mainTitle = ShortWordWrap(globe.projectOptions.vernacularTitle, 20).Split(newLine);
                     }
-                    string[] description = ShortWordWrap(m_options.EnglishDescription, 60).Split(newLine);
+                    string[] description = ShortWordWrap(globe.projectOptions.EnglishDescription, 60).Split(newLine);
                     sw = new StreamWriter(coverOut);
-                    svg = svg.Replace("^f", m_options.fontFamily).Replace("^4", description[0]);
+                    svg = svg.Replace("^f", globe.projectOptions.fontFamily).Replace("^4", description[0]);
                     if (mainTitle.Length > 1)
                     {
                         svg = svg.Replace("^1", mainTitle[0]);
@@ -2234,31 +1688,38 @@ their generosity, people like you can open up the Bible and hear from God no mat
             // Look for .png files.
             pngPath = coverOut = Path.ChangeExtension(coverOut, "png");
             coverIn = Path.ChangeExtension(coverIn, "png");
-            string dbsCoverIn = Path.Combine(m_inputProjectDirectory, "dbscover.png");
-            m_options.dbsCover = false;
+            /*
+            string dbsCoverIn = Path.Combine(globe.inputProjectDirectory, "dbscover.png");
+            globe.projectOptions.dbsCover = false;
+            */
             if (File.Exists(coverIn))
             {
                 fileHelper.CopyFile(coverIn, coverOut);
             }
+            /*
             else if (File.Exists(dbsCoverIn))
             {
                 fileHelper.CopyFile(dbsCoverIn, coverOut);
-                m_options.dbsCover = true;
+                globe.projectOptions.dbsCover = true;
             }
-
+            */
             // Look for .jpg files.
             coverOut = Path.ChangeExtension(coverOut, "jpg");
             coverIn = Path.ChangeExtension(coverIn, "jpg");
+            /*
             dbsCoverIn = Path.ChangeExtension(dbsCoverIn, "jpg");
+            */
             if (File.Exists(coverIn))
             {
                 fileHelper.CopyFile(coverIn, coverOut);
             }
+            /*
             else if (File.Exists(dbsCoverIn))
             {
                 fileHelper.CopyFile(dbsCoverIn, coverOut);
-                m_options.dbsCover = true;
+                globe.projectOptions.dbsCover = true;
             }
+            */
 
             if (File.Exists(coverOut))
             {   // We have a jpg cover. Is it big enough?
@@ -2289,29 +1750,34 @@ their generosity, people like you can open up the Bible and hear from God no mat
 
         public void DoPostprocess()
         {
-            List<string> postproclist = m_options.postprocesses;
-            string command;
-            foreach (string proc in postproclist)
+            if (Logit.loggedError)
             {
-                command = proc.Replace("%d", m_project);
-                command = command.Replace("%t", m_options.translationId);
-                command = command.Replace("%i", m_options.fcbhId);
-                command = command.Replace("%e", m_options.languageId);
-                command = command.Replace("%h", m_options.homeDomain);
-                command = command.Replace("%p", m_options.privateProject ? "private" : "public");
-                command = command.Replace("%r", m_options.redistributable ? "redistributable" : "restricted");
-                command = command.Replace("%o", m_options.downloadsAllowed ? "downloadable":"onlineonly");
-                currentConversion = "Running " + command;
-                batchLabel.Text = currentConversion;
-                Application.DoEvents();
-                if (!fileHelper.RunCommand(command))
-                    MessageBox.Show(fileHelper.runCommandError, "Error " + currentConversion);
-                currentConversion = String.Empty;
-                if (!fileHelper.fAllRunning)
-                    return;
+                Logit.WriteLine("Skipping postprocessing due to prior errors on this project.");
             }
-            
-
+            else
+            {
+                List<string> postproclist = globe.projectOptions.postprocesses;
+                string command;
+                foreach (string proc in postproclist)
+                {
+                    command = proc.Replace("%d", globe.currentProject);
+                    command = command.Replace("%t", globe.projectOptions.translationId);
+                    command = command.Replace("%i", globe.projectOptions.fcbhId);
+                    command = command.Replace("%e", globe.projectOptions.languageId);
+                    command = command.Replace("%h", globe.projectOptions.homeDomain);
+                    command = command.Replace("%p", globe.projectOptions.privateProject ? "private" : "public");
+                    command = command.Replace("%r", globe.projectOptions.redistributable ? "redistributable" : "restricted");
+                    command = command.Replace("%o", globe.projectOptions.downloadsAllowed ? "downloadable" : "onlineonly");
+                    currentConversion = "Running " + command;
+                    batchLabel.Text = currentConversion;
+                    Application.DoEvents();
+                    if (!fileHelper.RunCommand(command))
+                        MessageBox.Show(fileHelper.runCommandError, "Error " + currentConversion);
+                    currentConversion = String.Empty;
+                    if (!fileHelper.fAllRunning)
+                        return;
+                }
+            }
         }
 
         /// <summary>
@@ -2323,8 +1789,8 @@ their generosity, people like you can open up the Bible and hear from God no mat
             try
             {
                 
-                string UsfmDir = Path.Combine(m_outputProjectDirectory, "extendedusfm");
-                string UsfxName = Path.Combine(Path.Combine(m_outputProjectDirectory, "usfx"), "usfx.xml");
+                string UsfmDir = Path.Combine(globe.outputProjectDirectory, "extendedusfm");
+                string UsfxName = Path.Combine(Path.Combine(globe.outputProjectDirectory, "usfx"), "usfx.xml");
                 if (!File.Exists(UsfxName))
                 {
                     MessageBox.Show(this, UsfxName + " not found!", "ERROR normalizing USFM from USFX");
@@ -2337,23 +1803,24 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 Application.DoEvents();
                 if (!fileHelper.fAllRunning)
                     return;
-                logFile = Path.Combine(m_outputProjectDirectory, "usfx2usfm2_log.txt");
+                logFile = Path.Combine(globe.outputProjectDirectory, "usfx2usfm2_log.txt");
                 Logit.OpenFile(logFile);
                 Logit.GUIWriteString = showMessageString;
                 Logit.UpdateStatus = updateConversionProgress;
-                SFConverter.scripture = new Scriptures(m_options);
+                SFConverter.scripture = new Scriptures(globe.projectOptions);
                 Logit.loggedError = false;
-                SFConverter.scripture.USFXtoUSFM(UsfxName, UsfmDir, m_options.translationId + ".usfm", true, m_options);
+                Logit.loggedWarning = false;
+                SFConverter.scripture.USFXtoUSFM(UsfxName, UsfmDir, globe.projectOptions.translationId + ".usfm", true, globe.projectOptions);
 
-                UsfmDir = Path.Combine(m_outputProjectDirectory, "usfm");
+                UsfmDir = Path.Combine(globe.outputProjectDirectory, "usfm");
                 Utils.DeleteDirectory(UsfmDir);
                 fileHelper.EnsureDirectory(UsfmDir);
                 currentConversion = "Normalizing USFM from USFX. ";
-                SFConverter.scripture.USFXtoUSFM(UsfxName, UsfmDir, m_options.translationId + ".usfm", false, m_options);
+                SFConverter.scripture.USFXtoUSFM(UsfxName, UsfmDir, globe.projectOptions.translationId + ".usfm", false, globe.projectOptions);
                 Logit.CloseFile();
                 if (Logit.loggedError)
                 {
-                    m_options.lastRunResult = false;
+                    globe.projectOptions.lastRunResult = false;
                 }
                 currentConversion = "Converted USFX to USFM.";
             }
@@ -2369,17 +1836,17 @@ their generosity, people like you can open up the Bible and hear from God no mat
         /// <param name="SourceDir">directory containing USX files</param>
         private void ImportUsx(string SourceDir)
         {
-            string usfxDir = Path.Combine(m_outputProjectDirectory, "usfx");
+            string usfxDir = Path.Combine(globe.outputProjectDirectory, "usfx");
             string tmpname = Path.Combine(usfxDir, "tempusfx.xml");
             string bookNamesFile = Path.Combine(SourceDir, "BookNames.xml");
             try
             {
-                string logFile = Path.Combine(m_outputProjectDirectory, "UsxConversionReports.txt");
+                string logFile = Path.Combine(globe.outputProjectDirectory, "UsxConversionReports.txt");
                 Logit.OpenFile(logFile);
                 Logit.UpdateStatus = updateConversionProgress;
                 Logit.GUIWriteString = showMessageString;
                 Logit.loggedError = false;
-
+                Logit.loggedWarning = false;
                 // Sanity check
                 if (!Directory.Exists(SourceDir))
                 {
@@ -2414,35 +1881,35 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 Application.DoEvents();
                 if (!fileHelper.fAllRunning)
                     return;
-                string usfmDir = Path.Combine(m_outputProjectDirectory, "usfm");
+                string usfmDir = Path.Combine(globe.outputProjectDirectory, "usfm");
                 Utils.DeleteDirectory(usfmDir);
                 fileHelper.EnsureDirectory(usfmDir);
                 fileHelper.CopyFile(bookNamesFile, Path.Combine(usfmDir, "BookNames.xml"), true);
-                SFConverter.scripture = new Scriptures(m_options);
-                SFConverter.scripture.USFXtoUSFM(usfxName, usfmDir, m_options.translationId + ".usfm", false, m_options);
+                SFConverter.scripture = new Scriptures(globe.projectOptions);
+                SFConverter.scripture.USFXtoUSFM(usfxName, usfmDir, globe.projectOptions.translationId + ".usfm", false, globe.projectOptions);
 
-                usfmDir = Path.Combine(m_outputProjectDirectory, "extendedusfm");
+                usfmDir = Path.Combine(globe.outputProjectDirectory, "extendedusfm");
                 Utils.DeleteDirectory(usfmDir);
                 fileHelper.EnsureDirectory(usfmDir);
                 fileHelper.CopyFile(bookNamesFile, Path.Combine(usfmDir, "BookNames.xml"), true);
-                SFConverter.scripture = new Scriptures(m_options);
-                SFConverter.scripture.USFXtoUSFM(usfxName, usfmDir, m_options.translationId + ".usfm", true, m_options);
+                SFConverter.scripture = new Scriptures(globe.projectOptions);
+                SFConverter.scripture.USFXtoUSFM(usfxName, usfmDir, globe.projectOptions.translationId + ".usfm", true, globe.projectOptions);
 
                 // Recreate USFX from USFM, this time with <ve/> tags and in canonical order
-                SFConverter.scripture.bkInfo.ReadDefaultBookNames(Path.Combine(m_outputProjectDirectory, "BookNames.xml"));
-                SFConverter.scripture.assumeAllNested = m_options.relaxUsfmNesting;
+                SFConverter.scripture.bkInfo.ReadDefaultBookNames(Path.Combine(globe.outputProjectDirectory, "BookNames.xml"));
+                SFConverter.scripture.assumeAllNested = globe.projectOptions.relaxUsfmNesting;
                 // Read the input USFM files into internal data structures.
                 SFConverter.ProcessFilespec(Path.Combine(usfmDir, "*.usfm"), Encoding.UTF8);
                 currentConversion = "converting from USFM to USFX; writing USFX";
                 Application.DoEvents();
 
                 // Write out the USFX file.
-                SFConverter.scripture.languageCode = m_options.languageId;
+                SFConverter.scripture.languageCode = globe.projectOptions.languageId;
                 SFConverter.scripture.WriteUSFX(usfxName);
-                string bookNames = Path.Combine(Path.Combine(m_outputProjectDirectory, "usfx"), "BookNames.xml");
+                string bookNames = Path.Combine(Path.Combine(globe.outputProjectDirectory, "usfx"), "BookNames.xml");
                 SFConverter.scripture.bkInfo.WriteDefaultBookNames(bookNames);
                 bool errorState = Logit.loggedError;
-                bool runResult = m_options.lastRunResult;
+                bool runResult = globe.projectOptions.lastRunResult;
                 fileHelper.revisePua(usfxName);
                 SFConverter.scripture.ReadRefTags(usfxName);
                 if (!SFConverter.scripture.ValidateUsfx(usfxName))
@@ -2452,10 +1919,10 @@ their generosity, people like you can open up the Bible and hear from God no mat
                     Logit.WriteLine("Retrying validation on usfx.xml without expanded references.");
                     if (SFConverter.scripture.ValidateUsfx(usfxName))
                     {
-                        m_options.lastRunResult = runResult;
+                        globe.projectOptions.lastRunResult = runResult;
                         Logit.loggedError = errorState;
                         Logit.WriteLine("Validation passed without expanded references.");
-                        m_options.makeHotLinks = false;
+                        globe.projectOptions.makeHotLinks = false;
                     }
                     else
                     {
@@ -2465,13 +1932,18 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 Logit.CloseFile();
                 if (Logit.loggedError)
                 {
-                    m_options.lastRunResult = false;
+                    globe.projectOptions.lastRunResult = false;
                 }
                 else
                 {
-                    if (File.Exists(tmpname))
-                        File.Delete(tmpname);
+
+                    Utils.DeleteFile(tmpname);
                 }
+                if (Logit.loggedWarning)
+                {
+                    globe.projectOptions.warningsFound = true;
+                }
+
                 currentConversion = "converted USFM to USFX.";
                 Application.DoEvents();
             }
@@ -2492,7 +1964,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
             try
             {
                 
-                string UsfmDir = Path.Combine(m_outputProjectDirectory, "extendedusfm");
+                string UsfmDir = Path.Combine(globe.outputProjectDirectory, "extendedusfm");
                 if (!Directory.Exists(SourceDir))
                 {
                     MessageBox.Show(this, SourceDir + " not found!", "ERROR");
@@ -2501,7 +1973,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 // Start with an EMPTY USFM directory to avoid problems with old files 
                 Utils.DeleteDirectory(UsfmDir);
                 fileHelper.EnsureDirectory(UsfmDir);
-                string usfxDir = Path.Combine(m_outputProjectDirectory, "usfx");
+                string usfxDir = Path.Combine(globe.outputProjectDirectory, "usfx");
                 fileHelper.EnsureDirectory(usfxDir);
                 string[] inputFileNames = Directory.GetFiles(SourceDir);
                 if (inputFileNames.Length == 0)
@@ -2527,30 +1999,35 @@ their generosity, people like you can open up the Bible and hear from God no mat
                             {
                                 DateTime fileDate;
                                 fileDate = File.GetLastWriteTimeUtc(inputFile);
-                                if (fileDate > m_options.SourceFileDate)
+                                if (fileDate > globe.projectOptions.SourceFileDate)
                                 {
-                                    sourceDate = fileDate;
-                                    m_options.SourceFileDate = sourceDate;
+                                    globe.sourceDate = fileDate;
+                                    globe.projectOptions.SourceFileDate = globe.sourceDate;
                                 }
 
-                                logFile = Path.Combine(m_outputProjectDirectory, "usfx2usfm_log.txt");
+                                logFile = Path.Combine(globe.outputProjectDirectory, "usfx2usfm_log.txt");
                                 Logit.OpenFile(logFile);
                                 Logit.GUIWriteString = showMessageString;
                                 Logit.UpdateStatus = updateConversionProgress;
-                                SFConverter.scripture = new Scriptures(m_options);
+                                SFConverter.scripture = new Scriptures(globe.projectOptions);
                                 Logit.loggedError = false;
+                                Logit.loggedWarning = false;
                                 currentConversion = "converting from USFX to USFM";
                                 Application.DoEvents();
-                                SFConverter.scripture.USFXtoUSFM(inputFile, UsfmDir, m_options.translationId + ".usfm", true, m_options);
-                                UsfmDir = Path.Combine(m_outputProjectDirectory, "usfm");
+                                SFConverter.scripture.USFXtoUSFM(inputFile, UsfmDir, globe.projectOptions.translationId + ".usfm", true, globe.projectOptions);
+                                UsfmDir = Path.Combine(globe.outputProjectDirectory, "usfm");
                                 // Start with an EMPTY USFM directory to avoid problems with old files 
                                 Utils.DeleteDirectory(UsfmDir);
                                 fileHelper.EnsureDirectory(UsfmDir);
-                                SFConverter.scripture.USFXtoUSFM(inputFile, UsfmDir, m_options.translationId + ".usfm", false, m_options);
+                                SFConverter.scripture.USFXtoUSFM(inputFile, UsfmDir, globe.projectOptions.translationId + ".usfm", false, globe.projectOptions);
                                 Logit.CloseFile();
                                 if (Logit.loggedError)
                                 {
-                                    m_options.lastRunResult = false;
+                                    globe.projectOptions.lastRunResult = false;
+                                }
+                                if (Logit.loggedWarning)
+                                {
+                                    globe.projectOptions.warningsFound = true;
                                 }
                                 currentConversion = "converted USFX to USFM.";
                                 File.Copy(inputFile, Path.Combine(usfxDir, "usfx.xml"), true);
@@ -2582,90 +2059,94 @@ their generosity, people like you can open up the Bible and hear from God no mat
         /// </summary>
         private void ConvertUsfxToPDF(string xetexDir)
         {
-            if ((m_options.languageId.Length < 3) || (m_options.translationId.Length < 3))
+            if ((globe.projectOptions.languageId.Length < 3) || (globe.projectOptions.translationId.Length < 3))
                 return;
             Usfx2XeTeX toXeTex = new Usfx2XeTeX();
             toXeTex.texDir = xetexDir;
             toXeTex.sqlFileName = string.Empty; // Inhibit re-making SQL file.
             currentConversion = "writing XeTeX";
-            string UsfxPath = Path.Combine(m_outputProjectDirectory, "usfx");
+            string UsfxPath = Path.Combine(globe.outputProjectDirectory, "usfx");
             if (!Directory.Exists(UsfxPath))
             {
                 MessageBox.Show(this, UsfxPath + " not found!", "ERROR");
                 return;
             }
             Utils.DeleteDirectory(xetexDir);
-            Utils.EnsureDirectory(m_outputProjectDirectory);
-            Utils.EnsureDirectory(m_outputDirectory);
+            Utils.EnsureDirectory(globe.outputDirectory);
+            Utils.EnsureDirectory(globe.outputProjectDirectory);
             Utils.EnsureDirectory(xetexDir);
-            string logFile = Path.Combine(m_outputProjectDirectory, "xetexConversionReport.txt");
+            string logFile = Path.Combine(globe.outputProjectDirectory, "xetexConversionReport.txt");
             Logit.OpenFile(logFile);
             Logit.GUIWriteString = showMessageString;
             Logit.UpdateStatus = updateConversionProgress;
 
-            string fontSource = Path.Combine(dataRootDir, "fonts");
-            string fontName = m_options.fontFamily.ToLower().Replace(' ', '_');
+            string fontSource = Path.Combine(globe.dataRootDir, "fonts");
+            string fontName = globe.projectOptions.fontFamily.ToLower().Replace(' ', '_');
 
           
-            toXeTex.projectOptions = m_options;
-            toXeTex.projectOutputDir = m_outputProjectDirectory;
-            toXeTex.redistributable = m_options.redistributable;
+            toXeTex.projectOptions = globe.projectOptions;
+            toXeTex.projectOutputDir = globe.outputProjectDirectory;
+            toXeTex.redistributable = globe.projectOptions.redistributable;
             toXeTex.epubIdentifier = GetEpubID();
             toXeTex.stripPictures = false;
             toXeTex.indexDate = DateTime.UtcNow;
-            toXeTex.indexDateStamp = "PDF generated on " + toXeTex.indexDate.ToString("d MMM yyyy") +
-                " from source files dated " + sourceDate.ToString("d MMM yyyy") + @"\par ";
+            toXeTex.indexDateStamp = "PDF generated using Haiola and XeLaTeX on " + toXeTex.indexDate.ToString("d MMM yyyy") +
+                " from source files dated " + globe.sourceDate.ToString("d MMM yyyy") + @"\par ";
             toXeTex.GeneratingConcordance = false;
-            toXeTex.CrossRefToFilePrefixMap = m_options.CrossRefToFilePrefixMap;
-            toXeTex.contentCreator = m_options.contentCreator;
-            toXeTex.contributor = m_options.contributor;
+            toXeTex.CrossRefToFilePrefixMap = globe.projectOptions.CrossRefToFilePrefixMap;
+            toXeTex.contentCreator = globe.projectOptions.contentCreator;
+            toXeTex.contributor = globe.projectOptions.contributor;
             string usfxFilePath = Path.Combine(UsfxPath, "usfx.xml");
             toXeTex.bookInfo.ReadPublicationOrder(orderFile);
-            toXeTex.MergeXref(Path.Combine(m_inputProjectDirectory, "xref.xml"));
+            toXeTex.MergeXref(Path.Combine(globe.inputProjectDirectory, "xref.xml"));
             //TODO: eliminate side effects in expandPercentEscapes
             // Side effect: expandPercentEscapes sets longCopyrightMessage and shortCopyrightMessage.
             toXeTex.sourceLink = expandPercentEscapes("<a href=\"http://%h/%t\">%v</a>");
             toXeTex.longCopr = longCopyrightMessage;
             toXeTex.shortCopr = shortCopyrightMessage;
-            toXeTex.textDirection = m_options.textDir;
-            toXeTex.stripManualNoteOrigins = m_options.stripNoteOrigin;
-            toXeTex.noteOriginFormat = m_options.xoFormat;
-            toXeTex.englishDescription = m_options.EnglishDescription;
-            toXeTex.preferredFont = m_options.fontFamily;
-            toXeTex.fcbhId = m_options.fcbhId;
+            toXeTex.textDirection = globe.projectOptions.textDir;
+            toXeTex.stripManualNoteOrigins = globe.projectOptions.stripNoteOrigin;
+            toXeTex.noteOriginFormat = globe.projectOptions.xoFormat;
+            toXeTex.englishDescription = globe.projectOptions.EnglishDescription;
+            toXeTex.preferredFont = globe.projectOptions.fontFamily;
+            toXeTex.fcbhId = globe.projectOptions.fcbhId;
             toXeTex.coverName = Path.GetFileName(preferredCover);
-            if (m_options.PrepublicationChecks &&
-                (m_options.publicDomain || m_options.redistributable || File.Exists(Path.Combine(m_inputProjectDirectory, "certify.txt"))) &&
+            if (globe.projectOptions.PrepublicationChecks &&
+                (globe.projectOptions.publicDomain || globe.projectOptions.redistributable || File.Exists(Path.Combine(globe.inputProjectDirectory, "certify.txt"))) &&
                 File.Exists(certified))
             {
                 File.Copy(certified, Path.Combine(xetexDir, "eBible.org_certified.jpg"));
                 // toXeTex.indexDateStamp = toXeTex.indexDateStamp + "<br /><a href='http://eBible.org/certified/' target='_blank'><img src='eBible.org_certified.jpg' alt='eBible.org certified' /></a>";
             }
-            toXeTex.xrefCall.SetMarkers(m_options.xrefCallers);
-            toXeTex.footNoteCall.SetMarkers(m_options.footNoteCallers);
-            toXeTex.inputDir = m_inputDirectory;
-            toXeTex.projectInputDir = m_inputProjectDirectory;
+            toXeTex.xrefCall.SetMarkers(globe.projectOptions.xrefCallers);
+            toXeTex.footNoteCall.SetMarkers(globe.projectOptions.footNoteCallers);
+            toXeTex.inputDir = globe.inputDirectory;
+            toXeTex.projectInputDir = globe.inputProjectDirectory;
             toXeTex.ConvertUsfxToHtml(usfxFilePath, xetexDir,
-                m_options.vernacularTitle,
-                m_options.languageId,
-                m_options.translationId,
-                m_options.chapterLabel,
-                m_options.psalmLabel,
+                globe.projectOptions.vernacularTitle,
+                globe.projectOptions.languageId,
+                globe.projectOptions.translationId,
+                globe.projectOptions.chapterLabel,
+                globe.projectOptions.psalmLabel,
                 shortCopyrightMessage,
-                expandPercentEscapes(m_options.homeLink),
-                expandPercentEscapes(m_options.footerHtml),
-                expandPercentEscapes(m_options.indexHtml),
+                expandPercentEscapes(globe.projectOptions.homeLink),
+                expandPercentEscapes(globe.projectOptions.footerHtml),
+                expandPercentEscapes(globe.projectOptions.indexHtml),
                 copyrightPermissionsStatement(),
-                m_options.ignoreExtras,
-                m_options.goText);
-            toXeTex.bookInfo.RecordStats(m_options);
-            m_options.commonChars = toXeTex.commonChars;
-            m_options.Write();
+                globe.projectOptions.ignoreExtras,
+                globe.projectOptions.goText);
+            toXeTex.bookInfo.RecordStats(globe.projectOptions);
+            globe.projectOptions.commonChars = toXeTex.commonChars;
+            globe.projectOptions.Write();
             LoadStatisticsTab();
             Logit.CloseFile();
             if (Logit.loggedError)
             {
-                m_options.lastRunResult = false;
+                globe.projectOptions.lastRunResult = false;
+            }
+            if (Logit.loggedWarning)
+            {
+                globe.projectOptions.warningsFound = true;
             }
         }
 
@@ -2675,65 +2156,65 @@ their generosity, people like you can open up the Bible and hear from God no mat
         private void ConvertUsfxToMosis()
         {
             currentConversion = "writing MOSIS";
-            if ((m_options.languageId.Length < 3) || (m_options.translationId.Length < 3))
+            if ((globe.projectOptions.languageId.Length < 3) || (globe.projectOptions.translationId.Length < 3))
                 return;
-            string UsfxPath = Path.Combine(m_outputProjectDirectory, "usfx");
-            string mosisPath = Path.Combine(m_outputProjectDirectory, "mosis");
+            string UsfxPath = Path.Combine(globe.outputProjectDirectory, "usfx");
+            string mosisPath = Path.Combine(globe.outputProjectDirectory, "mosis");
             if (!Directory.Exists(UsfxPath))
             {
                 MessageBox.Show(this, UsfxPath + " not found!", "ERROR");
                 return;
             }
             string usfxFilePath = Path.Combine(UsfxPath, "usfx.xml");
-            string mosisFilePath = Path.Combine(mosisPath, m_options.translationId + "_osis.xml");
+            string mosisFilePath = Path.Combine(mosisPath, globe.projectOptions.translationId + "_osis.xml");
 
-            Utils.EnsureDirectory(m_outputDirectory);
-            Utils.EnsureDirectory(m_outputProjectDirectory);
+            Utils.EnsureDirectory(globe.outputDirectory);
+            Utils.EnsureDirectory(globe.outputProjectDirectory);
             Utils.EnsureDirectory(mosisPath);
 
             usfxToMosisConverter toMosis = new usfxToMosisConverter();
-            if (m_options.redistributable && File.Exists(eBibleCertified))
+            if (globe.projectOptions.redistributable && File.Exists(eBibleCertified))
             {
-                m_options.textSourceUrl = "https://eBible.org/Scriptures/";
+                globe.projectOptions.textSourceUrl = "https://eBible.org/Scriptures/";
             }
             else
             {
-                m_options.textSourceUrl = "";
+                globe.projectOptions.textSourceUrl = "";
             }
-            toMosis.languageCode = m_options.languageId;
-            toMosis.translationId = m_options.translationId;
-            toMosis.revisionDateTime = m_options.contentUpdateDate;
-            toMosis.vernacularTitle = m_options.vernacularTitle;
-            toMosis.contentCreator = m_options.contentCreator;
-            toMosis.contentContributor = m_options.contributor;
-            toMosis.englishDescription = m_options.EnglishDescription;
-            toMosis.lwcDescription = m_options.lwcDescription;
-            toMosis.printPublisher = m_options.printPublisher;
-            toMosis.ePublisher = m_options.electronicPublisher;
-            toMosis.languageName = m_options.languageNameInEnglish;
-            toMosis.dialect = m_options.dialect;
-            toMosis.vernacularLanguageName = m_options.languageName;
-            toMosis.projectOptions = m_options;
-            toMosis.swordDir = Path.Combine(dataRootDir, "sword");
-            toMosis.swordRestricted = Path.Combine(dataRootDir, "swordRestricted");
-            toMosis.copyrightNotice = m_options.publicDomain ? "public domain" : "Copyright © " + m_options.copyrightYears + " " + m_options.copyrightOwner;
-            if (m_options.publicDomain)
+            toMosis.languageCode = globe.projectOptions.languageId;
+            toMosis.translationId = globe.projectOptions.translationId;
+            toMosis.revisionDateTime = globe.projectOptions.contentUpdateDate;
+            toMosis.vernacularTitle = globe.projectOptions.vernacularTitle;
+            toMosis.contentCreator = globe.projectOptions.contentCreator;
+            toMosis.contentContributor = globe.projectOptions.contributor;
+            toMosis.englishDescription = globe.projectOptions.EnglishDescription;
+            toMosis.lwcDescription = globe.projectOptions.lwcDescription;
+            toMosis.printPublisher = globe.projectOptions.printPublisher;
+            toMosis.ePublisher = globe.projectOptions.electronicPublisher;
+            toMosis.languageName = globe.projectOptions.languageNameInEnglish;
+            toMosis.dialect = globe.projectOptions.dialect;
+            toMosis.vernacularLanguageName = globe.projectOptions.languageName;
+            toMosis.projectOptions = globe.projectOptions;
+            toMosis.swordDir = Path.Combine(globe.dataRootDir, "sword");
+            toMosis.swordRestricted = Path.Combine(globe.dataRootDir, "swordRestricted");
+            toMosis.copyrightNotice = globe.projectOptions.publicDomain ? "public domain" : "Copyright © " + globe.projectOptions.copyrightYears + " " + globe.projectOptions.copyrightOwner;
+            if (globe.projectOptions.publicDomain)
             {
                 toMosis.rightsNotice = @"This work is in the Public Domain. That means that it is not copyrighted.
  It is still subject to God's Law concerning His Word, including the Great Commission (Matthew 28:18-20).
 ";
             }
-            else if (m_options.ccbyndnc)
+            else if (globe.projectOptions.ccbyndnc)
             {
                 toMosis.rightsNotice = @"This Bible translation is made available to you under the terms of the
  Creative Commons Attribution-Noncommercial-No Derivative Works license (http://creativecommons.org/licenses/by-nc-nd/4.0/).";
             }
-            else if (m_options.ccbysa)
+            else if (globe.projectOptions.ccbysa)
             {
                 toMosis.rightsNotice = @"This Bible translation is made available to you under the terms of the
  Creative Commons Attribution-Share-Alike license (http://creativecommons.org/licenses/by-sa/4.0/).";
             }
-            else if (m_options.ccbynd)
+            else if (globe.projectOptions.ccbynd)
             {
                 toMosis.rightsNotice = @"This Bible translation is made available to you under the terms of the
  Creative Commons Attribution-No Derivatives license (http://creativecommons.org/licenses/by-na/4.0/).";
@@ -2742,12 +2223,12 @@ their generosity, people like you can open up the Bible and hear from God no mat
             {
                 toMosis.rightsNotice = String.Empty;
             }
-            if (m_options.rightsStatement.Length > 0)
+            if (globe.projectOptions.rightsStatement.Length > 0)
             {
-                toMosis.rightsNotice += m_options.rightsStatement;
+                toMosis.rightsNotice += globe.projectOptions.rightsStatement;
             }
             toMosis.infoPage = copyrightPermissionsStatement();
-            string logFile = Path.Combine(m_outputProjectDirectory, "MosisConversionReport.txt");
+            string logFile = Path.Combine(globe.outputProjectDirectory, "MosisConversionReport.txt");
             Logit.OpenFile(logFile);
             Logit.GUIWriteString = showMessageString;
             toMosis.langCodes = languageCodes;
@@ -2755,46 +2236,50 @@ their generosity, people like you can open up the Bible and hear from God no mat
             Logit.CloseFile();
             if (Logit.loggedError)
             {
-                m_options.lastRunResult = false;
+                globe.projectOptions.lastRunResult = false;
+            }
+            if (Logit.loggedWarning)
+            {
+                globe.projectOptions.warningsFound = true;
             }
         }
 
         private void PrepareSearchText()
         {
-            string logFile = Path.Combine(m_outputProjectDirectory, "SearchReport.txt");
+            string logFile = Path.Combine(globe.outputProjectDirectory, "SearchReport.txt");
             Logit.OpenFile(logFile);
             try
             {
                 ExtractSearchText est = new ExtractSearchText();
-                string vplPath = Path.Combine(m_outputProjectDirectory, "vpl");
-                string UsfxPath = Path.Combine(m_outputProjectDirectory, "usfx");
-                string auxPath = Path.Combine(m_outputProjectDirectory, "search");
+                string vplPath = Path.Combine(globe.outputProjectDirectory, "vpl");
+                string UsfxPath = Path.Combine(globe.outputProjectDirectory, "usfx");
+                string auxPath = Path.Combine(globe.outputProjectDirectory, "search");
                 string verseText = Path.Combine(auxPath, "verseText.xml");
-                // string sqlFile = Path.Combine(m_outputDirectory, "MySQL");
-                string sqlFile = Path.Combine(m_outputProjectDirectory, "sql");
+                // string sqlFile = Path.Combine(globe.m_outputProjectDirectory, "MySQL");
+                string sqlFile = Path.Combine(globe.outputProjectDirectory, "sql");
                 Logit.GUIWriteString = showMessageString;
                 Logit.UpdateStatus = updateConversionProgress;
                 Utils.EnsureDirectory(auxPath);
                 Utils.EnsureDirectory(sqlFile);
                 est.Filter(Path.Combine(UsfxPath, "usfx.xml"), verseText);
-                est.WriteSearchSql(verseText, m_project, Path.Combine(sqlFile, m_project + "_vpl.sql"));
-                est.WriteSearchSql(Path.ChangeExtension(verseText, ".lemma"), m_project, Path.Combine(sqlFile, m_project + "_lemma.sql"));
-                if (est.LongestWordLength > m_options.longestWordLength)
-                    m_options.longestWordLength = est.LongestWordLength;
+                est.WriteSearchSql(verseText, globe.currentProject, Path.Combine(sqlFile, globe.currentProject + "_vpl.sql"));
+                est.WriteSearchSql(Path.ChangeExtension(verseText, ".lemma"), globe.currentProject, Path.Combine(sqlFile, globe.currentProject + "_lemma.sql"));
+                if (est.LongestWordLength > globe.projectOptions.longestWordLength)
+                    globe.projectOptions.longestWordLength = est.LongestWordLength;
                 // Copy search text files to VPL output.
                 Utils.DeleteDirectory(vplPath);
                 Utils.EnsureDirectory(vplPath);
-                File.Copy(verseText, Path.Combine(vplPath, m_project + "_vpl.xml"));
-                File.Copy(Path.Combine(auxPath, "verseText.vpltxt"), Path.Combine(vplPath, m_project + "_vpl.txt"));
-                File.Copy(Path.Combine(m_inputDirectory, "haiola.css"), Path.Combine(vplPath, "haiola.css"));
-                StreamWriter htm = new StreamWriter(Path.Combine(vplPath, m_project + "_about.htm"));
+                File.Copy(verseText, Path.Combine(vplPath, globe.currentProject + "_vpl.xml"));
+                File.Copy(Path.Combine(auxPath, "verseText.vpltxt"), Path.Combine(vplPath, globe.currentProject + "_vpl.txt"));
+                File.Copy(Path.Combine(globe.inputDirectory, "haiola.css"), Path.Combine(vplPath, "haiola.css"));
+                StreamWriter htm = new StreamWriter(Path.Combine(vplPath, globe.currentProject + "_about.htm"));
                 htm.WriteLine("<!DOCTYPE html>");
                 htm.WriteLine("<html>");
                 htm.WriteLine("<head>");
                 htm.WriteLine("<meta charset=\"UTF-8\" />");
                 htm.WriteLine("<link rel=\"stylesheet\" href=\"haiola.css\" type=\"text/css\" />");
                 htm.WriteLine("<meta name=\"viewport\" content=\"user-scalable=yes, initial-scale=1, minimum-scale=1, width=device-width\"/>");
-                htm.WriteLine("<title>About {0}_vpl</title>", m_project);
+                htm.WriteLine("<title>About {0}_vpl</title>", globe.currentProject);
                 htm.WriteLine("</head>");
                 htm.WriteLine("<body class=\"mainDoc\"");
                 htm.WriteLine("<p>This archive contains BIBLE TEXT ONLY. All formatting, paragraph breaks, notes, introductions, noncanonical section titles, etc., have been removed. The file ending \"_vpl.txt\" is designed for import into BibleWorks and similar Bible study programs. The file ending \"_vpl.xml\" contains the same information, but is in XML format and uses standard SIL/UBS book abbreviations.");
@@ -2806,7 +2291,11 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 htm.Close();
                 if (Logit.loggedError)
                 {
-                    m_options.lastRunResult = false;
+                    globe.projectOptions.lastRunResult = false;
+                }
+                if (Logit.loggedWarning)
+                {
+                    globe.projectOptions.warningsFound = true;
                 }
             }
             catch (Exception ex)
@@ -2829,14 +2318,14 @@ their generosity, people like you can open up the Bible and hear from God no mat
         private void ProcessOneProject(string projDirName)
         {
             Logit.GUIWriteString = showMessageString;
-            SetCurrentProject(projDirName);
-        	m_xiniPath = Path.Combine(m_inputProjectDirectory, "options.xini");
+            SetcurrentProject(projDirName);
+        	globe.projectXiniPath = Path.Combine(globe.inputProjectDirectory, "options.xini");
             displayOptions();
-            if (m_options.done || !fileHelper.lockProject(m_inputProjectDirectory))
+            if (globe.projectOptions.done || !fileHelper.lockProject(globe.inputProjectDirectory))
             {
                 return;
             }
-            logProjectStart("Processing " + m_options.translationId + " in " + m_inputProjectDirectory);
+            logProjectStart("Processing " + globe.projectOptions.translationId + " in " + globe.inputProjectDirectory);
             Application.DoEvents();
             if (!fileHelper.fAllRunning)
             {
@@ -2844,37 +2333,37 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 return;
             }
 
-            Utils.DeleteDirectory(Path.Combine(m_outputProjectDirectory, "search"));
-            Utils.DeleteDirectory(Path.Combine(m_outputProjectDirectory, "usfm1"));
-            Utils.DeleteDirectory(Path.Combine(m_outputProjectDirectory, "sfm"));
-            Utils.DeleteDirectory(Path.Combine(m_outputProjectDirectory, "extendedusfm"));
-            Utils.DeleteDirectory(Path.Combine(m_outputProjectDirectory, "usfm"));
-            Utils.DeleteDirectory(Path.Combine(m_outputProjectDirectory, "usfx"));
+            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "search"));
+            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "usfm1"));
+            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "sfm"));
+            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "extendedusfm"));
+            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "usfm"));
+            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "usfx"));
 
 
-            if (m_options.PrepublicationChecks &&
-                (m_options.publicDomain || m_options.redistributable || File.Exists(Path.Combine(m_inputProjectDirectory, "certify.txt"))) &&
+            if (globe.projectOptions.PrepublicationChecks &&
+                (globe.projectOptions.publicDomain || globe.projectOptions.redistributable || File.Exists(Path.Combine(globe.inputProjectDirectory, "certify.txt"))) &&
                 File.Exists(eBibleCertified))
             {
                 certified = eBibleCertified;
-                m_options.eBibleCertified = true;
+                globe.projectOptions.eBibleCertified = true;
             }
             else
             {
                 certified = null;
-                m_options.eBibleCertified = false;
+                globe.projectOptions.eBibleCertified = false;
             }
-            m_options.rebuild = RebuildCheckBox.Checked;
-            m_options.Write();
+            globe.projectOptions.rebuild = RebuildCheckBox.Checked;
+            globe.projectOptions.Write();
 
             // Find out what kind of input we have (USFX, USFM, or USX)
             // and produce USFX, USFM, (and in the future) USX outputs.
 
-            orderFile = Path.Combine(m_inputProjectDirectory, "bookorder.txt");
+            orderFile = Path.Combine(globe.inputProjectDirectory, "bookorder.txt");
             if (!File.Exists(orderFile))
                 orderFile = SFConverter.FindAuxFile("bookorder.txt");
             StreamReader sr = new StreamReader(orderFile);
-            m_options.allowedBookList = sr.ReadToEnd();
+            globe.projectOptions.allowedBookList = sr.ReadToEnd();
             sr.Close();
 
 
@@ -2885,7 +2374,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 fileHelper.unlockProject();
                 return;
             }
-            Utils.DeleteDirectory(Path.Combine(m_outputProjectDirectory, "sql"));
+            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "sql"));
 
             UpdateBooksList();
             Application.DoEvents();
@@ -2896,23 +2385,23 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 PrepareSearchText();
             Application.DoEvents();
             // Create epub file
-            string epubDir = Path.Combine(m_outputProjectDirectory, "epub");
-            if (fileHelper.fAllRunning && m_options.makeEub && (m_options.rebuild || m_options.SourceFileDate > Directory.GetCreationTime(epubDir)))
+            string epubDir = Path.Combine(globe.outputProjectDirectory, "epub");
+            if (fileHelper.fAllRunning && globe.projectOptions.makeEub && (globe.projectOptions.rebuild || globe.projectOptions.SourceFileDate > Directory.GetCreationTime(epubDir)))
             {
                 Utils.DeleteDirectory(epubDir);
                 ConvertUsfxToEPub();
             }
             Application.DoEvents();
             // Create HTML output for posting on web sites.
-            string htmlDir = Path.Combine(m_outputProjectDirectory, "html");
-            if (fileHelper.fAllRunning && m_options.makeHtml && (m_options.rebuild || m_options.SourceFileDate > Directory.GetCreationTime(htmlDir)))
+            string htmlDir = Path.Combine(globe.outputProjectDirectory, "html");
+            if (fileHelper.fAllRunning && globe.projectOptions.makeHtml && (globe.projectOptions.rebuild || globe.projectOptions.SourceFileDate > Directory.GetCreationTime(htmlDir)))
             {
                 Utils.DeleteDirectory(htmlDir);
                 ConvertUsfxToPortableHtml();
             }
             Application.DoEvents();
-            string WordMLDir = Path.Combine(m_outputProjectDirectory, "WordML");
-            if (fileHelper.fAllRunning && m_options.makeWordML && (m_options.rebuild || m_options.SourceFileDate > Directory.GetCreationTime(WordMLDir)))
+            string WordMLDir = Path.Combine(globe.outputProjectDirectory, "WordML");
+            if (fileHelper.fAllRunning && globe.projectOptions.makeWordML && (globe.projectOptions.rebuild || globe.projectOptions.SourceFileDate > Directory.GetCreationTime(WordMLDir)))
             {   // Write out WordML document
                 // Note: this conversion departs from the standard architecture of making the USFX file the hub, because the WordML writer code was already done in WordSend,
                 // and expected USFM input. Therefore, we read the normalized USFM files, which should be present even if the project input is USFX or USX.
@@ -2922,53 +2411,53 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 {
                     Utils.DeleteDirectory(WordMLDir);
                     currentConversion = "Reading normalized USFM";
-                    string logFile = Path.Combine(m_outputProjectDirectory, "WordMLConversionReport.txt");
+                    string logFile = Path.Combine(globe.outputProjectDirectory, "WordMLConversionReport.txt");
                     Logit.OpenFile(logFile);
-                    SFConverter.scripture = new Scriptures(m_options);
-                    string seedFile = Path.Combine(m_inputProjectDirectory, "Scripture.xml");
+                    SFConverter.scripture = new Scriptures(globe.projectOptions);
+                    string seedFile = Path.Combine(globe.inputProjectDirectory, "Scripture.xml");
                     if (!File.Exists(seedFile))
                     {
-                        seedFile = Path.Combine(m_inputDirectory, "Scripture.xml");
+                        seedFile = Path.Combine(globe.inputDirectory, "Scripture.xml");
                     }
                     if (!File.Exists(seedFile))
                     {
                         seedFile = SFConverter.FindAuxFile("Scripture.xml");
                     }
                     SFConverter.scripture.templateName = seedFile;
-                    SFConverter.ProcessFilespec(Path.Combine(Path.Combine(m_outputProjectDirectory, "usfm"), "*.usfm"));
+                    SFConverter.ProcessFilespec(Path.Combine(Path.Combine(globe.outputProjectDirectory, "usfm"), "*.usfm"));
                     currentConversion = "Writing WordML";
                     Utils.EnsureDirectory(WordMLDir);
-                    SFConverter.scripture.WriteToWordML(Path.Combine(WordMLDir, m_options.translationId + "_word.xml"));
+                    SFConverter.scripture.WriteToWordML(Path.Combine(WordMLDir, globe.projectOptions.translationId + "_word.xml"));
                 }
                 catch (Exception ex)
                 {
 
                     Logit.WriteError("Error writing WordML file: " + ex.Message);
                     Logit.WriteError(ex.StackTrace);
-                    m_options.makeWordML = false;
+                    globe.projectOptions.makeWordML = false;
                 }
-                makeWordMLCheckBox.Checked = m_options.makeWordML;
+                makeWordMLCheckBox.Checked = globe.projectOptions.makeWordML;
                 Logit.CloseFile();
             }
             Application.DoEvents();
             // Create Modified OSIS output for conversion to Sword format.
-            string mosisDir = Path.Combine(m_outputProjectDirectory, "mosis");
-            if (fileHelper.fAllRunning && m_options.makeSword && (m_options.rebuild || (m_options.SourceFileDate > m_options.SwordVersionDate)))
+            string mosisDir = Path.Combine(globe.outputProjectDirectory, "mosis");
+            if (fileHelper.fAllRunning && globe.projectOptions.makeSword && (globe.projectOptions.rebuild || (globe.projectOptions.SourceFileDate > globe.projectOptions.SwordVersionDate)))
             {
                 Utils.DeleteDirectory(mosisDir);
                 ConvertUsfxToMosis();
             }
             Application.DoEvents();
-            string xetexDir = Path.Combine(m_outputProjectDirectory, "xetex");
-            if (fileHelper.fAllRunning && m_options.makePDF /* && (m_options.rebuild || (m_options.SourceFileDate > Directory.GetCreationTime(xetexDir)))*/)
+            string xetexDir = Path.Combine(globe.outputProjectDirectory, "xetex");
+            if (fileHelper.fAllRunning && globe.projectOptions.makePDF /* && (globe.m_options.rebuild || (globe.m_options.SourceFileDate > Directory.GetCreationTime(xetexDir)))*/)
             {
                 ConvertUsfxToPDF(xetexDir);
             }
             Application.DoEvents();
             // Run proprietary extension conversions, if any.
-            string inscriptDir = Path.Combine(Path.Combine(dataRootDir, "inscript"), m_options.fcbhId);
+            string inscriptDir = Path.Combine(Path.Combine(globe.dataRootDir, "inscript"), globe.projectOptions.fcbhId);
             DateTime inscriptCreated = Directory.GetCreationTime(inscriptDir);
-            if (fileHelper.fAllRunning && m_options.makeInScript && (m_options.rebuild || m_options.SourceFileDate > inscriptCreated))
+            if (fileHelper.fAllRunning && globe.projectOptions.makeInScript && (globe.projectOptions.rebuild || globe.projectOptions.SourceFileDate > inscriptCreated))
             {
                 Utils.DeleteDirectory(inscriptDir);
                 plugin.DoProprietaryConversions();
@@ -2978,49 +2467,57 @@ their generosity, people like you can open up the Bible and hear from God no mat
             if (fileHelper.fAllRunning)
             {
                 DoPostprocess();
-                m_options.done = true;
-                m_options.Write();
+                globe.projectOptions.done = true;
+                globe.projectOptions.Write();
             }
             fileHelper.unlockProject();
             Application.DoEvents();
         }
 
-    	private void SetCurrentProject(string projDirName)
+    	private void SetcurrentProject(string projDirName)
     	{
-    		m_project = projDirName;
-    		m_inputProjectDirectory = Path.Combine(m_inputDirectory, m_project);
-    		m_outputProjectDirectory = Path.Combine(m_outputDirectory, m_project);
-    		fileHelper.EnsureDirectory(m_outputProjectDirectory);
+    		globe.currentProject = projDirName;
+    		globe.inputProjectDirectory = Path.Combine(globe.inputDirectory, globe.currentProject);
+    		globe.outputProjectDirectory = Path.Combine(globe.outputDirectory, globe.currentProject);
+    		fileHelper.EnsureDirectory(globe.outputProjectDirectory);
     	}
 
         private string FindSource(string projDirName)
         {
-            SetCurrentProject(projDirName);
+            SetcurrentProject(projDirName);
             string source;
             string result = string.Empty;
-            if (!String.IsNullOrEmpty((string)paratextcomboBox.SelectedItem))
+            if (!String.IsNullOrEmpty((string)paratext8ComboBox.SelectedItem))
             {
-                source = Path.Combine(paratextProjectsDir, (string)paratextcomboBox.SelectedItem);
+                source = Path.Combine(globe.paratext8ProjectsDir, (string)paratext8ComboBox.SelectedItem);
                 if (Directory.Exists(source))
                 {
                     return source;
                 }
             }
-            source = Path.Combine(m_inputProjectDirectory, "Source");
+            if (!String.IsNullOrEmpty((string)paratextcomboBox.SelectedItem))
+            {
+                source = Path.Combine(globe.paratextProjectsDir, (string)paratextcomboBox.SelectedItem);
+                if (Directory.Exists(source))
+                {
+                    return source;
+                }
+            }
+            source = Path.Combine(globe.inputProjectDirectory, "Source");
             if (Directory.Exists(source))
             {
                 return source;
             }
             else
             {
-                source = Path.Combine(m_inputProjectDirectory, "usfx");
+                source = Path.Combine(globe.inputProjectDirectory, "usfx");
                 if (Directory.Exists(source))
                 {
                     return source;
                 }
                 else
                 {
-                    source = Path.Combine(m_inputProjectDirectory, "usx");
+                    source = Path.Combine(globe.inputProjectDirectory, "usx");
                     if (Directory.Exists(source))
                     {
                         return source;
@@ -3032,14 +2529,33 @@ their generosity, people like you can open up the Bible and hear from God no mat
 
     	private bool GetUsfx(string projDirName)
     	{
-			SetCurrentProject(projDirName);
+			SetcurrentProject(projDirName);
 			string source;
-            if (!String.IsNullOrEmpty((string)paratextcomboBox.SelectedItem))
+            if (!String.IsNullOrEmpty((string)paratext8ComboBox.SelectedItem))
             {
-                source = Path.Combine(paratextProjectsDir, (string)paratextcomboBox.SelectedItem);
+                source = Path.Combine(globe.paratext8ProjectsDir, (string)paratext8ComboBox.SelectedItem);
                 if (Directory.Exists(source))
                 {
-                    PreprocessUsfmFiles(source);
+                    globe.PreprocessUsfmFiles(source);
+                    Application.DoEvents();
+                    if (fileHelper.fAllRunning)
+                    {
+                        ConvertUsfmToUsfx();
+                        NormalizeUsfm();
+                    }
+                    return true;
+                }
+                else
+                {
+                    Logit.WriteError("Paratext 8 project directory " + source + " not found!");
+                }
+            }
+            if (!String.IsNullOrEmpty((string)paratextcomboBox.SelectedItem))
+            {
+                source = Path.Combine(globe.paratextProjectsDir, (string)paratextcomboBox.SelectedItem);
+                if (Directory.Exists(source))
+                {
+                    globe.PreprocessUsfmFiles(source);
                     Application.DoEvents();
                     if (fileHelper.fAllRunning)
                     {
@@ -3053,10 +2569,10 @@ their generosity, people like you can open up the Bible and hear from God no mat
                     Logit.WriteError("Paratext project directory " + source + " not found!");
                 }
             }
-            source = Path.Combine(m_inputProjectDirectory, "Source");
+            source = Path.Combine(globe.inputProjectDirectory, "Source");
             if (Directory.Exists(source))
             {
-                PreprocessUsfmFiles(source);
+                globe.PreprocessUsfmFiles(source);
                 Application.DoEvents();
                 if (fileHelper.fAllRunning)
                 {
@@ -3066,7 +2582,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
             }
             else
             {
-                source = Path.Combine(m_inputProjectDirectory, "usfx");
+                source = Path.Combine(globe.inputProjectDirectory, "usfx");
                 if (Directory.Exists(source))
                 {
                     ImportUsfx(source);
@@ -3074,7 +2590,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 }
                 else
                 {
-                    source = Path.Combine(m_inputProjectDirectory, "usx");
+                    source = Path.Combine(globe.inputProjectDirectory, "usx");
                     if (Directory.Exists(source))
                     {
                         ImportUsx(source);
@@ -3082,10 +2598,10 @@ their generosity, people like you can open up the Bible and hear from God no mat
                         if (File.Exists(metadataXml))
                         {
                             DateTime fileDate = File.GetLastWriteTimeUtc(metadataXml);
-                            if (fileDate > sourceDate)
+                            if (fileDate > globe.sourceDate)
                             {
-                                sourceDate = fileDate;
-                                m_options.SourceFileDate = sourceDate;
+                                globe.sourceDate = fileDate;
+                                globe.projectOptions.SourceFileDate = globe.sourceDate;
                             }
                         }
 
@@ -3156,7 +2672,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
             int numdone = 0;
             int nummarked = 0;
             TimeSpan ts, remainingTime;
-            string command = Path.Combine(m_inputDirectory, "postprocess.bat");
+            string command = Path.Combine(globe.inputDirectory, "postprocess.bat");
 
             if (fileHelper.fAllRunning)
             {
@@ -3185,18 +2701,18 @@ their generosity, people like you can open up the Bible and hear from God no mat
 
 
             fcbhIds = null;
-            if (getFCBHkeys)
+            if (globe.getFCBHkeys)
                 GetFcbhIds();
 
 
             foreach (object o in m_projectsList.CheckedItems)
             {
-                SetCurrentProject((string)o);
-                m_xiniPath = Path.Combine(m_inputProjectDirectory, "options.xini");
+                SetcurrentProject((string)o);
+                globe.projectXiniPath = Path.Combine(globe.inputProjectDirectory, "options.xini");
                 displayOptions();
-                if (!m_options.done)
+                if (!globe.projectOptions.done)
                 {
-                    insertProjectEntry(new projectEntry((string)o, m_options.dependsOn));
+                    insertProjectEntry(new projectEntry((string)o, globe.projectOptions.dependsOn));
                     nummarked++;
                 }
             }
@@ -3257,7 +2773,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
             }
             else
             {
-                string index = Path.Combine(Path.Combine(m_outputProjectDirectory, "html"), "index.htm");
+                string index = Path.Combine(Path.Combine(globe.outputProjectDirectory, "html"), "index.htm");
                 if (File.Exists(index))
                     System.Diagnostics.Process.Start(index);
             }
@@ -3285,14 +2801,13 @@ their generosity, people like you can open up the Bible and hear from God no mat
 
                 foreach (object o in m_projectsList.CheckedItems)
                 {
-                    SetCurrentProject((string)o);
-                    m_xiniPath = Path.Combine(m_inputProjectDirectory, "options.xini");
+                    SetcurrentProject((string)o);
+                    globe.projectXiniPath = Path.Combine(globe.inputProjectDirectory, "options.xini");
                     displayOptions();
-                    lockFile = Path.Combine(m_inputProjectDirectory, "lock");
-                    if (File.Exists(lockFile))
-                        File.Delete(lockFile);
-                    m_options.done = false;
-                    m_options.Write();
+                    lockFile = Path.Combine(globe.inputProjectDirectory, "lock");
+                    Utils.DeleteFile(lockFile);
+                    globe.projectOptions.done = false;
+                    globe.projectOptions.Write();
                 }
 
 
@@ -3409,11 +2924,11 @@ their generosity, people like you can open up the Bible and hear from God no mat
                                         break;
                                     case "contents/bookList/description":
                                         if (defaultBookList)
-                                            m_options.canonTypeEnglish = MetadataText();
+                                            globe.projectOptions.canonTypeEnglish = MetadataText();
                                         break;
                                     case "contents/bookList/descriptionLocal":
                                         if (defaultBookList)
-                                            m_options.canonTypeLocal = MetadataText();
+                                            globe.projectOptions.canonTypeLocal = MetadataText();
                                         break;
                                     case "agencies/creator":
                                         creatorTextBox.Text = MetadataText();
@@ -3539,7 +3054,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
                                 }
                             }
                         }
-                        BookInfo.WriteDefaultBookNames(Path.Combine(m_outputProjectDirectory, "BookNames.xml"));
+                        BookInfo.WriteDefaultBookNames(Path.Combine(globe.outputProjectDirectory, "BookNames.xml"));
                     }
                 }
             }
@@ -3548,7 +3063,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 MessageBox.Show(ex.Message, "Error trying to read " + fileName);
                 result = false;
         	}
-            m_options.Write();
+            globe.projectOptions.Write();
             return result;
         }
 
@@ -3557,127 +3072,128 @@ their generosity, people like you can open up the Bible and hear from God no mat
         /// </summary>
         private void displayOptions()
         {
-            if (m_options == null)
+            if (globe.projectOptions == null)
             {
-                m_options = new Options(m_xiniPath);
+                globe.projectOptions = new Options(globe.projectXiniPath);
             }
             else
             {
-                m_options.Reload(m_xiniPath);
+                globe.projectOptions.Reload(globe.projectXiniPath);
             }
-            if (m_options.languageId.Length == 3)
+            if (globe.projectOptions.languageId.Length == 3)
             {
-                ethnorecord er = eth.ReadEthnologue(m_options.languageId);
-                if (m_options.country.Length == 0)
-                    m_options.country = er.countryName;
-                if (m_options.countryCode.Length == 0)
-                    m_options.countryCode = er.countryId;
-                if (m_options.languageNameInEnglish.Length == 0)
-                    m_options.languageNameInEnglish = er.langName;
+                ethnorecord er = eth.ReadEthnologue(globe.projectOptions.languageId);
+                if (globe.projectOptions.country.Length == 0)
+                    globe.projectOptions.country = er.countryName;
+                if (globe.projectOptions.countryCode.Length == 0)
+                    globe.projectOptions.countryCode = er.countryId;
+                if (globe.projectOptions.languageNameInEnglish.Length == 0)
+                    globe.projectOptions.languageNameInEnglish = er.langName;
             }
-            SFConverter.jobIni = m_options.ini;
-            ethnologueCodeTextBox.Text = m_options.languageId;
-            translationIdTextBox.Text = m_project; // This was m_options.translationId, but now we force short translation ID and input directory name to match.
-            traditionalAbbreviationTextBox.Text = m_options.translationTraditionalAbbreviation;
-            languageNameTextBox.Text = m_options.languageName;
-            engLangNameTextBox.Text = m_options.languageNameInEnglish;
-            dialectTextBox.Text = m_options.dialect;
-            creatorTextBox.Text = m_options.contentCreator;
-            contributorTextBox.Text = m_options.contributor;
-            titleTextBox.Text = m_options.vernacularTitle;
-            descriptionTextBox.Text = m_options.EnglishDescription;
-            lwcDescriptionTextBox.Text = m_options.lwcDescription;
+            SFConverter.jobIni = globe.projectOptions.ini;
+            ethnologueCodeTextBox.Text = globe.projectOptions.languageId;
+            translationIdTextBox.Text = globe.currentProject; // This was globe.m_options.translationId, but now we force short translation ID and input directory name to match.
+            traditionalAbbreviationTextBox.Text = globe.projectOptions.translationTraditionalAbbreviation;
+            languageNameTextBox.Text = globe.projectOptions.languageName;
+            engLangNameTextBox.Text = globe.projectOptions.languageNameInEnglish;
+            dialectTextBox.Text = globe.projectOptions.dialect;
+            creatorTextBox.Text = globe.projectOptions.contentCreator;
+            contributorTextBox.Text = globe.projectOptions.contributor;
+            titleTextBox.Text = globe.projectOptions.vernacularTitle;
+            descriptionTextBox.Text = globe.projectOptions.EnglishDescription;
+            lwcDescriptionTextBox.Text = globe.projectOptions.lwcDescription;
             updateDateTimePicker.MaxDate = DateTime.Now.AddDays(2);
-            updateDateTimePicker.Value = m_options.contentUpdateDate;
-            privateCheckBox.Checked = m_options.privateProject;
-            pdRadioButton.Checked = m_options.publicDomain;
-            ccRadioButton.Checked = m_options.ccbyndnc;
-            CCBySaRadioButton.Checked = m_options.ccbysa;
-            CCByNdRadioButton.Checked = m_options.ccbynd;
-            otherRadioButton.Checked = m_options.otherLicense;
-            allRightsRadioButton.Checked = m_options.allRightsReserved;
-            silentRadioButton.Checked = m_options.silentCopyright;
-            copyrightOwnerTextBox.Text = m_options.copyrightOwner;
-            copyrightOwnerUrlTextBox.Text = m_options.copyrightOwnerUrl;
-            copyrightYearTextBox.Text = m_options.copyrightYears;
-            coprAbbrevTextBox.Text = m_options.copyrightOwnerAbbrev;
-            rightsStatementTextBox.Text = m_options.rightsStatement;
-            printPublisherTextBox.Text = m_options.printPublisher;
-            electronicPublisherTextBox.Text = m_options.electronicPublisher;
-            stripExtrasCheckBox.Checked = m_options.ignoreExtras;
-            xoTextBox.Text = m_options.xoFormat;
-            customCssTextBox.Text = m_options.customCssFileName;
-            stripOriginCheckBox.Checked = m_options.stripNoteOrigin;
-            prepublicationChecksCheckBox.Checked = m_options.PrepublicationChecks;
-            webSiteReadyCheckBox.Checked = m_options.WebSiteReady;
-            e10dblCheckBox.Checked = m_options.ETENDBL;
-            archivedCheckBox.Checked = m_options.Archived;
-            subsetCheckBox.Checked = m_options.subsetProject;
-            paratextcomboBox.SelectedItem = m_options.paratextProject;
-            audioRecordingCopyrightTextBox.Text = m_options.AudioCopyrightNotice;
-            rodCodeTextBox.Text = m_options.rodCode;
-            ldmlTextBox.Text = m_options.ldml;
-            scriptTextBox.Text = m_options.script;
-            localRightsHolderTextBox.Text = m_options.localRightsHolder;
-            facebookTextBox.Text = m_options.facebook;
-            countryTextBox.Text = m_options.country;
-            countryCodeTextBox.Text = m_options.countryCode;
-            extendUsfmCheckBox.Checked = m_options.extendUsfm;
-            chapterLabelTextBox.Text = m_options.chapterLabel;
-            psalmLabelTextBox.Text = m_options.psalmLabel;
-            cropCheckBox.Checked = m_options.includeCropMarks;
-            chapter1CheckBox.Checked = m_options.chapter1;
-            verse1CheckBox.Checked = m_options.verse1;
-            pageWidthTextBox.Text = m_options.pageWidth;
-            pageLengthTextBox.Text = m_options.pageLength;
-            regenerateNoteOriginsCheckBox.Checked = m_options.RegenerateNoteOrigins;
-            cvSeparatorTextBox.Text = m_options.CVSeparator;
-            downloadsAllowedCheckBox.Checked = m_options.downloadsAllowed;
-            if ((m_options.SwordName.Length < 1) && (m_options.translationId.Length > 1))
+            updateDateTimePicker.Value = globe.projectOptions.contentUpdateDate;
+            privateCheckBox.Checked = globe.projectOptions.privateProject;
+            pdRadioButton.Checked = globe.projectOptions.publicDomain;
+            ccRadioButton.Checked = globe.projectOptions.ccbyndnc;
+            CCBySaRadioButton.Checked = globe.projectOptions.ccbysa;
+            CCByNdRadioButton.Checked = globe.projectOptions.ccbynd;
+            otherRadioButton.Checked = globe.projectOptions.otherLicense;
+            allRightsRadioButton.Checked = globe.projectOptions.allRightsReserved;
+            silentRadioButton.Checked = globe.projectOptions.silentCopyright;
+            copyrightOwnerTextBox.Text = globe.projectOptions.copyrightOwner;
+            copyrightOwnerUrlTextBox.Text = globe.projectOptions.copyrightOwnerUrl;
+            copyrightYearTextBox.Text = globe.projectOptions.copyrightYears;
+            coprAbbrevTextBox.Text = globe.projectOptions.copyrightOwnerAbbrev;
+            rightsStatementTextBox.Text = globe.projectOptions.rightsStatement;
+            printPublisherTextBox.Text = globe.projectOptions.printPublisher;
+            electronicPublisherTextBox.Text = globe.projectOptions.electronicPublisher;
+            stripExtrasCheckBox.Checked = globe.projectOptions.ignoreExtras;
+            xoTextBox.Text = globe.projectOptions.xoFormat;
+            customCssTextBox.Text = globe.projectOptions.customCssFileName;
+            stripOriginCheckBox.Checked = globe.projectOptions.stripNoteOrigin;
+            prepublicationChecksCheckBox.Checked = globe.projectOptions.PrepublicationChecks;
+            webSiteReadyCheckBox.Checked = globe.projectOptions.WebSiteReady;
+            e10dblCheckBox.Checked = globe.projectOptions.ETENDBL;
+            archivedCheckBox.Checked = globe.projectOptions.Archived;
+            subsetCheckBox.Checked = globe.projectOptions.subsetProject;
+            paratextcomboBox.SelectedItem = globe.projectOptions.paratextProject;
+            paratext8ComboBox.SelectedItem = globe.projectOptions.paratext8Project;
+            audioRecordingCopyrightTextBox.Text = globe.projectOptions.AudioCopyrightNotice;
+            rodCodeTextBox.Text = globe.projectOptions.rodCode;
+            ldmlTextBox.Text = globe.projectOptions.ldml;
+            scriptTextBox.Text = globe.projectOptions.script;
+            localRightsHolderTextBox.Text = globe.projectOptions.localRightsHolder;
+            facebookTextBox.Text = globe.projectOptions.facebook;
+            countryTextBox.Text = globe.projectOptions.country;
+            countryCodeTextBox.Text = globe.projectOptions.countryCode;
+            extendUsfmCheckBox.Checked = globe.projectOptions.extendUsfm;
+            chapterLabelTextBox.Text = globe.projectOptions.chapterLabel;
+            psalmLabelTextBox.Text = globe.projectOptions.psalmLabel;
+            cropCheckBox.Checked = globe.projectOptions.includeCropMarks;
+            chapter1CheckBox.Checked = globe.projectOptions.chapter1;
+            verse1CheckBox.Checked = globe.projectOptions.verse1;
+            pageWidthTextBox.Text = globe.projectOptions.pageWidth;
+            pageLengthTextBox.Text = globe.projectOptions.pageLength;
+            regenerateNoteOriginsCheckBox.Checked = globe.projectOptions.RegenerateNoteOrigins;
+            cvSeparatorTextBox.Text = globe.projectOptions.CVSeparator;
+            downloadsAllowedCheckBox.Checked = globe.projectOptions.downloadsAllowed;
+            if ((globe.projectOptions.SwordName.Length < 1) && (globe.projectOptions.translationId.Length > 1))
             {
-                m_options.SwordName = m_options.translationId.Replace("-", "").Replace("_", "");
-                if ((m_options.copyrightYears.Length >= 4) && !Char.IsDigit(m_options.SwordName[m_options.SwordName.Length - 1]))
-                    m_options.SwordName += m_options.copyrightYears.Substring(m_options.copyrightYears.Length - 4);
+                globe.projectOptions.SwordName = globe.projectOptions.translationId.Replace("-", "").Replace("_", "");
+                if ((globe.projectOptions.copyrightYears.Length >= 4) && !Char.IsDigit(globe.projectOptions.SwordName[globe.projectOptions.SwordName.Length - 1]))
+                    globe.projectOptions.SwordName += globe.projectOptions.copyrightYears.Substring(globe.projectOptions.copyrightYears.Length - 4);
             }
-            if ((m_options.SwordName.Length > 0) && !m_options.SwordName.EndsWith(m_swordSuffix))
+            if ((globe.projectOptions.SwordName.Length > 0) && !globe.projectOptions.SwordName.EndsWith(globe.m_swordSuffix))
             {
-                m_options.SwordName += m_swordSuffix;
+                globe.projectOptions.SwordName += globe.m_swordSuffix;
             }
-            swordNameTextBox.Text = m_options.SwordName;
-            oldSwordIdTextBox.Text = m_options.ObsoleteSwordName;
-            RebuildCheckBox.Checked = m_options.rebuild = xini.ReadBool("rebuild", false);
-            runXetexCheckBox.Checked = m_options.rebuild = xini.ReadBool("runXetex", false);
-            makeInScriptCheckBox.Checked = m_options.makeInScript;
-            makeEPubCheckBox.Checked = m_options.makeEub;
-            makeHtmlCheckBox.Checked = m_options.makeHtml;
-            makePDFCheckBox.Checked = m_options.makePDF;
-            makeSwordCheckBox.Checked = m_options.makeSword;
-            makeWordMLCheckBox.Checked = m_options.makeWordML;
-            disablePrintingFigoriginsCheckBox.Checked = m_options.disablePrintingFigOrigins;
-            apocryphaCheckBox.Checked = m_options.includeApocrypha;
-            if (m_options.DBSandeBible)
+            swordNameTextBox.Text = globe.projectOptions.SwordName;
+            oldSwordIdTextBox.Text = globe.projectOptions.ObsoleteSwordName;
+            RebuildCheckBox.Checked = globe.projectOptions.rebuild = globe.xini.ReadBool("rebuild", false);
+            runXetexCheckBox.Checked = globe.projectOptions.rebuild = globe.xini.ReadBool("runXetex", false);
+            makeInScriptCheckBox.Checked = globe.projectOptions.makeInScript;
+            makeEPubCheckBox.Checked = globe.projectOptions.makeEub;
+            makeHtmlCheckBox.Checked = globe.projectOptions.makeHtml;
+            makePDFCheckBox.Checked = globe.projectOptions.makePDF;
+            makeSwordCheckBox.Checked = globe.projectOptions.makeSword;
+            makeWordMLCheckBox.Checked = globe.projectOptions.makeWordML;
+            disablePrintingFigoriginsCheckBox.Checked = globe.projectOptions.disablePrintingFigOrigins;
+            apocryphaCheckBox.Checked = globe.projectOptions.includeApocrypha;
+            if (globe.projectOptions.DBSandeBible)
                 recheckedCheckBox.Visible = true;
-            recheckedCheckBox.Checked = m_options.rechecked;
+            recheckedCheckBox.Checked = globe.projectOptions.rechecked;
 
-
-            if ((m_options.fcbhId == String.Empty) && (fcbhDbsIds != null))
+            /*
+            if ((globe.projectOptions.fcbhId == String.Empty) && (fcbhDbsIds != null))
             {
-                m_options.fcbhId = (string)fcbhDbsIds[m_project];
-                if (m_options.fcbhId == null)
-                    m_options.fcbhId = String.Empty;
+                globe.projectOptions.fcbhId = (string)fcbhDbsIds[globe.currentProject];
+                if (globe.projectOptions.fcbhId == null)
+                    globe.projectOptions.fcbhId = String.Empty;
             }
-            fcbhIdTextBox.Text = m_options.fcbhId;
-            shortTitleTextBox.Text = m_options.shortTitle;
+            */
+            fcbhIdTextBox.Text = globe.projectOptions.fcbhId;
+            shortTitleTextBox.Text = globe.projectOptions.shortTitle;
             if (shortTitleTextBox.Text.Length < 1)
-                shortTitleTextBox.Text = m_options.EnglishDescription;
+                shortTitleTextBox.Text = globe.projectOptions.EnglishDescription;
                         
-            m_currentTemplate = xini.ReadString("currentTemplate", String.Empty);
-            templateLabel.Text = "Current template: " + m_currentTemplate;
-            copyFromTemplateButton.Enabled = (m_currentTemplate.Length > 0) && (m_currentTemplate != m_project);
-            makeTemplateButton.Enabled = m_currentTemplate != m_project;
+            templateLabel.Text = "Current template: " + globe.currentTemplate;
+            copyFromTemplateButton.Enabled = (globe.currentTemplate.Length > 0) && (globe.currentTemplate != globe.currentProject);
+            makeTemplateButton.Enabled = globe.currentTemplate != globe.currentProject;
             if (!fileHelper.fAllRunning)
             {
-                if (m_options.lastRunResult)
+                if (globe.projectOptions.lastRunResult)
                     BackColor = Color.LightGreen;
                 else
                     BackColor = Color.LightPink;
@@ -3685,46 +3201,46 @@ their generosity, people like you can open up the Bible and hear from God no mat
 
             listInputProcesses.SuspendLayout();
             listInputProcesses.Items.Clear();
-            foreach (string filename in m_options.preprocessingTables)
+            foreach (string filename in globe.projectOptions.preprocessingTables)
                 listInputProcesses.Items.Add(filename);
             listInputProcesses.ResumeLayout();
 
             postprocessListBox.SuspendLayout();
             postprocessListBox.Items.Clear();
-            foreach (string filename in m_options.postprocesses)
+            foreach (string filename in globe.projectOptions.postprocesses)
                 postprocessListBox.Items.Add(filename);
             postprocessListBox.ResumeLayout();
 
             // Insert more checkbox settings here.
-            homeLinkTextBox.Text = m_options.homeLink;
-            goTextTextBox.Text = m_options.goText;
-            footerHtmlTextBox.Text = m_options.footerHtml;
-            indexPageTextBox.Text = m_options.indexHtml;
-            promoTextBox.Text = m_options.promoHtml;
-            licenseTextBox.Text = m_options.licenseHtml;
-            versificationComboBox.Text = m_options.versificationScheme;
-            numberSystemComboBox.Text = fileHelper.SetDigitLocale(m_options.numberSystem);
+            homeLinkTextBox.Text = globe.projectOptions.homeLink;
+            goTextTextBox.Text = globe.projectOptions.goText;
+            footerHtmlTextBox.Text = globe.projectOptions.footerHtml;
+            indexPageTextBox.Text = globe.projectOptions.indexHtml;
+            promoTextBox.Text = globe.projectOptions.promoHtml;
+            licenseTextBox.Text = globe.projectOptions.licenseHtml;
+            versificationComboBox.Text = globe.projectOptions.versificationScheme;
+            numberSystemComboBox.Text = fileHelper.SetDigitLocale(globe.projectOptions.numberSystem);
             numberSystemLabel.Text = fileHelper.NumberSample();
-            textDirectionComboBox.Text = m_options.textDir;
-            homeDomainTextBox.Text = m_options.homeDomain;
-            relaxNestingSyntaxCheckBox.Checked = m_options.relaxUsfmNesting;
-            fontComboBox.Text = m_options.fontFamily;
-            JesusFilmLinkTextTextBox.Text = m_options.JesusFilmLinkText;
-            JesusFilmLinkTargetTextBox.Text = m_options.JesusFilmLinkTarget;
-            dependsComboBox.Text = m_options.dependsOn;
-            footNoteCallersTextBox.Text = m_options.footNoteCallers;
-            crossreferenceCallersTextBox.Text = m_options.xrefCallers;
-            commentTextBox.Text = m_options.commentText;
-            redistributableCheckBox.Checked = m_options.redistributable;
-            licenseTextBox.Enabled = customPermissionsCheckBox.Checked = m_options.customPermissions;
-            ISBNLabel.Text = "ISBN " + m_options.isbn13;
+            textDirectionComboBox.Text = globe.projectOptions.textDir;
+            homeDomainTextBox.Text = globe.projectOptions.homeDomain;
+            relaxNestingSyntaxCheckBox.Checked = globe.projectOptions.relaxUsfmNesting;
+            fontComboBox.Text = globe.projectOptions.fontFamily;
+            JesusFilmLinkTextTextBox.Text = globe.projectOptions.JesusFilmLinkText;
+            JesusFilmLinkTargetTextBox.Text = globe.projectOptions.JesusFilmLinkTarget;
+            dependsComboBox.Text = globe.projectOptions.dependsOn;
+            footNoteCallersTextBox.Text = globe.projectOptions.footNoteCallers;
+            crossreferenceCallersTextBox.Text = globe.projectOptions.xrefCallers;
+            commentTextBox.Text = globe.projectOptions.commentText;
+            redistributableCheckBox.Checked = globe.projectOptions.redistributable;
+            licenseTextBox.Enabled = customPermissionsCheckBox.Checked = globe.projectOptions.customPermissions;
+            //ISBNLabel.Text = "ISBN " + globe.projectOptions.isbn13;
 
-            if (m_options.eBibleCertified)
+            if (globe.projectOptions.eBibleCertified)
                 certLabel.Text = "certified";
             else
                 certLabel.Text = "";
 
-            if (m_options.commonChars)
+            if (globe.projectOptions.commonChars)
                 commonCharactersLabel.Text = "Common fonts OK.";
             else
                 commonCharactersLabel.Text = "Extended Unicode font required.";
@@ -3735,9 +3251,9 @@ their generosity, people like you can open up the Bible and hear from God no mat
             LoadStatisticsTab();
             SetCopyrightStrings();
 
-            if (ReadMetadata(Path.Combine(Path.Combine(m_inputProjectDirectory, "usx"), "metadata.xml")))
+            if (ReadMetadata(Path.Combine(Path.Combine(globe.inputProjectDirectory, "usx"), "metadata.xml")))
                 SaveOptions();
-            string src = FindSource(m_project);
+            string src = FindSource(globe.currentProject);
             if (src == string.Empty)
             {
                 sourceLabel.BackColor = Color.Yellow;
@@ -3764,43 +3280,43 @@ Apocrypha/Deuterocanon: {8} books;  {9} chapters;  {10} verses;  {11} verse rang
 Peripherals: {12} books
 
 FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}  FCBH Portions: {17}",
-                                m_options.otBookCount, m_options.otChapCount, m_options.otVerseCount, m_options.otVerseMax,
-                                m_options.ntBookCount, m_options.ntChapCount, m_options.ntVerseCount, m_options.ntVerseMax,
-                                m_options.adBookCount, m_options.adChapCount, m_options.adVerseCount, m_options.adVerseMax,
-                                m_options.pBookCount,
-                                m_options.fcbhDramaOT, m_options.fcbhDramaNT, m_options.fcbhAudioOT, m_options.fcbhAudioNT, m_options.fcbhAudioPortion);
+                                globe.projectOptions.otBookCount, globe.projectOptions.otChapCount, globe.projectOptions.otVerseCount, globe.projectOptions.otVerseMax,
+                                globe.projectOptions.ntBookCount, globe.projectOptions.ntChapCount, globe.projectOptions.ntVerseCount, globe.projectOptions.ntVerseMax,
+                                globe.projectOptions.adBookCount, globe.projectOptions.adChapCount, globe.projectOptions.adVerseCount, globe.projectOptions.adVerseMax,
+                                globe.projectOptions.pBookCount,
+                                globe.projectOptions.fcbhDramaOT, globe.projectOptions.fcbhDramaNT, globe.projectOptions.fcbhAudioOT, globe.projectOptions.fcbhAudioNT, globe.projectOptions.fcbhAudioPortion);
         }
 
 		private void LoadConcTab()
 		{
-            concordanceRadioButton.Checked = m_options.GenerateConcordance;
-            mobileHtmlRadioButton.Checked = m_options.GenerateMobileHtml;
-            legacyHtmlRadioButton.Checked = m_options.LegacyHtml;
-            chkMergeCase.Checked = m_options.MergeCase;
-			tbxWordformingChars.Text = m_options.WordformingChars;
-			tbxExcludeWords.Text = m_options.ExcludeWords;
-			tbxMaxFreq.Text = m_options.MaxFreqSrc;
-			tbxPhrases.Text = m_options.PhrasesSrc;
-			tbxMinContext.Text = m_options.MinContextLength.ToString();
-			tbxMaxContext.Text = m_options.MaxContextLength.ToString();
+            concordanceRadioButton.Checked = globe.projectOptions.GenerateConcordance;
+            mobileHtmlRadioButton.Checked = globe.projectOptions.GenerateMobileHtml;
+            legacyHtmlRadioButton.Checked = globe.projectOptions.LegacyHtml;
+            chkMergeCase.Checked = globe.projectOptions.MergeCase;
+			tbxWordformingChars.Text = globe.projectOptions.WordformingChars;
+			tbxExcludeWords.Text = globe.projectOptions.ExcludeWords;
+			tbxMaxFreq.Text = globe.projectOptions.MaxFreqSrc;
+			tbxPhrases.Text = globe.projectOptions.PhrasesSrc;
+			tbxMinContext.Text = globe.projectOptions.MinContextLength.ToString();
+			tbxMaxContext.Text = globe.projectOptions.MaxContextLength.ToString();
 
 		}
 
 		private void SaveConcTab()
 		{
-			m_options.GenerateConcordance = concordanceRadioButton.Checked;
-            m_options.GenerateMobileHtml = mobileHtmlRadioButton.Checked;
-            m_options.LegacyHtml = legacyHtmlRadioButton.Checked;
-            m_options.MergeCase = chkMergeCase.Checked;
-			m_options.WordformingChars = tbxWordformingChars.Text;
-			m_options.ExcludeWords = tbxExcludeWords.Text;
-			m_options.MaxFreqSrc = tbxMaxFreq.Text; // Enhance: validate
-			m_options.PhrasesSrc = tbxPhrases.Text;
+			globe.projectOptions.GenerateConcordance = concordanceRadioButton.Checked;
+            globe.projectOptions.GenerateMobileHtml = mobileHtmlRadioButton.Checked;
+            globe.projectOptions.LegacyHtml = legacyHtmlRadioButton.Checked;
+            globe.projectOptions.MergeCase = chkMergeCase.Checked;
+			globe.projectOptions.WordformingChars = tbxWordformingChars.Text;
+			globe.projectOptions.ExcludeWords = tbxExcludeWords.Text;
+			globe.projectOptions.MaxFreqSrc = tbxMaxFreq.Text; // Enhance: validate
+			globe.projectOptions.PhrasesSrc = tbxPhrases.Text;
 			int temp;
 			if (int.TryParse(tbxMinContext.Text, out temp))
-				m_options.MinContextLength = temp;
+				globe.projectOptions.MinContextLength = temp;
 			if (int.TryParse(tbxMaxContext.Text, out temp))
-				m_options.MaxContextLength = temp;
+				globe.projectOptions.MaxContextLength = temp;
 		}
 
 		private void LoadBooksTab()
@@ -3808,12 +3324,12 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
 			listBooks.BeginUpdate();
 			listBooks.Items.Clear();
 			Dictionary<string, string> idsToCrossRefs = new Dictionary<string, string>();
-			foreach (var kvp in m_options.CrossRefToFilePrefixMap)
+			foreach (var kvp in globe.projectOptions.CrossRefToFilePrefixMap)
 				idsToCrossRefs[kvp.Value] = kvp.Key;
-			foreach (var key in m_options.Books)
+			foreach (var key in globe.projectOptions.Books)
 			{
 				string vernAbbr;
-				if (!m_options.ReferenceAbbeviationsMap.TryGetValue(key, out vernAbbr))
+				if (!globe.projectOptions.ReferenceAbbeviationsMap.TryGetValue(key, out vernAbbr))
 					vernAbbr = "";
 				string crossRefName;
 				if (!idsToCrossRefs.TryGetValue(key, out crossRefName))
@@ -3839,183 +3355,184 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
 					continue;
                 if (crossRefsToIds.ContainsKey(crossRefName))
                 {
-                    MessageBox.Show("Duplicate book name: " + crossRefName + " @ " + key, "Error in " + m_options.translationId, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Duplicate book name: " + crossRefName + " @ " + key, "Error in " + globe.projectOptions.translationId, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
                     crossRefsToIds.Add(crossRefName, key);
                 }
 			}
-			m_options.Books = books;
-			m_options.ReferenceAbbeviationsMap = idsToVernAbbrs;
-			m_options.CrossRefToFilePrefixMap = crossRefsToIds;
+			globe.projectOptions.Books = books;
+			globe.projectOptions.ReferenceAbbeviationsMap = idsToVernAbbrs;
+			globe.projectOptions.CrossRefToFilePrefixMap = crossRefsToIds;
 		}
 
 		private void SaveFramesTab()
 		{
-            m_options.UseFrames = framedConcordanceRadioButton.Checked;
-			m_options.ConcordanceLinkText = concordanceLinkTextBox.Text;
-			m_options.BooksAndChaptersLinkText = booksAndChaptersLinkTextBox.Text;
-			m_options.IntroductionLinkText = introductionLinkTextBox.Text;
-			m_options.PreviousChapterLinkText = previousChapterLinkTextBox.Text;
-			m_options.NextChapterLinkText = nextChapterLinkTextBox.Text;
-			m_options.HideNavigationButtonText = hideNavigationPanesTextBox.Text;
-			m_options.ShowNavigationButtonText = showNavigationTextBox.Text;
+            globe.projectOptions.UseFrames = framedConcordanceRadioButton.Checked;
+			globe.projectOptions.ConcordanceLinkText = concordanceLinkTextBox.Text;
+			globe.projectOptions.BooksAndChaptersLinkText = booksAndChaptersLinkTextBox.Text;
+			globe.projectOptions.IntroductionLinkText = introductionLinkTextBox.Text;
+			globe.projectOptions.PreviousChapterLinkText = previousChapterLinkTextBox.Text;
+			globe.projectOptions.NextChapterLinkText = nextChapterLinkTextBox.Text;
+			globe.projectOptions.HideNavigationButtonText = hideNavigationPanesTextBox.Text;
+			globe.projectOptions.ShowNavigationButtonText = showNavigationTextBox.Text;
 		}
 
 		private void LoadFramesTab()
 		{
-            framedConcordanceRadioButton.Checked = m_options.UseFrames;
-			concordanceLinkTextBox.Text = m_options.ConcordanceLinkText;
-			booksAndChaptersLinkTextBox.Text = m_options.BooksAndChaptersLinkText;
-			introductionLinkTextBox.Text = m_options.IntroductionLinkText;
-			previousChapterLinkTextBox.Text = m_options.PreviousChapterLinkText;
-			nextChapterLinkTextBox.Text = m_options.NextChapterLinkText;
-			hideNavigationPanesTextBox.Text = m_options.HideNavigationButtonText;
-			showNavigationTextBox.Text = m_options.ShowNavigationButtonText;
+            framedConcordanceRadioButton.Checked = globe.projectOptions.UseFrames;
+			concordanceLinkTextBox.Text = globe.projectOptions.ConcordanceLinkText;
+			booksAndChaptersLinkTextBox.Text = globe.projectOptions.BooksAndChaptersLinkText;
+			introductionLinkTextBox.Text = globe.projectOptions.IntroductionLinkText;
+			previousChapterLinkTextBox.Text = globe.projectOptions.PreviousChapterLinkText;
+			nextChapterLinkTextBox.Text = globe.projectOptions.NextChapterLinkText;
+			hideNavigationPanesTextBox.Text = globe.projectOptions.HideNavigationButtonText;
+			showNavigationTextBox.Text = globe.projectOptions.ShowNavigationButtonText;
 		}
 
         private void m_projectsList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            m_project = m_projectsList.SelectedItem.ToString();
-            m_inputProjectDirectory = Path.Combine(m_inputDirectory, m_project);
-            m_outputProjectDirectory = Path.Combine(m_outputDirectory, m_project);
-            m_xiniPath = Path.Combine(m_inputProjectDirectory, "options.xini");
+            globe.currentProject = m_projectsList.SelectedItem.ToString();
+            globe.inputProjectDirectory = Path.Combine(globe.inputDirectory, globe.currentProject);
+            globe.outputProjectDirectory = Path.Combine(globe.outputDirectory, globe.currentProject);
+            globe.projectXiniPath = Path.Combine(globe.inputProjectDirectory, "options.xini");
             displayOptions();
         }
 
         public void SaveOptions()
         {
-            if (m_options == null)
+            if (globe.projectOptions == null)
                 return;
-            m_options.languageId = ethnologueCodeTextBox.Text;
-            m_options.translationId = translationIdTextBox.Text;
-            m_options.translationTraditionalAbbreviation = traditionalAbbreviationTextBox.Text;
-            m_options.languageName = languageNameTextBox.Text;
-            m_options.languageNameInEnglish = engLangNameTextBox.Text;
-            m_options.dialect = dialectTextBox.Text;
-            m_options.contentCreator = creatorTextBox.Text;
-            m_options.contributor = contributorTextBox.Text;
-            m_options.vernacularTitle = titleTextBox.Text;
-            m_options.EnglishDescription = descriptionTextBox.Text;
-            m_options.lwcDescription = lwcDescriptionTextBox.Text;
-            m_options.contentUpdateDate = updateDateTimePicker.Value;
-            m_options.publicDomain = pdRadioButton.Checked;
-            m_options.ccbyndnc = ccRadioButton.Checked;
-            m_options.ccbysa = CCBySaRadioButton.Checked;
-            m_options.ccbynd = CCByNdRadioButton.Checked;
-            m_options.otherLicense = otherRadioButton.Checked;
-            m_options.allRightsReserved = allRightsRadioButton.Checked;
-            m_options.silentCopyright = silentRadioButton.Checked;
-            m_options.copyrightOwner = copyrightOwnerTextBox.Text.Trim();
+            globe.projectOptions.languageId = ethnologueCodeTextBox.Text;
+            globe.projectOptions.translationId = translationIdTextBox.Text;
+            globe.projectOptions.translationTraditionalAbbreviation = traditionalAbbreviationTextBox.Text;
+            globe.projectOptions.languageName = languageNameTextBox.Text;
+            globe.projectOptions.languageNameInEnglish = engLangNameTextBox.Text;
+            globe.projectOptions.dialect = dialectTextBox.Text;
+            globe.projectOptions.contentCreator = creatorTextBox.Text;
+            globe.projectOptions.contributor = contributorTextBox.Text;
+            globe.projectOptions.vernacularTitle = titleTextBox.Text;
+            globe.projectOptions.EnglishDescription = descriptionTextBox.Text;
+            globe.projectOptions.lwcDescription = lwcDescriptionTextBox.Text;
+            globe.projectOptions.contentUpdateDate = updateDateTimePicker.Value;
+            globe.projectOptions.publicDomain = pdRadioButton.Checked;
+            globe.projectOptions.ccbyndnc = ccRadioButton.Checked;
+            globe.projectOptions.ccbysa = CCBySaRadioButton.Checked;
+            globe.projectOptions.ccbynd = CCByNdRadioButton.Checked;
+            globe.projectOptions.otherLicense = otherRadioButton.Checked;
+            globe.projectOptions.allRightsReserved = allRightsRadioButton.Checked;
+            globe.projectOptions.silentCopyright = silentRadioButton.Checked;
+            globe.projectOptions.copyrightOwner = copyrightOwnerTextBox.Text.Trim();
             copyrightOwnerUrlTextBox.Text = copyrightOwnerUrlTextBox.Text.Trim();
             if ((copyrightOwnerUrlTextBox.Text.Length > 1) && !copyrightOwnerUrlTextBox.Text.ToLowerInvariant().StartsWith("http://"))
                 copyrightOwnerUrlTextBox.Text = "http://" + copyrightOwnerUrlTextBox.Text;
-            m_options.copyrightOwnerUrl = copyrightOwnerUrlTextBox.Text;
-            m_options.copyrightYears = copyrightYearTextBox.Text.Trim();
-            m_options.copyrightOwnerAbbrev = coprAbbrevTextBox.Text.Trim();
-            m_options.rightsStatement = rightsStatementTextBox.Text;
-            m_options.printPublisher = printPublisherTextBox.Text.Trim();
-            m_options.electronicPublisher = electronicPublisherTextBox.Text.Trim();
-            m_options.ignoreExtras = stripExtrasCheckBox.Checked;
-            m_options.textDir = textDirectionComboBox.Text;
-            m_options.xoFormat = xoTextBox.Text;
-            m_options.customCssFileName = customCssTextBox.Text;
-            m_options.stripNoteOrigin = stripOriginCheckBox.Checked;
-            m_options.PrepublicationChecks = prepublicationChecksCheckBox.Checked;
-            m_options.WebSiteReady = webSiteReadyCheckBox.Checked;
-            m_options.ETENDBL = e10dblCheckBox.Checked;
-            m_options.Archived = archivedCheckBox.Checked;
-            m_options.subsetProject = subsetCheckBox.Checked;
-            m_options.paratextProject = (string)paratextcomboBox.SelectedItem;
-            m_options.JesusFilmLinkText = JesusFilmLinkTextTextBox.Text;
-            m_options.JesusFilmLinkTarget = JesusFilmLinkTargetTextBox.Text;
-            m_options.AudioCopyrightNotice = audioRecordingCopyrightTextBox.Text;
-            m_options.rodCode = rodCodeTextBox.Text;
-            m_options.ldml = ldmlTextBox.Text;
-            m_options.script = scriptTextBox.Text;
-            m_options.localRightsHolder = localRightsHolderTextBox.Text;
-            m_options.facebook = facebookTextBox.Text;
-            m_options.country = countryTextBox.Text;
-            m_options.countryCode = countryCodeTextBox.Text;
-            m_options.extendUsfm = extendUsfmCheckBox.Checked;
-            m_options.fcbhId = fcbhIdTextBox.Text.Replace(".","");
-            m_options.shortTitle = shortTitleTextBox.Text;
-            m_options.footNoteCallers = footNoteCallersTextBox.Text;
-            m_options.xrefCallers = crossreferenceCallersTextBox.Text;
-            m_options.commentText = commentTextBox.Text;
-            m_options.redistributable = redistributableCheckBox.Checked & !m_options.privateProject;
-            m_options.downloadsAllowed = downloadsAllowedCheckBox.Checked & !m_options.privateProject;
-            m_options.customPermissions = customPermissionsCheckBox.Checked;
-            m_options.chapterLabel = chapterLabelTextBox.Text;
-            m_options.psalmLabel = psalmLabelTextBox.Text;
-            m_options.includeCropMarks = cropCheckBox.Checked;
-            m_options.chapter1 = chapter1CheckBox.Checked;
-            m_options.verse1 = verse1CheckBox.Checked;
-            m_options.pageWidth = pageWidthTextBox.Text;
-            m_options.pageLength = pageLengthTextBox.Text;
-            m_options.RegenerateNoteOrigins = regenerateNoteOriginsCheckBox.Checked;
-            m_options.CVSeparator = cvSeparatorTextBox.Text;
-            m_options.SwordName = swordNameTextBox.Text;
-            m_options.ObsoleteSwordName = oldSwordIdTextBox.Text;
-            m_options.rebuild = RebuildCheckBox.Checked;
-            xini.WriteBool("rebuild", m_options.rebuild);
-            m_options.makeInScript = makeInScriptCheckBox.Checked;
-            m_options.makeEub = makeEPubCheckBox.Checked;
-            m_options.makeHtml = makeHtmlCheckBox.Checked;
-            m_options.makePDF = makePDFCheckBox.Checked;
-            m_options.makeSword = makeSwordCheckBox.Checked;
-            m_options.makeWordML = makeWordMLCheckBox.Checked;
-            m_options.disablePrintingFigOrigins = disablePrintingFigoriginsCheckBox.Checked;
-            m_options.includeApocrypha = apocryphaCheckBox.Checked;
+            globe.projectOptions.copyrightOwnerUrl = copyrightOwnerUrlTextBox.Text;
+            globe.projectOptions.copyrightYears = copyrightYearTextBox.Text.Trim();
+            globe.projectOptions.copyrightOwnerAbbrev = coprAbbrevTextBox.Text.Trim();
+            globe.projectOptions.rightsStatement = rightsStatementTextBox.Text;
+            globe.projectOptions.printPublisher = printPublisherTextBox.Text.Trim();
+            globe.projectOptions.electronicPublisher = electronicPublisherTextBox.Text.Trim();
+            globe.projectOptions.ignoreExtras = stripExtrasCheckBox.Checked;
+            globe.projectOptions.textDir = textDirectionComboBox.Text;
+            globe.projectOptions.xoFormat = xoTextBox.Text;
+            globe.projectOptions.customCssFileName = customCssTextBox.Text;
+            globe.projectOptions.stripNoteOrigin = stripOriginCheckBox.Checked;
+            globe.projectOptions.PrepublicationChecks = prepublicationChecksCheckBox.Checked;
+            globe.projectOptions.WebSiteReady = webSiteReadyCheckBox.Checked;
+            globe.projectOptions.ETENDBL = e10dblCheckBox.Checked;
+            globe.projectOptions.Archived = archivedCheckBox.Checked;
+            globe.projectOptions.subsetProject = subsetCheckBox.Checked;
+            globe.projectOptions.paratextProject = (string)paratextcomboBox.SelectedItem;
+            globe.projectOptions.paratext8Project = (string)paratext8ComboBox.SelectedItem;
+            globe.projectOptions.JesusFilmLinkText = JesusFilmLinkTextTextBox.Text;
+            globe.projectOptions.JesusFilmLinkTarget = JesusFilmLinkTargetTextBox.Text;
+            globe.projectOptions.AudioCopyrightNotice = audioRecordingCopyrightTextBox.Text;
+            globe.projectOptions.rodCode = rodCodeTextBox.Text;
+            globe.projectOptions.ldml = ldmlTextBox.Text;
+            globe.projectOptions.script = scriptTextBox.Text;
+            globe.projectOptions.localRightsHolder = localRightsHolderTextBox.Text;
+            globe.projectOptions.facebook = facebookTextBox.Text;
+            globe.projectOptions.country = countryTextBox.Text;
+            globe.projectOptions.countryCode = countryCodeTextBox.Text;
+            globe.projectOptions.extendUsfm = extendUsfmCheckBox.Checked;
+            globe.projectOptions.fcbhId = fcbhIdTextBox.Text.Replace(".","");
+            globe.projectOptions.shortTitle = shortTitleTextBox.Text;
+            globe.projectOptions.footNoteCallers = footNoteCallersTextBox.Text;
+            globe.projectOptions.xrefCallers = crossreferenceCallersTextBox.Text;
+            globe.projectOptions.commentText = commentTextBox.Text;
+            globe.projectOptions.redistributable = redistributableCheckBox.Checked & !globe.projectOptions.privateProject;
+            globe.projectOptions.downloadsAllowed = downloadsAllowedCheckBox.Checked & !globe.projectOptions.privateProject;
+            globe.projectOptions.customPermissions = customPermissionsCheckBox.Checked;
+            globe.projectOptions.chapterLabel = chapterLabelTextBox.Text;
+            globe.projectOptions.psalmLabel = psalmLabelTextBox.Text;
+            globe.projectOptions.includeCropMarks = cropCheckBox.Checked;
+            globe.projectOptions.chapter1 = chapter1CheckBox.Checked;
+            globe.projectOptions.verse1 = verse1CheckBox.Checked;
+            globe.projectOptions.pageWidth = pageWidthTextBox.Text;
+            globe.projectOptions.pageLength = pageLengthTextBox.Text;
+            globe.projectOptions.RegenerateNoteOrigins = regenerateNoteOriginsCheckBox.Checked;
+            globe.projectOptions.CVSeparator = cvSeparatorTextBox.Text;
+            globe.projectOptions.SwordName = swordNameTextBox.Text;
+            globe.projectOptions.ObsoleteSwordName = oldSwordIdTextBox.Text;
+            globe.projectOptions.rebuild = RebuildCheckBox.Checked;
+            globe.xini.WriteBool("rebuild", globe.projectOptions.rebuild);
+            globe.projectOptions.makeInScript = makeInScriptCheckBox.Checked;
+            globe.projectOptions.makeEub = makeEPubCheckBox.Checked;
+            globe.projectOptions.makeHtml = makeHtmlCheckBox.Checked;
+            globe.projectOptions.makePDF = makePDFCheckBox.Checked;
+            globe.projectOptions.makeSword = makeSwordCheckBox.Checked;
+            globe.projectOptions.makeWordML = makeWordMLCheckBox.Checked;
+            globe.projectOptions.disablePrintingFigOrigins = disablePrintingFigoriginsCheckBox.Checked;
+            globe.projectOptions.includeApocrypha = apocryphaCheckBox.Checked;
 
             List<string> tableNames = new List<string>();
             foreach (string filename in listInputProcesses.Items)
                 tableNames.Add(filename);
-            m_options.preprocessingTables = tableNames;
+            globe.projectOptions.preprocessingTables = tableNames;
             
             List<string> postprocessNames = new List<string>();
             foreach (string filename in postprocessListBox.Items)
                 postprocessNames.Add(filename);
-            m_options.postprocesses = postprocessNames;
+            globe.projectOptions.postprocesses = postprocessNames;
             
             /*
             List<string> alternateLinks = new List<string>();
             foreach (string alternateLink in altLinkListBox.Items)
                 alternateLinks.Add(alternateLink);
-            m_options.altLinks = alternateLinks;
+            globe.m_options.altLinks = alternateLinks;
              */
             
             // Insert more checkbox settings here.
-            m_options.homeLink = homeLinkTextBox.Text;
-            m_options.goText = goTextTextBox.Text;
-            m_options.footerHtml = footerHtmlTextBox.Text;
-            m_options.indexHtml = indexPageTextBox.Text;
-            m_options.promoHtml = promoTextBox.Text;
-            m_options.licenseHtml = licenseTextBox.Text;
-            m_options.versificationScheme = versificationComboBox.Text;
-            m_options.numberSystem = fileHelper.SetDigitLocale(numberSystemComboBox.Text.Trim());
-            m_options.privateProject = privateCheckBox.Checked;
-            m_options.relaxUsfmNesting = relaxNestingSyntaxCheckBox.Checked;
-            m_options.rechecked = recheckedCheckBox.Checked;
+            globe.projectOptions.homeLink = homeLinkTextBox.Text;
+            globe.projectOptions.goText = goTextTextBox.Text;
+            globe.projectOptions.footerHtml = footerHtmlTextBox.Text;
+            globe.projectOptions.indexHtml = indexPageTextBox.Text;
+            globe.projectOptions.promoHtml = promoTextBox.Text;
+            globe.projectOptions.licenseHtml = licenseTextBox.Text;
+            globe.projectOptions.versificationScheme = versificationComboBox.Text;
+            globe.projectOptions.numberSystem = fileHelper.SetDigitLocale(numberSystemComboBox.Text.Trim());
+            globe.projectOptions.privateProject = privateCheckBox.Checked;
+            globe.projectOptions.relaxUsfmNesting = relaxNestingSyntaxCheckBox.Checked;
+            globe.projectOptions.rechecked = recheckedCheckBox.Checked;
 
-            m_options.homeDomain = homeDomainTextBox.Text.Trim();
-            m_options.fontFamily = fontComboBox.Text;
+            globe.projectOptions.homeDomain = homeDomainTextBox.Text.Trim();
+            globe.projectOptions.fontFamily = fontComboBox.Text;
             if (dependsComboBox.SelectedItem != null)
-                m_options.dependsOn = dependsComboBox.Text;
+                globe.projectOptions.dependsOn = dependsComboBox.Text;
 
 			SaveConcTab();
 			SaveBooksTab();
         	SaveFramesTab();
 
-            m_options.Write();
+            globe.projectOptions.Write();
         }
 
         private void btnAddInputProcess_Click(object sender, EventArgs e)
         {
             OpenFileDialog dlg = new OpenFileDialog();
             dlg.CheckFileExists = true;
-            dlg.InitialDirectory = m_inputProjectDirectory;
+            dlg.InitialDirectory = globe.inputProjectDirectory;
             //dlg.Multiselect = true;
             dlg.Filter = "Regular expression files (*.re)|*.re|All files|*.*";
             if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -4033,14 +3550,14 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
                         return;
                     }
                 }
-                if ((newFileDir.ToLowerInvariant() != m_inputProjectDirectory.ToLowerInvariant()) &&
-                    (newFileDir.ToLowerInvariant() != m_inputDirectory.ToLowerInvariant()) &&
-                    (newFileDir.ToLowerInvariant() != dataRootDir.ToLowerInvariant()))
+                if ((newFileDir.ToLowerInvariant() != globe.inputProjectDirectory.ToLowerInvariant()) &&
+                    (newFileDir.ToLowerInvariant() != globe.inputDirectory.ToLowerInvariant()) &&
+                    (newFileDir.ToLowerInvariant() != globe.dataRootDir.ToLowerInvariant()))
                 {
                     if (MessageBox.Show(this, "Preprocessing files must be in the work directory. Copy there?", "Note", MessageBoxButtons.YesNo) ==
                         DialogResult.Yes)
                     {
-                        File.Copy(newFilePath, Path.Combine(m_inputProjectDirectory, newFileName));
+                        File.Copy(newFilePath, Path.Combine(globe.inputProjectDirectory, newFileName));
                     }
                     else
                     {
@@ -4140,7 +3657,7 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
             else
                 progress = currentConversion + " " + WordSend.usfxToHtmlConverter.conversionProgress;
             if (fileHelper.fAllRunning)
-                runtime = (DateTime.UtcNow - startTime).ToString("g") + " " + m_project + " ";
+                runtime = (DateTime.UtcNow - startTime).ToString("g") + " " + globe.currentProject + " ";
             batchLabel.Text = runtime + progress;
             extensionLabel.Text = plugin.PluginMessage();
             if (triggerautorun)
@@ -4164,7 +3681,7 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
 
         private void statusNow(string s)
         {
-            batchLabel.Text = (DateTime.UtcNow - startTime).ToString().Substring(0, 8) + " " + m_project + " " + s;
+            batchLabel.Text = (DateTime.UtcNow - startTime).ToString().Substring(0, 8) + " " + globe.currentProject + " " + s;
             Application.DoEvents();
         }
 
@@ -4220,7 +3737,9 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
 
         private void runHighlightedButton_Click(object sender, EventArgs e)
         {
-            string command = Path.Combine(m_inputDirectory, "postprocess.bat");
+            string command = Path.Combine(globe.inputDirectory, "postprocess.bat");
+            Utils.DeleteFile(Path.Combine(globe.inputProjectDirectory, "lock"));
+
             try
             {
                 if (fileHelper.fAllRunning)
@@ -4247,7 +3766,7 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
                 Application.DoEvents();
                 timer1.Enabled = true;
                 WorkOnAllButton.Text = "Stop";
-                m_options.done = false;
+                globe.projectOptions.done = false;
                 SaveOptions();
                 ProcessOneProject(SelectedProject);
                 Application.DoEvents();
@@ -4263,7 +3782,7 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
                 batchLabel.Text = (DateTime.UtcNow - startTime).ToString(@"g") + " " + "Done.";
                 messagesListBox.Items.Add(batchLabel.Text);
                 m_projectsList_SelectedIndexChanged(null, null);
-                string indexhtm = Path.Combine(Path.Combine(m_outputProjectDirectory, "html"), "index.htm");
+                string indexhtm = Path.Combine(Path.Combine(globe.outputProjectDirectory, "html"), "index.htm");
                 if (File.Exists(indexhtm))
                     System.Diagnostics.Process.Start(indexhtm);
             }
@@ -4305,11 +3824,11 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
         public ArrayList fcbhIds;
 
         /// <summary>
-        /// Find FCBH ID(s) for the currently-displayed m_options record
+        /// Find FCBH ID(s) for the currently-displayed globe.m_options record
         /// </summary>
         protected void MatchFcbhIds()
         {
-            if ((!getFCBHkeys) || (fcbhIds == null))
+            if ((!globe.getFCBHkeys) || (fcbhIds == null))
                 return;
             string ntDrama = String.Empty;
             string ntAudio = String.Empty;
@@ -4320,13 +3839,13 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
             foreach (FcbhAudio fcbh in fcbhIds)
             {
                 //ntDrama = ntAudio = otDrama = otAudio = portion = String.Empty;
-                if (fcbh.language_iso == m_options.languageId)
+                if (fcbh.language_iso == globe.projectOptions.languageId)
                 {
-                    localFcbhId = m_options.fcbhId;
+                    localFcbhId = globe.projectOptions.fcbhId;
                     if (localFcbhId.Length < 6)
                         localFcbhId = "@@@@@@"; // No match, but don't choke Substring().
                     localFcbhId = localFcbhId.Substring(0, 6);
-                    if ((fcbh.version_code == m_options.translationTraditionalAbbreviation) ||
+                    if ((fcbh.version_code == globe.projectOptions.translationTraditionalAbbreviation) ||
                         (fcbh.fcbh_id.StartsWith(localFcbhId)))
                     {
                         switch (fcbh.collection_code)
@@ -4358,12 +3877,12 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
                     }
                 }
             }
-            m_options.fcbhAudioNT = ntAudio;
-            m_options.fcbhDramaNT = ntDrama;
-            m_options.fcbhAudioOT = otAudio;
-            m_options.fcbhDramaOT = otDrama;
-            m_options.fcbhAudioPortion = portion;
-            m_options.Write();
+            globe.projectOptions.fcbhAudioNT = ntAudio;
+            globe.projectOptions.fcbhDramaNT = ntDrama;
+            globe.projectOptions.fcbhAudioOT = otAudio;
+            globe.projectOptions.fcbhDramaOT = otDrama;
+            globe.projectOptions.fcbhAudioPortion = portion;
+            globe.projectOptions.Write();
         }
 
         protected void GetFcbhIds()
@@ -4399,313 +3918,12 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
             }
         }
 
-        /// <summary>
-        /// Generate files summarizing Bible translation project statistics.
-        /// </summary>
-        /// <param name="sender">sender object</param>
-        /// <param name="e">EventArgs</param>
-        /*
-    	private void statsButton_Click(object sender, EventArgs e)
-        {
-            int numProjects = 0;
-            int numViral = 0;
-            int numTranslations = 0;
-            int urlid = 0;
-            int numLanguages = 0;
-            int numDialects = 0;
-            int numSites = 0;
-            int numSubsets = 0;
-            int numCertified = 0;
-            int c;
-            int coprCount = 0;
-            string dialect;
-            string homedomain;
-            string copr = String.Empty;
-            string sqlDir = Path.Combine(m_outputDirectory, "MySQL");
-            string inScriptSite;
-
-            Utils.EnsureDirectory(sqlDir);
-
-            Hashtable langTable = new Hashtable();
-            Hashtable dialectTable = new Hashtable();
-            Hashtable siteTable = new Hashtable();
-            Hashtable coprTable = new Hashtable();
-            btnSetRootDirectory.Enabled = false;
-            reloadButton.Enabled = false;
-            m_projectsList.Enabled = false;
-            markRetryButton.Enabled = false;
-            unmarkAllButton.Enabled = false;
-            runHighlightedButton.Enabled = false;
-            WorkOnAllButton.Enabled = false;
-            startTime = DateTime.UtcNow;
-            timer1.Enabled = true;
-            SaveOptions();
-            StreamWriter sw = new StreamWriter(Path.Combine(m_outputDirectory, "translations.csv"), false, System.Text.Encoding.UTF8);
-            StreamWriter sqlFile = new StreamWriter(Path.Combine(sqlDir,"bible_list.sql"), false, System.Text.Encoding.UTF8);
-            StreamWriter altUrlFile = new StreamWriter(Path.Combine(sqlDir, "urllist.sql"), false, System.Text.Encoding.UTF8);
-            StreamWriter scorecard = new StreamWriter(Path.Combine(m_outputDirectory, "scorecard.txt"), false, System.Text.Encoding.UTF8);
-            StreamWriter infoHtm;
-            sqlFile.WriteLine("USE sofia;");
-            sqlFile.WriteLine("DROP TABLE IF EXISTS sofia.bible_list;");
-            sqlFile.WriteLine(@"CREATE TABLE bible_list (
-  translationid VARCHAR(64) NOT NULL PRIMARY KEY COLLATE UTF8_GENERAL_CI,
-  fcbhid VARCHAR(12),
-  languagecode VARCHAR(4) NOT NULL,
-  languagename VARCHAR(128),
-  languagenameinenglish VARCHAR(128),
-  dialect VARCHAR(128),
-  homedomain VARCHAR(128),
-  title VARCHAR(256),
-  shorttitle VARCHAR(256),
-  description VARCHAR(1024),
-  free BOOL,
-  copyright VARCHAR(1024),
-  updatedate DATE,
-  publicationurl VARCHAR(1024));");
-            sqlFile.WriteLine("LOCK TABLES bible_list WRITE;");
-            altUrlFile.WriteLine("USE sofia;");
-            altUrlFile.WriteLine(@"DROP TABLE IF EXISTS sofia.urllist;");
-            altUrlFile.WriteLine(@"CREATE TABLE urllist (
-  urlid INT UNSIGNED NOT NULL,
-  languagecode VARCHAR(4) NOT NULL,
-  translationid VARCHAR(64) NOT NULL COLLATE UTF8_GENERAL_CI,
-  url VARCHAR(1024) NOT NULL);");
-            altUrlFile.WriteLine("LOCK TABLES urllist WRITE;");
-
-            sw.WriteLine("\"languageCode\",\"translationId\",\"languageName\",\"languageNameInEnglish\",\"dialect\",\"homeDomain\",\"title\",\"description\",\"Redistributable\",\"Copyright\",\"UpdateDate\",\"publicationURL\",\"OTbooks\",\"OTchapters\",\"OTverses\",\"NTbooks\",\"NTchapters\",\"NTverses\",\"DCbooks\",\"DCchapters\",\"DCverses\",\"FCBHID\",\"Certified\",\"inScript\"");
-            foreach (object o in m_projectsList.Items)
-            {
-                m_project = (string)o;
-                m_inputProjectDirectory = Path.Combine(m_inputDirectory, m_project);
-                m_outputProjectDirectory = Path.Combine(m_outputDirectory, m_project);
-                m_xiniPath = Path.Combine(m_inputProjectDirectory, "options.xini");
-                displayOptions();
-                if (m_options.redistributable || (m_options.languageId == "khm"))
-                    inScriptSite = "http://eBible.org/study/?v1=GN1_1&w1=bible&t1=local%3A";
-                else
-                    inScriptSite = "http://dbs.org/bible/?v1=GN1_1&w1=bible&t1=local%3A";
-                if (m_options.eBibleCertified)
-                {
-                    numCertified++;
-                }
-                numProjects++;
-                MatchFcbhIds();
-                if (Directory.Exists(m_outputProjectDirectory))
-                {
-                    infoHtm = new StreamWriter(Path.Combine(m_outputProjectDirectory, "info.inc"));
-                    infoHtm.WriteLine("<tr><td><a href='http://www.ethnologue.com/language/{0}'>{0}</a></td><td><a href='{2}/index.htm'>{1}</a></td><td><a href='{2}/index.htm'>{3}</a></td><td>{4}</td><td>{5}</td><td><a href=\"{6}{7}\">inScript</a></td></tr>",
-                        m_options.languageId,
-                        m_options.languageName,
-                        m_options.translationId,
-                        m_options.vernacularTitle,
-                        m_options.languageNameInEnglish,
-                        m_options.dialect,
-                        inScriptSite, m_options.fcbhId);
-                    infoHtm.Close();
-                }
-                if ((!m_options.privateProject) && (m_options.languageId.Length > 1))
-                {
-                    if (m_options.subsetProject)
-                        numSubsets++;
-                    else
-                        numTranslations++;
-                    if (langTable[m_options.languageId] == null)
-                    {
-                        langTable[m_options.languageId] = 1;
-                        numLanguages++;
-                    }
-                    else
-                    {
-                        c = (int)langTable[m_options.languageId];
-                        langTable[m_options.languageId] = c + 1;
-                    }
-                    dialect = m_options.languageId + m_options.dialect;
-                    if (dialectTable[dialect] == null)
-                    {
-                        dialectTable[dialect] = 1;
-                        numDialects++;
-                    }
-                    else
-                    {
-                        c = (int)dialectTable[dialect];
-                        dialectTable[dialect] = c + 1;
-                    }
-                    homedomain = m_options.homeDomain.Trim();
-                    if (homedomain.Length > 0)
-                    {
-                        if (siteTable[homedomain] == null)
-                        {
-                            siteTable[homedomain] = 1;
-                            numSites++;
-                        }
-                        else
-                        {
-                            c = (int)siteTable[homedomain];
-                            siteTable[homedomain] = c + 1;
-                        }
-                    }
-                    if (m_options.publicDomain || m_options.creativeCommons)
-                    {
-                        numViral++;
-                    }
-                    if (m_options.publicDomain)
-                    {
-                        copr = "Public Domain";
-                    }
-                    else if (m_options.copyrightOwnerAbbrev != String.Empty)
-                    {
-                        copr = "© " + m_options.copyrightOwnerAbbrev;
-                    }
-                    else
-                    {
-                        copr = "© " + m_options.copyrightOwner;
-                    }
-                    if (coprTable[copr] == null)
-                    {
-                        coprTable[copr] = 1;
-                    }
-                    else
-                    {
-                        coprCount = (int)coprTable[copr];
-                        coprTable[copr] = coprCount + 1;
-                    }
-                    sw.WriteLine("\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\",\"{10}\",\"http://{5}/{1}/\",\"{11}\",\"{12}\",\"{13}\",\"{14}\",\"{15}\",\"{16}\",\"{17}\",\"{18}\",\"{19}\",\"{20}\",\"{21}\",\"{22}{23}\"",
-                        m_options.languageId,
-                        m_options.translationId,
-                        fileHelper.csvString(m_options.languageName),
-                        fileHelper.csvString(m_options.languageNameInEnglish),
-                        fileHelper.csvString(m_options.dialect),
-                        fileHelper.csvString(m_options.homeDomain.Trim()),
-                        fileHelper.csvString(m_options.vernacularTitle.Trim()),
-                        fileHelper.csvString(m_options.EnglishDescription.Trim()),
-                        (m_options.publicDomain || m_options.creativeCommons).ToString(),
-                        fileHelper.csvString(m_options.publicDomain ? "public domain" : "Copyright © " + m_options.copyrightYears + " " + m_options.copyrightOwner),
-                        m_options.contentUpdateDate.ToString("yyyy-MM-dd"),
-                        m_options.otBookCount,
-                        m_options.otChapCount,
-                        m_options.otVerseCount,
-                        m_options.ntBookCount,
-                        m_options.ntChapCount,
-                        m_options.ntVerseCount,
-                        m_options.adBookCount,
-                        m_options.adChapCount,
-                        m_options.adVerseCount,
-                        m_options.fcbhId,
-                        m_options.eBibleCertified,
-                        inScriptSite,
-                        m_options.fcbhId);
-                    sqlFile.WriteLine("INSERT INTO bible_list VALUES (\"{0}\",\"{1}\",\"{2}\",\"{3}\",\"{4}\",\"{5}\",\"{6}\",\"{7}\",\"{8}\",\"{9}\",{10},\"{11}\",\"{12}\",\"http://{6}/{0}/\");",
-                        m_options.translationId,
-                        m_options.languageId,
-                        m_options.fcbhId,
-                        fileHelper.sqlString(m_options.languageName),
-                        fileHelper.sqlString(m_options.languageNameInEnglish),
-                        fileHelper.sqlString(m_options.dialect),
-                        fileHelper.sqlString(m_options.homeDomain.Trim()),
-                        fileHelper.sqlString(m_options.vernacularTitle.Trim()),
-                        fileHelper.sqlString(m_options.shortTitle.Trim()),
-                        fileHelper.sqlString(m_options.EnglishDescription.Trim()),
-                        (m_options.publicDomain || m_options.creativeCommons)?"1":"0",
-                        fileHelper.sqlString(m_options.publicDomain ? "public domain" : "Copyright © " + m_options.copyrightYears + " " + m_options.copyrightOwner),
-                        m_options.contentUpdateDate.ToString("yyyy-MM-dd"));
-                    if (m_options.homeDomain.Length > 0)
-                    {
-                        altUrlFile.WriteLine("INSERT INTO urllist VALUES ('{0}', '{1}', '{2}', '<a href=\"http://{3}/{2}/\">{4}</a>');",
-                            urlid.ToString(), m_options.languageId, m_options.translationId,
-                            fileHelper.sqlString(m_options.homeDomain.Trim()),
-                            fileHelper.sqlString(m_options.vernacularTitle.Trim()));
-                        urlid++;
-                    }
-                    foreach (string altUrl in m_options.altLinks)
-                    {
-                        altUrlFile.WriteLine("INSERT INTO 'urllist' VALUES ('{0}', '{1}', '{2}', '{3}');",
-                            urlid.ToString(), m_options.languageId, m_options.translationId, fileHelper.sqlString(altUrl));
-                        urlid++;
-                    }
-                }
-            }
-            sw.Close();
-            sqlFile.WriteLine("UNLOCK TABLES;");
-            altUrlFile.WriteLine("UNLOCK TABLES;");
-            sqlFile.Close();
-            altUrlFile.Close();
-            fileHelper.fAllRunning = false;
-            currentConversion = numProjects.ToString() + " projects; " + numTranslations.ToString() + " public. " + urlid.ToString() + " URLs " + numSites.ToString() + " sites " + numLanguages.ToString() + " languages " + numDialects.ToString() + " dialects (including languages). ";
-
-            scorecard.WriteLine("Haiola project statistics as of {0} UTC", DateTime.UtcNow.ToString("R"));
-            scorecard.WriteLine("{0} languages", numLanguages.ToString());
-            scorecard.WriteLine("{0} dialects", numDialects.ToString());
-            scorecard.WriteLine("{0} freely redistributable translations", numViral.ToString());
-            scorecard.WriteLine("{0} certified translations", numCertified.ToString());
-            scorecard.WriteLine("{0} limited-sharing translations", (numTranslations-numViral).ToString());
-            scorecard.WriteLine("{0} total public translations", numTranslations.ToString());
-            scorecard.WriteLine("{0} subset projects", numSubsets.ToString());
-            scorecard.WriteLine("{0} projects", numProjects.ToString());
-            scorecard.WriteLine("{0} primary distribution URLs", urlid.ToString());
-            scorecard.WriteLine("{0} master sites", numSites.ToString());
-            scorecard.WriteLine("Translations by site:");
-            foreach (DictionaryEntry de in siteTable)
-            {
-                scorecard.WriteLine(" {0,4} translations at {1}", (int)de.Value, (string)de.Key);
-            }
-            scorecard.WriteLine("Languages with multiple translations:");
-            foreach (DictionaryEntry de in langTable)
-            {
-                if ((int)de.Value > 1)
-                {
-                    scorecard.WriteLine(" {0,4} translations in {1}", (int)de.Value, (string)de.Key);
-                }
-            }
-            scorecard.WriteLine("Dialects with multiple translations:");
-            foreach (DictionaryEntry de in dialectTable)
-            {
-                if ((int)de.Value > 1)
-                {
-                    scorecard.WriteLine(" {0,4} translations in {1}", (int)de.Value, (string)de.Key);
-                }
-            }
-            scorecard.WriteLine("Copyright ownership:");
-            foreach (DictionaryEntry de in coprTable)
-            {
-                coprCount = (int)de.Value;
-                scorecard.WriteLine(" {0,4} {1}", coprCount, (string)de.Key);
-            }
-            scorecard.Close();
-
-            timer1.Enabled = false;
-            statsLabel.Text = currentConversion;
-            m_projectsList_SelectedIndexChanged(null, null);
-            WorkOnAllButton.Enabled = true;
-            WorkOnAllButton.Text = "Run marked";
-            m_projectsList.Enabled = true;
-            markRetryButton.Enabled = true;
-            unmarkAllButton.Enabled = true;
-            btnSetRootDirectory.Enabled = true;
-            reloadButton.Enabled = true;
-            runHighlightedButton.Enabled = true;
-            WorkOnAllButton.Enabled = true;
-            batchLabel.Text = (DateTime.UtcNow - startTime).ToString() + " " + currentConversion;
-        }
-        */
 
         private void helpButton_Click(object sender, EventArgs e)
         {
             showHelp("haiola.htm");
         }
 
-        /*
-        private void addLinkButton_Click(object sender, EventArgs e)
-        {
-            if (altLinkTextBox.Text.Length > 3)
-                altLinkListBox.Items.Add(altLinkTextBox.Text);
-        }
-
-        private void deleteLinkButton_Click(object sender, EventArgs e)
-        {
-            if ((altLinkListBox.Items.Count > 0) && (altLinkListBox.SelectedIndex >= 0))
-                altLinkListBox.Items.RemoveAt(altLinkListBox.SelectedIndex);
-        }
-        */
 
 		/// <summary>
 		/// Click on the Update button in the Books tab
@@ -4815,23 +4033,22 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
         private void makeTemplateButton_Click(object sender, EventArgs e)
         {
             makeTemplateButton.Enabled = false;
-            m_currentTemplate = m_project;
-            xini.WriteString("currentTemplate", m_currentTemplate);
-            templateLabel.Text = "Current template: " + m_currentTemplate;
+            globe.currentTemplate = globe.currentProject;
+            templateLabel.Text = "Current template: " + globe.currentTemplate;
             copyFromTemplateButton.Enabled = false;
-            xini.Write();
+            globe.xini.Write();
         }
 
         private void copyFromTemplateButton_Click(object sender, EventArgs e)
         {
-            Options templateOptions = new Options(Path.Combine(Path.Combine(m_inputDirectory, m_currentTemplate), "options.xini"));
-            homeLinkTextBox.Text = m_options.homeLink = templateOptions.homeLink;
-            goTextTextBox.Text = m_options.goText = templateOptions.goText;
-            footerHtmlTextBox.Text = m_options.footerHtml = templateOptions.footerHtml;
-            indexPageTextBox.Text = m_options.indexHtml = templateOptions.indexHtml;
-            licenseTextBox.Text = m_options.licenseHtml = templateOptions.licenseHtml;
-            customCssTextBox.Text = m_options.customCssFileName = templateOptions.customCssFileName;
-            m_options.postprocesses = templateOptions.postprocesses;
+            Options templateOptions = new Options(Path.Combine(Path.Combine(globe.inputDirectory, globe.currentTemplate), "options.xini"));
+            homeLinkTextBox.Text = globe.projectOptions.homeLink = templateOptions.homeLink;
+            goTextTextBox.Text = globe.projectOptions.goText = templateOptions.goText;
+            footerHtmlTextBox.Text = globe.projectOptions.footerHtml = templateOptions.footerHtml;
+            indexPageTextBox.Text = globe.projectOptions.indexHtml = templateOptions.indexHtml;
+            licenseTextBox.Text = globe.projectOptions.licenseHtml = templateOptions.licenseHtml;
+            customCssTextBox.Text = globe.projectOptions.customCssFileName = templateOptions.customCssFileName;
+            globe.projectOptions.postprocesses = templateOptions.postprocesses;
             postprocessListBox.SuspendLayout();
             postprocessListBox.Items.Clear();
             foreach (string filename in templateOptions.postprocesses)
@@ -4850,11 +4067,11 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
         /// </summary>
         public void LoadParatextProjectList()
         {
-            if (Directory.Exists(paratextProjectsDir))
+            if (Directory.Exists(globe.paratextProjectsDir))
             {
                 paratextcomboBox.Items.Clear();
                 paratextcomboBox.Items.Add(String.Empty);
-                string[] dirList = Directory.GetDirectories(paratextProjectsDir);
+                string[] dirList = Directory.GetDirectories(globe.paratextProjectsDir);
                 foreach (string d in dirList)
                 {
                     string ssf = d + ".ssf";
@@ -4867,11 +4084,35 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
             }
         }
 
+
+        /// <summary>
+        /// Load the Paratext 8 Projects combo box item list based on projects found in the Paratext directory.
+        /// </summary>
+        public void LoadParatext8ProjectList()
+        {
+            if (Directory.Exists(globe.paratext8ProjectsDir))
+            {
+                paratext8ComboBox.Items.Clear();
+                paratext8ComboBox.Items.Add(String.Empty);
+                string[] dirList = Directory.GetDirectories(globe.paratext8ProjectsDir);
+                foreach (string d in dirList)
+                {
+                    string bookNames = Path.Combine(d, "BookNames.xml");
+                    if (File.Exists(bookNames))
+                    {
+                        paratext8ComboBox.Items.Add(Path.GetFileNameWithoutExtension(d));
+                    }
+                }
+            }
+        }
+
+
+
         private void paratextButton_Click(object sender, EventArgs e)
         {
             SaveOptions();
             FolderBrowserDialog dlg = new FolderBrowserDialog();
-            dlg.SelectedPath = paratextProjectsDir;
+            dlg.SelectedPath = globe.paratextProjectsDir;
             dlg.Description =
                 @"Please select your existing Paratext Projects folder.";
             dlg.ShowNewFolderButton = true;
@@ -4879,9 +4120,10 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
                 return;
             if (File.Exists(Path.Combine(dlg.SelectedPath, "usfm.sty")))
             {
-                paratextProjectsDir = dlg.SelectedPath;
-                xini.Write();
+                globe.paratextProjectsDir = dlg.SelectedPath;
+                globe.xini.Write();
                 LoadParatextProjectList();
+                LoadParatext8ProjectList();
             }
         }
 
@@ -4891,13 +4133,13 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
             {
                 SaveOptions();
                 displayOptions();
-                m_options.selected = e.NewValue == CheckState.Checked;
-                if (m_options.selected)
+                globe.projectOptions.selected = e.NewValue == CheckState.Checked;
+                if (globe.projectOptions.selected)
                     projSelected++;
                 else
                     projSelected--;
                 statsLabel.Text = projReady.ToString() + " of " + projCount.ToString() + " project directories are ready to run; " + projSelected.ToString() + " selected."; ;
-                m_options.Write();
+                globe.projectOptions.Write();
             }
         }
 
@@ -4948,14 +4190,14 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
 
         private void numberSystemComboBox_SelectedValueChanged(object sender, EventArgs e)
         {
-            m_options.numberSystem = numberSystemComboBox.Text;
-            fileHelper.SetDigitLocale(m_options.numberSystem);
+            globe.projectOptions.numberSystem = numberSystemComboBox.Text;
+            fileHelper.SetDigitLocale(globe.projectOptions.numberSystem);
             numberSystemLabel.Text = fileHelper.NumberSample();
         }
 
         private void paratextcomboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string src = FindSource(m_project);
+            string src = FindSource(globe.currentProject);
             if (src == string.Empty)
             {
                 sourceLabel.BackColor = Color.Yellow;
@@ -5061,13 +4303,18 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
 
         private void runXetexCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            xini.WriteBool("runXetex", runXetexCheckBox.Checked);
-            xini.Write();
+            globe.xini.WriteBool("runXetex", runXetexCheckBox.Checked);
+            globe.xini.Write();
         }
 
         private void relaxNestingSyntaxCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            m_options.relaxUsfmNesting = relaxNestingSyntaxCheckBox.Checked;
+            globe.projectOptions.relaxUsfmNesting = relaxNestingSyntaxCheckBox.Checked;
+        }
+
+        private void paratext8ComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            paratextcomboBox_SelectedIndexChanged(sender, e);
         }
 
         private void privateCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -5079,13 +4326,13 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
                 redistributableCheckBox.Enabled = false;
                 downloadsAllowedCheckBox.Checked = false;
                 downloadsAllowedCheckBox.Enabled = false;
-                m_options.privateProject = true;
+                globe.projectOptions.privateProject = true;
             }
             else
             {
                 redistributableCheckBox.Enabled = true;
                 downloadsAllowedCheckBox.Enabled = true;
-                m_options.privateProject = false;
+                globe.projectOptions.privateProject = false;
             }
         }
 
@@ -5096,8 +4343,8 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
 
         private void RebuildCheckBox_CheckedChanged(object sender, EventArgs e)
         {
-            xini.WriteBool("rebuild", RebuildCheckBox.Checked);
-            xini.Write();
+            globe.xini.WriteBool("rebuild", RebuildCheckBox.Checked);
+            globe.xini.Write();
         }
 
         

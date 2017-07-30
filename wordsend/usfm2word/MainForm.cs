@@ -1750,7 +1750,7 @@ namespace WordSend
 				optionsFileLabel.Text = jobOptionsName;
 				try
 				{
-					File.Delete(jobOptionsName);
+					Utils.DeleteFile(jobOptionsName);
 				}
 				catch
 				{

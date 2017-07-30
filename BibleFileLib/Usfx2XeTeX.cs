@@ -187,7 +187,7 @@ namespace WordSend
             }
             if (runningHeader.Length > 30)
             {
-                Logit.WriteError("No abbreviation or short name found for " + currentBookHeader + " (" + currentBookAbbrev + ").");
+                Logit.WriteWarning("No abbreviation or short name found for " + currentBookHeader + " (" + currentBookAbbrev + ").");
             }
             Utils.EnsureDirectory(texDir);
             CloseHtmlFile();
@@ -297,7 +297,7 @@ namespace WordSend
             text = text.Replace(@"\", @"$\backslash$").Replace("$", @"\$").Replace("#", @"\#").Replace("%", @"\%")
                 .Replace("&", @"\&").Replace("_", @"\_").Replace(LEFTBRACE, @"$\{$").Replace("’”", "’\u00A0”")
                 .Replace("^", "\u2303")    // Replace circumflex with look-alike up arrowhead to avoid TeX math command behavior and old style diacritic behavior
-                .Replace(RIGHTBRACE, @"$\}$").Replace("”’", "”\u00A0’").Replace("‘“", "‘\u00A0“").Replace("“‘", "“\u00A0‘");
+                .Replace(RIGHTBRACE, @"$\}$").Replace("”’", "”\u00A0’").Replace("‘“", "‘\u00A0“").Replace("“‘", "“\u00A0‘").Replace("ʻ", "{ʻ}");
             if (!ignore)
             {
                 if (eatSpace)
@@ -802,10 +802,12 @@ For other uses, please contact the respective copyright owners.</p>
         /// <param name="goText">Link text for going to book list</param>
         protected override void WriteCopyrightPage(string chapFormat, string licenseHtml, string goText)
         {
+            /*
             if (projectOptions.isbn13.Length > 13)
             {
                 licenseHtml = licenseHtml + "<p><br/>ISBN " + projectOptions.isbn13 + "</p>";
             }
+            */
             licenseHtml = Html2Tex(licenseHtml);
             // Copyright page
             currentBookAbbrev = "CPR";
@@ -820,6 +822,7 @@ For other uses, please contact the respective copyright owners.</p>
             texFile.WriteLine(DoBiDi(String.Format("{0} {1}{2}", indexDateStamp, epubIdentifier, RIGHTBRACE)));
             texFile.WriteLine(@"\vfill\eject");
             CloseHtmlFile();
+            /*
             if (projectOptions.DBSandeBible && projectOptions.redistributable)
             {
                 OpenHtmlFile("verso.tex");
@@ -837,6 +840,8 @@ For other uses, please contact the respective copyright owners.</p>
                 texFile.WriteLine(@"\vskip 1ex\hrule\vfill\eject");
                 CloseHtmlFile();
             }
+            */
+
         }
 
 
@@ -1081,9 +1086,9 @@ For other uses, please contact the respective copyright owners.</p>
                 webIndex.WriteLine(projectOptions.translationId + "_all");
                 webIndex.WriteLine("A4 size");
                 webIndex.WriteLine(projectOptions.translationId + "_a4");
-                webIndex.WriteLine("6 in x 9 in monochrome");
+                webIndex.WriteLine("6 in x 9 in 9 point");
                 webIndex.WriteLine(projectOptions.translationId + "_prt");
-                webIndex.WriteLine("135mm x 211 mm");
+                webIndex.WriteLine("6 in x 9 in 8 point");
                 webIndex.WriteLine(projectOptions.translationId + "_book");
                 foreach (BibleBookRecord br in bookInfo.publishArray)
                 {
@@ -1369,8 +1374,8 @@ For other uses, please contact the respective copyright owners.</p>
                 WriteXeTeXHeader(Path.Combine(texDir, "12pt.tex"), "11in", "8.5in", "1in", "0.75in", "0.75in", "0.75in", "11.0pt", "12pt", 12.0, numColumns, false, true);
                 WriteXeTeXHeader(Path.Combine(texDir, "12pt2cola4.tex"), "297mm", "210mm", "30mm", "30mm", "25mm", "25mm", "11.0pt", "12pt", 12.0, numColumns, false, true);
                 WriteXeTeXHeader(Path.Combine(texDir, "12pta5.tex"), "210mm", "148mm", "25mm", "25mm", "25mm", "25mm", "11.0pt", "12pt", 12.0, 1, false, true);
-                // WriteXeTeXHeader(Path.Combine(texDir, "print.tex"), "9in", "6in", "0.5in", "0.4in", "0.3in", "0.2in", "11.0pt", "6pt", 8.0, numColumns, false, false);
-                WriteXeTeXHeader(Path.Combine(texDir, "print.tex"), "9in", "6in", "0.75in", "0.75in", "0.75in", "0.75in", "11.0pt", "6pt", 9.0, numColumns, false, false);
+                WriteXeTeXHeader(Path.Combine(texDir, "print.tex"), "9in", "6in", "0.5in", "0.35in", "0.35in", "0.35in", "11.0pt", "9pt", 9.1, numColumns, false, false);
+                // WriteXeTeXHeader(Path.Combine(texDir, "print.tex"), "9in", "6in", "0.75in", "0.75in", "0.75in", "0.75in", "11.0pt", "6pt", 9.0, numColumns, false, false);
                 WriteXeTeXHeader(Path.Combine(texDir, "book.tex"), "228.6mm", "152.4mm", "23mm", "8mm", "8mm", "10mm", "11.0pt", "6pt", 8.0, numColumns, false, false);
                 // WriteXeTeXHeader(Path.Combine(texDir, "colorbook.tex"), "211mm", "135mm", "12mm", "8mm", "8mm", "8mm", "11.0pt", "6pt", 8.0, numColumns, false, true);
             }
@@ -1576,9 +1581,9 @@ For other uses, please contact the respective copyright owners.</p>
                     texFile.WriteLine("\\resizebox{0}!{2}{0}\\textwidth{2}{0}\\includegraphics{0}{1}{2}{2}", LEFTBRACE, "cover.png", RIGHTBRACE);
                     texFile.WriteLine(@"\vfill\eject");
                 }
-                
-                texFile.WriteLine(@"\tableofcontents\clearpage");
+
                 texFile.WriteLine("\\input{0}CPR{1}", LEFTBRACE, RIGHTBRACE);
+                texFile.WriteLine(@"\tableofcontents\clearpage");
                 if (numCols > 1)
                     texFile.WriteLine(@"\begin{multicols}{2}%");
                 texFile.WriteLine(@"\setcounter{page}{1}\pagenumbering{arabic}\mainmatter%");
@@ -1638,17 +1643,10 @@ For other uses, please contact the respective copyright owners.</p>
                     texA4File.WriteLine("\\resizebox{0}\\textwidth{2}{0}\\textheight-1ex{2}{0}\\includegraphics{0}{1}{2}{2}", LEFTBRACE, "cover.png", RIGHTBRACE);
                     texA4File.WriteLine(@"\vfill\eject");
                 }
+                texFile.WriteLine("\\input{0}CPR{1}", LEFTBRACE, RIGHTBRACE);
                 texFile.WriteLine(@"\TocFont\tableofcontents\clearpage");
-                if (projectOptions.DBSandeBible && projectOptions.redistributable)
-                {
-                    texFile.WriteLine("\\input{0}verso{1}", LEFTBRACE, RIGHTBRACE);
-                }
-                else
-                {
-                    texFile.WriteLine("\\input{0}CPR{1}", LEFTBRACE, RIGHTBRACE);
-                }
-                texA4File.WriteLine(@"\TocFont\tableofcontents\clearpage");
                 texA4File.WriteLine("\\input{0}CPR{1}", LEFTBRACE, RIGHTBRACE);
+                texA4File.WriteLine(@"\TocFont\tableofcontents\clearpage");
                 if (numCols > 1)
                 {
                     texFile.WriteLine(@"\begin{multicols}{2}%");

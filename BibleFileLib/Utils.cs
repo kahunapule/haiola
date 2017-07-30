@@ -124,11 +124,31 @@ namespace WordSend
             }
         }
 
-		/// Create the directory if it does not exist already. Return true if a problem occurs.
-		/// </summary>
-		/// <param name="destinationPath"></param>
-		/// <returns></returns>
-		public static bool EnsureDirectory(string destinationPath)
+
+        public static void DeleteFile(string destinationPath)
+        {
+            try
+            {
+                if (File.Exists(destinationPath))
+                {
+                    File.Delete(destinationPath);
+                }
+                if (Directory.Exists(destinationPath))
+                {
+                    Directory.Delete(destinationPath, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(String.Format("Unable to delete file {0}. Details: {1}", destinationPath, ex.Message), "Error");
+            }
+        }
+
+        /// Create the directory if it does not exist already. Return true if a problem occurs.
+        /// </summary>
+        /// <param name="destinationPath"></param>
+        /// <returns></returns>
+        public static bool EnsureDirectory(string destinationPath)
 		{
 			if (!Directory.Exists(destinationPath))
 			{

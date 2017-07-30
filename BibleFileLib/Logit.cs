@@ -45,6 +45,7 @@ namespace WordSend
         //		public static System.Windows.Forms.ListBox lstBox;
         protected static System.IO.StreamWriter sw;
         public static bool loggedError = false;
+        public static bool loggedWarning = false;
         public static string logFileName = String.Empty;
 
         public static bool ShowStatus(string s)
@@ -58,6 +59,12 @@ namespace WordSend
         {
             WriteLine(s);
             loggedError = true;
+        }
+
+        public static void WriteWarning(string s)
+        {
+            WriteLine(s);
+            loggedWarning = true;
         }
 
         public static void WriteLine(string s)
@@ -75,6 +82,7 @@ namespace WordSend
         public static void OpenFile(string fName)
         {
             loggedError = false;
+            loggedWarning = false;
             try
             {
                 CloseFile();

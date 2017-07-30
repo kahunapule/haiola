@@ -925,7 +925,6 @@ namespace WordSend
 			StringBuilder sb = new StringBuilder();
 			int ch;
 			int lookAhead;
-            // int barCount = 0;
             isEndTag = false;
 			// Skip to \, parse parts up to but not including next \ or EOF.
 			do
@@ -1612,6 +1611,229 @@ namespace WordSend
 		}
 	}
 
+    public class SFMAttribute
+    {
+        public string tag;
+        public string value;
+        public string remainder;
+
+        public SFMAttribute(string s, string defaultTag = "")
+        {
+            tag = defaultTag;
+            value = remainder = string.Empty;
+            StringBuilder token1 = new StringBuilder(s.Length);
+            StringBuilder token2 = new StringBuilder(s.Length);
+            StringBuilder token3 = new StringBuilder(s.Length);
+            bool inQuote = false;
+            bool foundEqual = false;
+            int i = 0;
+            int state = 0;  // 0=initial white space; 1=first token; 2=looking for equal; 3=equal found, second token initial whitespace; 4=second token; 5=whitespace/end 6 = remainder
+            char ch;
+            while (i < s.Length)
+            {
+                ch = s[i++];
+                switch (state)
+                {
+                    case 0: // Looking for first token
+                        if (!char.IsWhiteSpace(ch))
+                        {
+                            state = 1;
+                            if (ch == '\"')
+                            {
+                                inQuote = true;
+                            }
+                            else
+                            {
+                                token1.Append(ch);
+                            }
+                        }
+                        break;
+                    case 1: // In first token
+                        if (inQuote)
+                        {
+                            if (ch == '\"')
+                            {
+                                inQuote = false;
+                                state = 2;
+                            }
+                            else
+                            {
+                                token1.Append(ch);
+                            }
+                        }
+                        else if (ch == '=')
+                        {
+                            state = 3;
+                            foundEqual = true;
+                        }
+                        else if (char.IsWhiteSpace(ch))
+                        {
+                            state = 2;
+                        }
+                        else
+                        {
+                            token1.Append(ch);
+                        }
+                        break;
+                    case 2: // Looking for =
+                        if (ch == '=')
+                        {
+                            state = 3;  // Found it!
+                            foundEqual = true;
+                            inQuote = false;
+                        }
+                        else if (inQuote)
+                        {
+                            if (ch == '\"')
+                            {   // Just ended the quoted keyword
+                                inQuote = false;
+                            }
+                        }
+                        else if (!char.IsWhiteSpace(ch))
+                        {   // Ignore white space between key word and = sign
+                            token1.Append(ch);
+                        }
+                        break;
+                    case 3: // found equal sign
+                        if (!char.IsWhiteSpace(ch))
+                        {
+                            state = 4;
+                            if (ch == '\"')
+                            {
+                                inQuote = true;
+                            }
+                            else
+                            {
+                                token2.Append(ch);
+                            }
+                        }
+                        break;
+                    case 4: // second token
+                        if (inQuote)
+                        {
+                            if (ch == '\"')
+                            {
+                                inQuote = false;
+                                state = 5;
+                            }
+                            else
+                            {
+                                token2.Append(ch);
+                            }
+                        }
+                        else
+                        {   // Not (yet) in quote
+                            if (ch == '\"')
+                            {
+                                inQuote = true;
+                            }
+                            else if (char.IsWhiteSpace(ch))
+                            {   // Outside of a quote, white space terminates an attribute.
+                                state = 5;
+                            }
+                            else
+                            {   // Still building the attribute.
+                                token2.Append(ch);
+                            }
+                        }
+                        break;
+                    case 5: // After attribute
+                        if (!char.IsWhiteSpace(ch))
+                        {
+                            state = 6;
+                            token3.Append(ch);
+                        }
+                        break;
+                    case 6: // in remainder
+                        token3.Append(ch);
+                        break;
+                }
+            }
+            if (foundEqual)
+            {   // Found an equal sign, so we have both tag and value
+                tag = token1.ToString();
+                value = token2.ToString();
+            }
+            else
+            {   // No equal sign found; just a default value
+                value = token1.ToString();
+            }
+            remainder = token3.ToString();
+        }
+    }
+
+    public class WordTag
+    {
+        public string content;  // The word or words described by this tag, as printed in the main text.
+        public string strong;   // s Strong's number (like G05485 or H01234)
+        public string lemma;    // l Lemma (root word for lexicon lookup)
+        public string srcloc;   // srcloc Source Location, like "gnt5:51.1.2.1" for GNT version 5 text, book 51, chapter1, verse 2, word 1
+        public string plural;   // x-plural, plural True iff the word is plural (useful for English you)
+        public string morph;    // x-morph, m Morphology indicator
+
+        public void clear()
+        {
+            content = strong = lemma = srcloc = plural = morph = string.Empty;
+        }
+
+        public void ParseFields(string s)
+        {
+            clear();
+            if (!string.IsNullOrEmpty(s))
+            {
+                string[] parts = content.Split('|');    // Separate display form and glossary entry form
+                if (parts.Length > 1)
+                {
+                    content = parts[0];
+                    s = parts[1];
+                    SFMAttribute sfma;
+                    while (s.Length > 0)
+                    {
+                        sfma = new SFMAttribute(s);
+                        switch (sfma.tag.ToLowerInvariant())
+                        {
+                            case "":    // "lemma" is the default attribute
+                            case "lemma":
+                                lemma = sfma.value;
+                                break;
+                            case "strong":
+                                strong = sfma.value;
+                                break;
+                            case "srcloc":
+                                srcloc = sfma.value;
+                                break;
+                            case "x-plural":
+                                plural = sfma.value;
+                                break;
+                            case "x-morph":
+                                morph = sfma.value;
+                                break;
+                            default:
+                                Logit.WriteError("Unexpected attribute name " + sfma.tag + " in " + s);
+                                break;
+                        }
+                        s = sfma.remainder;
+                    }
+                }
+                else
+                {   // No "|" present, so there are no attributes, just content.
+                    content = s;
+                }
+            }
+        }
+
+        public WordTag(string figSpec)
+        {
+            ParseFields(figSpec);
+        }
+
+        public WordTag()
+        {
+            clear();
+        }
+
+    }
+
     public class Figure
     {
         // \fig Fox over hole|BK00051b.tif|col|MAT 8|Horace Knowles; The British & Foreign Bible Society|Aromong be inoon wu kaye̱e̱r ribong|8.20\fig*
@@ -1662,29 +1884,125 @@ namespace WordSend
 
         public void ParseFields(string s)
         {
+            int i;
+            int barCount = 0;
             description = catalog = size = location = caption = reference = "";
             s = s.Trim();
-            description = firstField(s);
-            catalog = nextField(s);
-            size = nextField(s);
-            location = nextField(s);
-            copyright = nextField(s);
-            caption = nextField(s);
-            reference = nextField(s);
+            // Count vertical bars to see if this is a USFM 3.0 (1 bar) or USFM 2.4 (6 bars) figure specification.
+            for (i = 0; i < s.Length; i++)
+            {
+                if (s[i] == '|')
+                    barCount++;
+            }
+            if (barCount == 1)
+            {   // USFM 3.0 detected
+                SFMAttribute sfma;
+                caption = firstField(s);
+                if (s.Length > fieldEnd+1)
+                {
+                    s = s.Substring(fieldEnd + 1);
+                    while (s.Length > 0)
+                    {
+                        sfma = new SFMAttribute(s);
+                        switch (sfma.tag.ToLowerInvariant())
+                        {
+                            case "alt":
+                                description = sfma.value;
+                                break;
+                            case "src":
+                                catalog = sfma.value;
+                                break;
+                            case "size":
+                                size = sfma.value;
+                                break;
+                            case "loc":
+                                location = sfma.value;
+                                break;
+                            case "copy":
+                                copyright = sfma.value;
+                                break;
+                            case "ref":
+                                reference = sfma.value;
+                                break;
+                            default:
+                                Logit.WriteError("Unexpected attribute name " + sfma.tag + " in " + s);
+                                break;
+                        }
+                        s = sfma.remainder;
+                    }
+                }
+            }
+            else
+            {
+                if (barCount != 6)
+                {
+                    Logit.WriteError("Unexpected bar count in figure specification: " + s);
+                }
+                description = firstField(s);
+                catalog = nextField(s);
+                size = nextField(s);
+                location = nextField(s);
+                copyright = nextField(s);
+                caption = nextField(s);
+                reference = nextField(s);
+            }
         }
 
         public string figSpec
         {
             get
             {
+                StringBuilder sb = new StringBuilder(caption + "|");
+                /* USFM 2.4:
                 return description + "|" + catalog + "|" + size + "|" + location +
                     "|" + copyright + "|" + caption + "|" + reference;
+                   USFM 3.0:
+                */
+                if (!string.IsNullOrEmpty(description))
+                {
+                    sb.Append("alt=\"");
+                    sb.Append(description);
+                    sb.Append("\" ");
+                }
+                sb.Append("src=\"");
+                sb.Append(catalog);
+                sb.Append("\"");
+                if (string.IsNullOrEmpty(size))
+                {   // Required attribute; default to column size
+                    sb.Append(" size=\"col\"");
+                }
+                else
+                {
+                    sb.Append(" size=\"");
+                    sb.Append(size);
+                    sb.Append("\"");
+                }
+                if (!string.IsNullOrEmpty(location))
+                {
+                    sb.Append(" loc=\"");
+                    sb.Append(location);
+                    sb.Append("\"");
+                }
+                if (!string.IsNullOrEmpty(copyright))
+                {
+                    sb.Append(" copy=\"");
+                    sb.Append(copyright);
+                    sb.Append("\"");
+                }
+                if (!string.IsNullOrEmpty(reference))
+                {
+                    sb.Append(" ref=\"");
+                    sb.Append(reference);
+                    sb.Append("\"");
+                }
+                return sb.ToString();
             }
             set
             {
                 ParseFields(value);
             }
         }
+
         public Figure(string figSpec)
         {
             ParseFields(figSpec);
@@ -1692,7 +2010,7 @@ namespace WordSend
 
         public Figure()
         {
-            description = catalog = size = location = caption = reference = "";
+            clear();
         }
     }
 
@@ -2836,9 +3154,34 @@ namespace WordSend
             if (embedUsfx)
 			{
 				inUSFXNoteStyle++;
-				// Logit.WriteLine("  Starting note style "+sfm);
-				xw.WriteStartElement(ns+sfm);
-			}
+
+                if (sfm == "w")
+                {
+                    WordTag wt;
+                    xw.WriteStartElement(ns + "w");
+                    if (!string.IsNullOrEmpty(content))
+                    {
+                        wt = new WordTag(content);
+                        content = wt.content;
+                        if (!string.IsNullOrEmpty(wt.lemma))
+                            xw.WriteAttributeString("l", wt.lemma);
+                        if (!string.IsNullOrEmpty(wt.strong))
+                            xw.WriteAttributeString("s", wt.strong);
+                        if (!string.IsNullOrEmpty(wt.srcloc))
+                            xw.WriteAttributeString("srcloc", wt.srcloc);
+                        if (!string.IsNullOrEmpty(wt.plural))
+                            xw.WriteAttributeString("plural", wt.plural);
+                        if (!string.IsNullOrEmpty(wt.morph))
+                            xw.WriteAttributeString("m", wt.morph);
+                    }
+                }
+                else
+                {
+                    // Logit.WriteLine("  Starting note style "+sfm);
+                    xw.WriteStartElement(ns + sfm);
+                }
+
+            }
 			WriteUSFXText(content);
 		}
 
@@ -2864,16 +3207,22 @@ namespace WordSend
                 // Logit.WriteLine("Starting style "+sfm+" level "+usfxStyleCount.ToString());
                 if (sfm == "w")
                 {
-                    xw.WriteStartElement(ns + "gw");
-                    xw.WriteAttributeString("sfm", sfm);
+                    WordTag wt;
+                    xw.WriteStartElement(ns + "w");
                     if (!string.IsNullOrEmpty(content))
                     {
-                        string[] parts = content.Split('|');    // Separate display form and glossary entry form
-                        if (parts.Length > 1)
-                        {
-                            content = parts[0];
-                            xw.WriteAttributeString("root", parts[1]);
-                        }
+                        wt = new WordTag(content);
+                        content = wt.content;
+                        if (!string.IsNullOrEmpty(wt.lemma))
+                            xw.WriteAttributeString("l", wt.lemma);
+                        if (!string.IsNullOrEmpty(wt.strong))
+                            xw.WriteAttributeString("s", wt.strong);
+                        if (!string.IsNullOrEmpty(wt.srcloc))
+                            xw.WriteAttributeString("srcloc", wt.srcloc);
+                        if (!string.IsNullOrEmpty(wt.plural))
+                            xw.WriteAttributeString("plural", wt.plural);
+                        if (!string.IsNullOrEmpty(wt.morph))
+                            xw.WriteAttributeString("m", wt.morph);
                     }
                 }
                 else if (charStyleTagList.IndexOf(" " + sfm + " ") >= 0)
@@ -2902,16 +3251,22 @@ namespace WordSend
                     // Logit.WriteLine("Starting style "+sfm+" level "+usfxStyleCount.ToString());
                     if (sfm == "w")
                     {
-                        xw.WriteStartElement(ns + "gw");
-                        xw.WriteAttributeString("sfm", sfm);
+                        WordTag wt;
+                        xw.WriteStartElement(ns + "w");
                         if (!string.IsNullOrEmpty(content))
                         {
-                            string[] parts = content.Split('|');    // Separate display form and glossary entry form
-                            if (parts.Length > 1)
-                            {
-                                content = parts[0];
-                                xw.WriteAttributeString("root", parts[1]);
-                            }
+                            wt = new WordTag(content);
+                            content = wt.content;
+                            if (!string.IsNullOrEmpty(wt.lemma))
+                                xw.WriteAttributeString("l", wt.lemma);
+                            if (!string.IsNullOrEmpty(wt.strong))
+                                xw.WriteAttributeString("s", wt.strong);
+                            if (!string.IsNullOrEmpty(wt.srcloc))
+                                xw.WriteAttributeString("srcloc", wt.srcloc);
+                            if (!string.IsNullOrEmpty(wt.plural))
+                                xw.WriteAttributeString("plural", wt.plural);
+                            if (!string.IsNullOrEmpty(wt.morph))
+                                xw.WriteAttributeString("m", wt.morph);
                         }
                     }
                     else if (charStyleTagList.IndexOf(" " + sfm + " ") >= 0)
@@ -4246,11 +4601,6 @@ namespace WordSend
 							}
 							else
 							{
-                                if (sf.tag == "w")
-                                {
-
-                                }
-
 								if (inUSFXNote)
 								{
 									StartUSFXNoteStyle(sf.tag, sf.text, sf.nested);
@@ -4833,15 +5183,15 @@ namespace WordSend
             {
                 Directory.SetCurrentDirectory(usfxDirectory);
                 // Clean up temporary files from a possible earlier run that failed.
-                File.Delete(tempAname);
-                File.Delete(temp0name);
-                File.Delete(temp1name); // Note: it is not an error if the file doesn't already exist.
-                File.Delete(temp2name);
-                File.Delete(temp3name);
-                File.Delete(temp4name);
-                File.Delete(temp5name);
-                File.Delete(temp6name);
-                //File.Delete(temp7name);
+                Utils.DeleteFile(tempAname);
+                Utils.DeleteFile(temp0name);
+                Utils.DeleteFile(temp1name); // Note: it is not an error if the file doesn't already exist.
+                Utils.DeleteFile(temp2name);
+                Utils.DeleteFile(temp3name);
+                Utils.DeleteFile(temp4name);
+                Utils.DeleteFile(temp5name);
+                Utils.DeleteFile(temp6name);
+                //Utils.DeleteFile(temp7name);
 
                 // EscapeParensInBookNames(bookNames, tempAname);
 
@@ -4914,7 +5264,7 @@ namespace WordSend
                         return;
                     }
 
-                    File.Delete(temp3name);
+                    Utils.DeleteFile(temp3name);
 
                     // step 3.3 - Persian mark fully identified canonical references
                     // -o:%2\convert\%1.step3.3Persian.xml %2\convert\%1.step3.2Persian.xml XSLT\step3.3Persian.xsl pathToFiles="C:\d\kahuna\" bookNamesFile="listOfBookNames.html"  bookNamesXml="BookNames.xml"
@@ -4928,7 +5278,7 @@ namespace WordSend
                         return;
                     }
 
-                    File.Delete(temp4name);
+                    Utils.DeleteFile(temp4name);
 
                     // step 3.4 - Persian  find Psalm 18
                     // -o:%2\convert\%1.step3.4Persian.xml %2\convert\%1.step3.3Persian.xml XSLT\step3.4Persian.xsl pathToFiles="C:\d\kahuna\" bookNamesFile="listOfBookNames.html"  bookNamesXml="BookNames.xml"
@@ -4942,7 +5292,7 @@ namespace WordSend
                         return;
                     }
 
-                    File.Delete(temp3name);
+                    Utils.DeleteFile(temp3name);
 
                     // step 3.5 - Persian fix verse bridge
                     // -o:%2\convert\%1.step3.xml          %2\convert\%1.step3.4Persian.xml XSLT\step3.5Persian.xsl pathToFiles="C:\d\kahuna\" bookNamesFile="listOfBookNames.html"  bookNamesXml="BookNames.xml"
@@ -4956,7 +5306,7 @@ namespace WordSend
                         return;
                     }
 
-                    File.Delete(temp4name);
+                    Utils.DeleteFile(temp4name);
                 }
                 else
                 {
@@ -5028,26 +5378,26 @@ namespace WordSend
 
                 // Get rid of temporary files that are no longer needed.
                 
-                File.Delete(tempAname);
-                File.Delete(temp0name);
-                File.Delete(temp1name);
-                File.Delete(temp2name);
-                File.Delete(temp3name);
-                File.Delete(temp4name);
-                File.Delete(temp5name);
-                File.Delete(temp6name);
-                //File.Delete(temp7name);
-                File.Delete(fileName + ".bak");
-                File.Delete(Path.Combine(usfxDirectory, "step0.xsl"));
-                File.Delete(Path.Combine(usfxDirectory, "step1.xsl"));
-                File.Delete(Path.Combine(usfxDirectory, "step2.xsl"));
-                File.Delete(Path.Combine(usfxDirectory, "step3.xsl"));
-                File.Delete(Path.Combine(usfxDirectory, "step4.xsl"));
-                File.Delete(Path.Combine(usfxDirectory, "step5.xsl"));
-                File.Delete(Path.Combine(usfxDirectory, "step6.xsl"));
+                Utils.DeleteFile(tempAname);
+                Utils.DeleteFile(temp0name);
+                Utils.DeleteFile(temp1name);
+                Utils.DeleteFile(temp2name);
+                Utils.DeleteFile(temp3name);
+                Utils.DeleteFile(temp4name);
+                Utils.DeleteFile(temp5name);
+                Utils.DeleteFile(temp6name);
+                //Utils.DeleteFile(temp7name);
+                Utils.DeleteFile(fileName + ".bak");
+                Utils.DeleteFile(Path.Combine(usfxDirectory, "step0.xsl"));
+                Utils.DeleteFile(Path.Combine(usfxDirectory, "step1.xsl"));
+                Utils.DeleteFile(Path.Combine(usfxDirectory, "step2.xsl"));
+                Utils.DeleteFile(Path.Combine(usfxDirectory, "step3.xsl"));
+                Utils.DeleteFile(Path.Combine(usfxDirectory, "step4.xsl"));
+                Utils.DeleteFile(Path.Combine(usfxDirectory, "step5.xsl"));
+                Utils.DeleteFile(Path.Combine(usfxDirectory, "step6.xsl"));
                 
-                //File.Delete(Path.Combine(usfxDirectory, "step7.xsl"));
-                // File.Delete(Path.Combine(usfxDirectory, "source-target.xml"));
+                //Utils.DeleteFile(Path.Combine(usfxDirectory, "step7.xsl"));
+                // Utils.DeleteFile(Path.Combine(usfxDirectory, "source-target.xml"));
             }
             catch (Exception ex)
             {
@@ -5690,7 +6040,7 @@ namespace WordSend
                 }
             }
             mr.Close();
-            File.Delete(localSchemaName);
+            Utils.DeleteFile(localSchemaName);
             return usfxValid;
         }
 
@@ -5910,12 +6260,14 @@ namespace WordSend
 			string s = "";
             string lemma = "";
             string morphology = "";
+            string srcloc = "";
             string tgt = "";
             string src = "";
             string web = "";
             string strongs = "";
             string plural = "";
             string root = "";
+            string usfmAttribute = "";
 			Stack sfmPairStack = new Stack();
 			bool firstCol = true;
 			bool ignore = false;
@@ -5955,7 +6307,7 @@ namespace WordSend
                     {
                         // The SFM name is the element name UNLESS sfm attribute overrides it.
                         sfm = usfxFile.Name;
-                        id = level = style = who = strongs = plural = lemma = morphology = root = "";
+                        id = level = style = who = strongs = plural = lemma = morphology = root = srcloc = "";
                         tgt = src = web = "";
                         if (usfxFile.HasAttributes)
                         {
@@ -6001,6 +6353,9 @@ namespace WordSend
                                         break;
                                     case "m":
                                         morphology = usfxFile.Value;
+                                        break;
+                                    case "srcloc":
+                                        srcloc = usfxFile.Value;
                                         break;
                                     case "tgt":
                                         tgt = usfxFile.Value;
@@ -6385,37 +6740,56 @@ namespace WordSend
                                 break;
                             case "zw":
                             case "w":
-                                if (extendUsfm)
+                                StringBuilder sb = new StringBuilder("|");
+                                if (!string.IsNullOrEmpty(lemma))
                                 {
-                                    if (plural == "true")
+                                    sb.Append("lemma=\"");
+                                    sb.Append(lemma);
+                                    sb.Append("\"");
+                                }
+                                if (!string.IsNullOrEmpty(strongs))
+                                {
+                                    if (sb.Length > 1)
+                                        sb.Append(" ");
+                                    sb.Append("strong=\"");
+                                    sb.Append(strongs);
+                                    sb.Append("\"");
+                                }
+                                if (!string.IsNullOrEmpty(srcloc))
+                                {
+                                    if (sb.Length > 1)
+                                        sb.Append(" ");
+                                    sb.Append("srcloc=\"");
+                                    sb.Append(srcloc);
+                                    sb.Append("\"");
+                                }
+                                if (!string.IsNullOrEmpty(plural))
+                                {
+                                    if (sb.Length > 1)
+                                        sb.Append(" ");
+                                    sb.Append("x-plural=\"");
+                                    sb.Append(plural);
+                                    sb.Append("\"");
+                                }
+                                if (!string.IsNullOrEmpty(morphology))
+                                {
+                                    if (sb.Length > 1)
+                                        sb.Append(" ");
+                                    sb.Append("x-morph=\"");
+                                    sb.Append(morphology);
+                                    sb.Append("\"");
+                                }
+                                usfmAttribute = sb.ToString();
+                                usfmFile.WriteSFM("w", "", "", false, (charStyleStackLevel > 0) || inFootnote);
+                                if (usfxFile.IsEmptyElement)
+                                {
+                                    if (usfmAttribute.Length > 1)
                                     {
-                                        usfmFile.WriteSFM("zplural");
+                                        usfmFile.WriteString(usfmAttribute);
+                                        usfmAttribute = "";
                                     }
-                                    if (!(String.IsNullOrEmpty(strongs) && String.IsNullOrEmpty(lemma) && String.IsNullOrEmpty(morphology)))
-                                    {
-                                        usfmFile.WriteSFM("zw", "", "", false, (charStyleStackLevel > 0) || inFootnote);
-                                        if (!String.IsNullOrEmpty(strongs))
-                                        {
-                                            usfmFile.WriteSFM("zws", "", strongs, false, true);
-                                            usfmFile.WriteSFM("zws*", "", "", false, true);
-                                        }
-                                        if (!String.IsNullOrEmpty(lemma))
-                                        {
-                                            usfmFile.WriteSFM("zwl", "", lemma, false, true);
-                                            usfmFile.WriteSFM("zwl*", "", "", false, true);
-                                        }
-                                        if (!String.IsNullOrEmpty(morphology))
-                                        {
-                                            usfmFile.WriteSFM("zwm", "", morphology, false, true);
-                                            usfmFile.WriteSFM("zwm*", "", "", false, true);
-                                        }
-                                        usfmFile.WriteSFM("zw*", "", "", false, (charStyleStackLevel > 0) || inFootnote);
-                                        if (usfxFile.IsEmptyElement)
-                                        {
-                                            usfmFile.WriteSFM("zx", "", "", false, (charStyleStackLevel > 0) || inFootnote);
-                                            usfmFile.WriteSFM("zx*", "", "", false, (charStyleStackLevel > 0) || inFootnote);
-                                        }
-                                    }
+                                    usfmFile.WriteSFM("w*", "", "", false, (charStyleStackLevel > 0) || inFootnote);
+                                    Logit.WriteLine("Warning: empty word element at " + bookId + " " + chapter + ":" + verse);
                                 }
                                 break;
                             case "ztoc":
@@ -6525,11 +6899,12 @@ namespace WordSend
                                 break;
                             case "zw":
                             case "w":
-                                if (extendUsfm)
+                                if (usfmAttribute.Length > 1)
                                 {
-                                    usfmFile.WriteSFM("zx", "", "", false, (charStyleStackLevel > 0) || inFootnote);
-                                    usfmFile.WriteSFM("zx*", "", "", false, (charStyleStackLevel > 0) || inFootnote);
+                                    usfmFile.WriteString(usfmAttribute);
+                                    usfmAttribute = "";
                                 }
+                                usfmFile.WriteSFM("w*", "", "", false, (charStyleStackLevel > 0) || inFootnote);
                                 break;
                             case "quoteStart":
                             case "quoteRemind":

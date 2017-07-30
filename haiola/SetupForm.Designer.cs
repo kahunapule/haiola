@@ -40,6 +40,8 @@
             this.extensionLabel = new System.Windows.Forms.Label();
             this.swordSuffixTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.findParatext8Button = new System.Windows.Forms.Button();
+            this.paratext8DirectoryLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // projectDirectoryLabel
@@ -82,7 +84,7 @@
             // 
             // helpButton
             // 
-            this.helpButton.Location = new System.Drawing.Point(12, 183);
+            this.helpButton.Location = new System.Drawing.Point(12, 250);
             this.helpButton.Name = "helpButton";
             this.helpButton.Size = new System.Drawing.Size(129, 30);
             this.helpButton.TabIndex = 4;
@@ -91,7 +93,7 @@
             // 
             // closeButton
             // 
-            this.closeButton.Location = new System.Drawing.Point(436, 182);
+            this.closeButton.Location = new System.Drawing.Point(436, 249);
             this.closeButton.Name = "closeButton";
             this.closeButton.Size = new System.Drawing.Size(128, 31);
             this.closeButton.TabIndex = 5;
@@ -113,7 +115,7 @@
             // coprLabel
             // 
             this.coprLabel.AutoSize = true;
-            this.coprLabel.Location = new System.Drawing.Point(9, 148);
+            this.coprLabel.Location = new System.Drawing.Point(9, 194);
             this.coprLabel.Name = "coprLabel";
             this.coprLabel.Size = new System.Drawing.Size(28, 13);
             this.coprLabel.TabIndex = 6;
@@ -122,7 +124,7 @@
             // extensionLabel
             // 
             this.extensionLabel.AutoSize = true;
-            this.extensionLabel.Location = new System.Drawing.Point(9, 166);
+            this.extensionLabel.Location = new System.Drawing.Point(9, 219);
             this.extensionLabel.Name = "extensionLabel";
             this.extensionLabel.Size = new System.Drawing.Size(52, 13);
             this.extensionLabel.TabIndex = 7;
@@ -144,11 +146,32 @@
             this.label1.TabIndex = 9;
             this.label1.Text = "Sword Module suffix";
             // 
+            // findParatext8Button
+            // 
+            this.findParatext8Button.Location = new System.Drawing.Point(13, 142);
+            this.findParatext8Button.Name = "findParatext8Button";
+            this.findParatext8Button.Size = new System.Drawing.Size(176, 32);
+            this.findParatext8Button.TabIndex = 10;
+            this.findParatext8Button.Text = "Find Paratext &8 projects directory";
+            this.findParatext8Button.UseVisualStyleBackColor = true;
+            this.findParatext8Button.Click += new System.EventHandler(this.findParatext8Button_Click);
+            // 
+            // paratext8DirectoryLabel
+            // 
+            this.paratext8DirectoryLabel.AutoSize = true;
+            this.paratext8DirectoryLabel.Location = new System.Drawing.Point(9, 176);
+            this.paratext8DirectoryLabel.Name = "paratext8DirectoryLabel";
+            this.paratext8DirectoryLabel.Size = new System.Drawing.Size(222, 13);
+            this.paratext8DirectoryLabel.TabIndex = 11;
+            this.paratext8DirectoryLabel.Text = "Please select your Paratext 8 project directory";
+            // 
             // SetupForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(576, 225);
+            this.ClientSize = new System.Drawing.Size(576, 292);
+            this.Controls.Add(this.paratext8DirectoryLabel);
+            this.Controls.Add(this.findParatext8Button);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.swordSuffixTextBox);
             this.Controls.Add(this.extensionLabel);
@@ -181,5 +204,7 @@
         private System.Windows.Forms.Label extensionLabel;
         private System.Windows.Forms.TextBox swordSuffixTextBox;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button findParatext8Button;
+        private System.Windows.Forms.Label paratext8DirectoryLabel;
     }
 }

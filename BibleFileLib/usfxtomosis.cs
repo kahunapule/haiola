@@ -758,8 +758,8 @@ namespace WordSend
             try 
 	        {
                 Utils.EnsureDirectory(swordZipDir);
-                File.Delete(Path.Combine(swordZipDir, swordName + ".zip"));
-                File.Delete(Path.Combine(Path.Combine(swordDir, "mods.d"), swordName + ".conf"));
+                Utils.DeleteFile(Path.Combine(swordZipDir, swordName + ".zip"));
+                Utils.DeleteFile(Path.Combine(Path.Combine(swordDir, "mods.d"), swordName + ".conf"));
                 Utils.DeleteDirectory(Path.Combine(Path.Combine(Path.Combine(Path.Combine(swordDir, "modules"), "texts"), "ztext"), swordName));
                 command = "tar czvf mods.d.tar.gz mods.d/";
                 fileHelper.RunCommand(command, swordDir);
@@ -798,11 +798,11 @@ namespace WordSend
             {
                 // Clear out old stuff
                 Utils.DeleteDirectory(Path.Combine(oldSwordModuleDir, swordName));
-                File.Delete(Path.Combine(swordZipDir, swordName + ".zip"));
-
                 // set up directory structure
                 Utils.EnsureDirectory(baseDir);
+                Utils.EnsureDirectory(swordDir);
                 Utils.EnsureDirectory(swordZipDir);
+                Utils.DeleteFile(Path.Combine(swordZipDir, swordName + ".zip"));
                 Utils.EnsureDirectory(swordModuleDir);
                 swordModuleDir = Path.Combine(swordModuleDir, "texts");
                 Utils.EnsureDirectory(swordModuleDir);
@@ -881,6 +881,13 @@ namespace WordSend
                 }
             }
 
+            // Don't create a Sword module if there were errors in the build so far.
+            if (Logit.loggedError)
+            {
+                Logit.WriteLine("Skipping Sword module creation due to prior errors.");
+                return;
+            }
+
             projectOptions.swordVersification = SwordVs.GetSwordVersification();
             string swordConfName = Path.Combine(modsd, swordName + ".conf");
 
@@ -957,7 +964,7 @@ namespace WordSend
                 config.WriteLine("SwordVersionDate={0}", projectOptions.SwordVersionDate.ToString("yyyy-MM-dd"));
                 config.WriteLine("Version={0}.{1}", projectOptions.SwordMajorVersion, projectOptions.SwordMinorVersion);
                 if (projectOptions.DBSandeBible)
-                    config.WriteLine("History_{0}.{1}=Automatically generated on {2} from source files dated {3} by eBible.org (http://eBible.org) in cooperation with the Digital Bible Society (http://dbs.org)",
+                    config.WriteLine("History_{0}.{1}=Automatically generated on {2} from source files dated {3} by eBible.org (http://eBible.org) with funding through World Outreach Missions",
                         projectOptions.SwordMajorVersion, projectOptions.SwordMinorVersion,
                         DateTime.Now.Date.ToString("yyyy-MM-dd"),
                         projectOptions.SourceFileDate.Date.ToString("yyyy-MM-dd"));
@@ -2120,7 +2127,7 @@ namespace WordSend
                     }
                 }
                 mr.Close();
-                File.Delete(localSchemaName);
+                Utils.DeleteFile(localSchemaName);
                 if (projectOptions != null)
                 {
                     WriteSwordConfig();

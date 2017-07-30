@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
 	<xs:element name="SFMInfo">
 		<xs:annotation>
 			<xs:documentation>Comment describing your root element</xs:documentation>
@@ -73,6 +74,16 @@
 								<xs:annotation>
 									<xs:documentation>This is the TeX code (without the backslash) that this tag is translated to when converting to TeX.</xs:documentation>
 								</xs:annotation>
+							</xs:element>
+							<xs:element maxOccurs="unbounded" minOccurs="0" name="defaultAttribute">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="sequence" type="xs:int"/>
+											<xs:attribute name="usfxName" type="xs:string"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
 							</xs:element>
 							<xs:element name="comment" type="xs:string" minOccurs="0">
 								<xs:annotation>

@@ -1245,7 +1245,7 @@ namespace WordSend
 
 
 
-                File.Delete(mimeName);
+                Utils.DeleteFile(mimeName);
                 Utils.DeleteDirectory(OEBPS);
                 Utils.DeleteDirectory(metaName);
                 

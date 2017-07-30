@@ -20,9 +20,9 @@ Z:\Documents\source\haiola\wordsend\usfm2word\bin\Debug\Newtonsoft.Json.dll
 Z:\Documents\source\haiola\wordsend\usfm2word\bin\Debug\ICSharpCode.SharpZipLib.dll
 Z:\Documents\source\haiola\wordsend\usfm2word\bin\Debug\BibleFileLib.pdb
 Z:\Documents\source\haiola\wordsend\usfm2word\bin\Debug\Newtonsoft.Json.xml
-Z:\Documents\source\haiola\wordsend\usfm2word\obj\Debug\usfm2word.csprojResolveAssemblyReference.cache
 Z:\Documents\source\haiola\wordsend\usfm2word\obj\Debug\usfm2word.csproj.ResolveComReference.cache
 Z:\Documents\source\haiola\wordsend\usfm2word\obj\Debug\WordSend.MainForm.resources
 Z:\Documents\source\haiola\wordsend\usfm2word\obj\Debug\usfm2word.csproj.GenerateResource.Cache
 Z:\Documents\source\haiola\wordsend\usfm2word\obj\Debug\usfm2word.exe
 Z:\Documents\source\haiola\wordsend\usfm2word\obj\Debug\usfm2word.pdb
+Z:\Documents\source\haiola\wordsend\usfm2word\obj\Debug\usfm2word.csprojResolveAssemblyReference.cache

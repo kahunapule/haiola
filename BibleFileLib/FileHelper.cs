@@ -71,7 +71,7 @@ namespace WordSend
         /// </summary>
         public static void unlockProject()
         {
-            File.Delete(lockFileName);
+            Utils.DeleteFile(lockFileName);
         }
 
 
@@ -813,7 +813,7 @@ namespace WordSend
                 string bakFileName = FileName + "." + Rnd.Next().ToString() + ".bak";
                 File.Move(FileName, bakFileName);
                 File.Move(tempFileName, FileName);
-                File.Delete(bakFileName);
+                Utils.DeleteFile(bakFileName);
             }
             catch (Exception ex)
             {
@@ -871,7 +871,7 @@ namespace WordSend
             {
                 if (overwrite && File.Exists(dst))
                 {
-                    File.Delete(dst);
+                    Utils.DeleteFile(dst);
                 }
                 if (!File.Exists(dst))
                     File.Copy(src, dst, overwrite);

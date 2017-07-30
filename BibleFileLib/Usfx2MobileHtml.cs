@@ -728,9 +728,9 @@ namespace WordSend
                     htm.WriteLine("<div class=\"toc\">epub3: <a href=\"http://eBible.org/epub/{0}.epub\">{0}.epub</a></div>", translationId);
                     if (File.Exists(String.Format("/home/kahunapule/vhosts/ebible.org/httpdocs/epub/{0}.mobi", translationId)))
                         htm.WriteLine("<div class=\"toc\">Kindle mobi: <a href=\"http://eBible.org/epub/{0}.mobi\">{0}.mobi</a></div>", translationId);
-                    if (projectOptions.homeDomain == "pngscriptures.org")
+                    if (projectOptions.homeDomain == "png.bible")
                     {
-                        htm.WriteLine("<div class=\"toc\"><a href=\"http://PNGScriptures.org/pdf/{0}/\" target=\"_blank\">PDF</a></div>", translationId);
+                        htm.WriteLine("<div class=\"toc\"><a href=\"http://PNG.Bible/pdf/{0}/\" target=\"_blank\">PDF</a></div>", translationId);
                     }
                     else
                     {

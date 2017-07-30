@@ -54,6 +54,7 @@
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
+    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vsDFAF.tmp\Debug\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -78,6 +79,7 @@
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
+    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vsDFAF.tmp\Release\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib">
@@ -109,6 +111,7 @@
     </Compile>
     <Compile Include="bookmatch.cs" />
     <Compile Include="ChapterInfo.cs" />
+    <Compile Include="global.cs" />
     <Compile Include="readssf.cs" />
     <Compile Include="Versification.cs" />
     <Compile Include="epub.cs" />

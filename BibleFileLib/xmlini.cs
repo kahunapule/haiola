@@ -284,8 +284,7 @@ namespace WordSend
             string bakFileName = Path.ChangeExtension(fileName, "bak");
             try
             {
-                if (File.Exists(bakFileName))
-                    File.Delete(bakFileName);
+                Utils.DeleteFile(bakFileName);
                 if (File.Exists(fileName))
                     File.Move(fileName, bakFileName);
                 try

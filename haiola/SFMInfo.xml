@@ -219,6 +219,14 @@
 		<characterStyle>Figure</characterStyle>
 		<nestingAllowed>true</nestingAllowed>
 		<levelExpected>false</levelExpected>
+		<defaultAttribute sequence="1" usfxName="description">default</defaultAttribute>
+		<defaultAttribute sequence="2" usfxName="catalog">src</defaultAttribute>
+		<defaultAttribute sequence="3" usfxName="size">size</defaultAttribute>
+		<defaultAttribute sequence="4" usfxName="location">loc</defaultAttribute>
+		<defaultAttribute sequence="5" usfxName="copyright">copy</defaultAttribute>
+		<defaultAttribute sequence="6" usfxName="caption">cap</defaultAttribute>
+		<defaultAttribute sequence="7" usfxName="reference">ref</defaultAttribute>
+		<comment>For USFM 2.4, all 7 fields separated by vertical bars and without attribute names are required; default is description/alt. For USFM 3.0, there is only one vertical bar. Before that is the caption. After that are the named attributes.</comment>
 	</sfm>
 	<sfm kind="character">
 		<tag>fk</tag>
@@ -939,6 +947,7 @@
 		<nestingAllowed>true</nestingAllowed>
 		<levelExpected>false</levelExpected>
 		<milestone>false</milestone>
+		<defaultAttribute sequence="1" usfxName="l">lemma</defaultAttribute>
 	</sfm>
 	<sfm kind="character">
 		<tag>wg</tag>
