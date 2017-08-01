@@ -38,6 +38,8 @@
             this.btnSetRootDirectory = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.idTabPage = new System.Windows.Forms.TabPage();
+            this.label78 = new System.Windows.Forms.Label();
+            this.paratext8ComboBox = new System.Windows.Forms.ComboBox();
             this.rodCodeTextBox = new System.Windows.Forms.TextBox();
             this.label60 = new System.Windows.Forms.Label();
             this.label76 = new System.Windows.Forms.Label();
@@ -119,7 +121,6 @@
             this.copyrightOwnerTextBox = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.processTabPage = new System.Windows.Forms.TabPage();
-            this.btnAddSpecialProcess = new System.Windows.Forms.Button();
             this.postprocessTextBox = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.mvDownButton = new System.Windows.Forms.Button();
@@ -271,8 +272,6 @@
             this.sourceLabel = new System.Windows.Forms.Label();
             this.RebuildCheckBox = new System.Windows.Forms.CheckBox();
             this.runXetexCheckBox = new System.Windows.Forms.CheckBox();
-            this.paratext8ComboBox = new System.Windows.Forms.ComboBox();
-            this.label78 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.idTabPage.SuspendLayout();
             this.copyrightTabPage.SuspendLayout();
@@ -378,7 +377,7 @@
             this.tabControl1.Controls.Add(this.statsTabPage);
             this.tabControl1.Controls.Add(this.outputsTabPage);
             this.tabControl1.Controls.Add(this.messagesTabPage);
-            this.tabControl1.Location = new System.Drawing.Point(2, 123);
+            this.tabControl1.Location = new System.Drawing.Point(2, 115);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -442,6 +441,24 @@
             this.idTabPage.TabIndex = 0;
             this.idTabPage.Text = "ID";
             this.idTabPage.UseVisualStyleBackColor = true;
+            // 
+            // label78
+            // 
+            this.label78.AutoSize = true;
+            this.label78.Location = new System.Drawing.Point(420, 40);
+            this.label78.Name = "label78";
+            this.label78.Size = new System.Drawing.Size(110, 15);
+            this.label78.TabIndex = 249;
+            this.label78.Text = "Paratext 8 project:";
+            // 
+            // paratext8ComboBox
+            // 
+            this.paratext8ComboBox.FormattingEnabled = true;
+            this.paratext8ComboBox.Location = new System.Drawing.Point(536, 37);
+            this.paratext8ComboBox.Name = "paratext8ComboBox";
+            this.paratext8ComboBox.Size = new System.Drawing.Size(127, 23);
+            this.paratext8ComboBox.TabIndex = 248;
+            this.paratext8ComboBox.SelectedIndexChanged += new System.EventHandler(this.paratext8ComboBox_SelectedIndexChanged);
             // 
             // rodCodeTextBox
             // 
@@ -1240,7 +1257,6 @@
             // 
             // processTabPage
             // 
-            this.processTabPage.Controls.Add(this.btnAddSpecialProcess);
             this.processTabPage.Controls.Add(this.postprocessTextBox);
             this.processTabPage.Controls.Add(this.textBox1);
             this.processTabPage.Controls.Add(this.mvDownButton);
@@ -1262,13 +1278,6 @@
             this.processTabPage.TabIndex = 1;
             this.processTabPage.Text = "Proc.";
             this.processTabPage.UseVisualStyleBackColor = true;
-            // 
-            // btnAddSpecialProcess
-            // 
-            this.btnAddSpecialProcess.Location = new System.Drawing.Point(0, 0);
-            this.btnAddSpecialProcess.Name = "btnAddSpecialProcess";
-            this.btnAddSpecialProcess.Size = new System.Drawing.Size(66, 22);
-            this.btnAddSpecialProcess.TabIndex = 0;
             // 
             // postprocessTextBox
             // 
@@ -1382,7 +1391,7 @@
             this.btnRemoveInputProcess.Location = new System.Drawing.Point(85, 72);
             this.btnRemoveInputProcess.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.btnRemoveInputProcess.Name = "btnRemoveInputProcess";
-            this.btnRemoveInputProcess.Size = new System.Drawing.Size(59, 33);
+            this.btnRemoveInputProcess.Size = new System.Drawing.Size(77, 33);
             this.btnRemoveInputProcess.TabIndex = 61;
             this.btnRemoveInputProcess.Text = "- Remove";
             this.btnRemoveInputProcess.UseVisualStyleBackColor = true;
@@ -1787,7 +1796,7 @@
             this.extendUsfmCheckBox.AutoSize = true;
             this.extendUsfmCheckBox.Location = new System.Drawing.Point(19, 88);
             this.extendUsfmCheckBox.Name = "extendUsfmCheckBox";
-            this.extendUsfmCheckBox.Size = new System.Drawing.Size(342, 19);
+            this.extendUsfmCheckBox.Size = new System.Drawing.Size(214, 19);
             this.extendUsfmCheckBox.TabIndex = 113;
             this.extendUsfmCheckBox.Text = "&Extend USFM for reference links";
             this.extendUsfmCheckBox.UseVisualStyleBackColor = true;
@@ -2898,24 +2907,6 @@
             this.runXetexCheckBox.UseVisualStyleBackColor = true;
             this.runXetexCheckBox.CheckedChanged += new System.EventHandler(this.runXetexCheckBox_CheckedChanged);
             // 
-            // paratext8ComboBox
-            // 
-            this.paratext8ComboBox.FormattingEnabled = true;
-            this.paratext8ComboBox.Location = new System.Drawing.Point(536, 37);
-            this.paratext8ComboBox.Name = "paratext8ComboBox";
-            this.paratext8ComboBox.Size = new System.Drawing.Size(127, 23);
-            this.paratext8ComboBox.TabIndex = 248;
-            this.paratext8ComboBox.SelectedIndexChanged += new System.EventHandler(this.paratext8ComboBox_SelectedIndexChanged);
-            // 
-            // label78
-            // 
-            this.label78.AutoSize = true;
-            this.label78.Location = new System.Drawing.Point(420, 40);
-            this.label78.Name = "label78";
-            this.label78.Size = new System.Drawing.Size(110, 15);
-            this.label78.TabIndex = 249;
-            this.label78.Text = "Paratext 8 project:";
-            // 
             // haiolaForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -3093,7 +3084,6 @@
 		private System.Windows.Forms.Label label39;
 		private System.Windows.Forms.TextBox hideNavigationPanesTextBox;
         private System.Windows.Forms.Label label38;
-        private System.Windows.Forms.Button btnAddSpecialProcess;
         private System.Windows.Forms.Label label40;
         private System.Windows.Forms.TextBox coprAbbrevTextBox;
         private System.Windows.Forms.Label label41;
