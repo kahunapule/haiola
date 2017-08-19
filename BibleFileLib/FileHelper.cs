@@ -2069,8 +2069,6 @@ namespace WordSend
         /// <param name="fName">name of file to update encoding in</param>
         public static void revisePua(string fName)
         {
-            // int u;
-            int v, i;
             try
             {
                 StreamReader sr = new StreamReader(fName);

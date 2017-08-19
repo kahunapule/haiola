@@ -185,7 +185,7 @@ namespace WordSend
 		public void WriteString(string s)
 		{	// Writes a string out with loose word wrap that finds the next word break after
 			// a line length of WORDWRAPLENGTH is reached.
-			int i, j;
+			int i;
 
 			if (!fileIsOpen)
 			{
@@ -788,12 +788,12 @@ namespace WordSend
         public bool nested; // True for tags starting with \+
 		public TagRecord info;  // Information about this particular tag
         public static string currentParagraph;  // Most recently encountered paragraph (after chapter)
-
+        /******
         private static string delayedTag = String.Empty;
         private static string delayedText = String.Empty;
         private static string delayedAttribute = String.Empty;
         private static bool delayedIsEndTag = false;
-
+        ******/
         // The following state variables are used for input context validation on read.
         private static string prevTag = String.Empty;
         private static string expectedEndTag = String.Empty;
@@ -849,15 +849,23 @@ namespace WordSend
                 }
                 else if (tag.CompareTo("v") == 0)
                 {
-                    for (i = 0; i < attribute.Length; i++)
+                    if (attribute.Length < 1)
                     {
-                        if (!((attribute[i] == '-') || (attribute[i] == '\u200F') || Char.IsDigit(attribute[i])))
-                        {
-                            Logit.WriteError("Bad verse value of " + attribute + " at " + currentBook + " " + currentChapter + ":" + attribute);
-                            i = attribute.Length;
-                        }
+                        Logit.WriteError("ERROR: \\v without attribute  at " + currentBook + " " + currentChapter + ":" + currentVerse);
                     }
-                    currentVerse = attribute;
+                    else
+                    {
+                        for (i = 0; i < attribute.Length; i++)
+                        {
+                            if (!((attribute[i] == '-') || (attribute[i] == '\u200F') || Char.IsDigit(attribute[i]) || (attribute[i] == 'a') || (attribute[i] == 'b')
+                                || (attribute[i] == 'A') || (attribute[i] == 'B')))
+                            {
+                                Logit.WriteError("Bad verse value of " + attribute + " at " + currentBook + " " + currentChapter + ":" + attribute);
+                                i = attribute.Length;
+                            }
+                        }
+                        currentVerse = attribute;
+                    }
                     if (currentParagraph == String.Empty)
                         Logit.WriteError("USFM error: no paragraph started at " + currentBook + " " + currentChapter + ":" + currentVerse);
                     else if ((currentParagraph == "b") && (text.Trim().Length > 0))
@@ -910,18 +918,6 @@ namespace WordSend
 		{
             if (SFConverter.scripture == null)
                 SFConverter.scripture = new Scriptures();
-            if (!String.IsNullOrEmpty(delayedTag))
-            {
-                tag = delayedTag;
-                info = SFConverter.scripture.tags.info(tag);
-                text = delayedText;
-                isEndTag = delayedIsEndTag;
-                attribute = delayedAttribute;
-                delayedTag = delayedText = delayedAttribute = string.Empty;
-                validate();
-                return true;
-            }
-
 			StringBuilder sb = new StringBuilder();
 			int ch;
 			int lookAhead;
@@ -1057,43 +1053,8 @@ namespace WordSend
 			// Read text up to next \, collapsing all contiguous white space to a single space.
 			bool inSpace = false;
 			lookAhead = sr.Peek();
-            // Special case to skip over \ characters embedded in filename a \fig ...\fig* sequence
-            // \ may occur in a filename between the 1st and 2nd | of 6 in a figure specification.
-            // However, markup of actual texts often get the | syntax wrong, and we often just strip out
-            // fig tags, anyway, so we are omitting this check for now. This means that we aren't supporting
-            // the \ character in file names. The forward slash, /, however, is OK. Best practice: just put in
-            // the file name and no path in the figure specification, or better yet, use an external figure list
-            // that could be used with multiple sources.
-            /*
-            if (tag == "fig")
-            {
-                if ((sb.ToString().EndsWith("\fi") && (ch == 'g') && (lookAhead == '*')))
-                {
-                    barCount += 7;
-                    Logit.WriteError("Bad figure markup | count " + sb.ToString() + "g*" + " near " +
-                        currentBook + " " + currentChapter + ":" + currentVerse);
-                }
-                while ((ch != -1) && ((ch != '\\') || (barCount < 2)))
-                {
-                    if (fileHelper.IsNormalWhiteSpace((char)ch))
-                    {
-                        if (!inSpace)
-                        {
-                            inSpace = true;
-                            sb.Append(' ');
-                        }
-                    }
-                    else
-                    {
-                        sb.Append((char)ch);
-                        inSpace = false;
-                        if (ch == '|')
-                            barCount++;
-                    }
-                    ch = sr.Read();
-                }
-            }
-             */
+            // We used to skip over \ characters embedded in filename a \fig ...\fig* sequence, but no longer, since
+            // Paratext validation expects a simple file name with no path information here.
 
             if (fileHelper.IsNormalWhiteSpace((char)ch))
             {   // Any run of contiguous normal white space (tab, space, CR, LF) is replaced with
@@ -1154,34 +1115,6 @@ namespace WordSend
 					SFConverter.scripture.tags.inCanon = true;
 				}
 			}
-
-            if (tag == "v")
-            {
-                if (attribute.EndsWith("a"))
-                {
-                    attribute = attribute.Replace("a", "");
-                }
-                else
-                {
-                    if (attribute.Length < 1)
-                    {
-                        Logit.WriteError("ERROR: \\v without attribute in " + fileName);
-                    }
-                    else
-                    {
-                        if (!char.IsDigit(attribute[attribute.Length - 1]))
-                        {
-                            delayedTag = "vp*";
-                            delayedText = text;
-                            delayedIsEndTag = true;
-                            delayedAttribute = string.Empty;
-                            text = attribute;
-                            attribute = string.Empty;
-                            tag = "vp";
-                        }
-                    }
-                }
-            }
 
             validate();
 			return true;
@@ -2458,7 +2391,7 @@ namespace WordSend
                         {
                             Logit.WriteError("ERROR: Verse missing attribute after " + book.bookCode +" "+ currentChapter.ToString() + ":" + vs.ToString());
                         }
-                        string highVerse = sfm.attribute;
+                        string highVerse = sfm.attribute.Replace("a", "").Replace("b", "").Replace("A", "").Replace("B", "");
                         int dashplace = highVerse.IndexOf('-');
                         if (dashplace > 0)
                         {
@@ -3238,7 +3171,7 @@ namespace WordSend
             }
             else
             {
-                if (!inUSFXNote)
+                if ((!nested) && (!inUSFXNote) && (usfxStyleCount > 1))
                 {
                     Logit.WriteLine("Warning: Started new character style " + sfm + " without terminating " +
                         activeCharacterStyle[usfxStyleCount] +
@@ -4721,79 +4654,6 @@ namespace WordSend
 			}
 		}
 
-/* The following test proceedure is the simple framework upon which the 
- * second pass of WriteToWordML is built.
- * It is just an example of how to reliably read from one XML document and
- * write to another, pretty-printing it in the process. (You could remove
- * the indentation formatting from this sample method for more space
- * efficiency at the expense of human readability.)
- * 
-		public void CloneXmlFile()
-		{
-			string fileName = @"c:\sil\test\testout.xml";
-
-			try
-			{
-				xr = new XmlTextReader(SFConverter.jobIni.ReadString("templateName",
-					Path.Combine(Path.GetDirectoryName(XMLini.ExecutableName()), "Scripture.xml")));
-				xw = new XmlTextWriter(fileName, System.Text.Encoding.UTF8);
-				xw.Formatting = System.Xml.Formatting.Indented;
-				xw.Indentation = 1;
-				xw.IndentChar = ' ';
-				xr.Read();
-				while (!xr.EOF)
-				{
-					Logit.WriteLine("Seed node type="+xr.NodeType.ToString()+" Name="+xr.Name+" Value="+xr.Value); // DEBUG
-					switch (xr.NodeType)
-					{
-						case XmlNodeType.Element:
-							xw.WriteStartElement(xr.Name);
-							xw.WriteAttributes(xr, true);
-							if (xr.IsEmptyElement)
-								xw.WriteEndElement();
-							break;
-						case XmlNodeType.EndElement:
-							xw.WriteEndElement();
-							break;
-						case XmlNodeType.Text:
-							xw.WriteString(xr.Value);
-							break;
-						case XmlNodeType.SignificantWhitespace:
-							xw.WriteWhitespace(xr.Value);
-							break;
-						case XmlNodeType.Whitespace:
-							// You could insert xw.WriteWhitespace(xr.Value); to preserve
-							// notsingnificant whites space, but why?
-							break;
-						case XmlNodeType.Attribute:
-							xw.WriteAttributeString(xr.Name, xr.Value);
-							break;
-						case XmlNodeType.ProcessingInstruction:
-							xw.WriteProcessingInstruction(xr.Name, xr.Value);
-							break;
-						case XmlNodeType.XmlDeclaration:
-							xw.WriteStartDocument(true);
-							break;
-						default:
-							Logit.WriteLine("Doing NOTHING with type="+xr.NodeType.ToString()+" Name="+xr.Name+" Value="+xr.Value); // DEBUG
-							break;
-					}
-					if (!xr.EOF)
-						xr.Read();
-				}
-				xw.Close();
-				xr.Close();
-				Logit.WriteLine(fileName+" written.");
-			}
-			catch (System.Exception ex)
-			{
-				Logit.WriteLine(ex.ToString());
-				Logit.WriteLine("Failed to parse seed file "+templateName);
-				return;
-			}
-		}
-*/
-
         public Options projectOptions;
 
 		public void WriteToWordML(string fileName)
@@ -5150,263 +5010,6 @@ namespace WordSend
             sw.Close();
         }
 
-        /*
-        public void AddRefTags(string fileName)
-        {
-            if (!projectOptions.makeHotLinks)
-            {
-                Logit.WriteLine("Hot link detection disabled; skipping.");
-                return;
-            }
-            File.Copy(fileName, Path.ChangeExtension(fileName, ".norefxml"));
-            string command;
-            string twoUp = Path.Combine("..", "..");
-            string usfxDirectory = Path.GetDirectoryName(fileName);
-            string tempAname = Path.Combine(usfxDirectory, "BookNamesA.xml");
-            string temp0name = Path.Combine(usfxDirectory, "BookNamesWithPeriodAndWithout.html");
-            string temp1name = Path.Combine(usfxDirectory, "listOfBookNames.html");
-            string temp2name = Path.Combine(usfxDirectory, "listOfBookNamesStartingWithDigit.html");
-            string temp3name = Path.Combine(usfxDirectory, "temp3.xml");
-            string temp4name = Path.Combine(usfxDirectory, "temp4.xml");
-            string temp5name = Path.Combine(usfxDirectory, "temp5.xml");
-            string temp6name = Path.Combine(usfxDirectory, "temp6.xml");
-            //string temp7name = Path.Combine(usfxDirectory, "temp7.xml");
-            string saxonJar = SFConverter.FindAuxFile("saxon9he.jar");
-            string bookNames = Path.Combine(usfxDirectory, "BookNames.xml");
-            if (!File.Exists(bookNames))
-            {
-                Logit.WriteError("Error: " + bookNames + " not found.");
-                return;
-            }
-            string logFile = Path.Combine(Path.Combine(usfxDirectory, ".."), "xsltlog.txt");
-            try
-            {
-                Directory.SetCurrentDirectory(usfxDirectory);
-                // Clean up temporary files from a possible earlier run that failed.
-                Utils.DeleteFile(tempAname);
-                Utils.DeleteFile(temp0name);
-                Utils.DeleteFile(temp1name); // Note: it is not an error if the file doesn't already exist.
-                Utils.DeleteFile(temp2name);
-                Utils.DeleteFile(temp3name);
-                Utils.DeleteFile(temp4name);
-                Utils.DeleteFile(temp5name);
-                Utils.DeleteFile(temp6name);
-                //Utils.DeleteFile(temp7name);
-
-                // EscapeParensInBookNames(bookNames, tempAname);
-
-                // Step A: escape parens AND make sure all fields of BookNames.xml exist
-
-                command = string.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" 2> \"{4}\"", saxonJar, tempAname, bookNames,
-                    GetXslt("stepA.xsl", usfxDirectory), logFile);
-                if (!fileHelper.RunCommand(command, usfxDirectory))
-                {
-                    Logit.WriteError("Error running command " + command);
-                    Logit.WriteError(fileHelper.runCommandError);
-                    return;
-                }
-
-                // Step 0: Create abbreviation with period and without period.
-                // -o:%2\convert\BookNamesWithPeriodAndWithout.html %2\source\BookNames.xml XSLT\step0.xsl
-                command = string.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" 2>> \"{4}\"", saxonJar, temp0name, tempAname,
-                    GetXslt("step0.xsl", usfxDirectory), logFile);
-                if (!fileHelper.RunCommand(command, usfxDirectory))
-                {
-                    Logit.WriteError("Error running command " + command);
-                    Logit.WriteError(fileHelper.runCommandError);
-                    return;
-                }
-
-
-                // Step 1: Create list of possible references.
-                //  -o:%2\convert\listOfBookNames.html %2\convert\BookNamesWithPeriodAndWithout.html XSLT\step1.xsl
-                command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" 2>> \"{4}\"", saxonJar, temp1name, temp0name,
-                    GetXslt("step1.xsl", usfxDirectory), logFile);
-                if (!fileHelper.RunCommand(command, usfxDirectory))
-                {
-                    Logit.WriteError("Error running command " + command);
-                    Logit.WriteError(fileHelper.runCommandError);
-                    return;
-                }
-                // Step 2: Create list of possible references starting with digit
-                //  -o:%2\convert\listOfBookNamesStartingWithDigit.html %2\source\BookNames.xml XSLT\step2.xsl
-                command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" 2>> \"{4}\"", saxonJar, temp2name, bookNames,
-                    GetXslt("step2.xsl", usfxDirectory), logFile);
-                if (!fileHelper.RunCommand(command, usfxDirectory))
-                {
-                    Logit.WriteError("Error running command " + command);
-                    Logit.WriteError(fileHelper.runCommandError);
-                    return;
-                }
-                
-                if (languageCode == "pes")
-                {
-                    // step 3.1 Persian fixHyphen fix space around hypen error
-                    // -o:%2\convert\%1.step3.1Persian.xml c:\d\Kahuna\%2\source\%1 XSLT\step3.1Persian.xsl pathToFiles="C:\d\kahuna\" bookNamesFile="listOfBookNames.html"  bookNamesXml="BookNames.xml"
-                    command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" pathToFiles=\"{7}\" bookNamesFile=\"{4}\" bookNamesXml=\"{5}\" 2>> \"{6}\"",
-                        saxonJar, temp3name,
-                        fileName, GetXslt("step3.1Persian.xsl", usfxDirectory), temp1name, bookNames, logFile, usfxDirectory);
-                    if (!fileHelper.RunCommand(command, usfxDirectory))
-                    {
-                        Logit.WriteError("Error running command " + command);
-                        Logit.WriteError(fileHelper.runCommandError);
-                        return;
-                    }
-                    // step 3.2 Persian fix chapter verse error
-                    // -o:%2\convert\%1.step3.2Persian.xml %2\convert\%1.step3.1Persian.xml XSLT\step3.2Persian.xsl pathToFiles="C:\d\kahuna\" bookNamesFile="listOfBookNames.html"  bookNamesXml="BookNames.xml"
-                    command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" pathToFiles=\"{7}\" bookNamesFile=\"{4}\" bookNamesXml=\"{5}\" 2>> \"{6}\"",
-                        saxonJar, temp4name,
-                        temp3name, GetXslt("step3.2Persian.xsl", usfxDirectory), temp1name, bookNames, logFile, usfxDirectory);
-                    if (!fileHelper.RunCommand(command, usfxDirectory))
-                    {
-                        Logit.WriteError("Error running command " + command);
-                        Logit.WriteError(fileHelper.runCommandError);
-                        return;
-                    }
-
-                    Utils.DeleteFile(temp3name);
-
-                    // step 3.3 - Persian mark fully identified canonical references
-                    // -o:%2\convert\%1.step3.3Persian.xml %2\convert\%1.step3.2Persian.xml XSLT\step3.3Persian.xsl pathToFiles="C:\d\kahuna\" bookNamesFile="listOfBookNames.html"  bookNamesXml="BookNames.xml"
-                    command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" pathToFiles=\"{7}\" bookNamesFile=\"{4}\" bookNamesXml=\"{5}\" 2>> \"{6}\"",
-                        saxonJar, temp3name,
-                        temp4name, GetXslt("step3.3Persian.xsl", usfxDirectory), temp1name, bookNames, logFile, usfxDirectory);
-                    if (!fileHelper.RunCommand(command, usfxDirectory))
-                    {
-                        Logit.WriteError("Error running command " + command);
-                        Logit.WriteError(fileHelper.runCommandError);
-                        return;
-                    }
-
-                    Utils.DeleteFile(temp4name);
-
-                    // step 3.4 - Persian  find Psalm 18
-                    // -o:%2\convert\%1.step3.4Persian.xml %2\convert\%1.step3.3Persian.xml XSLT\step3.4Persian.xsl pathToFiles="C:\d\kahuna\" bookNamesFile="listOfBookNames.html"  bookNamesXml="BookNames.xml"
-                    command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" pathToFiles=\"{7}\" bookNamesFile=\"{4}\" bookNamesXml=\"{5}\" 2>> \"{6}\"",
-                        saxonJar, temp4name,
-                        temp3name, GetXslt("step3.4Persian.xsl", usfxDirectory), temp1name, bookNames, logFile, usfxDirectory);
-                    if (!fileHelper.RunCommand(command, usfxDirectory))
-                    {
-                        Logit.WriteError("Error running command " + command);
-                        Logit.WriteError(fileHelper.runCommandError);
-                        return;
-                    }
-
-                    Utils.DeleteFile(temp3name);
-
-                    // step 3.5 - Persian fix verse bridge
-                    // -o:%2\convert\%1.step3.xml          %2\convert\%1.step3.4Persian.xml XSLT\step3.5Persian.xsl pathToFiles="C:\d\kahuna\" bookNamesFile="listOfBookNames.html"  bookNamesXml="BookNames.xml"
-                    command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" pathToFiles=\"{7}\" bookNamesFile=\"{4}\" bookNamesXml=\"{5}\" 2>> \"{6}\"",
-                        saxonJar, temp3name,
-                        temp4name, GetXslt("step3.5Persian.xsl", usfxDirectory), temp1name, bookNames, logFile, usfxDirectory);
-                    if (!fileHelper.RunCommand(command, usfxDirectory))
-                    {
-                        Logit.WriteError("Error running command " + command);
-                        Logit.WriteError(fileHelper.runCommandError);
-                        return;
-                    }
-
-                    Utils.DeleteFile(temp4name);
-                }
-                else
-                {
-                    // Step 3: Mark fully identified canonical references
-                    //  -o:%2\convert\%1.step3.xml c:\d\Kahuna\%2\source\%1 XSLT\step3.xsl pathToFiles="C:\d\kahuna\" bookNamesFile="listOfBookNames.html"  bookNamesXml="BookNames.xml"
-                    command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" pathToFiles=\"{7}\" bookNamesFile=\"{4}\" bookNamesXml=\"{5}\" 2>> \"{6}\"",
-                        saxonJar, temp3name,
-                        fileName, GetXslt("step3.xsl", usfxDirectory), temp1name, bookNames, logFile, usfxDirectory);
-                    if (!fileHelper.RunCommand(command, usfxDirectory))
-                    {
-                        Logit.WriteError("Error running command " + command);
-                        Logit.WriteError(fileHelper.runCommandError);
-                        return;
-                    }
-                }
-                // Step 4: Correct error with (2) parenthesis
-                //  -o:%2\convert\%1.step4.xml %2\convert\%1.step3.xml XSLT\step4.xsl
-                command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" numberedBookNamesFile=\"{4}\" 2>> \"{5}\"",
-                    saxonJar, temp4name, temp3name,
-                    GetXslt("step4.xsl", usfxDirectory), "listOfBookNamesStartingWithDigit.html", logFile);
-                if (!fileHelper.RunCommand(command, usfxDirectory))
-                {
-                    Logit.WriteError("Error running command " + command);
-                    Logit.WriteError(fileHelper.runCommandError);
-                    return;
-                }
-                // Step 5: Add missing book and chapter numbers to canonical references
-                // -o:%2\convert\%1.step5.xml %2\convert\%1.step4.xml XSLT\step5.xsl
-                command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" 2>> \"{4}\"", saxonJar, temp5name, temp4name,
-                    GetXslt("step5.xsl", usfxDirectory), logFile);
-                if (!fileHelper.RunCommand(command, usfxDirectory))
-                {
-                    Logit.WriteError("Error running command " + command);
-                    Logit.WriteError(fileHelper.runCommandError);
-                    return;
-                }
-                // Step 6: OBA 8.1 fix
-                // -o:%2\convert\%1.step6.xml %2\convert\%1.step5.xml XSLT\step6.xsl
-                command = String.Format("java -jar \"{0}\" -o:\"{1}\" -s:\"{2}\" -xsl:\"{3}\" 2>> \"{4}\"", saxonJar, temp6name, temp5name,
-                    GetXslt("step6.xsl", usfxDirectory), logFile);
-                if (!fileHelper.RunCommand(command, usfxDirectory))
-                {
-                    Logit.WriteError("Error running command " + command);
-                    Logit.WriteError(fileHelper.runCommandError);
-                    return;
-                }
-                //Logit.WriteLine(DateTime.Now.ToString() + " Replacing usfx.xml");
-                
-                // Replace the original usfx.xml with the new file.
-                if (File.Exists(fileName) && File.Exists(temp6name))
-                {
-                    File.Replace(temp6name, fileName, fileName + ".bak");
-                }
-                else
-                {
-                    if (File.Exists(logFile))
-                    {
-                        StreamReader sr = new StreamReader(logFile);
-                        string s = sr.ReadLine();
-                        while (s != null)
-                        {
-                            Logit.WriteError(s);
-                            s = sr.ReadLine();
-                        }
-                        sr.Close();
-                    }
-                    return;
-                }
-
-                // Get rid of temporary files that are no longer needed.
-                
-                Utils.DeleteFile(tempAname);
-                Utils.DeleteFile(temp0name);
-                Utils.DeleteFile(temp1name);
-                Utils.DeleteFile(temp2name);
-                Utils.DeleteFile(temp3name);
-                Utils.DeleteFile(temp4name);
-                Utils.DeleteFile(temp5name);
-                Utils.DeleteFile(temp6name);
-                //Utils.DeleteFile(temp7name);
-                Utils.DeleteFile(fileName + ".bak");
-                Utils.DeleteFile(Path.Combine(usfxDirectory, "step0.xsl"));
-                Utils.DeleteFile(Path.Combine(usfxDirectory, "step1.xsl"));
-                Utils.DeleteFile(Path.Combine(usfxDirectory, "step2.xsl"));
-                Utils.DeleteFile(Path.Combine(usfxDirectory, "step3.xsl"));
-                Utils.DeleteFile(Path.Combine(usfxDirectory, "step4.xsl"));
-                Utils.DeleteFile(Path.Combine(usfxDirectory, "step5.xsl"));
-                Utils.DeleteFile(Path.Combine(usfxDirectory, "step6.xsl"));
-                
-                //Utils.DeleteFile(Path.Combine(usfxDirectory, "step7.xsl"));
-                // Utils.DeleteFile(Path.Combine(usfxDirectory, "source-target.xml"));
-            }
-            catch (Exception ex)
-            {
-                Logit.WriteError("Error calling Java to add ref tags to " + fileName);
-                Logit.WriteError(ex.Message);
-            }
-        }
-        */
-
         protected string level;
         protected string style;
         protected string sfm;
@@ -5469,7 +5072,6 @@ namespace WordSend
         private StringBuilder stdRef;
         private StringBuilder vernacularRef;
         private StringBuilder before;
-        private StringBuilder after;
         private StringBuilder numberString;
         private string foundBook;
         private int parseReferenceState;
@@ -5773,6 +5375,28 @@ namespace WordSend
             }
         }
 
+        public string normalbcv(string book, string chapter, string verse)
+        {
+            int vsnum = 0;
+            char[] dash = { '-' };
+            string[] verses = verse.Split(dash);
+
+            book = book.Replace("\u200f" /* Right-to-left mark */, "");
+            chapter = chapter.Replace("\u200f" /* Right-to-left mark */, "");
+            verse = verse.Replace("\u200f" /* Right-to-left mark */, "").Replace("a", "").Replace("A", "");
+            verses = verse.Split(dash);
+            verse = verses[0].Replace("b", "").Replace("B", "");
+            if (verses[0].EndsWith("b") || (verses[0].EndsWith("B")))
+            {
+                if (verses.Length > 1)
+                {   // Standard verse is one more than the number ending with b, which makes sense in the common case of v 1a, followed by v 1b-2 or similar.
+                    if (Int32.TryParse(verse, out vsnum))
+                        verse = (vsnum + 1).ToString();
+                }
+            }
+            return book + "." + chapter + "." + verse;
+        }
+
         public void ReadRefTags(string usfxName)
         {
             int attributeIndex;
@@ -5825,7 +5449,7 @@ namespace WordSend
                             if (usfx.Name == "v")
                             {
                                 vs = id;
-                                xw.WriteAttributeString("bcv", (bookTLA + "." + chap + "." + vs).Replace("\u200f", ""));
+                                xw.WriteAttributeString("bcv", normalbcv(bookTLA, chap, vs));
                             }
                             if (usfx.IsEmptyElement)
                                 xw.WriteEndElement();
@@ -5916,6 +5540,7 @@ namespace WordSend
                         switch(usfx.Name)
                         {
                             case "x":
+                            case "xt":
                             case "f":
                             case "r":
                             case "fe":

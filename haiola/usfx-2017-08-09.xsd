@@ -328,7 +328,8 @@
 								<xs:simpleType>
 									<xs:restriction base="xs:string">
 										<xs:pattern
-											value="[\p{Lu}\d][\p{Lu}\d][\p{Lu}\d]\.\d+(\.\d+)?"/>
+											value="[\p{Lu}\d][\p{Lu}\d][\p{Lu}\d]\.\d+(\.\d+)?(\-(([\p{Lu}\d]\p{Lu}[\p{Lu}\d]\.)?\d+\.)?\d+)?"
+										/>
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:attribute>
