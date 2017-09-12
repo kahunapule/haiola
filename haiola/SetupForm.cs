@@ -26,6 +26,8 @@ namespace WordSend
                 haiola.Version.date, haiola.Version.time, haiola.Version.year); 
             extensionLabel.Text = hf.plugin.PluginMessage();
             swordSuffixTextBox.Text = hf.globe.m_swordSuffix;
+            usfm3figTagsCheckBox.Checked = hf.globe.generateUsfm3Fig;
+
         }
 
 
@@ -74,6 +76,7 @@ namespace WordSend
         private void closeButton_Click(object sender, EventArgs e)
         {
             hf.globe.m_swordSuffix = swordSuffixTextBox.Text;
+            hf.globe.generateUsfm3Fig = usfm3figTagsCheckBox.Checked;
             hf.globe.xini.Write();
             Close();
         }
@@ -98,5 +101,6 @@ namespace WordSend
             }
 
         }
+
     }
 }

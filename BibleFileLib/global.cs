@@ -48,6 +48,12 @@ namespace WordSend
             set { xini.WriteBool("downloadFcbhAudio", value); }
         }
 
+        public bool generateUsfm3Fig
+        {
+            get { return xini.ReadBool("generateUsfm3Fig", false); }
+            set { xini.WriteBool("generateUsfm3Fig", value); }
+        }
+
 
         protected string GuessParatextProjectsDir()
         {

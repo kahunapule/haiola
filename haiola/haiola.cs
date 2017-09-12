@@ -393,7 +393,7 @@ namespace haiola
             Logit.OpenFile(logFile);
             Logit.UpdateStatus = updateConversionProgress;
             Logit.GUIWriteString = showMessageString;
-            SFConverter.scripture = new Scriptures(globe.projectOptions);
+            SFConverter.scripture = new Scriptures(globe);
             Logit.loggedError = false;
             Logit.loggedWarning = false;
             // Read a copy of BookNames.xml copied from the source USFM directory, if any.
@@ -1807,7 +1807,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 Logit.OpenFile(logFile);
                 Logit.GUIWriteString = showMessageString;
                 Logit.UpdateStatus = updateConversionProgress;
-                SFConverter.scripture = new Scriptures(globe.projectOptions);
+                SFConverter.scripture = new Scriptures(globe);
                 Logit.loggedError = false;
                 Logit.loggedWarning = false;
                 SFConverter.scripture.USFXtoUSFM(UsfxName, UsfmDir, globe.projectOptions.translationId + ".usfm", true, globe.projectOptions);
@@ -1885,14 +1885,14 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 Utils.DeleteDirectory(usfmDir);
                 fileHelper.EnsureDirectory(usfmDir);
                 fileHelper.CopyFile(bookNamesFile, Path.Combine(usfmDir, "BookNames.xml"), true);
-                SFConverter.scripture = new Scriptures(globe.projectOptions);
+                SFConverter.scripture = new Scriptures(globe);
                 SFConverter.scripture.USFXtoUSFM(usfxName, usfmDir, globe.projectOptions.translationId + ".usfm", false, globe.projectOptions);
 
                 usfmDir = Path.Combine(globe.outputProjectDirectory, "extendedusfm");
                 Utils.DeleteDirectory(usfmDir);
                 fileHelper.EnsureDirectory(usfmDir);
                 fileHelper.CopyFile(bookNamesFile, Path.Combine(usfmDir, "BookNames.xml"), true);
-                SFConverter.scripture = new Scriptures(globe.projectOptions);
+                SFConverter.scripture = new Scriptures(globe);
                 SFConverter.scripture.USFXtoUSFM(usfxName, usfmDir, globe.projectOptions.translationId + ".usfm", true, globe.projectOptions);
 
                 // Recreate USFX from USFM, this time with <ve/> tags and in canonical order
@@ -2009,7 +2009,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
                                 Logit.OpenFile(logFile);
                                 Logit.GUIWriteString = showMessageString;
                                 Logit.UpdateStatus = updateConversionProgress;
-                                SFConverter.scripture = new Scriptures(globe.projectOptions);
+                                SFConverter.scripture = new Scriptures(globe);
                                 Logit.loggedError = false;
                                 Logit.loggedWarning = false;
                                 currentConversion = "converting from USFX to USFM";
@@ -2413,7 +2413,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
                     currentConversion = "Reading normalized USFM";
                     string logFile = Path.Combine(globe.outputProjectDirectory, "WordMLConversionReport.txt");
                     Logit.OpenFile(logFile);
-                    SFConverter.scripture = new Scriptures(globe.projectOptions);
+                    SFConverter.scripture = new Scriptures(globe);
                     string seedFile = Path.Combine(globe.inputProjectDirectory, "Scripture.xml");
                     if (!File.Exists(seedFile))
                     {

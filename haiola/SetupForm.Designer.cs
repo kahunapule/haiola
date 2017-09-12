@@ -42,6 +42,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.findParatext8Button = new System.Windows.Forms.Button();
             this.paratext8DirectoryLabel = new System.Windows.Forms.Label();
+            this.usfm3figTagsCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // projectDirectoryLabel
@@ -165,11 +166,22 @@
             this.paratext8DirectoryLabel.TabIndex = 11;
             this.paratext8DirectoryLabel.Text = "Please select your Paratext 8 project directory";
             // 
+            // usfm3figTagsCheckBox
+            // 
+            this.usfm3figTagsCheckBox.AutoSize = true;
+            this.usfm3figTagsCheckBox.Location = new System.Drawing.Point(309, 125);
+            this.usfm3figTagsCheckBox.Name = "usfm3figTagsCheckBox";
+            this.usfm3figTagsCheckBox.Size = new System.Drawing.Size(164, 17);
+            this.usfm3figTagsCheckBox.TabIndex = 12;
+            this.usfm3figTagsCheckBox.Text = "Generate USFM 3 figure tags";
+            this.usfm3figTagsCheckBox.UseVisualStyleBackColor = true;
+            // 
             // SetupForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(576, 292);
+            this.Controls.Add(this.usfm3figTagsCheckBox);
             this.Controls.Add(this.paratext8DirectoryLabel);
             this.Controls.Add(this.findParatext8Button);
             this.Controls.Add(this.label1);
@@ -206,5 +218,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button findParatext8Button;
         private System.Windows.Forms.Label paratext8DirectoryLabel;
+        private System.Windows.Forms.CheckBox usfm3figTagsCheckBox;
     }
 }

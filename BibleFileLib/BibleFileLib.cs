@@ -1778,6 +1778,7 @@ namespace WordSend
         public string copyright;
         public string caption;
         public string reference;
+        public bool oldSyntax;
 
         public void clear()
         {
@@ -1885,50 +1886,53 @@ namespace WordSend
         {
             get
             {
-                StringBuilder sb = new StringBuilder(caption + "|");
-                /* USFM 2.4:
-                return description + "|" + catalog + "|" + size + "|" + location +
-                    "|" + copyright + "|" + caption + "|" + reference;
-                   USFM 3.0:
-                */
-                if (!string.IsNullOrEmpty(description))
-                {
-                    sb.Append("alt=\"");
-                    sb.Append(description);
-                    sb.Append("\" ");
-                }
-                sb.Append("src=\"");
-                sb.Append(catalog);
-                sb.Append("\"");
-                if (string.IsNullOrEmpty(size))
-                {   // Required attribute; default to column size
-                    sb.Append(" size=\"col\"");
+                if (oldSyntax)
+                {   // USFM 2.4:
+                    return description + "|" + catalog + "|" + size + "|" + location +
+                        "|" + copyright + "|" + caption + "|" + reference;
                 }
                 else
-                {
-                    sb.Append(" size=\"");
-                    sb.Append(size);
+                {   // USFM 3.0:
+                    StringBuilder sb = new StringBuilder(caption + "|");
+                    if (!string.IsNullOrEmpty(description))
+                    {
+                        sb.Append("alt=\"");
+                        sb.Append(description);
+                        sb.Append("\" ");
+                    }
+                    sb.Append("src=\"");
+                    sb.Append(catalog);
                     sb.Append("\"");
+                    if (string.IsNullOrEmpty(size))
+                    {   // Required attribute; default to column size
+                        sb.Append(" size=\"col\"");
+                    }
+                    else
+                    {
+                        sb.Append(" size=\"");
+                        sb.Append(size);
+                        sb.Append("\"");
+                    }
+                    if (!string.IsNullOrEmpty(location))
+                    {
+                        sb.Append(" loc=\"");
+                        sb.Append(location);
+                        sb.Append("\"");
+                    }
+                    if (!string.IsNullOrEmpty(copyright))
+                    {
+                        sb.Append(" copy=\"");
+                        sb.Append(copyright);
+                        sb.Append("\"");
+                    }
+                    if (!string.IsNullOrEmpty(reference))
+                    {
+                        sb.Append(" ref=\"");
+                        sb.Append(reference);
+                        sb.Append("\"");
+                    }
+                    return sb.ToString();
                 }
-                if (!string.IsNullOrEmpty(location))
-                {
-                    sb.Append(" loc=\"");
-                    sb.Append(location);
-                    sb.Append("\"");
-                }
-                if (!string.IsNullOrEmpty(copyright))
-                {
-                    sb.Append(" copy=\"");
-                    sb.Append(copyright);
-                    sb.Append("\"");
-                }
-                if (!string.IsNullOrEmpty(reference))
-                {
-                    sb.Append(" ref=\"");
-                    sb.Append(reference);
-                    sb.Append("\"");
-                }
-                return sb.ToString();
             }
             set
             {
@@ -2142,6 +2146,13 @@ namespace WordSend
         public Scriptures(Options options)
         {
             projectOptions = options;
+            Initialize();
+        }
+
+        public Scriptures(global gb)
+        {
+            globe = gb;
+            projectOptions = globe.projectOptions;
             Initialize();
         }
 
@@ -5865,6 +5876,9 @@ namespace WordSend
 
         const int STYLESTACKSIZE = 64;
 
+        public global globe;
+
+
         public void USFXtoUSFM(string inFileName, string outDir, string outFileName, bool extendUsfm, Options m_options)
 		{
 			int i;
@@ -6127,6 +6141,7 @@ namespace WordSend
                                     {
                                         if (usfxFile.Name == "fig")
                                         {
+                                            fig.oldSyntax = !globe.generateUsfm3Fig;
                                             usfmFile.WriteSFM("fig", "", fig.figSpec, false, false);
                                             usfmFile.WriteSFM("fig*", "", "", false, false);
                                             inFig = false;

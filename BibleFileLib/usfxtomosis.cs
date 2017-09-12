@@ -1234,10 +1234,10 @@ namespace WordSend
                                     WriteMosisElementString("lb", "");
                                     break;
                                 case "bk":
-                                    if (inNote)
+                                    // if (inNote)
                                         StartElementWithAttribute("hi", "type", "italic");
-                                    else
-                                        StartElementWithAttribute("reference", "type", "x-bookName");
+                                    // else NOTE: <reference> tag not used here because embedded reference within this element fails OSIS validation. Real case: pma.
+                                    //    StartElementWithAttribute("reference", "type", "x-bookName");
                                     break;
                                 case "f":   //  footnote
                                     if (inLineGroup && !inPoetryLine)
