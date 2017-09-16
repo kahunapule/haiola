@@ -4167,6 +4167,7 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
                 nextChapterLinkTextBox.Font = newFont;
                 hideNavigationPanesTextBox.Font = newFont;
                 showNavigationTextBox.Font = newFont;
+                numberSystemLabel.Font = newFont;
             }
             catch (Exception ex)
             {

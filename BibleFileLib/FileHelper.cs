@@ -558,9 +558,9 @@ namespace WordSend
                 int n;
                 foreach (char c in s)
                 {
-                    if (Char.IsDigit(c))
+                    n = ((int)c) - ((int)'0');
+                    if ((n >= 0) && (n <= 9))
                     {
-                        n = ((int)c) - ((int)'0');
                         sb.Append(newDigits[n]);
                     }
                     else
