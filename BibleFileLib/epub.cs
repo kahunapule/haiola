@@ -572,7 +572,7 @@ namespace WordSend
             htm.WriteLine(" <nav epub:type=\"toc\" id=\"toc\">");
             htm.WriteLine("  <h1 class=\"title\">{0}</h1>", EscapeHtml(translationName));
             htm.WriteLine("  <ol class='nav'>");
-            if ((copyrightLinkHTML != null) && (copyrightLinkHTML.Trim().Length > 0) && !projectOptions.silentCopyright)
+            if ((copyrightLinkHTML != null) && (copyrightLinkHTML.Trim().Length > 0) && !projectOptions.silentCopyright && !projectOptions.anonymous)
             {
                 htm.WriteLine("   <li>{0}</li>", copyrightLinkHTML);
             }

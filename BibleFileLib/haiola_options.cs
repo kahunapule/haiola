@@ -134,6 +134,12 @@ namespace WordSend
             set { ini.WriteBool("ccbynd", value); }
         }
 
+        public bool anonymous
+        {
+            get { return (ini.ReadBool("anonymous", false)); }
+            set { ini.WriteBool("anonymous", value); }
+        }
+
         public bool done
         {
             get { return (ini.ReadBool("done", false)); }
@@ -611,13 +617,13 @@ namespace WordSend
 
         public string contentCreator
 		{
-			get { return ini.ReadString("contentCreator", "Wycliffe Bible Translators"); }
+			get { return anonymous ? "anonymous" : ini.ReadString("contentCreator", String.Empty); }
 			set { ini.WriteString("contentCreator", value.Trim()); }
 		}
 
 		public string contributor
 		{
-			get { return ini.ReadString("contributor", String.Empty); }
+			get { return anonymous ? "anonymous" : ini.ReadString("contributor", String.Empty); }
 			set { ini.WriteString("contributor", value.Trim()); }
 		}
 
@@ -800,19 +806,19 @@ namespace WordSend
 
 		public string copyrightOwner
 		{
-			get { return ini.ReadString("copyrightOwner", String.Empty); }
+			get { return anonymous?"anonymous":ini.ReadString("copyrightOwner", String.Empty); }
 			set { ini.WriteString("copyrightOwner", value.Trim()); }
 		}
 
         public string copyrightOwnerAbbrev
         {
-            get { return ini.ReadString("copyrightOwnerAbbrev", String.Empty); }
+            get { return anonymous ? String.Empty : ini.ReadString("copyrightOwnerAbbrev", String.Empty); }
             set { ini.WriteString("copyrightOwnerAbbrev", value.Trim()); }
         }
 
         public string copyrightOwnerUrl
         {
-            get { return ini.ReadString("copyrightOwnerUrl", String.Empty); }
+            get { return anonymous ? String.Empty : ini.ReadString("copyrightOwnerUrl", String.Empty); }
             set { ini.WriteString("copyrightOwnerUrl", value.Trim()); }
         }
 

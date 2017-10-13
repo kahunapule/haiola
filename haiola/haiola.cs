@@ -484,6 +484,10 @@ namespace haiola
             {
                 longCopyrightMessage = shortCopyrightMessage = copyrightLink = String.Empty;
             }
+            else if (globe.projectOptions.anonymous)
+            {
+                longCopyrightMessage = shortCopyrightMessage = copyrightLink = "© " + globe.projectOptions.copyrightYears + ". ";
+            }
             else if (globe.projectOptions.copyrightOwnerAbbrev.Length > 0)
             {
                 shortCopyrightMessage = "© " + globe.projectOptions.copyrightYears + " " + globe.projectOptions.copyrightOwnerAbbrev;
@@ -603,49 +607,43 @@ namespace haiola
             if (!String.IsNullOrEmpty(globe.projectOptions.lwcDescription))
                 copr.Append(String.Format("<h2>{0}</h2>\n", usfxToHtmlConverter.EscapeHtml(globe.projectOptions.lwcDescription)));
             copr.Append(String.Format("<p>{0}<br />\n",copyrightLink));
-            if (!String.IsNullOrEmpty(globe.projectOptions.rightsStatement))
-                copr.Append(String.Format("{0}<br />\n", globe.projectOptions.rightsStatement));
             copr.Append(String.Format("Language: <a href='http://www.ethnologue.org/language/{0}' class='{2}' target='_blank'>{1}",
                 globe.projectOptions.languageId, globe.projectOptions.languageName, fontClass));
             if (globe.projectOptions.languageName != globe.projectOptions.languageNameInEnglish)
                 copr.Append(String.Format(" ({0})", usfxToHtmlConverter.EscapeHtml(globe.projectOptions.languageNameInEnglish)));
             copr.Append("</a><br />\n");
             if (!String.IsNullOrEmpty(globe.projectOptions.dialect))
-                copr.Append(String.Format("Dialect: {0}<br />", usfxToHtmlConverter.EscapeHtml(globe.projectOptions.dialect)));
-            /*
-            if (!String.IsNullOrEmpty(globe.m_options.printPublisher))
-                copr.Append(String.Format("Primary print publisher: {0}<br />\n", usfxToHtmlConverter.EscapeHtml(globe.m_options.printPublisher)));
-            if (!String.IsNullOrEmpty(globe.m_options.electronicPublisher))
-                copr.Append(String.Format("Electronic publisher: {0}<br />\n", usfxToHtmlConverter.EscapeHtml(globe.m_options.electronicPublisher)));
-            */
-            if (!String.IsNullOrEmpty(globe.projectOptions.contentCreator))
+                copr.Append(String.Format("Dialect: {0}<br />\n", usfxToHtmlConverter.EscapeHtml(globe.projectOptions.dialect)));
+            if (!(globe.projectOptions.anonymous || String.IsNullOrEmpty(globe.projectOptions.contentCreator)))
                 copr.Append(String.Format("Translation by: {0}<br />\n", usfxToHtmlConverter.EscapeHtml(globe.projectOptions.contentCreator)));
-            if ((!String.IsNullOrEmpty(globe.projectOptions.contributor)) && (globe.projectOptions.contentCreator != globe.projectOptions.contributor))
+            if ((!globe.projectOptions.anonymous) && (!String.IsNullOrEmpty(globe.projectOptions.contributor)) && (globe.projectOptions.contentCreator != globe.projectOptions.contributor))
                 copr.Append(String.Format("Contributor: {0}<br />\n", usfxToHtmlConverter.EscapeHtml(globe.projectOptions.contributor)));
-            copr.Append("</p>\n");
             if (!String.IsNullOrEmpty(globe.projectOptions.promoHtml))
-                copr.Append(globe.projectOptions.promoHtml);
+                copr.Append("<br />\n" + globe.projectOptions.promoHtml);
+            if (!String.IsNullOrEmpty(globe.projectOptions.rightsStatement))
+                copr.Append("<br />\n" + globe.projectOptions.rightsStatement);
+            copr.Append("</p>\n");
             if (globe.projectOptions.ccbyndnc)
             {
                 copr.Append(@"<p>This translation is made available to you under the terms of the
 <a href='http://creativecommons.org/licenses/by-nc-nd/4.0/'>Creative Commons Attribution-Noncommercial-No Derivatives license 4.0.</a></p>
 <p>You may share and redistribute this Bible translation or extracts from it in any format, provided that:</p>
 <ul>
-<li>You include the above copyright information.</li>
+<li>You include the above copyright and source information.</li>
 <li>You do not sell this work for a profit.</li>
-<li>You do not change any of the actual words or punctuation of the Scriptures.</li>
+<li>You do not change any of the words or punctuation of the Scriptures.</li>
 </ul>
 <p>Pictures included with Scriptures and other documents on this site are licensed just for use with those Scriptures and documents.
 For other uses, please contact the respective copyright owners.</p>
 ");
             }
-            if (globe.projectOptions.ccbysa)
+            else if (globe.projectOptions.ccbysa)
             {
                 copr.Append(@"<p>This translation is made available to you under the terms of the
 <a href='http://creativecommons.org/licenses/by-sa/4.0/'>Creative Commons Attribution Share-Alike license 4.0.</a></p>
 <p>You have permission to share and redistribute this Bible translation in any format and to make reasonable revisions and adaptations of this translation, provided that:</p>
 <ul>
-<li>You include the above copyright information.</li>
+<li>You include the above copyright and source information.</li>
 <li>If you make any changes to the text, you must indicate that you did so in a way that makes it clear that the original licensor is not necessarily endorsing your changes.</li>
 <li>If you redistribute this text, you must distribute your contributions under the same license as the original.</li>
 </ul>
@@ -654,20 +652,20 @@ For other uses, please contact the respective copyright owners.</p>
 <p>Note that in addition to the rules above, revising and adapting God's Word involves a great responsibility to be true to God's Word. See Revelation 22:18-19.</p>
 ");
             }
-            if (globe.projectOptions.ccbynd)
+            else if (globe.projectOptions.ccbynd)
             {
                 copr.Append(@"<p>This translation is made available to you under the terms of the
 <a href='http://creativecommons.org/licenses/by-nd/4.0/'>Creative Commons Attribution-No Derivatives license 4.0.</a></p>
 <p>You may share and redistribute this Bible translation or extracts from it in any format, provided that:</p>
 <ul>
-<li>You include the above copyright information.</li>
+<li>You include the above copyright and source information.</li>
 <li>You do not make any derivative works that change any of the actual words or punctuation of the Scriptures.</li>
 </ul>
 <p>Pictures included with Scriptures and other documents on this site are licensed just for use with those Scriptures and documents.
 For other uses, please contact the respective copyright owners.</p>
 ");
             }
-            copr.Append(String.Format("<p>{0}</p>\n", globe.projectOptions.contentUpdateDate.ToString("yyyy-MM-dd")));
+            copr.Append(String.Format("<p><br/>{0}</p>\n", globe.projectOptions.contentUpdateDate.ToString("yyyy-MM-dd")));
             return copr.ToString();
         }
 
@@ -1024,32 +1022,40 @@ For other uses, please contact the respective copyright owners.</p>
             xml.WriteElementString("dc:publisher", globe.projectOptions.electronicPublisher);
             string rights = String.Empty;
             string shortRights = globe.projectOptions.translationId + " Scripture ";
-            string copyright = "Copyright © " + globe.projectOptions.copyrightYears + " " +  globe.projectOptions.copyrightOwner;
+            string copyright;
             if (globe.projectOptions.publicDomain)
             {
                 copyright = rights = "Public Domain";
                 shortRights = shortRights + "is in the Public Domain.";
             }
-            else if (globe.projectOptions.ccbyndnc)
+            else if (globe.projectOptions.anonymous)
+            {
+                copyright = "Copyright © " + globe.projectOptions.copyrightYears + ". ";
+            }
+            else
+            {
+                copyright = "Copyright © " + globe.projectOptions.copyrightYears + " " + globe.projectOptions.copyrightOwner;
+            }
+            copyright += Environment.NewLine + globe.projectOptions.rightsStatement + Environment.NewLine;
+            if (globe.projectOptions.ccbyndnc)
             {
                 rights = copyright + @"
-This work is made available to you under the terms of the Creative Commons Attribution-Noncommercial-No Derivative Works license at http://creativecommons.org/licenses/by-nc-nd/4.0/.
-You may convert the text to different file formats or make extracts, as long as you don't change any of the text or punctuation of the content." +
-                Environment.NewLine + globe.projectOptions.rightsStatement;
+This work is made available to you under the terms of the Creative Commons Attribution-Noncommercial-No Derivative Works license at http://creativecommons.org/licenses/by-nc-nd/4.0/." +
+                Environment.NewLine;
                 shortRights = shortRights + copyright + " Creative Commons BY-NC-ND license.";
             }
             else if (globe.projectOptions.ccbynd)
             {
                 rights = copyright + @"
 This work is made available to you under the terms of the Creative Commons Attribution-No Derivative Works license at http://creativecommons.org/licenses/by-nd/4.0/." +
-                Environment.NewLine + globe.projectOptions.rightsStatement;
+                Environment.NewLine;
                 shortRights = shortRights + copyright + " Creative Commons BY-ND license.";
             }
             else if (globe.projectOptions.ccbysa)
             {
                 rights = copyright + @"
 This work is made available to you under the terms of the Creative Commons Attribution-Share-Alike license at http://creativecommons.org/licenses/by-sa/4.0/." +
-                Environment.NewLine + globe.projectOptions.rightsStatement;
+                Environment.NewLine;
                 shortRights = shortRights + copyright + " Creative Commons BY-SA license.";
             }
             else if (globe.projectOptions.otherLicense)
@@ -1061,9 +1067,8 @@ This work is made available to you under the terms of the Creative Commons Attri
             {
                 rights = copyright + " All rights reserved.";
                 shortRights = shortRights + rights;
-                if (globe.projectOptions.rightsStatement.Length > 0)
-                    rights = rights + Environment.NewLine + globe.projectOptions.rightsStatement;
             }
+            rights = rights + globe.projectOptions.rightsStatement;
             xml.WriteElementString("dc:rights", rights);
             xml.WriteElementString("dc:identifier", String.Empty);
             xml.WriteElementString("dc:type", String.Empty);
@@ -2198,34 +2203,27 @@ their generosity, people like you can open up the Bible and hear from God no mat
             toMosis.swordDir = Path.Combine(globe.dataRootDir, "sword");
             toMosis.swordRestricted = Path.Combine(globe.dataRootDir, "swordRestricted");
             toMosis.copyrightNotice = globe.projectOptions.publicDomain ? "public domain" : "Copyright © " + globe.projectOptions.copyrightYears + " " + globe.projectOptions.copyrightOwner;
+            toMosis.rightsNotice = globe.projectOptions.rightsStatement + "<br/> ";
             if (globe.projectOptions.publicDomain)
             {
-                toMosis.rightsNotice = @"This work is in the Public Domain. That means that it is not copyrighted.
+                toMosis.rightsNotice += @" This work is in the Public Domain. That means that it is not copyrighted.
  It is still subject to God's Law concerning His Word, including the Great Commission (Matthew 28:18-20).
 ";
             }
             else if (globe.projectOptions.ccbyndnc)
             {
-                toMosis.rightsNotice = @"This Bible translation is made available to you under the terms of the
+                toMosis.rightsNotice += @" This Bible translation is made available to you under the terms of the
  Creative Commons Attribution-Noncommercial-No Derivative Works license (http://creativecommons.org/licenses/by-nc-nd/4.0/).";
             }
             else if (globe.projectOptions.ccbysa)
             {
-                toMosis.rightsNotice = @"This Bible translation is made available to you under the terms of the
+                toMosis.rightsNotice += @" This Bible translation is made available to you under the terms of the
  Creative Commons Attribution-Share-Alike license (http://creativecommons.org/licenses/by-sa/4.0/).";
             }
             else if (globe.projectOptions.ccbynd)
             {
-                toMosis.rightsNotice = @"This Bible translation is made available to you under the terms of the
+                toMosis.rightsNotice += @" This Bible translation is made available to you under the terms of the
  Creative Commons Attribution-No Derivatives license (http://creativecommons.org/licenses/by-na/4.0/).";
-            }
-            else
-            {
-                toMosis.rightsNotice = String.Empty;
-            }
-            if (globe.projectOptions.rightsStatement.Length > 0)
-            {
-                toMosis.rightsNotice += globe.projectOptions.rightsStatement;
             }
             toMosis.infoPage = copyrightPermissionsStatement();
             string logFile = Path.Combine(globe.outputProjectDirectory, "MosisConversionReport.txt");
@@ -3111,6 +3109,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
             CCByNdRadioButton.Checked = globe.projectOptions.ccbynd;
             otherRadioButton.Checked = globe.projectOptions.otherLicense;
             allRightsRadioButton.Checked = globe.projectOptions.allRightsReserved;
+            anonymousCheckBox.Checked = globe.projectOptions.anonymous;
             silentRadioButton.Checked = globe.projectOptions.silentCopyright;
             copyrightOwnerTextBox.Text = globe.projectOptions.copyrightOwner;
             copyrightOwnerUrlTextBox.Text = globe.projectOptions.copyrightOwnerUrl;
@@ -3421,11 +3420,12 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
             globe.projectOptions.ccbysa = CCBySaRadioButton.Checked;
             globe.projectOptions.ccbynd = CCByNdRadioButton.Checked;
             globe.projectOptions.otherLicense = otherRadioButton.Checked;
+            globe.projectOptions.anonymous = anonymousCheckBox.Checked;
             globe.projectOptions.allRightsReserved = allRightsRadioButton.Checked;
             globe.projectOptions.silentCopyright = silentRadioButton.Checked;
             globe.projectOptions.copyrightOwner = copyrightOwnerTextBox.Text.Trim();
             copyrightOwnerUrlTextBox.Text = copyrightOwnerUrlTextBox.Text.Trim();
-            if ((copyrightOwnerUrlTextBox.Text.Length > 1) && !copyrightOwnerUrlTextBox.Text.ToLowerInvariant().StartsWith("http://"))
+            if ((copyrightOwnerUrlTextBox.Text.Length > 1) && !copyrightOwnerUrlTextBox.Text.ToLowerInvariant().StartsWith("http"))
                 copyrightOwnerUrlTextBox.Text = "http://" + copyrightOwnerUrlTextBox.Text;
             globe.projectOptions.copyrightOwnerUrl = copyrightOwnerUrlTextBox.Text;
             globe.projectOptions.copyrightYears = copyrightYearTextBox.Text.Trim();

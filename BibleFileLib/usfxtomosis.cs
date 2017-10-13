@@ -346,8 +346,11 @@ namespace WordSend
             StartMosisElement("work");    // Insert Dublin Core identity here.
             mosis.WriteAttributeString("osisWork", osisWorkId);
             WriteElementAndAttributeStringsIfNotEmpty("title", vernacularTitle, "type", "x-vernacular");
-            WriteElementStringIfNotEmpty("contributor", contentContributor);
-            WriteElementStringIfNotEmpty("creator", contentCreator);
+            if (!projectOptions.anonymous)
+            {
+                WriteElementStringIfNotEmpty("contributor", contentContributor);
+                WriteElementStringIfNotEmpty("creator", contentCreator);
+            }
             WriteElementAndAttributeStringsIfNotEmpty("description", englishDescription, "type", "x-english");
             WriteElementAndAttributeStringsIfNotEmpty("description", lwcDescription, "type", "x-lwc");
             WriteElementAndAttributeStringsIfNotEmpty("publisher", printPublisher, "type", "x-print");

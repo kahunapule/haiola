@@ -272,6 +272,7 @@
             this.sourceLabel = new System.Windows.Forms.Label();
             this.RebuildCheckBox = new System.Windows.Forms.CheckBox();
             this.runXetexCheckBox = new System.Windows.Forms.CheckBox();
+            this.anonymousCheckBox = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.idTabPage.SuspendLayout();
             this.copyrightTabPage.SuspendLayout();
@@ -851,6 +852,7 @@
             // 
             // copyrightTabPage
             // 
+            this.copyrightTabPage.Controls.Add(this.anonymousCheckBox);
             this.copyrightTabPage.Controls.Add(this.privateCheckBox);
             this.copyrightTabPage.Controls.Add(this.downloadsAllowedCheckBox);
             this.copyrightTabPage.Controls.Add(this.redistributableCheckBox);
@@ -2907,6 +2909,16 @@
             this.runXetexCheckBox.UseVisualStyleBackColor = true;
             this.runXetexCheckBox.CheckedChanged += new System.EventHandler(this.runXetexCheckBox_CheckedChanged);
             // 
+            // anonymousCheckBox
+            // 
+            this.anonymousCheckBox.AutoSize = true;
+            this.anonymousCheckBox.Location = new System.Drawing.Point(534, 65);
+            this.anonymousCheckBox.Name = "anonymousCheckBox";
+            this.anonymousCheckBox.Size = new System.Drawing.Size(94, 19);
+            this.anonymousCheckBox.TabIndex = 233;
+            this.anonymousCheckBox.Text = "&Anonymous";
+            this.anonymousCheckBox.UseVisualStyleBackColor = true;
+            // 
             // haiolaForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -3213,6 +3225,7 @@
         private System.Windows.Forms.CheckBox recheckedCheckBox;
         private System.Windows.Forms.Label label78;
         private System.Windows.Forms.ComboBox paratext8ComboBox;
+        private System.Windows.Forms.CheckBox anonymousCheckBox;
     }
 }
 

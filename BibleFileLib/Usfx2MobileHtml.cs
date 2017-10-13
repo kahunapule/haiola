@@ -269,7 +269,7 @@ namespace WordSend
                 if ((!String.IsNullOrEmpty(footerTextHTML)) || (!String.IsNullOrEmpty(copyrightLinkHTML)))
                 {
                     htm.WriteLine("<div class=\"copyright\">");
-                    htm.WriteLine(String.Format("{0}{1}<p align=\"center\">{2}</p>", footerTextHTML, Environment.NewLine, projectOptions.silentCopyright ? String.Empty : copyrightLinkHTML));
+                    htm.WriteLine(String.Format("{0}{1}<p align=\"center\">{2}</p>", footerTextHTML, Environment.NewLine, (projectOptions.anonymous || projectOptions.silentCopyright) ? String.Empty : copyrightLinkHTML));
                     htm.WriteLine("</div>");    // copyright
                 }
                 htm.WriteLine("</div></body></html>");  // close main div class="main"
