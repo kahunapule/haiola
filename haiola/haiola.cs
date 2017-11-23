@@ -72,37 +72,6 @@ namespace haiola
             setup.ShowDialog();
         }
 
-        /* Function deprecated due to input file not being maintained.
-
-        private Hashtable fcbhDbsIds;
-
-        private void readFcbhIds()
-        {
-            string fcbhIdFileName = Path.Combine(globe.inputDirectory, "fcbhids.csv");
-            string line;
-            string [] fields;
-            if (File.Exists(fcbhIdFileName))
-            {
-                try
-                {
-                    fcbhDbsIds = new Hashtable();
-                    StreamReader sr = new StreamReader(fcbhIdFileName);
-                    while (null != (line = sr.ReadLine()))
-                    {
-                        fields = line.Split(new Char[] { ',' });
-                        if ((fields.Length > 3) && (!String.IsNullOrEmpty(fields[2])) && (!String.IsNullOrEmpty(fields[1])))
-                        {
-                            fcbhDbsIds[fields[2]] = fields[1];  // fields[2] == haiola ID/original DBS ID; fields[1] = FCBH ID
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message, "Error reading fcbhids.csv");
-                }
-            }
-        }
-        */
 
         public LanguageCodeInfo languageCodes;
 
@@ -467,95 +436,6 @@ namespace haiola
     	}
 
 
-        public string shortCopyrightMessage, longCopyrightMessage, copyrightLink;
-
-        /// <summary>
-        /// Sets the shortCopyrightMessage, longCopyrightMessage, and copyrightLink variables based on the
-        /// current globe.m_options values.
-        /// </summary>
-        public void SetCopyrightStrings()
-        {
-            if (globe.projectOptions.publicDomain)
-            {
-                shortCopyrightMessage = longCopyrightMessage = "Public Domain";
-                copyrightLink = "<a href='http://en.wikipedia.org/wiki/Public_domain'>Public Domain</a>";
-            }
-            else if (globe.projectOptions.silentCopyright)
-            {
-                longCopyrightMessage = shortCopyrightMessage = copyrightLink = String.Empty;
-            }
-            else if (globe.projectOptions.anonymous)
-            {
-                longCopyrightMessage = shortCopyrightMessage = copyrightLink = "© " + globe.projectOptions.copyrightYears + ". ";
-            }
-            else if (globe.projectOptions.copyrightOwnerAbbrev.Length > 0)
-            {
-                shortCopyrightMessage = "© " + globe.projectOptions.copyrightYears + " " + globe.projectOptions.copyrightOwnerAbbrev;
-                longCopyrightMessage = "Copyright © " + globe.projectOptions.copyrightYears + " " + globe.projectOptions.copyrightOwner;
-                if (globe.projectOptions.copyrightOwnerUrl.Length > 11)
-                    copyrightLink = "copyright © " + globe.projectOptions.copyrightYears + " <a href=\"" + globe.projectOptions.copyrightOwnerUrl + "\">" + usfxToHtmlConverter.EscapeHtml(globe.projectOptions.copyrightOwner) + "</a>";
-                else
-                    copyrightLink = longCopyrightMessage;
-            }
-            else
-            {
-                shortCopyrightMessage = "© " + globe.projectOptions.copyrightYears + " " + globe.projectOptions.copyrightOwner;
-                longCopyrightMessage = "Copyright " + shortCopyrightMessage;
-                if (globe.projectOptions.copyrightOwnerUrl.Length > 11)
-                    copyrightLink = "copyright © " + globe.projectOptions.copyrightYears + " <a href=\"" + globe.projectOptions.copyrightOwnerUrl + "\">" + usfxToHtmlConverter.EscapeHtml(globe.projectOptions.copyrightOwner) + "</a>";
-                else
-                    copyrightLink = longCopyrightMessage;
-            }
-            if (globe.projectOptions.AudioCopyrightNotice.Length > 1)
-            {
-                longCopyrightMessage = longCopyrightMessage + "; ℗ " + usfxToHtmlConverter.EscapeHtml(globe.projectOptions.AudioCopyrightNotice);
-                copyrightLink = copyrightLink + "<br />℗ " + usfxToHtmlConverter.EscapeHtml(globe.projectOptions.AudioCopyrightNotice);
-            }
-        }
-
-        /// <summary>
-        /// Expands % escape codes in a string.
-        /// </summary>
-        /// <param name="s">String containing 0 or more % codes</param>
-        /// <returns>String with values replacing their respective % codes</returns>
-        public string expandPercentEscapes(string s)
-        {
-            string distributionScope;
-            if (globe.projectOptions.privateProject)
-                globe.projectOptions.redistributable = globe.projectOptions.downloadsAllowed = false;
-            if (globe.projectOptions.redistributable)
-                distributionScope = "redistributable";
-            else if (globe.projectOptions.downloadsAllowed)
-                distributionScope = "downloadable";
-            else
-                distributionScope = "restricted";
-            s = s.Replace("%d", globe.currentProject);
-            s = s.Replace("%e", globe.projectOptions.languageId);
-            s = s.Replace("%h", globe.projectOptions.homeDomain);
-            s = s.Replace("%c", shortCopyrightMessage);
-            s = s.Replace("%C", copyrightLink);
-            s = s.Replace("%l", globe.projectOptions.languageName);
-            s = s.Replace("%L", globe.projectOptions.languageNameInEnglish);
-            s = s.Replace("%D", globe.projectOptions.dialect);
-            s = s.Replace("%a", globe.projectOptions.contentCreator);
-            s = s.Replace("%A", globe.projectOptions.contributor);
-            s = s.Replace("%v", globe.projectOptions.vernacularTitle);
-            s = s.Replace("%f", "<a href=\"" + globe.projectOptions.facebook + "\">" + globe.projectOptions.facebook + "</a>");
-            s = s.Replace("%F", globe.projectOptions.fcbhId);
-            s = s.Replace("%n", globe.projectOptions.EnglishDescription);
-            s = s.Replace("%N", globe.projectOptions.lwcDescription);
-            s = s.Replace("%p", globe.projectOptions.privateProject ? "private" : "public");
-            s = s.Replace("%r", distributionScope);
-            s = s.Replace("%T", globe.projectOptions.contentUpdateDate.ToString("yyyy-MM-dd"));
-            s = s.Replace("%o", globe.projectOptions.rightsStatement);
-            s = s.Replace("%x", globe.projectOptions.promoHtml);
-            s = s.Replace("%w", globe.projectOptions.printPublisher);
-            s = s.Replace("%i", globe.projectOptions.electronicPublisher);
-            s = s.Replace("%P", globe.projectOptions.AudioCopyrightNotice);
-            s = s.Replace("%t", globe.projectOptions.translationId);
-            string result = s.Replace("%%", "%");
-            return result;
-        }
 
         public string GetEpubID()
         {
@@ -593,80 +473,6 @@ namespace haiola
                 globe.projectOptions.Write();
             }
             return globe.projectOptions.epubId;
-        }
-
-        public string copyrightPermissionsStatement()
-        {
-            string fontClass = globe.projectOptions.fontFamily.ToLower().Replace(' ', '_');
-            if (globe.projectOptions.customPermissions)
-                return expandPercentEscapes(globe.projectOptions.licenseHtml);
-            StringBuilder copr = new StringBuilder();
-            copr.Append(String.Format("<h1 class='{2}'>{0}</h1>\n<h2>{1}</h2>\n",
-                usfxToHtmlConverter.EscapeHtml(globe.projectOptions.vernacularTitle), 
-                usfxToHtmlConverter.EscapeHtml(globe.projectOptions.EnglishDescription), fontClass));
-            if (!String.IsNullOrEmpty(globe.projectOptions.lwcDescription))
-                copr.Append(String.Format("<h2>{0}</h2>\n", usfxToHtmlConverter.EscapeHtml(globe.projectOptions.lwcDescription)));
-            copr.Append(String.Format("<p>{0}<br />\n",copyrightLink));
-            copr.Append(String.Format("Language: <a href='http://www.ethnologue.org/language/{0}' class='{2}' target='_blank'>{1}",
-                globe.projectOptions.languageId, globe.projectOptions.languageName, fontClass));
-            if (globe.projectOptions.languageName != globe.projectOptions.languageNameInEnglish)
-                copr.Append(String.Format(" ({0})", usfxToHtmlConverter.EscapeHtml(globe.projectOptions.languageNameInEnglish)));
-            copr.Append("</a><br />\n");
-            if (!String.IsNullOrEmpty(globe.projectOptions.dialect))
-                copr.Append(String.Format("Dialect: {0}<br />\n", usfxToHtmlConverter.EscapeHtml(globe.projectOptions.dialect)));
-            if (!(globe.projectOptions.anonymous || String.IsNullOrEmpty(globe.projectOptions.contentCreator)))
-                copr.Append(String.Format("Translation by: {0}<br />\n", usfxToHtmlConverter.EscapeHtml(globe.projectOptions.contentCreator)));
-            if ((!globe.projectOptions.anonymous) && (!String.IsNullOrEmpty(globe.projectOptions.contributor)) && (globe.projectOptions.contentCreator != globe.projectOptions.contributor))
-                copr.Append(String.Format("Contributor: {0}<br />\n", usfxToHtmlConverter.EscapeHtml(globe.projectOptions.contributor)));
-            if (!String.IsNullOrEmpty(globe.projectOptions.promoHtml))
-                copr.Append("<br />\n" + globe.projectOptions.promoHtml);
-            if (!String.IsNullOrEmpty(globe.projectOptions.rightsStatement))
-                copr.Append("<br />\n" + globe.projectOptions.rightsStatement);
-            copr.Append("</p>\n");
-            if (globe.projectOptions.ccbyndnc)
-            {
-                copr.Append(@"<p>This translation is made available to you under the terms of the
-<a href='http://creativecommons.org/licenses/by-nc-nd/4.0/'>Creative Commons Attribution-Noncommercial-No Derivatives license 4.0.</a></p>
-<p>You may share and redistribute this Bible translation or extracts from it in any format, provided that:</p>
-<ul>
-<li>You include the above copyright and source information.</li>
-<li>You do not sell this work for a profit.</li>
-<li>You do not change any of the words or punctuation of the Scriptures.</li>
-</ul>
-<p>Pictures included with Scriptures and other documents on this site are licensed just for use with those Scriptures and documents.
-For other uses, please contact the respective copyright owners.</p>
-");
-            }
-            else if (globe.projectOptions.ccbysa)
-            {
-                copr.Append(@"<p>This translation is made available to you under the terms of the
-<a href='http://creativecommons.org/licenses/by-sa/4.0/'>Creative Commons Attribution Share-Alike license 4.0.</a></p>
-<p>You have permission to share and redistribute this Bible translation in any format and to make reasonable revisions and adaptations of this translation, provided that:</p>
-<ul>
-<li>You include the above copyright and source information.</li>
-<li>If you make any changes to the text, you must indicate that you did so in a way that makes it clear that the original licensor is not necessarily endorsing your changes.</li>
-<li>If you redistribute this text, you must distribute your contributions under the same license as the original.</li>
-</ul>
-<p>Pictures included with Scriptures and other documents on this site are licensed just for use with those Scriptures and documents.
-For other uses, please contact the respective copyright owners.</p>
-<p>Note that in addition to the rules above, revising and adapting God's Word involves a great responsibility to be true to God's Word. See Revelation 22:18-19.</p>
-");
-            }
-            else if (globe.projectOptions.ccbynd)
-            {
-                copr.Append(@"<p>This translation is made available to you under the terms of the
-<a href='http://creativecommons.org/licenses/by-nd/4.0/'>Creative Commons Attribution-No Derivatives license 4.0.</a></p>
-<p>You may share and redistribute this Bible translation or extracts from it in any format, provided that:</p>
-<ul>
-<li>You include the above copyright and source information.</li>
-<li>You do not make any derivative works that change any of the actual words or punctuation of the Scriptures.</li>
-</ul>
-<p>Pictures included with Scriptures and other documents on this site are licensed just for use with those Scriptures and documents.
-For other uses, please contact the respective copyright owners.</p>
-");
-            }
-            copr.Append(String.Format("<p><br/>{0}</p>\n", globe.projectOptions.contentUpdateDate.ToString("yyyy-MM-dd")));
-            return copr.ToString();
         }
 
         private void ConvertUsfxToEPub()
@@ -760,9 +566,9 @@ For other uses, please contact the respective copyright owners.</p>
             toEpub.MergeXref(Path.Combine(globe.inputProjectDirectory, "xref.xml"));
             //TODO: eliminate side effects in expandPercentEscapes
             // Side effect: expandPercentEscapes sets longCopyrightMessage and shortCopyrightMessage.
-            toEpub.sourceLink = expandPercentEscapes("<a href=\"http://%h/%t\">%v</a>");
-            toEpub.longCopr = longCopyrightMessage;
-            toEpub.shortCopr = shortCopyrightMessage;
+            toEpub.sourceLink = globe.expandPercentEscapes("<a href=\"http://%h/%t\">%v</a>");
+            toEpub.longCopr = globe.longCopyrightMessage;
+            toEpub.shortCopr = globe.shortCopyrightMessage;
             toEpub.textDirection = globe.projectOptions.textDir;
             toEpub.customCssName = "epub.css";
             toEpub.stripManualNoteOrigins = globe.projectOptions.stripNoteOrigin;
@@ -789,11 +595,11 @@ For other uses, please contact the respective copyright owners.</p>
                 globe.projectOptions.translationId,
                 globe.projectOptions.chapterLabel,
                 globe.projectOptions.psalmLabel,
-                "<a class='xx' href='copyright.xhtml'>" +  usfxToHtmlConverter.EscapeHtml(shortCopyrightMessage) + "</a>",
-                expandPercentEscapes(globe.projectOptions.homeLink),
-                expandPercentEscapes(globe.projectOptions.footerHtml),
-                expandPercentEscapes(globe.projectOptions.indexHtml),
-                copyrightPermissionsStatement(),
+                "<a class='xx' href='copyright.xhtml'>" +  usfxToHtmlConverter.EscapeHtml(globe.shortCopyrightMessage) + "</a>",
+                globe.expandPercentEscapes(globe.projectOptions.homeLink),
+                globe.expandPercentEscapes(globe.projectOptions.footerHtml),
+                globe.expandPercentEscapes(globe.projectOptions.indexHtml),
+                globe.copyrightPermissionsStatement(),
                 globe.projectOptions.ignoreExtras,
                 globe.projectOptions.goText);
             toEpub.bookInfo.RecordStats(globe.projectOptions);
@@ -897,7 +703,7 @@ For other uses, please contact the respective copyright owners.</p>
     		string usfxFilePath = Path.Combine(UsfxPath, "usfx.xml");
             toHtm.bookInfo.ReadPublicationOrder(orderFile);
             toHtm.MergeXref(Path.Combine(globe.inputProjectDirectory, "xref.xml"));
-            toHtm.sourceLink = expandPercentEscapes("<a href=\"http://%h/%t\">%v</a>");
+            toHtm.sourceLink = globe.expandPercentEscapes("<a href=\"http://%h/%t\">%v</a>");
             toHtm.textDirection = globe.projectOptions.textDir;
             toHtm.customCssName = globe.projectOptions.customCssFileName;
             toHtm.stripManualNoteOrigins = globe.projectOptions.stripNoteOrigin;
@@ -934,11 +740,11 @@ For other uses, please contact the respective copyright owners.</p>
                 globe.projectOptions.translationId,
                 globe.projectOptions.chapterLabel,
                 globe.projectOptions.psalmLabel,
-                "<a href='copyright.htm'>" + usfxToHtmlConverter.EscapeHtml(shortCopyrightMessage) + "</a>",
-                expandPercentEscapes(globe.projectOptions.homeLink),
-                expandPercentEscapes(globe.projectOptions.footerHtml),
-                expandPercentEscapes(globe.projectOptions.indexHtml),
-                copyrightPermissionsStatement(),
+                "<a href='copyright.htm'>" + usfxToHtmlConverter.EscapeHtml(globe.shortCopyrightMessage) + "</a>",
+                globe.expandPercentEscapes(globe.projectOptions.homeLink),
+                globe.expandPercentEscapes(globe.projectOptions.footerHtml),
+                globe.expandPercentEscapes(globe.projectOptions.indexHtml),
+                globe.copyrightPermissionsStatement(),
                 globe.projectOptions.ignoreExtras,
                 globe.projectOptions.goText);
             toHtm.bookInfo.RecordStats(globe.projectOptions);
@@ -1102,8 +908,8 @@ This work is made available to you under the terms of the Creative Commons Attri
             // xml.WriteElementString("otmlId", " ");
             xml.WriteElementString("versificationScheme", globe.projectOptions.versificationScheme);
             xml.WriteElementString("checkVersification", "No");
-            // xml.WriteElementString("osis2SwordOptions", globe.m_options.osis2SwordOptions);
-            // xml.WriteElementString("otmlRenderChapterNumber", globe.m_options.otmlRenderChapterNumber);
+            // xml.WriteElementString("osis2SwordOptions", globe.globe.projectOptions.osis2SwordOptions);
+            // xml.WriteElementString("otmlRenderChapterNumber", globe.globe.projectOptions.otmlRenderChapterNumber);
             xml.WriteElementString("copyright", shortRights);
             xml.WriteEndElement();	// vernacularParmsMiscellaneous
             xml.WriteEndDocument();
@@ -1187,20 +993,20 @@ This work is made available to you under the terms of the Creative Commons Attri
             /*
             xml.WriteStartElement("agencies");
             string etenPartner = "WBT";
-            if ((globe.m_options.publicDomain == true) || globe.m_options.copyrightOwner.ToUpperInvariant().Contains("EBIBLE"))
+            if ((globe.globe.projectOptions.publicDomain == true) || globe.globe.projectOptions.copyrightOwner.ToUpperInvariant().Contains("EBIBLE"))
                 etenPartner = "eBible.org";
-            else if (globe.m_options.copyrightOwner.ToUpperInvariant().Contains("SOCIETY"))
+            else if (globe.globe.projectOptions.copyrightOwner.ToUpperInvariant().Contains("SOCIETY"))
                 etenPartner = "UBS";
-            else if (globe.m_options.copyrightOwner.ToUpperInvariant().Contains("BIBLICA"))
+            else if (globe.globe.projectOptions.copyrightOwner.ToUpperInvariant().Contains("BIBLICA"))
                 etenPartner = "Biblica";
-            else if (globe.m_options.copyrightOwnerAbbrev.ToUpperInvariant().Contains("PBT"))
+            else if (globe.globe.projectOptions.copyrightOwnerAbbrev.ToUpperInvariant().Contains("PBT"))
                 etenPartner = "PBT";
-            else if (globe.m_options.copyrightOwnerAbbrev.ToUpperInvariant().Contains("SIM"))
+            else if (globe.globe.projectOptions.copyrightOwnerAbbrev.ToUpperInvariant().Contains("SIM"))
                 etenPartner = "SIM";
             xml.WriteElementString("etenPartner", etenPartner);
-            xml.WriteElementString("creator", globe.m_options.contentCreator);
-            xml.WriteElementString("publisher", globe.m_options.electronicPublisher);
-            xml.WriteElementString("contributor", globe.m_options.contributor);
+            xml.WriteElementString("creator", globe.globe.projectOptions.contentCreator);
+            xml.WriteElementString("publisher", globe.globe.projectOptions.electronicPublisher);
+            xml.WriteElementString("contributor", globe.globe.projectOptions.contributor);
             xml.WriteEndElement();  // agencies
             */
             xml.WriteStartElement("language");
@@ -1392,34 +1198,6 @@ their generosity, people like you can open up the Bible and hear from God no mat
 			// Todo JohnT: move this to a new method, and the condition to the method that calls this.
 			if (globe.projectOptions.GenerateConcordance || globe.projectOptions.UseFrames)
 			{
-                /*****
-				currentConversion = "generate XHTML for concordance";
-				usfxToHtmlConverter toXhtm = new usfxToXhtmlConverter();
-				Logit.OpenFile(Path.Combine(m_outputProjectDirectory, "XHTMLConversionReport.txt"));
-
-				toXhtm.indexDateStamp = "XHTML generated " + DateTime.UtcNow.ToString("d MMM yyyy") +
-				                       " from source files dated " + globe.sourceDate.ToString("d MMM yyyy");
-				string xhtmlPath = Path.Combine(m_outputProjectDirectory, "xhtml");
-				Utils.EnsureDirectory(xhtmlPath);
-				// No point in doing this...doesn't change the concordance generated, just makes generation slower.
-				// Reinstate it if the XHTML is used for anything besides generating the concordance.
-				//toXhtm.CrossRefToFilePrefixMap = globe.m_options.CrossRefToFilePrefixMap;
-				toXhtm.ConvertUsfxToHtml(usfxFilePath, xhtmlPath,
-				                        globe.m_options.vernacularTitle,
-				                        globe.m_options.languageId,
-				                        globe.m_options.translationId,
-				                        globe.m_options.chapterLabel,
-				                        globe.m_options.psalmLabel,
-				                        globe.m_options.copyrightLink,
-				                        globe.m_options.homeLink,
-				                        globe.m_options.footerHtml,
-				                        globe.m_options.indexHtml,
-				                        globe.m_options.licenseHtml,
-				                        globe.m_options.useKhmerDigits,
-				                        globe.m_options.ignoreExtras,
-				                        globe.m_options.goText);
-				Logit.CloseFile();
-                ******/
 				currentConversion = "Concordance";
 				string concordanceDirectory = Path.Combine(htmlPath, "conc");
                 statusNow("Deleting " + concordanceDirectory);
@@ -2106,9 +1884,9 @@ their generosity, people like you can open up the Bible and hear from God no mat
             toXeTex.MergeXref(Path.Combine(globe.inputProjectDirectory, "xref.xml"));
             //TODO: eliminate side effects in expandPercentEscapes
             // Side effect: expandPercentEscapes sets longCopyrightMessage and shortCopyrightMessage.
-            toXeTex.sourceLink = expandPercentEscapes("<a href=\"http://%h/%t\">%v</a>");
-            toXeTex.longCopr = longCopyrightMessage;
-            toXeTex.shortCopr = shortCopyrightMessage;
+            toXeTex.sourceLink = globe.expandPercentEscapes("<a href=\"http://%h/%t\">%v</a>");
+            toXeTex.longCopr = globe.longCopyrightMessage;
+            toXeTex.shortCopr = globe.shortCopyrightMessage;
             toXeTex.textDirection = globe.projectOptions.textDir;
             toXeTex.stripManualNoteOrigins = globe.projectOptions.stripNoteOrigin;
             toXeTex.noteOriginFormat = globe.projectOptions.xoFormat;
@@ -2133,11 +1911,11 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 globe.projectOptions.translationId,
                 globe.projectOptions.chapterLabel,
                 globe.projectOptions.psalmLabel,
-                shortCopyrightMessage,
-                expandPercentEscapes(globe.projectOptions.homeLink),
-                expandPercentEscapes(globe.projectOptions.footerHtml),
-                expandPercentEscapes(globe.projectOptions.indexHtml),
-                copyrightPermissionsStatement(),
+                globe.shortCopyrightMessage,
+                globe.expandPercentEscapes(globe.projectOptions.homeLink),
+                globe.expandPercentEscapes(globe.projectOptions.footerHtml),
+                globe.expandPercentEscapes(globe.projectOptions.indexHtml),
+                globe.copyrightPermissionsStatement(),
                 globe.projectOptions.ignoreExtras,
                 globe.projectOptions.goText);
             toXeTex.bookInfo.RecordStats(globe.projectOptions);
@@ -2225,7 +2003,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 toMosis.rightsNotice += @" This Bible translation is made available to you under the terms of the
  Creative Commons Attribution-No Derivatives license (http://creativecommons.org/licenses/by-na/4.0/).";
             }
-            toMosis.infoPage = copyrightPermissionsStatement();
+            toMosis.infoPage = globe.copyrightPermissionsStatement();
             string logFile = Path.Combine(globe.outputProjectDirectory, "MosisConversionReport.txt");
             Logit.OpenFile(logFile);
             Logit.GUIWriteString = showMessageString;
@@ -2253,7 +2031,6 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 string UsfxPath = Path.Combine(globe.outputProjectDirectory, "usfx");
                 string auxPath = Path.Combine(globe.outputProjectDirectory, "search");
                 string verseText = Path.Combine(auxPath, "verseText.xml");
-                // string sqlFile = Path.Combine(globe.m_outputProjectDirectory, "MySQL");
                 string sqlFile = Path.Combine(globe.outputProjectDirectory, "sql");
                 Logit.GUIWriteString = showMessageString;
                 Logit.UpdateStatus = updateConversionProgress;
@@ -2284,7 +2061,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 htm.WriteLine("The file ending \"_vpl.sql\" contains the same information formatted to create a SQL data table.</p>");
                 htm.WriteLine(@"<p>Check for updates and other Bible translations in this format at <a href='https:\\Bible.cx\Scriptures\'>https:\\Bible.cx\Scriptures\</a> or <a href='ftp:\\eBible.org\pub\Scriptures\'>ftp:\\eBible.org\pub\Scriptures\</a></p>");
                 htm.WriteLine("<hr />");
-                htm.WriteLine(copyrightPermissionsStatement());
+                htm.WriteLine(globe.copyrightPermissionsStatement());
                 htm.WriteLine("</body></html>");
                 htm.Close();
                 if (Logit.loggedError)
@@ -2447,7 +2224,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
             }
             Application.DoEvents();
             string xetexDir = Path.Combine(globe.outputProjectDirectory, "xetex");
-            if (fileHelper.fAllRunning && globe.projectOptions.makePDF /* && (globe.m_options.rebuild || (globe.m_options.SourceFileDate > Directory.GetCreationTime(xetexDir)))*/)
+            if (fileHelper.fAllRunning && globe.projectOptions.makePDF /* && (globe.globe.projectOptions.rebuild || (globe.globe.projectOptions.SourceFileDate > Directory.GetCreationTime(xetexDir)))*/)
             {
                 ConvertUsfxToPDF(xetexDir);
             }
@@ -3090,7 +2867,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
             }
             SFConverter.jobIni = globe.projectOptions.ini;
             ethnologueCodeTextBox.Text = globe.projectOptions.languageId;
-            translationIdTextBox.Text = globe.currentProject; // This was globe.m_options.translationId, but now we force short translation ID and input directory name to match.
+            translationIdTextBox.Text = globe.currentProject; // This was globe.globe.projectOptions.translationId, but now we force short translation ID and input directory name to match.
             traditionalAbbreviationTextBox.Text = globe.projectOptions.translationTraditionalAbbreviation;
             languageNameTextBox.Text = globe.projectOptions.languageName;
             engLangNameTextBox.Text = globe.projectOptions.languageNameInEnglish;
@@ -3248,7 +3025,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
 			LoadBooksTab();
         	LoadFramesTab();
             LoadStatisticsTab();
-            SetCopyrightStrings();
+            globe.SetCopyrightStrings();
 
             if (ReadMetadata(Path.Combine(Path.Combine(globe.inputProjectDirectory, "usx"), "metadata.xml")))
                 SaveOptions();
@@ -3500,7 +3277,7 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
             List<string> alternateLinks = new List<string>();
             foreach (string alternateLink in altLinkListBox.Items)
                 alternateLinks.Add(alternateLink);
-            globe.m_options.altLinks = alternateLinks;
+            globe.globe.projectOptions.altLinks = alternateLinks;
              */
             
             // Insert more checkbox settings here.
@@ -3639,7 +3416,7 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
             if (currentConversion != progressMessage)
             {
                 currentConversion = progressMessage;
-                // batchLabel.Text = (DateTime.UtcNow - startTime).ToString().Substring(0, 8) + " " + m_project + " " + currentConversion;
+                // batchLabel.Text = (DateTime.UtcNow - startTime).ToString().Substring(0, 8) + " " + globe.currentProject + " " + currentConversion;
                 Application.DoEvents();
             }
             return fileHelper.fAllRunning;
@@ -3824,7 +3601,7 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
         public ArrayList fcbhIds;
 
         /// <summary>
-        /// Find FCBH ID(s) for the currently-displayed globe.m_options record
+        /// Find FCBH ID(s) for the currently-displayed globe.globe.projectOptions record
         /// </summary>
         protected void MatchFcbhIds()
         {

@@ -730,6 +730,7 @@ namespace WordSend
                     s = Regex.Replace(s, (string)FindThis[i], (string)ReplaceWith[i]);
                 }
                 s = DoBiDi(s);
+                s.Replace("</p>", "\\PAR ");
                 if (s.Contains("<") || s.Contains(">"))
                     Logit.WriteError("HTML to TeX conversion error.");
                 //s = s.Replace("<", " ").Replace(">", " ");

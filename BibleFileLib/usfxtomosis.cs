@@ -1194,6 +1194,7 @@ namespace WordSend
                                         StartElementWithAttribute("transChange", "type", "added");
                                     break;
                                 case "bd":
+                                case "qac":
                                     StartElementWithAttribute("hi", "type", "bold");
                                     break;
                                 case "bdit":
@@ -2015,6 +2016,7 @@ namespace WordSend
                                 case "k":
                                 case "no":
                                 case "pn":
+                                case "qac":
                                 case "qt":
                                 case "r":
                                 case "rq":

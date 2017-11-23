@@ -831,11 +831,12 @@ namespace WordSend
                     currentBook = attribute;
                     currentChapter = "0";
                     currentVerse = "0";
-                    currentParagraph = String.Empty;
+                    currentParagraph = string.Empty;
+                    prevTag = string.Empty;
                 }
                 else if (tag.CompareTo("c") == 0)
                 {
-                    currentParagraph = String.Empty;
+                    currentParagraph = string.Empty;
                     for (i = 0; i < attribute.Length; i++)
                     {
                         if (!Char.IsDigit(attribute[i]))
@@ -880,7 +881,7 @@ namespace WordSend
             }
             if ((prevTag == "tr") && (!columnTags.Contains(tag)))
             {
-                Logit.WriteError("USFM error: table row missing column at " + currentBook + " " + currentChapter + ":" + currentVerse);
+                Logit.WriteError("USFM error: table row missing column at " + currentBook + " " + currentChapter + ":" + currentVerse + " " + tag + " " + text);
             }
 
             // Check to see if we have properly ended a tag range.
@@ -1714,7 +1715,7 @@ namespace WordSend
             clear();
             if (!string.IsNullOrEmpty(s))
             {
-                string[] parts = content.Split('|');    // Separate display form and glossary entry form
+                string[] parts = s.Split('|');    // Separate display form and glossary entry form
                 if (parts.Length > 1)
                 {
                     content = parts[0];
@@ -6429,7 +6430,7 @@ namespace WordSend
                                         usfmAttribute = "";
                                     }
                                     usfmFile.WriteSFM("w*", "", "", false, (charStyleStackLevel > 0) || inFootnote);
-                                    Logit.WriteLine("Warning: empty word element at " + bookId + " " + chapter + ":" + verse);
+                                    Logit.WriteLine("Warning: empty word element " + usfmAttribute + " at " + bookId + " " + chapter + ":" + verse);
                                 }
                                 break;
                             case "ztoc":

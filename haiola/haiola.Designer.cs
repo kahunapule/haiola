@@ -84,6 +84,7 @@
             this.label25 = new System.Windows.Forms.Label();
             this.label24 = new System.Windows.Forms.Label();
             this.copyrightTabPage = new System.Windows.Forms.TabPage();
+            this.anonymousCheckBox = new System.Windows.Forms.CheckBox();
             this.privateCheckBox = new System.Windows.Forms.CheckBox();
             this.downloadsAllowedCheckBox = new System.Windows.Forms.CheckBox();
             this.redistributableCheckBox = new System.Windows.Forms.CheckBox();
@@ -272,7 +273,6 @@
             this.sourceLabel = new System.Windows.Forms.Label();
             this.RebuildCheckBox = new System.Windows.Forms.CheckBox();
             this.runXetexCheckBox = new System.Windows.Forms.CheckBox();
-            this.anonymousCheckBox = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.idTabPage.SuspendLayout();
             this.copyrightTabPage.SuspendLayout();
@@ -310,7 +310,7 @@
             // batchLabel
             // 
             this.batchLabel.AutoSize = true;
-            this.batchLabel.Location = new System.Drawing.Point(7, 87);
+            this.batchLabel.Location = new System.Drawing.Point(12, 77);
             this.batchLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.batchLabel.Name = "batchLabel";
             this.batchLabel.Size = new System.Drawing.Size(45, 15);
@@ -889,6 +889,16 @@
             this.copyrightTabPage.TabIndex = 2;
             this.copyrightTabPage.Text = "©";
             this.copyrightTabPage.UseVisualStyleBackColor = true;
+            // 
+            // anonymousCheckBox
+            // 
+            this.anonymousCheckBox.AutoSize = true;
+            this.anonymousCheckBox.Location = new System.Drawing.Point(534, 65);
+            this.anonymousCheckBox.Name = "anonymousCheckBox";
+            this.anonymousCheckBox.Size = new System.Drawing.Size(94, 19);
+            this.anonymousCheckBox.TabIndex = 233;
+            this.anonymousCheckBox.Text = "&Anonymous";
+            this.anonymousCheckBox.UseVisualStyleBackColor = true;
             // 
             // privateCheckBox
             // 
@@ -2811,7 +2821,7 @@
             // statsLabel
             // 
             this.statsLabel.AutoSize = true;
-            this.statsLabel.Location = new System.Drawing.Point(7, 70);
+            this.statsLabel.Location = new System.Drawing.Point(12, 60);
             this.statsLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.statsLabel.Name = "statsLabel";
             this.statsLabel.Size = new System.Drawing.Size(56, 15);
@@ -2861,7 +2871,7 @@
             // extensionLabel
             // 
             this.extensionLabel.AutoSize = true;
-            this.extensionLabel.Location = new System.Drawing.Point(7, 103);
+            this.extensionLabel.Location = new System.Drawing.Point(12, 93);
             this.extensionLabel.Name = "extensionLabel";
             this.extensionLabel.Size = new System.Drawing.Size(17, 15);
             this.extensionLabel.TabIndex = 30;
@@ -2881,7 +2891,7 @@
             // sourceLabel
             // 
             this.sourceLabel.AutoSize = true;
-            this.sourceLabel.Location = new System.Drawing.Point(7, 53);
+            this.sourceLabel.Location = new System.Drawing.Point(12, 43);
             this.sourceLabel.Name = "sourceLabel";
             this.sourceLabel.Size = new System.Drawing.Size(189, 15);
             this.sourceLabel.TabIndex = 34;
@@ -2890,7 +2900,7 @@
             // RebuildCheckBox
             // 
             this.RebuildCheckBox.AutoSize = true;
-            this.RebuildCheckBox.Location = new System.Drawing.Point(621, 53);
+            this.RebuildCheckBox.Location = new System.Drawing.Point(626, 43);
             this.RebuildCheckBox.Name = "RebuildCheckBox";
             this.RebuildCheckBox.Size = new System.Drawing.Size(68, 19);
             this.RebuildCheckBox.TabIndex = 241;
@@ -2901,23 +2911,13 @@
             // runXetexCheckBox
             // 
             this.runXetexCheckBox.AutoSize = true;
-            this.runXetexCheckBox.Location = new System.Drawing.Point(622, 75);
+            this.runXetexCheckBox.Location = new System.Drawing.Point(627, 65);
             this.runXetexCheckBox.Name = "runXetexCheckBox";
             this.runXetexCheckBox.Size = new System.Drawing.Size(93, 19);
             this.runXetexCheckBox.TabIndex = 242;
             this.runXetexCheckBox.Text = "Run &XeTeX";
             this.runXetexCheckBox.UseVisualStyleBackColor = true;
             this.runXetexCheckBox.CheckedChanged += new System.EventHandler(this.runXetexCheckBox_CheckedChanged);
-            // 
-            // anonymousCheckBox
-            // 
-            this.anonymousCheckBox.AutoSize = true;
-            this.anonymousCheckBox.Location = new System.Drawing.Point(534, 65);
-            this.anonymousCheckBox.Name = "anonymousCheckBox";
-            this.anonymousCheckBox.Size = new System.Drawing.Size(94, 19);
-            this.anonymousCheckBox.TabIndex = 233;
-            this.anonymousCheckBox.Text = "&Anonymous";
-            this.anonymousCheckBox.UseVisualStyleBackColor = true;
             // 
             // haiolaForm
             // 

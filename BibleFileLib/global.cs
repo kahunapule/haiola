@@ -447,7 +447,7 @@ namespace WordSend
             // surrogates in UTF-8, unless there is a byte-order mark.
             Encoding enc = fileHelper.IdentifyFileCharset(inputPath);
             // MessageBox.Show(inputPath + " is encoded as " + enc.ToString());
-            StreamReader reader = new StreamReader(inputPath, enc /* Encoding.GetEncoding(globe.m_options.InputEncoding) */);
+            StreamReader reader = new StreamReader(inputPath, enc /* Encoding.GetEncoding(globe.globe.projectOptions.InputEncoding) */);
             input = reader.ReadToEnd() + "\0";
             reader.Close();
 
@@ -556,7 +556,7 @@ namespace WordSend
             // Now, get on with preprocessing the USFM files.
             Logit.GUIWriteString = GUIWriteString;
             Logit.OpenFile(Path.Combine(outputProjectDirectory, "preprocesslog.txt"));
-            // string SourceDir = Path.Combine(m_inputProjectDirectory, "Source");
+            // string SourceDir = Path.Combine(globe.inputProjectDirectory, "Source");
             /*
             StreamReader sr = new StreamReader(orderFile);
             string allowedBookList = sr.ReadToEnd();
@@ -592,7 +592,7 @@ namespace WordSend
                     (fileType != ".CSS") && (fileType != ".SWP") &&
                     (fileType != ".ID") && (fileType != ".DIC") &&
                     (fileType != ".LDML") && (fileType != ".JSON") &&
-                    (fileType != ".VRS") && (fileType != ".INI") && (fileType != ".CSV") &&
+                    (fileType != ".VRS") && (fileType != ".INI") && (fileType != ".CSV") && (fileType != ".TSV") &&
                     (fileType != ".CCT") && (!inputFile.EndsWith("~")) &&
                     (lowerName != "autocorrect.txt") &&
                     (lowerName != "tmp.txt") &&
@@ -627,6 +627,177 @@ namespace WordSend
                     }
                 }
             }
+        }
+
+
+        public string shortCopyrightMessage, longCopyrightMessage, copyrightLink;
+
+        /// <summary>
+        /// Sets the shortCopyrightMessage, longCopyrightMessage, and copyrightLink variables based on the
+        /// current globe.globe.projectOptions values.
+        /// </summary>
+        public void SetCopyrightStrings()
+        {
+            if (projectOptions.publicDomain)
+            {
+                shortCopyrightMessage = longCopyrightMessage = "Public Domain";
+                copyrightLink = "<a href='http://en.wikipedia.org/wiki/Public_domain'>Public Domain</a>";
+            }
+            else if (projectOptions.silentCopyright)
+            {
+                longCopyrightMessage = shortCopyrightMessage = copyrightLink = String.Empty;
+            }
+            else if (projectOptions.anonymous)
+            {
+                longCopyrightMessage = shortCopyrightMessage = copyrightLink = "© " + projectOptions.copyrightYears + ". ";
+            }
+            else if (projectOptions.copyrightOwnerAbbrev.Length > 0)
+            {
+                shortCopyrightMessage = "© " + projectOptions.copyrightYears + " " + projectOptions.copyrightOwnerAbbrev;
+                longCopyrightMessage = "Copyright © " + projectOptions.copyrightYears + " " + projectOptions.copyrightOwner;
+                if (projectOptions.copyrightOwnerUrl.Length > 11)
+                    copyrightLink = "copyright © " + projectOptions.copyrightYears + " <a href=\"" + projectOptions.copyrightOwnerUrl + "\">" + usfxToHtmlConverter.EscapeHtml(projectOptions.copyrightOwner) + "</a>";
+                else
+                    copyrightLink = longCopyrightMessage;
+            }
+            else
+            {
+                shortCopyrightMessage = "© " + projectOptions.copyrightYears + " " + projectOptions.copyrightOwner;
+                longCopyrightMessage = "Copyright " + shortCopyrightMessage;
+                if (projectOptions.copyrightOwnerUrl.Length > 11)
+                    copyrightLink = "copyright © " + projectOptions.copyrightYears + " <a href=\"" + projectOptions.copyrightOwnerUrl + "\">" + usfxToHtmlConverter.EscapeHtml(projectOptions.copyrightOwner) + "</a>";
+                else
+                    copyrightLink = longCopyrightMessage;
+            }
+            if (projectOptions.AudioCopyrightNotice.Length > 1)
+            {
+                longCopyrightMessage = longCopyrightMessage + "; ℗ " + usfxToHtmlConverter.EscapeHtml(projectOptions.AudioCopyrightNotice);
+                copyrightLink = copyrightLink + "<br />℗ " + usfxToHtmlConverter.EscapeHtml(projectOptions.AudioCopyrightNotice);
+            }
+        }
+
+
+        /// <summary>
+        /// Expands % escape codes in a string.
+        /// </summary>
+        /// <param name="s">String containing 0 or more % codes</param>
+        /// <returns>String with values replacing their respective % codes</returns>
+        public string expandPercentEscapes(string s)
+        {
+            string distributionScope;
+            if (projectOptions.privateProject)
+                projectOptions.redistributable = projectOptions.downloadsAllowed = false;
+            if (projectOptions.redistributable)
+                distributionScope = "redistributable";
+            else if (projectOptions.downloadsAllowed)
+                distributionScope = "downloadable";
+            else
+                distributionScope = "restricted";
+            s = s.Replace("%d", currentProject);
+            s = s.Replace("%e", projectOptions.languageId);
+            s = s.Replace("%h", projectOptions.homeDomain);
+            s = s.Replace("%c", shortCopyrightMessage);
+            s = s.Replace("%C", copyrightLink);
+            s = s.Replace("%l", projectOptions.languageName);
+            s = s.Replace("%L", projectOptions.languageNameInEnglish);
+            s = s.Replace("%D", projectOptions.dialect);
+            s = s.Replace("%a", projectOptions.contentCreator);
+            s = s.Replace("%A", projectOptions.contributor);
+            s = s.Replace("%v", projectOptions.vernacularTitle);
+            s = s.Replace("%f", "<a href=\"" + projectOptions.facebook + "\">" + projectOptions.facebook + "</a>");
+            s = s.Replace("%F", projectOptions.fcbhId);
+            s = s.Replace("%n", projectOptions.EnglishDescription);
+            s = s.Replace("%N", projectOptions.lwcDescription);
+            s = s.Replace("%p", projectOptions.privateProject ? "private" : "public");
+            s = s.Replace("%r", distributionScope);
+            s = s.Replace("%T", projectOptions.contentUpdateDate.ToString("yyyy-MM-dd"));
+            s = s.Replace("%o", projectOptions.rightsStatement);
+            s = s.Replace("%x", projectOptions.promoHtml);
+            s = s.Replace("%w", projectOptions.printPublisher);
+            s = s.Replace("%i", projectOptions.electronicPublisher);
+            s = s.Replace("%P", projectOptions.AudioCopyrightNotice);
+            s = s.Replace("%t", projectOptions.translationId);
+            string result = s.Replace("%%", "%");
+            return result;
+        }
+
+
+        /// <summary>
+        /// Generate a complete copyright and permissions statement
+        /// </summary>
+        /// <returns>HTML text of the long copyright and permissions statement</returns>
+        public string copyrightPermissionsStatement()
+        {
+            string fontClass = projectOptions.fontFamily.ToLower().Replace(' ', '_');
+            if (projectOptions.customPermissions)
+                return expandPercentEscapes(projectOptions.licenseHtml);
+            StringBuilder copr = new StringBuilder();
+            copr.Append(String.Format("<h1 class='{2}'>{0}</h1>\n<h2>{1}</h2>\n",
+                usfxToHtmlConverter.EscapeHtml(projectOptions.vernacularTitle),
+                usfxToHtmlConverter.EscapeHtml(projectOptions.EnglishDescription), fontClass));
+            if (!String.IsNullOrEmpty(projectOptions.lwcDescription))
+                copr.Append(String.Format("<h2>{0}</h2>\n", usfxToHtmlConverter.EscapeHtml(projectOptions.lwcDescription)));
+            copr.Append(String.Format("<p>{0}<br />\n", copyrightLink));
+            copr.Append(String.Format("Language: <a href='http://www.ethnologue.org/language/{0}' class='{2}' target='_blank'>{1}",
+                projectOptions.languageId, projectOptions.languageName, fontClass));
+            if (projectOptions.languageName != projectOptions.languageNameInEnglish)
+                copr.Append(String.Format(" ({0})", usfxToHtmlConverter.EscapeHtml(projectOptions.languageNameInEnglish)));
+            copr.Append("</a><br />\n");
+            if (!String.IsNullOrEmpty(projectOptions.dialect))
+                copr.Append(String.Format("Dialect: {0}<br />\n", usfxToHtmlConverter.EscapeHtml(projectOptions.dialect)));
+            if (!(projectOptions.anonymous || String.IsNullOrEmpty(projectOptions.contentCreator)))
+                copr.Append(String.Format("Translation by: {0}<br />\n", usfxToHtmlConverter.EscapeHtml(projectOptions.contentCreator)));
+            if ((!projectOptions.anonymous) && (!String.IsNullOrEmpty(projectOptions.contributor)) && (projectOptions.contentCreator != projectOptions.contributor))
+                copr.Append(String.Format("Contributor: {0}<br />\n", usfxToHtmlConverter.EscapeHtml(projectOptions.contributor)));
+            if (!String.IsNullOrEmpty(projectOptions.promoHtml))
+                copr.Append("<br />\n" + projectOptions.promoHtml);
+            if (!String.IsNullOrEmpty(projectOptions.rightsStatement))
+                copr.Append("<br />\n" + projectOptions.rightsStatement);
+            copr.Append("</p>\n");
+            if (projectOptions.ccbyndnc)
+            {
+                copr.Append(@"<p>This translation is made available to you under the terms of the
+<a href='http://creativecommons.org/licenses/by-nc-nd/4.0/'>Creative Commons Attribution-Noncommercial-No Derivatives license 4.0.</a></p>
+<p>You may share and redistribute this Bible translation or extracts from it in any format, provided that:</p>
+<ul>
+<li>You include the above copyright and source information.</li>
+<li>You do not sell this work for a profit.</li>
+<li>You do not change any of the words or punctuation of the Scriptures.</li>
+</ul>
+<p>Pictures included with Scriptures and other documents on this site are licensed just for use with those Scriptures and documents.
+For other uses, please contact the respective copyright owners.</p>
+");
+            }
+            else if (projectOptions.ccbysa)
+            {
+                copr.Append(@"<p>This translation is made available to you under the terms of the
+<a href='http://creativecommons.org/licenses/by-sa/4.0/'>Creative Commons Attribution Share-Alike license 4.0.</a></p>
+<p>You have permission to share and redistribute this Bible translation in any format and to make reasonable revisions and adaptations of this translation, provided that:</p>
+<ul>
+<li>You include the above copyright and source information.</li>
+<li>If you make any changes to the text, you must indicate that you did so in a way that makes it clear that the original licensor is not necessarily endorsing your changes.</li>
+<li>If you redistribute this text, you must distribute your contributions under the same license as the original.</li>
+</ul>
+<p>Pictures included with Scriptures and other documents on this site are licensed just for use with those Scriptures and documents.
+For other uses, please contact the respective copyright owners.</p>
+<p>Note that in addition to the rules above, revising and adapting God's Word involves a great responsibility to be true to God's Word. See Revelation 22:18-19.</p>
+");
+            }
+            else if (projectOptions.ccbynd)
+            {
+                copr.Append(@"<p>This translation is made available to you under the terms of the
+<a href='http://creativecommons.org/licenses/by-nd/4.0/'>Creative Commons Attribution-No Derivatives license 4.0.</a></p>
+<p>You may share and redistribute this Bible translation or extracts from it in any format, provided that:</p>
+<ul>
+<li>You include the above copyright and source information.</li>
+<li>You do not make any derivative works that change any of the actual words or punctuation of the Scriptures.</li>
+</ul>
+<p>Pictures included with Scriptures and other documents on this site are licensed just for use with those Scriptures and documents.
+For other uses, please contact the respective copyright owners.</p>
+");
+            }
+            copr.Append(String.Format("<p><br/>{0}</p>\n", projectOptions.contentUpdateDate.ToString("yyyy-MM-dd")));
+            return copr.ToString();
         }
 
 
