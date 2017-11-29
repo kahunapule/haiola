@@ -204,7 +204,20 @@ namespace haiola
                 }
 
                 bool gotParatextProject = false;
-                if (!String.IsNullOrEmpty(globe.paratextProjectsDir))
+                // Check for Paratext 8 project.
+                if (!String.IsNullOrEmpty(globe.paratext8ProjectsDir))
+                {
+                    if (!String.IsNullOrEmpty(globe.projectOptions.paratext8Project))
+                    {
+                        string ParatextProjectDir = Path.Combine(globe.paratext8ProjectsDir, globe.projectOptions.paratext8Project);
+                        if (Directory.Exists(ParatextProjectDir))
+                        {
+                            gotParatextProject = true;
+                            Ssf.ReadParatextSsf(globe.projectOptions, Path.Combine(ParatextProjectDir + "Settings.xml"));
+                        }
+                    }
+                }
+                if ((!gotParatextProject) && (!String.IsNullOrEmpty(globe.paratextProjectsDir)))
                 {
                     if (!String.IsNullOrEmpty(globe.projectOptions.paratextProject))
                     {
@@ -3234,6 +3247,8 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
             globe.projectOptions.countryCode = countryCodeTextBox.Text;
             globe.projectOptions.extendUsfm = extendUsfmCheckBox.Checked;
             globe.projectOptions.fcbhId = fcbhIdTextBox.Text.Replace(".","");
+            if (string.IsNullOrEmpty(globe.projectOptions.fcbhId))
+                globe.projectOptions.fcbhId = globe.projectOptions.translationId.ToUpperInvariant();
             globe.projectOptions.shortTitle = shortTitleTextBox.Text;
             globe.projectOptions.footNoteCallers = footNoteCallersTextBox.Text;
             globe.projectOptions.xrefCallers = crossreferenceCallersTextBox.Text;

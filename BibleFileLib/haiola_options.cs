@@ -94,7 +94,7 @@ namespace WordSend
 
         public string fcbhId
         {
-            get { return ini.ReadString("fcbhId", String.Empty).Replace(".",""); }
+            get { return ini.ReadString("fcbhId", translationId.ToUpperInvariant()).Replace(".",""); }
             set { ini.WriteString("fcbhId", value); }
         }
 
