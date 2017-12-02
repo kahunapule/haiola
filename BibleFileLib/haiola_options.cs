@@ -15,8 +15,9 @@ namespace WordSend
 		private List<string> m_postprocesses;
 		private List<string> m_altLinks;
 		private bool changed = false;
+        public global globe;
 
-		public void Reload(string iniName)
+        public void Reload(string iniName)
 		{
             try
             {
@@ -84,6 +85,19 @@ namespace WordSend
 			Reload(iniName);
 		}
 
+        /// <summary>
+        /// Initializes options from the specified options file.
+        /// If that file doesn't exist, initialzes data from the Sepp Options.xml file in the same folder,
+        /// if it exists.
+        /// </summary>
+        /// <param name="iniName"></param>
+        public Options(string iniName, global gb)
+        {
+            Phrases = new List<string>();
+            Reload(iniName);
+            globe = gb;
+        }
+
         public string allowedBookList;
 
         public string AudioCopyrightNotice
@@ -94,7 +108,23 @@ namespace WordSend
 
         public string fcbhId
         {
-            get { return ini.ReadString("fcbhId", translationId.ToUpperInvariant()).Replace(".",""); }
+            get
+            {
+                string result = ini.ReadString("fcbhId", translationId.ToUpperInvariant()).Replace(".", "").Replace("-", "").Replace("_","");
+                if (string.IsNullOrEmpty(result))
+                    result = translationId.ToUpperInvariant().Replace(".", "").Replace("-", "").Replace("_", "");
+                if (result.Length < 6)
+                {
+                    string cprabbrev = copyrightOwnerAbbrev;
+                    if ((copyrightOwnerAbbrev.Length < 2) && (copyrightOwner.StartsWith("Wycliffe")))
+                        cprabbrev = "WBT";
+                    string fill = (dialect + cprabbrev + copyrightOwner).ToUpperInvariant().Replace(".", "").Replace("-", "").Replace("_", "").Replace(" ","");
+                    int ix = 0;
+                    while ((result.Length < 6) && (ix < fill.Length))
+                        result = result + fill[ix++];
+                }
+                return result;
+            }
             set { ini.WriteString("fcbhId", value); }
         }
 
@@ -635,7 +665,22 @@ namespace WordSend
 
         public string paratext8Project
         {
-            get { return ini.ReadString("paratext8Project", String.Empty); }
+            get
+            {
+                string proj = ini.ReadString("paratext8Project", String.Empty);
+                if (string.IsNullOrEmpty(proj))
+                {
+                    if ((paratextProject.Length > 0) && (globe != null))
+                    {
+                        if (File.Exists(Path.Combine(Path.Combine(globe.paratext8ProjectsDir, paratextProject), "Settings.xml")))
+                        {   // Automatic switch to Paratext 8 from 7.x
+                            proj = paratextProject;
+                            paratextProject = string.Empty;
+                        }
+                    }
+                }
+                return proj;
+            }
             set { ini.WriteString("paratext8Project", String.IsNullOrEmpty(value) ? String.Empty : value.Trim()); }
         }
 

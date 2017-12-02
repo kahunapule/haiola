@@ -196,7 +196,7 @@ namespace haiola
                 globe.projectXiniPath = Path.Combine(globe.inputProjectDirectory, "options.xini");
                 if (globe.projectOptions == null)
                 {
-                    globe.projectOptions = new Options(globe.projectXiniPath);
+                    globe.projectOptions = new Options(globe.projectXiniPath, globe);
                 }
                 else
                 {
@@ -2862,7 +2862,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
         {
             if (globe.projectOptions == null)
             {
-                globe.projectOptions = new Options(globe.projectXiniPath);
+                globe.projectOptions = new Options(globe.projectXiniPath, globe);
             }
             else
             {
@@ -2917,8 +2917,8 @@ their generosity, people like you can open up the Bible and hear from God no mat
             e10dblCheckBox.Checked = globe.projectOptions.ETENDBL;
             archivedCheckBox.Checked = globe.projectOptions.Archived;
             subsetCheckBox.Checked = globe.projectOptions.subsetProject;
-            paratextcomboBox.SelectedItem = globe.projectOptions.paratextProject;
             paratext8ComboBox.SelectedItem = globe.projectOptions.paratext8Project;
+            paratextcomboBox.SelectedItem = globe.projectOptions.paratextProject;
             audioRecordingCopyrightTextBox.Text = globe.projectOptions.AudioCopyrightNotice;
             rodCodeTextBox.Text = globe.projectOptions.rodCode;
             ldmlTextBox.Text = globe.projectOptions.ldml;
@@ -3833,7 +3833,7 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
 
         private void copyFromTemplateButton_Click(object sender, EventArgs e)
         {
-            Options templateOptions = new Options(Path.Combine(Path.Combine(globe.inputDirectory, globe.currentTemplate), "options.xini"));
+            Options templateOptions = new Options(Path.Combine(Path.Combine(globe.inputDirectory, globe.currentTemplate), "options.xini"), globe);
             homeLinkTextBox.Text = globe.projectOptions.homeLink = templateOptions.homeLink;
             goTextTextBox.Text = globe.projectOptions.goText = templateOptions.goText;
             footerHtmlTextBox.Text = globe.projectOptions.footerHtml = templateOptions.footerHtml;
