@@ -675,7 +675,9 @@ namespace WordSend
                         if (File.Exists(Path.Combine(Path.Combine(globe.paratext8ProjectsDir, paratextProject), "Settings.xml")))
                         {   // Automatic switch to Paratext 8 from 7.x
                             proj = paratextProject;
+                            ini.WriteString("paratext8Project", proj);
                             paratextProject = string.Empty;
+                            Write();
                         }
                     }
                 }
