@@ -846,7 +846,7 @@ namespace WordSend
                 verseNumber++;
             }
             verseOsisId = chapterOsisId + "." + verseNumber.ToString();
-            verseId = chapterId + "_" + verseNumber.ToString();
+            verseId = chapterId + "_" + currentVerse;   // was verseNumber.ToString();
             StartVerse();
         }
 

@@ -1257,7 +1257,7 @@ namespace WordSend
                 currentVerseAlternate = String.Empty;
                 currentBCV = currentBookAbbrev + " " + currentChapter + ":" + currentVerse;
                 verseOsisId = chapterOsisId + "." + verseNumber.ToString();
-                verseId = chapterId + "_" + verseNumber.ToString();
+                verseId = chapterId + "_" + currentVerse;   // was verseNumber.ToString();
                 EndHtmlTextStyle(); // USFM and USFX disallow text styles crossing verse boundaries.
                                     // (If text styles could cross verse boundaries, we could just remember what the last
                                     //  style was and restart it, but that would make displaying any arbitrary range of
@@ -1300,7 +1300,7 @@ namespace WordSend
                 verseNumber++;
             }
             verseOsisId = chapterOsisId + "." + verseNumber.ToString();
-            verseId = chapterId + "_" + verseNumber.ToString();
+            verseId = chapterId + "_" + currentVerse;   // was verseNumber.ToString();
             StartVerse();
         }
 
@@ -1451,7 +1451,7 @@ namespace WordSend
                                     verseNumber++;
                                 }
                                 verseOsisId = chapterOsisId + "." + verseNumber.ToString();
-                                verseId = chapterId + "_" + verseNumber.ToString();
+                                verseId = chapterId + "_" + currentVerse;   // was verseNumber.ToString();
                                 break;
                             case "f":
                                 inFootnote = true;
@@ -2176,7 +2176,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                     verseNumber++;
                                 }
                                 verseOsisId = chapterOsisId + "." + verseNumber.ToString();
-                                verseId = chapterId + "_" + verseNumber.ToString();
+                                verseId = chapterId + "_" + currentVerse;   // was verseNumber.ToString();
                                 break;
                             case "w":
                             case "zw":

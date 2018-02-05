@@ -1944,7 +1944,7 @@ For other uses, please contact the respective copyright owners.</p>
                 verseNumber++;
             }
             verseOsisId = chapterOsisId + "." + verseNumber.ToString();
-            verseId = chapterId + "_" + verseNumber.ToString();
+            verseId = chapterId + "_" + currentVerse;   // was verseNumber.ToString();
             StartVerse();
         }
 
