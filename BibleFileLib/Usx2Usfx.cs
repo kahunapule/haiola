@@ -322,9 +322,38 @@ namespace WordSend
 
         string processedUsxBooks;
 
+        protected bool ScanUsxDir(string usxDir)
+        {
+            bool result = true;
+            try
+            {
+                DirectoryInfo dir = new DirectoryInfo(usxDir);
+                foreach (FileInfo f in dir.GetFiles())
+                {
+                    if (f.Extension.ToLower().CompareTo(".usx") == 0)
+                        ReadUsx(f.FullName);
+                }
+                foreach (DirectoryInfo di in dir.GetDirectories())
+                {
+                    string fullName = Path.Combine(usxDir, di.Name);
+                    if (Directory.Exists(fullName))
+                    {
+                        result &= ScanUsxDir(fullName);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError("Error converting USX files in " + usxDir + " to USFX.");
+                Logit.WriteError(ex.Message);
+                return false;
+            }
+            return result;
+        }
+
         /// <summary>
-        /// Convert all USX files with .usx extensions in the given usxDir and up to one
-        /// directory below it to USFX in usfxFile. (The one directory below it is to
+        /// Convert all USX files with .usx extensions in the given usxDir and directories
+        /// below it to USFX in usfxFile. (Scanning directories below it is to
         /// allow a pure unzip of an ETEN DBL bundle to be put into the USX directory.
         /// </summary>
         /// <param name="usxDir">Directory containing .usx files</param>
@@ -337,28 +366,7 @@ namespace WordSend
                 processedUsxBooks = string.Empty;
                 scrp = new Scriptures();
                 scrp.OpenUsfx(usfxFile);
-                DirectoryInfo dir = new DirectoryInfo(usxDir);
-                foreach (FileInfo f in dir.GetFiles())
-                {
-                    if (f.Extension.ToLower().CompareTo(".usx") == 0)
-                        ReadUsx(f.FullName);
-                }
-                foreach (DirectoryInfo di in dir.GetDirectories())
-                {
-                    string fullName = Path.Combine(usxDir, di.Name);
-                    if (Directory.Exists(fullName))
-                    {
-                        DirectoryInfo d2 = new DirectoryInfo(fullName);
-                        foreach (FileInfo f2 in d2.GetFiles())
-                        {
-                            if (f2.Extension.ToLower().CompareTo(".usx") == 0)
-                                ReadUsx(f2.FullName);
-                        }
-                    }
-                }
-
-
-
+                ScanUsxDir(usxDir);
                 scrp.CloseUsfx();
             }
             catch (Exception ex)
