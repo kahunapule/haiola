@@ -30,11 +30,20 @@ namespace WordSend
         public string dataRootDir; // Default is BibleConv in the user's Documents folder
         public string currentProject = String.Empty; // e.g., Kupang
         public string projectXiniPath;  // e.g., BibleConv\input\Kupang\options.xini
+        public string preferredCover;
+        public ethnorecord er;
+        public LanguageCodeInfo languageCodes;
+
 
         public BoolStringDelegate GUIWriteString;
         public BoolStringDelegate UpdateStatus;
         public bool useConsole = false;
         public bool loggedError = false;
+
+        public global()
+        {
+            languageCodes = new LanguageCodeInfo();
+        }
 
         public string m_swordSuffix
         {
@@ -54,6 +63,11 @@ namespace WordSend
             set { xini.WriteBool("generateUsfm3Fig", value); }
         }
 
+        public bool runXetex
+        {
+            get { return xini.ReadBool("runXetex", false); }
+            set { xini.WriteBool("runXetex", value); xini.Write(); }
+        }
 
         protected string GuessParatextProjectsDir()
         {
@@ -754,7 +768,21 @@ namespace WordSend
             if (!String.IsNullOrEmpty(projectOptions.rightsStatement))
                 copr.Append("<br />\n" + projectOptions.rightsStatement);
             copr.Append("</p>\n");
-            if (projectOptions.ccbyndnc)
+            if (projectOptions.ccby)
+            {
+                copr.Append(@"<p>This translation is made available to you under the terms of the
+<a href='http://creativecommons.org/licenses/by4.0/'>Creative Commons Attribution license 4.0.</a></p>
+<p>You may share and redistribute this Bible translation or extracts from it in any format, provided that:</p>
+<ul>
+<li>You include the above copyright and source information.</li>
+<li>If you make any changes to the text, you must indicate that you did so in a way that makes it clear that the original licensor is not necessarily endorsing your changes.</li>
+</ul>
+<p>Pictures included with Scriptures and other documents on this site are licensed just for use with those Scriptures and documents.
+For other uses, please contact the respective copyright owners.</p>
+<p>Note that in addition to the rules above, revising and adapting God's Word involves a great responsibility to be true to God's Word. See Revelation 22:18-19.</p>
+");
+            }
+            else if (projectOptions.ccbyndnc)
             {
                 copr.Append(@"<p>This translation is made available to you under the terms of the
 <a href='http://creativecommons.org/licenses/by-nc-nd/4.0/'>Creative Commons Attribution-Noncommercial-No Derivatives license 4.0.</a></p>
@@ -799,8 +827,6 @@ For other uses, please contact the respective copyright owners.</p>
             copr.Append(String.Format("<p><br/>{0}</p>\n", projectOptions.contentUpdateDate.ToString("yyyy-MM-dd")));
             return copr.ToString();
         }
-
-
 
 
     }

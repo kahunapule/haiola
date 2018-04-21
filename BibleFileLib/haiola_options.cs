@@ -142,8 +142,14 @@ namespace WordSend
 
         public bool redistributable
         {
-            get { return ((ini.ReadBool("redistributable", false) || publicDomain || ccbyndnc || ccbysa || ccbynd) && !privateProject); }
+            get { return ((ini.ReadBool("redistributable", false) || publicDomain || ccby || ccbyndnc || ccbysa || ccbynd) && !privateProject); }
             set { ini.WriteBool("redistributable", (!privateProject) && (value || publicDomain || ccbyndnc || ccbysa || ccbynd)); }
+        }
+
+        public bool ccby
+        {
+            get { return (ini.ReadBool("ccby", !(ccbysa || ccbynd || publicDomain || ccbyndnc || allRightsReserved || silentCopyright || otherLicense))); }
+            set { ini.WriteBool("ccby", value); }
         }
 
         public bool ccbysa
@@ -160,7 +166,7 @@ namespace WordSend
 
         public bool ccbynd
         {
-            get { return (ini.ReadBool("ccbynd", !(ccbysa || publicDomain || ccbyndnc || allRightsReserved || silentCopyright || otherLicense))); }
+            get { return (ini.ReadBool("ccbynd", false)); }
             set { ini.WriteBool("ccbynd", value); }
         }
 
@@ -220,12 +226,6 @@ namespace WordSend
             set { ini.WriteBool("makeEpub", value); }
         }
 
-        public bool dbsCover
-        {
-            get { return (ini.ReadBool("dbsCover", false)); }
-            set { ini.WriteBool("dbsCOver", value); }
-        }
-
         public int printPdfPageCount
         {
             get { return (ini.ReadInt("printPdfPageCount", 0)); }
@@ -238,10 +238,10 @@ namespace WordSend
             set { ini.WriteBool("makePDF", value); }
         }
 
-        public bool makeInScript
+        public bool makeBrowserBible
         {
-            get { return (ini.ReadBool("makeInScript", true)); }
-            set { ini.WriteBool("makeInScript", value); }
+            get { return (ini.ReadBool("makeBrowserBible", true)); }
+            set { ini.WriteBool("makeBrowserBible", value); }
         }
 
         public bool makeHotLinks
@@ -254,12 +254,6 @@ namespace WordSend
         {
             get { return ini.ReadBool("customPermissions", false); }
             set { ini.WriteBool("customPermissions", value); }
-        }
-
-        public bool dbshelp
-        {
-            get { return ini.ReadBool("dbshelp", false); }
-            set { ini.WriteBool("dbshelp", value); }
         }
 
         public bool commonChars
@@ -347,10 +341,10 @@ namespace WordSend
             set { ini.WriteBool("eBibleCertified", value); }
         }
 
-        public bool DBSandeBible
+        public bool eBibledotorgunique
         {
-            get { return (!privateProject) && ini.ReadBool("DBSandeBible", (!privateProject) && File.Exists(@"/home/kahunapule/sync/doc/Electronic Scripture Publishing/eBible.org_certified.jpg")); }
-            set { ini.WriteBool("DBSandeBible", value); }
+            get { return (!privateProject) && ini.ReadBool("eBibledotorgunique", (!privateProject) && File.Exists(@"/home/kahunapule/sync/doc/Electronic Scripture Publishing/eBible.org_certified.jpg")); }
+            set { ini.WriteBool("eBibledotorgunique", value); }
         }
             
         public int adBookCount

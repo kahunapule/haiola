@@ -114,6 +114,7 @@ namespace WordSend
         protected string texFileName;
         protected StreamWriter texFile;
         public string texDir;
+        public bool callXetex;
         protected Hashtable pageCounts;   // Number of pages in each PDF file as a string.
 
         /// <summary>
@@ -823,25 +824,6 @@ For other uses, please contact the respective copyright owners.</p>
             texFile.WriteLine(DoBiDi(String.Format("{0} {1}{2}", indexDateStamp, epubIdentifier, RIGHTBRACE)));
             texFile.WriteLine(@"\vfill\eject");
             CloseHtmlFile();
-            /*
-            if (projectOptions.DBSandeBible && projectOptions.redistributable)
-            {
-                OpenHtmlFile("verso.tex");
-                bookListIndex = 0;
-                bookRecord = (BibleBookRecord)bookList[0];
-                texFile.WriteLine(@"\PeriphTitle{ }");
-                texFile.Write(licenseHtml);
-                texFile.Write("\n\\par\\vskip 1ex\\hrule\\vskip 0.5ex\\par {0}\\TINY ", LEFTBRACE);
-                texFile.WriteLine(DoBiDi(String.Format("{0} {1}{2}", indexDateStamp, epubIdentifier, RIGHTBRACE)));
-                texFile.WriteLine(@"\vfill\eject");
-                texFile.Write("\n\\par\\vskip 8ex\\hrule\\vskip 2ex\\par {0}", LEFTBRACE);
-                texFile.Write("\\IP \\renewcommand{\\FontSize}{10pt}\\SetFont This print-on-demand edition of Scripture is designed, produced, and provided at cost by the Digital Bible Society. This is made possible through partnerships with the Bible League of Canada, Open Doors International, eBible.org, and other missions and translation agencies.  We are deeply grateful for the sacrifices made in translating this edition of Scripture and the generosity of others in making this Bible available to you.");
-                texFile.Write("\n\\par \\vskip 1ex Cover artwork is copyright © 2016 by the Digital Bible Society (http://dbs.org) and shared under the Creative Commons BY-NC-ND 4.0 license (https://creativecommons.org/licenses/by-nc-nd/4.0/).");
-                texFile.Write("\n\\par \\vskip 1ex To order additional copies of this Bible or hundreds of translations like it or to learn more about our ministries and the mission of Scripture distribution in every language, we invite you to visit www.DBS.org (USA), www.BibleLeague.ca (Canada), and www.OpenDoors.org (Europe). May God bless your work in sharing and teaching these Scriptures, until, as it is written, the earth is \\ITB “filled with the knowledge of the glory of the LORD, as the waters cover the sea.” \\ITE (Habakkuk 2:14) {0}", RIGHTBRACE);
-                texFile.WriteLine(@"\vskip 1ex\hrule\vfill\eject");
-                CloseHtmlFile();
-            }
-            */
 
         }
 
@@ -1382,7 +1364,7 @@ For other uses, please contact the respective copyright owners.</p>
             }
             fileHelper.CopyFile(FindInputFile("footkmpj.sty"), Path.Combine(texDir, "footkmpj.sty"));
 
-            if (projectOptions.runXetex)
+            if (callXetex)
             {
 
                 if (!RunXeTeX(texScreenFileName))
@@ -1407,11 +1389,12 @@ For other uses, please contact the respective copyright owners.</p>
                         RunXeTeX(bookFileName);
                     }
                 }
-            }
-            if (projectOptions.runXetex)
                 WritePDFIndex();
+            }
             else
+            {
                 WritePDFTemplate();
+            }
         }
 
     

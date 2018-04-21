@@ -48,7 +48,7 @@ watch for error
 messages and check your outputs to make sure they look reasonable. In particular,
 please note that bad markup that does not conform exactly to the USFM specification
 WILL cause problems. Customizations of the style sheet (custom.sty) in Paratext
-are NOT honored by Haiola, and will confuse Haiola.<br>
+are NOT honored by Haiola, and will confuse Haiola.<br/>
 </p>
 
 <p>Haiola is a free and open source collection of
@@ -67,7 +67,7 @@ Haiola:</p>
 
 <ul>
 
-  <li>A relatively modern computer running a reasonably current version Linux or Windows.</li>
+  <li>A relatively modern computer running a reasonably current version Linux or Windows. (Sorry, MacOS is currently not supported.)</li>
   <li>A current Java Runtime Environment.</li>
   <li>Above-average computer literacy, including
 knowledge of file systems, files, and the ability to write a batch file
@@ -107,7 +107,7 @@ Bible translation project, you enter some meta-data (information about
 the project), then run the conversions on that project or on all
 selected projects. Some of the details as to what to do with the
 outputs are left up to you, either to process manually or to supply a
-script or batch file to process them.<br>
+script or batch file to process them.<br/>
 </p>
 
 <h2>How do I install Haiola on Microsoft Windows?</h2>
@@ -149,11 +149,11 @@ your "My Paratext Projects" directory is (whatever you called it when you instal
 Linux</a>. (These may be available in your distribution package
 management system. For Ubuntu, you can get the latest SIL fonts from
 "apt source deb http://packages.sil.org/ubuntu <i>distro</i> main", where
-<i>"distro"</i> is your current distribution (i. e. xenial).)<br>
+<i>"distro"</i> is your current distribution (i. e. xenial).)<br/>
 In other words, in /etc/apt/sources.list, add a line like:
-<pre wrap="">deb http://packages.sil.org/ubuntu distributionName main<br></pre><br>
-Then issue the following commands:<br>
-<pre>wget -O - http://packages.sil.org/sil.gpg | sudo apt-key add -<br>apt-get install fonts-sil-andika<br>sudo apt-get install fonts-sil-gentium-plus<br>sudo apt-get install mono-complete<br>sudo apt-get install libmono-winforms2.0-cil<br><br></pre></li>
+<pre wrap="">deb http://packages.sil.org/ubuntu distributionName main<br/></pre><br/>
+Then issue the following commands:<br/>
+<pre>wget -O - http://packages.sil.org/sil.gpg | sudo apt-key add -<br/>apt-get install fonts-sil-andika<br/>sudo apt-get install fonts-sil-gentium-plus<br/>sudo apt-get install mono-complete<br/>sudo apt-get install libmono-winforms2.0-cil<br/><br/></pre></li>
 <li><a href="https://haiola.org/haiola.zip">Download
 the Haiola distribution
 .zip file</a> and unzip it to a suitable location in your file system. Note
@@ -190,38 +190,40 @@ Windows uses “\”. In my examples, I'll use one or the other
 style, and leave it to you to adjust when necessary to fit your
 operating system.</p>
 
-<p>BibleConv<br>
-&nbsp;&nbsp; input — Note: it is your responsibility to create the input project folders within this directory.<br>
-&nbsp;&nbsp; &nbsp;&nbsp; project folders, which must be named the same as the short translation identifier<br>
-&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; Source<br>
+<p>BibleConv<br/>
+&nbsp;&nbsp; input — Note: it is your responsibility to create the input project folders within this directory.<br/>
+&nbsp;&nbsp; &nbsp;&nbsp; project folders, which must be named the same as the short translation identifier<br/>
+&nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; Source<br/>
 &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; Unicode USFM files
-for this project (if direct Paratext import is not used)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -or-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; usfx<br>
+for this project (if direct Paratext import is not used)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -or-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; usfx<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; USFX
-file for import<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -or-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; usx<br>
+file for import<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -or-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; usx<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; USX
-files named with .usx suffix (i. e. an unziped Digital Bible Library bundle). The .usx files may be in a subdirectory (i.e. USX_1) of this directory.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -and (optional)-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; htmlextras<br>
+files named with .usx suffix (i. e. an unziped Digital Bible Library bundle). The .usx files may be in a subdirectory (i.e. USX_1) of this directory.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -and (optional)-<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; htmlextras<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 Files to copy directly to the html output directory, such as images,
-introduction files, etc.<br>
-&nbsp;&nbsp; output — Note: output directories will be created and filled automatically as needed.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cover — cover image(s)<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; epub<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extendedusfm — may contain nonstandard markup, e.g. for Strong's numbers. This format is deprecated.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; html — your configured HTML output<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; search — text and XML files for searching text or importing to limited Bible study apps<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sql — Structured Query Language files for building a Bible contents database<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; usfm — Unified Standard Format Markup, great for interchange<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; usfx — Unified Standard Format XML, equivalent to USFM in features, but easier to process<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; WordML — Microsoft Word 2003 (and later) XML document format<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xetex — XeTeX format (an intermediate step to producing PDFs)<br>
-&nbsp;&nbsp; sword — output directory for a local Sword module repository<br>
-&nbsp;&nbsp; swordRestricted — output directory for a local Sword module repository for modules with restricted rights<br>
+introduction files, etc.<br/>
+&nbsp;&nbsp; output — Note: output directories will be created and filled automatically as needed.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; browserBible — Browser Bible module<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; cover — cover image(s)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; epub<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extendedusfm — may contain nonstandard markup, e.g. for Strong's numbers. This format is deprecated.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; html — your configured HTML output<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; search — text and XML files for searching text or importing to limited Bible study apps<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sql — Structured Query Language files for building a Bible contents database<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; usfm — Unified Standard Format Markup, great for interchange<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; usfx — Unified Standard Format XML, equivalent to USFM in features, but easier to process<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; WordML — Microsoft Word 2003 (and later) XML document format<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xetex — XeTeX format (an intermediate step to producing PDFs)<br/>
+&nbsp;&nbsp; browserBiblecss — CSS file input for Browser Bible modules<br/>
+&nbsp;&nbsp; sword — output directory for a local Sword module repository<br/>
+&nbsp;&nbsp; swordRestricted — output directory for a local Sword module repository for modules with restricted rights<br/>
 </p>
 
 <p>Of the folders above, the ones you create are the project folders
@@ -262,7 +264,7 @@ extension will automatically be changed in the HTML output. If an
 illustration is missing in the htmlextras directory, no &lt;IMG&gt; tag
 will be generated. Thus, if you have copyright permission to include
 only selected image files, just put those files for which you have
-permission in the htmlextras directory for that project.<br>
+permission in the htmlextras directory for that project.<br/>
 </p>
 
 <h2>ePub generation</h2>
@@ -356,7 +358,7 @@ output, you may put a file named <b>xref.xml</b> in the project directory.
 This file must be formatted like the crossreferences.xml sample file in
 the distribution. The "xlat" entries allow translation of book names or
 abbreviations to the local language, and the "xref" entries are the
-actual crossreference notes.<br>
+actual crossreference notes.<br/>
 <h2>The Books List</h2>
 
 <p>The book name and abbreviation list (<b>BookNames.xml</b>) as generated by Paratext
@@ -400,11 +402,13 @@ font is unique and needed for proper display of the Unicode range that is needed
 <h2>Copyright tab</h2>
 <ul>
 <li><b>Public Domain</b> — this project is in the Public Domain, either by copyright expiration, explicit donation to the Public Domain, or abandonment of intellectual property</li>
-<li><b>CC BY-NC</b> — this project is copyrighted and licensed under a Creative Commons Attribution, No derivatives license 4.0. (Recommended.)</li>
-<li><b>CC BY-NC-ND</b> — this project is copyrighted and licensed under a Creative Commons Attribution, Noncommercial, No derivatives license 4.0.</li>
+<li><b>CC BY</b> — this project is copyrighted and licensed under a Creative Commons Attribution license 4.0. (Highly recommended.)</li>
+<li><b>CC BY-SA</b> — this project is copyrighted and licensed under a Creative Commons Attribution, Share-Alike license 4.0. (Highly Recommended.)</li>
+<li><b>CC BY-ND</b> — this project is copyrighted and licensed under a Creative Commons Attribution, No derivatives license 4.0. (Recommended.)</li>
+<li><b>CC BY-NC-ND</b> — this project is copyrighted and licensed under a Creative Commons Attribution, Noncommercial, No derivatives license 4.0. (OK, but may have unintended negative consequences.)</li>
 <li><b>other</b> — this project is licensed under other terms, as listed below.</li>
 <li><b>All rights reserved</b> — this project is copyrighted and no additional license is granted herewith.</li>
-<li><b>Silent</b> — this project may or may not be copyrighted, but a copyright notice or public domain statement is not to be included with this project (not recommended unless necessary due to creative access area constraints).</li>
+<li><b>Silent</b> — this project may or may not be copyrighted, but a copyright notice or public domain statement is not to be included with this project (not recommended unless necessary due to creative access area constraints). Note that enforcement of a copyright when published this way is probably not possible.</li>
 <li><b>Copyright © owner(s)</b> — who actually owns the copyright. Note: this is NOT necessarily the publisher. It is the person or organization with the definitive right to grant or refuse publication permission.</li>
 <li><b>Copyright year(s)</b> — publication/creation date(s) starting the effective copyright term. Term length is complicated, but for current works by an organization, the term is 95 years, starting from this date. A revision extends the term of copyright for the revised work, but not for the unrevised work.</li>
 <li><b>© owner abbrev</b> — an abbreviation that might be used to indicate the copyright owner in a short form notice, like "BSPNG" for "Bible Society of Papua New Guinea". Leave blank or the same as the copyright owner field if this copyright owner doesn't want to use a short form.</li>
@@ -516,7 +520,7 @@ John Thomson, Nathan Miles, Michael Paul Johnson, and possibly some
 other people. (Kahunapule) Michael Paul Johnson is currently the only
 active programmer working on this project. Haiola inherits open source
 code from Onyx, WordSend, and Prophero. (Prophero was called SEPP at
-one time, and that name lives on in the source code, too.)<br>
+one time, and that name lives on in the source code, too.)<br/>
 </p>
 
 <h2>Where did the name “Haiola” come from?</h2>
@@ -543,12 +547,12 @@ you concatinate "Michael", the usual
 email separator between name and domain, and eBible.org, that should work. Or, just use the contact URL above.
 Remember the part about reading this document first. Also, make sure
 you have the most recent version of this program if you have a problem,
-just to make sure I haven't already fixed whatever is bugging you.<br>
+just to make sure I haven't already fixed whatever is bugging you.<br/>
 
-<br>
+<br/>
 
 If you want to get announcements of what is new with Haiola, please
-sign up for the announcement email list at <a href="http://groups.google.com/group/haiola?hl=en">http://groups.google.com/group/haiola?hl=en</a>.<br>
+sign up for the announcement email list at <a href="http://groups.google.com/group/haiola?hl=en">http://groups.google.com/group/haiola?hl=en</a>.<br/>
 
 <h2>Copyright and Permission to Copy</h2>
 

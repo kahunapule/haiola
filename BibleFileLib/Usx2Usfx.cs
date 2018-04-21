@@ -1,14 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Data;
 using System.IO;
-using System.Collections;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
-using System.Xml.Schema;
-using System.Diagnostics;
 
 namespace WordSend
 {

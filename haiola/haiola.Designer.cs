@@ -104,6 +104,7 @@
             this.coprAbbrevTextBox = new System.Windows.Forms.TextBox();
             this.stripExtrasCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.ccbyRadioButton = new System.Windows.Forms.RadioButton();
             this.CCBySaRadioButton = new System.Windows.Forms.RadioButton();
             this.CCByNdRadioButton = new System.Windows.Forms.RadioButton();
             this.silentRadioButton = new System.Windows.Forms.RadioButton();
@@ -255,7 +256,7 @@
             this.statisticsTextBox = new System.Windows.Forms.TextBox();
             this.outputsTabPage = new System.Windows.Forms.TabPage();
             this.makePDFCheckBox = new System.Windows.Forms.CheckBox();
-            this.makeInScriptCheckBox = new System.Windows.Forms.CheckBox();
+            this.makeBrowserBibleCheckBox = new System.Windows.Forms.CheckBox();
             this.label77 = new System.Windows.Forms.Label();
             this.makeWordMLCheckBox = new System.Windows.Forms.CheckBox();
             this.makeSwordCheckBox = new System.Windows.Forms.CheckBox();
@@ -548,9 +549,9 @@
             this.label67.AutoSize = true;
             this.label67.Location = new System.Drawing.Point(6, 73);
             this.label67.Name = "label67";
-            this.label67.Size = new System.Drawing.Size(93, 15);
+            this.label67.Size = new System.Drawing.Size(63, 15);
             this.label67.TabIndex = 52;
-            this.label67.Text = "FCBH/DBS ID:";
+            this.label67.Text = "FCBH ID:";
             // 
             // label66
             // 
@@ -893,21 +894,21 @@
             // anonymousCheckBox
             // 
             this.anonymousCheckBox.AutoSize = true;
-            this.anonymousCheckBox.Location = new System.Drawing.Point(534, 65);
+            this.anonymousCheckBox.Location = new System.Drawing.Point(544, 76);
             this.anonymousCheckBox.Name = "anonymousCheckBox";
             this.anonymousCheckBox.Size = new System.Drawing.Size(94, 19);
-            this.anonymousCheckBox.TabIndex = 233;
+            this.anonymousCheckBox.TabIndex = 22;
             this.anonymousCheckBox.Text = "&Anonymous";
             this.anonymousCheckBox.UseVisualStyleBackColor = true;
             // 
             // privateCheckBox
             // 
             this.privateCheckBox.AutoSize = true;
-            this.privateCheckBox.Location = new System.Drawing.Point(345, 65);
+            this.privateCheckBox.Location = new System.Drawing.Point(544, 104);
             this.privateCheckBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.privateCheckBox.Name = "privateCheckBox";
             this.privateCheckBox.Size = new System.Drawing.Size(170, 19);
-            this.privateCheckBox.TabIndex = 45;
+            this.privateCheckBox.TabIndex = 23;
             this.privateCheckBox.Text = "&Private - do not distribute";
             this.privateCheckBox.UseVisualStyleBackColor = true;
             this.privateCheckBox.CheckedChanged += new System.EventHandler(this.privateCheckBox_CheckedChanged);
@@ -915,27 +916,29 @@
             // downloadsAllowedCheckBox
             // 
             this.downloadsAllowedCheckBox.AutoSize = true;
-            this.downloadsAllowedCheckBox.Location = new System.Drawing.Point(171, 64);
+            this.downloadsAllowedCheckBox.Location = new System.Drawing.Point(544, 51);
             this.downloadsAllowedCheckBox.Name = "downloadsAllowedCheckBox";
             this.downloadsAllowedCheckBox.Size = new System.Drawing.Size(137, 19);
-            this.downloadsAllowedCheckBox.TabIndex = 44;
+            this.downloadsAllowedCheckBox.TabIndex = 21;
             this.downloadsAllowedCheckBox.Text = "Downloads allowed";
             this.downloadsAllowedCheckBox.UseVisualStyleBackColor = true;
+            this.downloadsAllowedCheckBox.CheckedChanged += new System.EventHandler(this.downloadsAllowedCheckBox_CheckedChanged);
             // 
             // redistributableCheckBox
             // 
             this.redistributableCheckBox.AutoSize = true;
-            this.redistributableCheckBox.Location = new System.Drawing.Point(10, 64);
+            this.redistributableCheckBox.Font = new System.Drawing.Font("Liberation Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.redistributableCheckBox.Location = new System.Drawing.Point(544, 26);
             this.redistributableCheckBox.Name = "redistributableCheckBox";
-            this.redistributableCheckBox.Size = new System.Drawing.Size(144, 19);
-            this.redistributableCheckBox.TabIndex = 43;
+            this.redistributableCheckBox.Size = new System.Drawing.Size(159, 19);
+            this.redistributableCheckBox.TabIndex = 20;
             this.redistributableCheckBox.Text = "Freely redistributable";
             this.redistributableCheckBox.UseVisualStyleBackColor = true;
             this.redistributableCheckBox.CheckedChanged += new System.EventHandler(this.redistributableCheckBox_CheckedChanged);
             // 
             // contributorTextBox
             // 
-            this.contributorTextBox.Location = new System.Drawing.Point(423, 269);
+            this.contributorTextBox.Location = new System.Drawing.Point(430, 302);
             this.contributorTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.contributorTextBox.Name = "contributorTextBox";
             this.contributorTextBox.Size = new System.Drawing.Size(274, 23);
@@ -944,7 +947,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(298, 269);
+            this.label8.Location = new System.Drawing.Point(305, 302);
             this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(121, 15);
@@ -954,7 +957,7 @@
             // 
             // creatorTextBox
             // 
-            this.creatorTextBox.Location = new System.Drawing.Point(105, 266);
+            this.creatorTextBox.Location = new System.Drawing.Point(112, 299);
             this.creatorTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.creatorTextBox.Name = "creatorTextBox";
             this.creatorTextBox.Size = new System.Drawing.Size(171, 23);
@@ -963,7 +966,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(-1, 269);
+            this.label7.Location = new System.Drawing.Point(6, 302);
             this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(98, 15);
@@ -974,7 +977,7 @@
             // label63
             // 
             this.label63.AutoSize = true;
-            this.label63.Location = new System.Drawing.Point(54, 419);
+            this.label63.Location = new System.Drawing.Point(61, 452);
             this.label63.Name = "label63";
             this.label63.Size = new System.Drawing.Size(65, 15);
             this.label63.TabIndex = 58;
@@ -982,14 +985,14 @@
             // 
             // facebookTextBox
             // 
-            this.facebookTextBox.Location = new System.Drawing.Point(126, 416);
+            this.facebookTextBox.Location = new System.Drawing.Point(133, 449);
             this.facebookTextBox.Name = "facebookTextBox";
             this.facebookTextBox.Size = new System.Drawing.Size(468, 23);
             this.facebookTextBox.TabIndex = 59;
             // 
             // localRightsHolderTextBox
             // 
-            this.localRightsHolderTextBox.Location = new System.Drawing.Point(125, 382);
+            this.localRightsHolderTextBox.Location = new System.Drawing.Point(132, 415);
             this.localRightsHolderTextBox.Name = "localRightsHolderTextBox";
             this.localRightsHolderTextBox.Size = new System.Drawing.Size(469, 23);
             this.localRightsHolderTextBox.TabIndex = 58;
@@ -997,7 +1000,7 @@
             // label62
             // 
             this.label62.AutoSize = true;
-            this.label62.Location = new System.Drawing.Point(11, 386);
+            this.label62.Location = new System.Drawing.Point(18, 419);
             this.label62.Name = "label62";
             this.label62.Size = new System.Drawing.Size(116, 15);
             this.label62.TabIndex = 55;
@@ -1006,7 +1009,7 @@
             // label57
             // 
             this.label57.AutoSize = true;
-            this.label57.Location = new System.Drawing.Point(342, 164);
+            this.label57.Location = new System.Drawing.Point(349, 197);
             this.label57.Name = "label57";
             this.label57.Size = new System.Drawing.Size(113, 15);
             this.label57.TabIndex = 54;
@@ -1014,7 +1017,7 @@
             // 
             // audioRecordingCopyrightTextBox
             // 
-            this.audioRecordingCopyrightTextBox.Location = new System.Drawing.Point(461, 161);
+            this.audioRecordingCopyrightTextBox.Location = new System.Drawing.Point(468, 194);
             this.audioRecordingCopyrightTextBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.audioRecordingCopyrightTextBox.Name = "audioRecordingCopyrightTextBox";
             this.audioRecordingCopyrightTextBox.Size = new System.Drawing.Size(172, 23);
@@ -1023,7 +1026,7 @@
             // label41
             // 
             this.label41.AutoSize = true;
-            this.label41.Location = new System.Drawing.Point(5, 161);
+            this.label41.Location = new System.Drawing.Point(12, 194);
             this.label41.Name = "label41";
             this.label41.Size = new System.Drawing.Size(91, 15);
             this.label41.TabIndex = 31;
@@ -1032,7 +1035,7 @@
             // 
             // copyrightOwnerUrlTextBox
             // 
-            this.copyrightOwnerUrlTextBox.Location = new System.Drawing.Point(106, 161);
+            this.copyrightOwnerUrlTextBox.Location = new System.Drawing.Point(113, 194);
             this.copyrightOwnerUrlTextBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.copyrightOwnerUrlTextBox.Name = "copyrightOwnerUrlTextBox";
             this.copyrightOwnerUrlTextBox.Size = new System.Drawing.Size(230, 23);
@@ -1041,7 +1044,7 @@
             // label40
             // 
             this.label40.AutoSize = true;
-            this.label40.Location = new System.Drawing.Point(459, 104);
+            this.label40.Location = new System.Drawing.Point(466, 137);
             this.label40.Name = "label40";
             this.label40.Size = new System.Drawing.Size(103, 15);
             this.label40.TabIndex = 29;
@@ -1050,7 +1053,7 @@
             // 
             // coprAbbrevTextBox
             // 
-            this.coprAbbrevTextBox.Location = new System.Drawing.Point(461, 124);
+            this.coprAbbrevTextBox.Location = new System.Drawing.Point(468, 157);
             this.coprAbbrevTextBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.coprAbbrevTextBox.Name = "coprAbbrevTextBox";
             this.coprAbbrevTextBox.Size = new System.Drawing.Size(134, 23);
@@ -1059,7 +1062,7 @@
             // stripExtrasCheckBox
             // 
             this.stripExtrasCheckBox.AutoSize = true;
-            this.stripExtrasCheckBox.Location = new System.Drawing.Point(5, 358);
+            this.stripExtrasCheckBox.Location = new System.Drawing.Point(12, 391);
             this.stripExtrasCheckBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.stripExtrasCheckBox.Name = "stripExtrasCheckBox";
             this.stripExtrasCheckBox.Size = new System.Drawing.Size(344, 19);
@@ -1069,6 +1072,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.ccbyRadioButton);
             this.groupBox1.Controls.Add(this.CCBySaRadioButton);
             this.groupBox1.Controls.Add(this.CCByNdRadioButton);
             this.groupBox1.Controls.Add(this.silentRadioButton);
@@ -1080,56 +1084,71 @@
             this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.groupBox1.Size = new System.Drawing.Size(714, 50);
+            this.groupBox1.Size = new System.Drawing.Size(534, 115);
             this.groupBox1.TabIndex = 11;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = " Freedom ";
             // 
+            // ccbyRadioButton
+            // 
+            this.ccbyRadioButton.AutoSize = true;
+            this.ccbyRadioButton.Font = new System.Drawing.Font("Liberation Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ccbyRadioButton.Location = new System.Drawing.Point(10, 21);
+            this.ccbyRadioButton.Name = "ccbyRadioButton";
+            this.ccbyRadioButton.Size = new System.Drawing.Size(216, 19);
+            this.ccbyRadioButton.TabIndex = 12;
+            this.ccbyRadioButton.TabStop = true;
+            this.ccbyRadioButton.Text = "Creative Commons Attribution";
+            this.ccbyRadioButton.UseVisualStyleBackColor = true;
+            this.ccbyRadioButton.CheckedChanged += new System.EventHandler(this.ccbyRadioButton_CheckedChanged);
+            // 
             // CCBySaRadioButton
             // 
             this.CCBySaRadioButton.AutoSize = true;
-            this.CCBySaRadioButton.Location = new System.Drawing.Point(126, 21);
+            this.CCBySaRadioButton.Font = new System.Drawing.Font("Liberation Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CCBySaRadioButton.Location = new System.Drawing.Point(10, 46);
             this.CCBySaRadioButton.Name = "CCBySaRadioButton";
-            this.CCBySaRadioButton.Size = new System.Drawing.Size(84, 19);
-            this.CCBySaRadioButton.TabIndex = 37;
+            this.CCBySaRadioButton.Size = new System.Drawing.Size(295, 19);
+            this.CCBySaRadioButton.TabIndex = 13;
             this.CCBySaRadioButton.TabStop = true;
-            this.CCBySaRadioButton.Text = "CC BY-SA";
+            this.CCBySaRadioButton.Text = "Creative Commons Attribution Share-Alike";
             this.CCBySaRadioButton.UseVisualStyleBackColor = true;
             this.CCBySaRadioButton.CheckedChanged += new System.EventHandler(this.CCBySaRadioButton_CheckedChanged);
             // 
             // CCByNdRadioButton
             // 
             this.CCByNdRadioButton.AutoSize = true;
-            this.CCByNdRadioButton.Font = new System.Drawing.Font("Liberation Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CCByNdRadioButton.Location = new System.Drawing.Point(226, 22);
+            this.CCByNdRadioButton.Font = new System.Drawing.Font("Liberation Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CCByNdRadioButton.Location = new System.Drawing.Point(10, 71);
             this.CCByNdRadioButton.Name = "CCByNdRadioButton";
-            this.CCByNdRadioButton.Size = new System.Drawing.Size(91, 19);
-            this.CCByNdRadioButton.TabIndex = 38;
+            this.CCByNdRadioButton.Size = new System.Drawing.Size(284, 19);
+            this.CCByNdRadioButton.TabIndex = 14;
             this.CCByNdRadioButton.TabStop = true;
-            this.CCByNdRadioButton.Text = "CC BY-ND";
+            this.CCByNdRadioButton.Text = "Creative Commons Attribution No Derivatives";
             this.CCByNdRadioButton.UseVisualStyleBackColor = true;
             this.CCByNdRadioButton.CheckedChanged += new System.EventHandler(this.CCByNdRadioButton_CheckedChanged);
             // 
             // silentRadioButton
             // 
             this.silentRadioButton.AutoSize = true;
-            this.silentRadioButton.Location = new System.Drawing.Point(653, 22);
+            this.silentRadioButton.Location = new System.Drawing.Point(401, 96);
             this.silentRadioButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.silentRadioButton.Name = "silentRadioButton";
             this.silentRadioButton.Size = new System.Drawing.Size(56, 19);
-            this.silentRadioButton.TabIndex = 42;
+            this.silentRadioButton.TabIndex = 19;
             this.silentRadioButton.TabStop = true;
             this.silentRadioButton.Text = "Silent";
             this.silentRadioButton.UseVisualStyleBackColor = true;
+            this.silentRadioButton.CheckedChanged += new System.EventHandler(this.silentRadioButton_CheckedChanged);
             // 
             // allRightsRadioButton
             // 
             this.allRightsRadioButton.AutoSize = true;
-            this.allRightsRadioButton.Location = new System.Drawing.Point(456, 22);
+            this.allRightsRadioButton.Location = new System.Drawing.Point(402, 44);
             this.allRightsRadioButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.allRightsRadioButton.Name = "allRightsRadioButton";
             this.allRightsRadioButton.Size = new System.Drawing.Size(128, 19);
-            this.allRightsRadioButton.TabIndex = 40;
+            this.allRightsRadioButton.TabIndex = 17;
             this.allRightsRadioButton.TabStop = true;
             this.allRightsRadioButton.Text = "All rights reserved";
             this.allRightsRadioButton.UseVisualStyleBackColor = true;
@@ -1138,11 +1157,11 @@
             // otherRadioButton
             // 
             this.otherRadioButton.AutoSize = true;
-            this.otherRadioButton.Location = new System.Drawing.Point(590, 22);
+            this.otherRadioButton.Location = new System.Drawing.Point(403, 69);
             this.otherRadioButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.otherRadioButton.Name = "otherRadioButton";
             this.otherRadioButton.Size = new System.Drawing.Size(54, 19);
-            this.otherRadioButton.TabIndex = 41;
+            this.otherRadioButton.TabIndex = 18;
             this.otherRadioButton.TabStop = true;
             this.otherRadioButton.Text = "other";
             this.otherRadioButton.UseVisualStyleBackColor = true;
@@ -1151,24 +1170,25 @@
             // ccRadioButton
             // 
             this.ccRadioButton.AutoSize = true;
-            this.ccRadioButton.Location = new System.Drawing.Point(326, 22);
+            this.ccRadioButton.Location = new System.Drawing.Point(10, 97);
             this.ccRadioButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.ccRadioButton.Name = "ccRadioButton";
-            this.ccRadioButton.Size = new System.Drawing.Size(111, 19);
-            this.ccRadioButton.TabIndex = 39;
+            this.ccRadioButton.Size = new System.Drawing.Size(378, 19);
+            this.ccRadioButton.TabIndex = 15;
             this.ccRadioButton.TabStop = true;
-            this.ccRadioButton.Text = "CC BY-NC-ND";
+            this.ccRadioButton.Text = "Creative Commons Attribution Noncommercial No Derivatives";
             this.ccRadioButton.UseVisualStyleBackColor = true;
             this.ccRadioButton.CheckedChanged += new System.EventHandler(this.ccRadioButton_CheckedChanged);
             // 
             // pdRadioButton
             // 
             this.pdRadioButton.AutoSize = true;
-            this.pdRadioButton.Location = new System.Drawing.Point(5, 22);
+            this.pdRadioButton.Font = new System.Drawing.Font("Liberation Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.pdRadioButton.Location = new System.Drawing.Point(402, 21);
             this.pdRadioButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.pdRadioButton.Name = "pdRadioButton";
-            this.pdRadioButton.Size = new System.Drawing.Size(108, 19);
-            this.pdRadioButton.TabIndex = 36;
+            this.pdRadioButton.Size = new System.Drawing.Size(114, 19);
+            this.pdRadioButton.TabIndex = 16;
             this.pdRadioButton.TabStop = true;
             this.pdRadioButton.Text = "Public Domain";
             this.pdRadioButton.UseVisualStyleBackColor = true;
@@ -1177,7 +1197,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(5, 328);
+            this.label16.Location = new System.Drawing.Point(12, 361);
             this.label16.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(122, 15);
@@ -1186,7 +1206,7 @@
             // 
             // electronicPublisherTextBox
             // 
-            this.electronicPublisherTextBox.Location = new System.Drawing.Point(145, 327);
+            this.electronicPublisherTextBox.Location = new System.Drawing.Point(152, 360);
             this.electronicPublisherTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.electronicPublisherTextBox.Name = "electronicPublisherTextBox";
             this.electronicPublisherTextBox.Size = new System.Drawing.Size(368, 23);
@@ -1194,7 +1214,7 @@
             // 
             // printPublisherTextBox
             // 
-            this.printPublisherTextBox.Location = new System.Drawing.Point(98, 297);
+            this.printPublisherTextBox.Location = new System.Drawing.Point(105, 330);
             this.printPublisherTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.printPublisherTextBox.Name = "printPublisherTextBox";
             this.printPublisherTextBox.Size = new System.Drawing.Size(416, 23);
@@ -1202,7 +1222,7 @@
             // 
             // rightsStatementTextBox
             // 
-            this.rightsStatementTextBox.Location = new System.Drawing.Point(5, 209);
+            this.rightsStatementTextBox.Location = new System.Drawing.Point(12, 242);
             this.rightsStatementTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.rightsStatementTextBox.Multiline = true;
             this.rightsStatementTextBox.Name = "rightsStatementTextBox";
@@ -1212,7 +1232,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(3, 188);
+            this.label15.Location = new System.Drawing.Point(10, 221);
             this.label15.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(136, 15);
@@ -1222,7 +1242,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(2, 298);
+            this.label14.Location = new System.Drawing.Point(9, 331);
             this.label14.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(92, 15);
@@ -1231,7 +1251,7 @@
             // 
             // copyrightYearTextBox
             // 
-            this.copyrightYearTextBox.Location = new System.Drawing.Point(5, 124);
+            this.copyrightYearTextBox.Location = new System.Drawing.Point(12, 157);
             this.copyrightYearTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.copyrightYearTextBox.Name = "copyrightYearTextBox";
             this.copyrightYearTextBox.Size = new System.Drawing.Size(171, 23);
@@ -1240,7 +1260,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(5, 104);
+            this.label13.Location = new System.Drawing.Point(12, 137);
             this.label13.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(110, 15);
@@ -1250,7 +1270,7 @@
             // 
             // copyrightOwnerTextBox
             // 
-            this.copyrightOwnerTextBox.Location = new System.Drawing.Point(196, 124);
+            this.copyrightOwnerTextBox.Location = new System.Drawing.Point(203, 157);
             this.copyrightOwnerTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.copyrightOwnerTextBox.Name = "copyrightOwnerTextBox";
             this.copyrightOwnerTextBox.Size = new System.Drawing.Size(246, 23);
@@ -1259,7 +1279,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(194, 101);
+            this.label12.Location = new System.Drawing.Point(201, 134);
             this.label12.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(137, 15);
@@ -2708,7 +2728,7 @@
             // outputsTabPage
             // 
             this.outputsTabPage.Controls.Add(this.makePDFCheckBox);
-            this.outputsTabPage.Controls.Add(this.makeInScriptCheckBox);
+            this.outputsTabPage.Controls.Add(this.makeBrowserBibleCheckBox);
             this.outputsTabPage.Controls.Add(this.label77);
             this.outputsTabPage.Controls.Add(this.makeWordMLCheckBox);
             this.outputsTabPage.Controls.Add(this.makeSwordCheckBox);
@@ -2731,17 +2751,15 @@
             this.makePDFCheckBox.Text = "PDF";
             this.makePDFCheckBox.UseVisualStyleBackColor = true;
             // 
-            // makeInScriptCheckBox
+            // makeBrowserBibleCheckBox
             // 
-            this.makeInScriptCheckBox.AutoSize = true;
-            this.makeInScriptCheckBox.Enabled = false;
-            this.makeInScriptCheckBox.Location = new System.Drawing.Point(47, 157);
-            this.makeInScriptCheckBox.Name = "makeInScriptCheckBox";
-            this.makeInScriptCheckBox.Size = new System.Drawing.Size(70, 19);
-            this.makeInScriptCheckBox.TabIndex = 5;
-            this.makeInScriptCheckBox.Text = "inScript";
-            this.makeInScriptCheckBox.UseVisualStyleBackColor = true;
-            this.makeInScriptCheckBox.Visible = false;
+            this.makeBrowserBibleCheckBox.AutoSize = true;
+            this.makeBrowserBibleCheckBox.Location = new System.Drawing.Point(47, 157);
+            this.makeBrowserBibleCheckBox.Name = "makeBrowserBibleCheckBox";
+            this.makeBrowserBibleCheckBox.Size = new System.Drawing.Size(101, 19);
+            this.makeBrowserBibleCheckBox.TabIndex = 5;
+            this.makeBrowserBibleCheckBox.Text = "BrowserBible";
+            this.makeBrowserBibleCheckBox.UseVisualStyleBackColor = true;
             // 
             // label77
             // 
@@ -2840,7 +2858,7 @@
             this.helpButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.helpButton.Name = "helpButton";
             this.helpButton.Size = new System.Drawing.Size(49, 28);
-            this.helpButton.TabIndex = 6;
+            this.helpButton.TabIndex = 7;
             this.helpButton.Text = "&Help";
             this.helpButton.UseVisualStyleBackColor = false;
             this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
@@ -2883,7 +2901,7 @@
             this.resumeButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.resumeButton.Name = "resumeButton";
             this.resumeButton.Size = new System.Drawing.Size(66, 28);
-            this.resumeButton.TabIndex = 7;
+            this.resumeButton.TabIndex = 6;
             this.resumeButton.Text = "Resume";
             this.resumeButton.UseVisualStyleBackColor = true;
             this.resumeButton.Click += new System.EventHandler(this.resumeButton_Click);
@@ -3212,7 +3230,7 @@
         private System.Windows.Forms.CheckBox makeSwordCheckBox;
         private System.Windows.Forms.CheckBox makeEPubCheckBox;
         private System.Windows.Forms.CheckBox makeHtmlCheckBox;
-        private System.Windows.Forms.CheckBox makeInScriptCheckBox;
+        private System.Windows.Forms.CheckBox makeBrowserBibleCheckBox;
         private System.Windows.Forms.CheckBox makePDFCheckBox;
         private System.Windows.Forms.CheckBox disablePrintingFigoriginsCheckBox;
         private System.Windows.Forms.CheckBox apocryphaCheckBox;
@@ -3226,6 +3244,7 @@
         private System.Windows.Forms.Label label78;
         private System.Windows.Forms.ComboBox paratext8ComboBox;
         private System.Windows.Forms.CheckBox anonymousCheckBox;
+        private System.Windows.Forms.RadioButton ccbyRadioButton;
     }
 }
 

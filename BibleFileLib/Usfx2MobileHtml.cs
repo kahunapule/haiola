@@ -1,6 +1,6 @@
 ﻿// --------------------------------------------------------------------------------------------
-#region // Copyright (c) 2003-2017, SIL International, EBT, Digital Bible Society, Michael Paul Johnson, and eBible.org.
-// <copyright from='2003' to='2017' company='SIL International, EBT, Digital Bible Society, Michael Paul Johnson, and eBible.org'>
+#region // Copyright (c) 2003-2017, SIL International, EBT, Michael Paul Johnson, and eBible.org.
+// <copyright from='2003' to='2017' company='SIL International, EBT, Michael Paul Johnson, and eBible.org'>
 //    
 //		Distributable under the terms of either the Common Public License or the
 //		GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -736,8 +736,8 @@ namespace WordSend
                     {
                         htm.WriteLine("<div class=\"toc\"><a href=\"http://eBible.org/pdf/{0}/\" target=\"_blank\">PDF</a></div>", translationId);
                     }
-                    htm.WriteLine("<div class=\"toc\"><a href=\"http://ebible.org/study/?w1=bible&t1=local%3A{0}&v1={1}1_1\" target=\"_blank\">inScript</a></div>",
-                        fcbhId, StartingShortCode);
+                    htm.WriteLine("<div class=\"toc\"><a href=\"http://ebible.org/study/?w1=bible&t1=local%3A{0}&v1={1}1_1\" target=\"_blank\">Browser Bible</a></div>",
+                        translationId, StartingShortCode);
                     htm.WriteLine("<div Class=\"toc\"><a href=\"ftp://ebible.org/pub/sword/zip/{0}.zip\">Crosswire Sword module</a></div>", projectOptions.SwordName);
                 }
             }

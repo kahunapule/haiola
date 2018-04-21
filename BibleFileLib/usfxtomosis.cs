@@ -966,7 +966,7 @@ namespace WordSend
                 projectOptions.Write();
                 config.WriteLine("SwordVersionDate={0}", projectOptions.SwordVersionDate.ToString("yyyy-MM-dd"));
                 config.WriteLine("Version={0}.{1}", projectOptions.SwordMajorVersion, projectOptions.SwordMinorVersion);
-                if (projectOptions.DBSandeBible)
+                if (projectOptions.eBibledotorgunique)
                     config.WriteLine("History_{0}.{1}=Automatically generated on {2} from source files dated {3} by eBible.org (http://eBible.org) with funding through World Outreach Missions",
                         projectOptions.SwordMajorVersion, projectOptions.SwordMinorVersion,
                         DateTime.Now.Date.ToString("yyyy-MM-dd"),

@@ -21,10 +21,10 @@ namespace WordSend
             projectDirectoryLabel.Text = hf.globe.dataRootDir;
             paratextDirLabel.Text = hf.globe.paratextProjectsDir;
             loadFCBHKeysCheckBox.Checked = hf.globe.getFCBHkeys;
-            loadFCBHKeysCheckBox.Visible = hf.plugin.PluginLoaded();
+            //loadFCBHKeysCheckBox.Visible = hf.plugin.PluginLoaded();
             coprLabel.Text = String.Format("Haiola version {0}.{1} ©2003-{2} SIL, EBT, && eBible.org. Released under Gnu LGPL 3 or later.",
                 haiola.Version.date, haiola.Version.time, haiola.Version.year); 
-            extensionLabel.Text = hf.plugin.PluginMessage();
+            //extensionLabel.Text = hf.plugin.PluginMessage();
             swordSuffixTextBox.Text = hf.globe.m_swordSuffix;
             usfm3figTagsCheckBox.Checked = hf.globe.generateUsfm3Fig;
 

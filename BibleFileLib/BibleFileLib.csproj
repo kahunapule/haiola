@@ -111,8 +111,10 @@
     </Compile>
     <Compile Include="bookmatch.cs" />
     <Compile Include="ChapterInfo.cs" />
+    <Compile Include="CreateIndex.cs" />
     <Compile Include="global.cs" />
     <Compile Include="readssf.cs" />
+    <Compile Include="usfx2BrowserBible.cs" />
     <Compile Include="Versification.cs" />
     <Compile Include="epub.cs" />
     <Compile Include="ethnologue.cs" />
@@ -136,6 +138,7 @@
     <Compile Include="Utils.cs" />
     <Compile Include="WordformInfo.cs" />
     <Compile Include="WordOccurrence.cs" />
+    <Compile Include="WriteBrowserBibleModule.cs" />
     <Compile Include="xmlini.cs" />
     <Compile Include="XmlTextReader.cs" />
   </ItemGroup>

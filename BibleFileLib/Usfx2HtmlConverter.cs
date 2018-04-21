@@ -125,7 +125,7 @@ namespace WordSend
         public BibleBookInfo bookInfo = new BibleBookInfo();
         protected BibleBookRecord bookRecord;
 
-        // Used in inScript audio integration:
+        // Used in Browser Bible audio integration:
         public string fcbhDramaNt;
         public string fcbhDramaOt;
         public string fcbhAudioNt;
