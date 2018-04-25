@@ -1236,7 +1236,10 @@ namespace WordSend
             verseNumber = 0;
             chopChapter = true;
             if (!bookInfo.isPeripheral(currentBookAbbrev))
+            {
                 newChapterFound = true;
+                Logit.WriteError("ERROR: chapter marker (\\c) missing in " + currentBookAbbrev);
+            }
             if (previousBookId != currentBookAbbrev)
             {
                 CloseHtmlFile();

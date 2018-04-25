@@ -32,6 +32,7 @@ namespace haiola
             //plugin = new PluginManager();
             batchLabel.Text = String.Format("Haiola version {0}.{1} © 2003-{2} SIL, EBT, && eBible.org. Released under Gnu LGPL 3 or later.",
                 Version.date, Version.time, Version.year);
+            Logit.versionString = batchLabel.Text;
             //extensionLabel.Text = plugin.PluginMessage();
             if (Program.autorun)
                 this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
@@ -2801,8 +2802,6 @@ their generosity, people like you can open up the Bible and hear from God no mat
                                             }
                                         }
                                         promoTextBox.Text = sb.ToString();
-                                        if (promoTextBox.Text.Contains("Creative Commons License"))
-                                            ccRadioButton.Checked = true;
                                         break;
                                     case "bookNames/book":
                                         bookCode = metadataXml.GetAttribute("code");
@@ -2877,7 +2876,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
             updateDateTimePicker.Value = globe.projectOptions.contentUpdateDate;
             privateCheckBox.Checked = globe.projectOptions.privateProject;
             pdRadioButton.Checked = globe.projectOptions.publicDomain;
-            ccRadioButton.Checked = globe.projectOptions.ccbyndnc;
+            ccbyndncRadioButton.Checked = globe.projectOptions.ccbyndnc;
             CCBySaRadioButton.Checked = globe.projectOptions.ccbysa;
             ccbyRadioButton.Checked = globe.projectOptions.ccby;
             CCByNdRadioButton.Checked = globe.projectOptions.ccbynd;
@@ -3182,7 +3181,7 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
             globe.projectOptions.lwcDescription = lwcDescriptionTextBox.Text;
             globe.projectOptions.contentUpdateDate = updateDateTimePicker.Value;
             globe.projectOptions.publicDomain = pdRadioButton.Checked;
-            globe.projectOptions.ccbyndnc = ccRadioButton.Checked;
+            globe.projectOptions.ccbyndnc = ccbyndncRadioButton.Checked;
             globe.projectOptions.ccby = ccbyRadioButton.Checked;
             globe.projectOptions.ccbysa = CCBySaRadioButton.Checked;
             globe.projectOptions.ccbynd = CCByNdRadioButton.Checked;
@@ -3408,7 +3407,6 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
             if (currentConversion != progressMessage)
             {
                 currentConversion = progressMessage;
-                // batchLabel.Text = (DateTime.UtcNow - startTime).ToString().Substring(0, 8) + " " + globe.currentProject + " " + currentConversion;
                 Application.DoEvents();
             }
             return fileHelper.fAllRunning;
@@ -3959,6 +3957,7 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
             {
                 redistributableCheckBox.Checked = false;
                 groupBox1.BackColor = Color.LightPink;
+                globe.projectOptions.allRightsReserved = true;
             }
         }
 
@@ -4022,7 +4021,7 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
 
         private void ccRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            if (ccRadioButton.Checked)
+            if (ccbyndncRadioButton.Checked)
             {
                 redistributableCheckBox.Checked = downloadsAllowedCheckBox.Checked = true;
                 groupBox1.BackColor = Color.LightYellow;

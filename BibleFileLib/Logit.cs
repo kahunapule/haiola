@@ -47,6 +47,8 @@ namespace WordSend
         public static bool loggedError = false;
         public static bool loggedWarning = false;
         public static string logFileName = String.Empty;
+        public static string versionString;
+        private static bool loggedVersion = false;
 
         public static bool ShowStatus(string s)
         {
@@ -76,12 +78,20 @@ namespace WordSend
             if ((!useConsole) && (GUIWriteString == null) && (sw == null))
                 System.Windows.Forms.MessageBox.Show(s);
             if (sw != null)
+            {
+                if (!loggedVersion)
+                {
+                    sw.WriteLine(versionString);
+                    loggedVersion = true;
+                }
                 sw.WriteLine(s);
+            }
         }
 
         public static void OpenFile(string fName)
         {
             loggedError = false;
+            loggedVersion = false;
             loggedWarning = false;
             try
             {

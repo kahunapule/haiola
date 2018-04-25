@@ -110,7 +110,7 @@
             this.silentRadioButton = new System.Windows.Forms.RadioButton();
             this.allRightsRadioButton = new System.Windows.Forms.RadioButton();
             this.otherRadioButton = new System.Windows.Forms.RadioButton();
-            this.ccRadioButton = new System.Windows.Forms.RadioButton();
+            this.ccbyndncRadioButton = new System.Windows.Forms.RadioButton();
             this.pdRadioButton = new System.Windows.Forms.RadioButton();
             this.label16 = new System.Windows.Forms.Label();
             this.electronicPublisherTextBox = new System.Windows.Forms.TextBox();
@@ -269,7 +269,6 @@
             this.helpButton = new System.Windows.Forms.Button();
             this.runHighlightedButton = new System.Windows.Forms.Button();
             this.markRetryButton = new System.Windows.Forms.Button();
-            this.extensionLabel = new System.Windows.Forms.Label();
             this.resumeButton = new System.Windows.Forms.Button();
             this.sourceLabel = new System.Windows.Forms.Label();
             this.RebuildCheckBox = new System.Windows.Forms.CheckBox();
@@ -311,7 +310,7 @@
             // batchLabel
             // 
             this.batchLabel.AutoSize = true;
-            this.batchLabel.Location = new System.Drawing.Point(12, 77);
+            this.batchLabel.Location = new System.Drawing.Point(9, 62);
             this.batchLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.batchLabel.Name = "batchLabel";
             this.batchLabel.Size = new System.Drawing.Size(45, 15);
@@ -1078,7 +1077,7 @@
             this.groupBox1.Controls.Add(this.silentRadioButton);
             this.groupBox1.Controls.Add(this.allRightsRadioButton);
             this.groupBox1.Controls.Add(this.otherRadioButton);
-            this.groupBox1.Controls.Add(this.ccRadioButton);
+            this.groupBox1.Controls.Add(this.ccbyndncRadioButton);
             this.groupBox1.Controls.Add(this.pdRadioButton);
             this.groupBox1.Location = new System.Drawing.Point(5, 7);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
@@ -1167,18 +1166,18 @@
             this.otherRadioButton.UseVisualStyleBackColor = true;
             this.otherRadioButton.CheckedChanged += new System.EventHandler(this.otherRadioButton_CheckedChanged);
             // 
-            // ccRadioButton
+            // ccbyndncRadioButton
             // 
-            this.ccRadioButton.AutoSize = true;
-            this.ccRadioButton.Location = new System.Drawing.Point(10, 97);
-            this.ccRadioButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.ccRadioButton.Name = "ccRadioButton";
-            this.ccRadioButton.Size = new System.Drawing.Size(378, 19);
-            this.ccRadioButton.TabIndex = 15;
-            this.ccRadioButton.TabStop = true;
-            this.ccRadioButton.Text = "Creative Commons Attribution Noncommercial No Derivatives";
-            this.ccRadioButton.UseVisualStyleBackColor = true;
-            this.ccRadioButton.CheckedChanged += new System.EventHandler(this.ccRadioButton_CheckedChanged);
+            this.ccbyndncRadioButton.AutoSize = true;
+            this.ccbyndncRadioButton.Location = new System.Drawing.Point(10, 97);
+            this.ccbyndncRadioButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
+            this.ccbyndncRadioButton.Name = "ccbyndncRadioButton";
+            this.ccbyndncRadioButton.Size = new System.Drawing.Size(378, 19);
+            this.ccbyndncRadioButton.TabIndex = 15;
+            this.ccbyndncRadioButton.TabStop = true;
+            this.ccbyndncRadioButton.Text = "Creative Commons Attribution Noncommercial No Derivatives";
+            this.ccbyndncRadioButton.UseVisualStyleBackColor = true;
+            this.ccbyndncRadioButton.CheckedChanged += new System.EventHandler(this.ccRadioButton_CheckedChanged);
             // 
             // pdRadioButton
             // 
@@ -2839,7 +2838,7 @@
             // statsLabel
             // 
             this.statsLabel.AutoSize = true;
-            this.statsLabel.Location = new System.Drawing.Point(12, 60);
+            this.statsLabel.Location = new System.Drawing.Point(9, 47);
             this.statsLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.statsLabel.Name = "statsLabel";
             this.statsLabel.Size = new System.Drawing.Size(56, 15);
@@ -2886,15 +2885,6 @@
             this.markRetryButton.UseVisualStyleBackColor = true;
             this.markRetryButton.Click += new System.EventHandler(this.markRetryButton_Click);
             // 
-            // extensionLabel
-            // 
-            this.extensionLabel.AutoSize = true;
-            this.extensionLabel.Location = new System.Drawing.Point(12, 93);
-            this.extensionLabel.Name = "extensionLabel";
-            this.extensionLabel.Size = new System.Drawing.Size(17, 15);
-            this.extensionLabel.TabIndex = 30;
-            this.extensionLabel.Text = "--";
-            // 
             // resumeButton
             // 
             this.resumeButton.Location = new System.Drawing.Point(603, 1);
@@ -2909,7 +2899,7 @@
             // sourceLabel
             // 
             this.sourceLabel.AutoSize = true;
-            this.sourceLabel.Location = new System.Drawing.Point(12, 43);
+            this.sourceLabel.Location = new System.Drawing.Point(9, 32);
             this.sourceLabel.Name = "sourceLabel";
             this.sourceLabel.Size = new System.Drawing.Size(189, 15);
             this.sourceLabel.TabIndex = 34;
@@ -2918,7 +2908,7 @@
             // RebuildCheckBox
             // 
             this.RebuildCheckBox.AutoSize = true;
-            this.RebuildCheckBox.Location = new System.Drawing.Point(626, 43);
+            this.RebuildCheckBox.Location = new System.Drawing.Point(529, 89);
             this.RebuildCheckBox.Name = "RebuildCheckBox";
             this.RebuildCheckBox.Size = new System.Drawing.Size(68, 19);
             this.RebuildCheckBox.TabIndex = 241;
@@ -2929,7 +2919,7 @@
             // runXetexCheckBox
             // 
             this.runXetexCheckBox.AutoSize = true;
-            this.runXetexCheckBox.Location = new System.Drawing.Point(627, 65);
+            this.runXetexCheckBox.Location = new System.Drawing.Point(622, 89);
             this.runXetexCheckBox.Name = "runXetexCheckBox";
             this.runXetexCheckBox.Size = new System.Drawing.Size(93, 19);
             this.runXetexCheckBox.TabIndex = 242;
@@ -2947,7 +2937,6 @@
             this.Controls.Add(this.RebuildCheckBox);
             this.Controls.Add(this.sourceLabel);
             this.Controls.Add(this.resumeButton);
-            this.Controls.Add(this.extensionLabel);
             this.Controls.Add(this.markRetryButton);
             this.Controls.Add(this.runHighlightedButton);
             this.Controls.Add(this.helpButton);
@@ -3055,7 +3044,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton allRightsRadioButton;
         private System.Windows.Forms.RadioButton otherRadioButton;
-        private System.Windows.Forms.RadioButton ccRadioButton;
+        private System.Windows.Forms.RadioButton ccbyndncRadioButton;
         private System.Windows.Forms.RadioButton pdRadioButton;
         private System.Windows.Forms.DateTimePicker updateDateTimePicker;
         private System.Windows.Forms.RadioButton silentRadioButton;
@@ -3130,7 +3119,6 @@
         private System.Windows.Forms.TabPage messagesTabPage;
         private System.Windows.Forms.ListBox messagesListBox;
         private System.Windows.Forms.Button markRetryButton;
-        private System.Windows.Forms.Label extensionLabel;
         private System.Windows.Forms.CheckBox relaxNestingSyntaxCheckBox;
         private System.Windows.Forms.Label label47;
         private System.Windows.Forms.ComboBox textDirectionComboBox;

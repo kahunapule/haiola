@@ -143,7 +143,7 @@ namespace WordSend
         public bool redistributable
         {
             get { return ((ini.ReadBool("redistributable", false) || publicDomain || ccby || ccbyndnc || ccbysa || ccbynd) && !privateProject); }
-            set { ini.WriteBool("redistributable", (!privateProject) && (value || publicDomain || ccbyndnc || ccbysa || ccbynd)); }
+            set { ini.WriteBool("redistributable", (!privateProject) && (value || publicDomain || ccbyndnc || ccbysa || ccbynd || ccby)); }
         }
 
         public bool ccby
@@ -605,7 +605,7 @@ namespace WordSend
 
         public bool downloadsAllowed
         {
-            get { return ini.ReadBool("downloadsAllowed", redistributable || ccbyndnc || publicDomain || ccbysa || ccbynd) && !privateProject; }
+            get { return ini.ReadBool("downloadsAllowed", redistributable || ccby || ccbyndnc || publicDomain || ccbysa || ccbynd) && !privateProject; }
             set { ini.WriteBool("downloadsAllowed", value); }
         }
 

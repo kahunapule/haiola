@@ -1143,9 +1143,16 @@ namespace WordSend
                                         languageCode = usfx.Value;
                                     shortLang = langCodes.ShortCode(languageCode);
                                     osisWorkId = "Bible." + shortLang;
-                                    if (translationId.Length > 4)
+                                    StringBuilder sb = new StringBuilder();
+                                    int ix;
+                                    for (ix = 0; ix < translationId.Length; ix++)
                                     {
-                                        osisWorkId += "." + translationId.Substring(4);
+                                        if (Char.IsLetterOrDigit(translationId[ix]))
+                                            sb.Append(translationId[ix]);
+                                    }
+                                    if (translationId.Length > 0)
+                                    {
+                                        osisWorkId += "." + sb.ToString();
                                     }
                                     osisWorkId = osisWorkId.Replace('-', '.');
                                     OpenMosisFile(mosisFileName);
