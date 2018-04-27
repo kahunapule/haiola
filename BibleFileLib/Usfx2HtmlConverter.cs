@@ -1238,7 +1238,6 @@ namespace WordSend
             if (!bookInfo.isPeripheral(currentBookAbbrev))
             {
                 newChapterFound = true;
-                Logit.WriteError("ERROR: chapter marker (\\c) missing in " + currentBookAbbrev);
             }
             if (previousBookId != currentBookAbbrev)
             {
@@ -2549,7 +2548,10 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                         break;
                                     case "v":
                                         if (chapterNumber == 0)
+                                        {
+                                            Logit.WriteError("ERROR: chapter marker (\\c) missing in " + currentBookAbbrev);
                                             VirtualChapter();
+                                        }
                                         ProcessVerse();
                                         break;
                                     case "va":
