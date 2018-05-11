@@ -5892,6 +5892,7 @@ namespace WordSend
             string shortName = "";
 			string chapter = "0";
 			string verse = "0";
+            string fnReturnVerse = "1";
 			string id = "";
 			string sfm = "";
 			string style = "";
@@ -6042,6 +6043,7 @@ namespace WordSend
                                     usfmFile.Open(Path.Combine(outDir, bkInfo.FilePrefix(bookId) + outFileName));
                                     chapter = "1";
                                     verse = "0";
+                                    fnReturnVerse = "1";
                                 }
                                 break;
                             case "id":
@@ -6066,7 +6068,7 @@ namespace WordSend
                                 }
                                 break;
                             case "v":
-                                verse = id;
+                                fnReturnVerse = verse = id;
                                 usfmFile.VirtualSpace = false;
                                 usfmFile.WriteSFM(sfm, "", id, true);
                                 if (!usfxFile.IsEmptyElement)
@@ -6084,6 +6086,14 @@ namespace WordSend
                             case "ve":
                                 // Verse end: there is no equivalent markup in USFM.
                                 // Markup can be recovered algorithmically on re-import.
+                                // However, we increment fnReturnVerse here to cover the case of footnotes in section headers that Paratext expects to match the number
+                                // of the following verse.
+                                int verseInteger;
+                                if (int.TryParse(fnReturnVerse, out verseInteger))
+                                {   // This only works for simple verse numbers, not verse bridges and/or segments. For those, we leave fnReturnVerse alone.
+                                    verseInteger++;
+                                    fnReturnVerse = verseInteger.ToString();
+                                }
                                 if (!usfxFile.IsEmptyElement)
                                 {
                                     ignore = true;
@@ -6135,7 +6145,7 @@ namespace WordSend
                                         }
                                         if (m_options.RegenerateNoteOrigins && String.IsNullOrEmpty(fig.reference.Trim()))
                                         {
-                                            fig.reference = shortName.Trim() + " " + fileHelper.LocalizeDigits(chapter) + m_options.CVSeparator + fileHelper.LocalizeDigits(verse);
+                                            fig.reference = shortName.Trim() + " " + fileHelper.LocalizeDigits(chapter) + m_options.CVSeparator + fileHelper.LocalizeDigits(fnReturnVerse);
                                         }
                                     }
                                     else if (usfxFile.NodeType == XmlNodeType.EndElement)
@@ -6281,7 +6291,7 @@ namespace WordSend
                                 needNoteTextMarker = true;
                                 if (m_options.RegenerateNoteOrigins)
                                 {
-                                    usfmFile.WriteSFM("fr", "", chapter + m_options.CVSeparator + verse, false, false);
+                                    usfmFile.WriteSFM("fr", "", chapter + m_options.CVSeparator + fnReturnVerse, false, false);
                                 }
                                 break;
                             case "fr":

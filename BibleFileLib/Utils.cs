@@ -88,7 +88,7 @@ namespace WordSend
             int i;
             for (i = 0; i < s.Length; i++)
             {
-                if (Char.IsLetter(s[i]))
+                if (!fileHelper.IsNormalWhiteSpace(s[i]))
                 {
                     wordLength++;
                 }

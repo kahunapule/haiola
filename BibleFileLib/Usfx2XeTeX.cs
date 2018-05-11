@@ -1338,7 +1338,7 @@ For other uses, please contact the respective copyright owners.</p>
         protected override void ZipResults()
         {
             int numColumns = 2;
-            if (projectOptions.longestWordLength > 20)
+            if (projectOptions.longestWordLength > 10)
                 numColumns = 1;
             string bookFileName;
             fileHelper.CopyFile(FindInputFile("haiola.tex"), Path.Combine(texDir, "haiola.tex"));
@@ -1525,7 +1525,7 @@ For other uses, please contact the respective copyright owners.</p>
             shortLangId = langCodes.ShortCode(langId);
             bool isRtl = projectOptions.textDir == "rtl";
             int numCols = 2;
-            if (isRtl || projectOptions.longestWordLength > 20)
+            if (isRtl || projectOptions.longestWordLength > 10)
                 numCols = 1;
             try
             {
