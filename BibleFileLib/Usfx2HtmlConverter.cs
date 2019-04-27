@@ -296,7 +296,7 @@ namespace WordSend
                 bsb.Append(s);
                 if (previousFileName.Length > 0)
                 {
-                    s = String.Format("<a href=\"{0}#V0\">&lt;&nbsp;</a>",
+                    s = String.Format("<a href=\"{0}#V0\">&lt;&#160;</a>",
                         Path.GetFileName(previousFileName));
                     sb.Append(s);
                     bsb.Append(s);
@@ -309,12 +309,12 @@ namespace WordSend
                 {
                     if (0 == chapterNumber)
                     {
-                        sb.Append(" &nbsp;" + linkText + "&nbsp; ");
+                        sb.Append(" &#160;" + linkText + "&#160; ");
                         bsb.Append(OptionSelectedOpeningElement + linkText + "</option>");
                     }
                     else
                     {
-                        sb.Append(String.Format(" <a href=\"{0}\">&nbsp;{1}&nbsp;</a> ",
+                        sb.Append(String.Format(" <a href=\"{0}\">&#160;{1}&#160;</a> ",
                             String.Format("{0}{1}.htm", currentBookAbbrev, i.ToString(formatString)), linkText));
                         bsb.Append(String.Format("<option value=\"{0}\">{1}</option>",
                             String.Format("{0}{1}.htm", currentBookAbbrev, i.ToString(formatString)), linkText));
@@ -333,13 +333,13 @@ namespace WordSend
                         linkText = fileHelper.LocalizeDigits(cn.ToString());
                         if (cn == chapterNumber)
                         {
-                            sb.Append(String.Format(" &nbsp;{0}&nbsp; ", linkText));
+                            sb.Append(String.Format(" &#160;{0}&#160; ", linkText));
                             bsb.Append(String.Format(OptionSelectedOpeningElement + "{0}</option>{1}", linkText, Environment.NewLine));
                             nextChapIndex = i + 1;
                         }
                         else
                         {
-                            sb.Append(String.Format("<a href=\" {0}.htm#V0\">&nbsp;{1}&nbsp;</a> ",
+                            sb.Append(String.Format("<a href=\" {0}.htm#V0\">&#160;{1}&#160;</a> ",
                                 chFile, linkText));
                             bsb.Append(String.Format("<option value=\"{0}.htm#V0\">{1}</option>{2}",
                                 chFile, linkText, Environment.NewLine));
@@ -351,7 +351,7 @@ namespace WordSend
                 if ((nextChapIndex >= chapterFileList.Count) || (nextChapIndex < 0))
                     nextChapIndex = 0;
 
-                s = String.Format("<a href=\"{0}#V0\">&nbsp;&gt;</a></div>",
+                s = String.Format("<a href=\"{0}#V0\">&#160;&gt;</a></div>",
                     (string)chapterFileList[nextChapIndex] + ".htm");
                 sb.Append(s);
                 bsb.Append(s);
@@ -740,7 +740,7 @@ namespace WordSend
                 htm.WriteLine(preVerse.ToString());
                 preVerse.Length = 0;
             }
-            htm.Write(string.Format(" <span class=\"verse\"> <a name=\"V{1}\">{0}&nbsp;</a></span>",
+            htm.Write(string.Format(" <span class=\"verse\"> <a name=\"V{1}\">{0}&#160;</a></span>",
                 currentVersePublished, verseNumber.ToString()));
             eatSpace = true;
            
@@ -796,7 +796,7 @@ namespace WordSend
             }
             string s = String.Format("<div class='{0}'>", style);
             if (style == "b")
-                s = s + " &nbsp; ";
+                s = s + " &#160; ";
             WriteHtmlText(s);
         }
 
@@ -1649,7 +1649,7 @@ namespace WordSend
             htm.WriteLine("<div class=\"toc\"><a href=\"{0}.htm\">{1}</a></div>",
                 StartingFile(), goText);
             htm.WriteLine(licenseHtml);
-            htm.WriteLine("<p>&nbsp;<br/><br/></p>");
+            htm.WriteLine("<p>&#160;<br/><br/></p>");
             if (indexDateStamp != String.Empty)
                 htm.WriteLine("<div class=\"fine\">{0}</div>", indexDateStamp);
             CloseHtmlFile();
@@ -1837,7 +1837,7 @@ namespace WordSend
             string figCopyright = String.Empty;
             string figCaption = String.Empty;
             string figReference = String.Empty; // Figure parameters
-            if (projectOptions.commonChars || projectOptions.languageId == "eng")
+            if (projectOptions.commonChars)
                 fontClass = "latin";
             else
                 fontClass = preferredFont.ToLower().Replace(' ', '_');
@@ -1901,8 +1901,10 @@ namespace WordSend
                     sqlVerseTable.WriteLine(@"USE sofia;
 DROP TABLE IF EXISTS sofia.{0};
 CREATE TABLE {0} (
-    verseID VARCHAR(16) NOT NULL PRIMARY KEY,
-    canon_order VARCHAR(12) NOT NULL,
+    canon_order VARCHAR(16) NOT NULL PRIMARY KEY,
+    book VARCHAR(4) NOT NULL,
+    chapter VARCHAR(4) NOT NULL,
+    verseID VARCHAR(12) NOT NULL,
     verseContents TEXT CHARACTER SET UTF8 NOT NULL) ENGINE=MyISAM;
 LOCK TABLES {0} WRITE;", sqlTableName);
                 }
@@ -2549,7 +2551,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                     case "v":
                                         if (chapterNumber == 0)
                                         {
-                                            Logit.WriteError("ERROR: chapter marker (\\c) missing in " + currentBookAbbrev);
+                                            Logit.WriteError("ERROR: chapter marker (\\c) missing before verse marker (\\v) in " + currentBookAbbrev);
                                             VirtualChapter();
                                         }
                                         ProcessVerse();
@@ -2596,6 +2598,10 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                     case "wj":
                                     case "cs":
                                     case "rq":
+                                    case "zcr":
+                                    case "zcg":
+                                    case "zcb":
+                                    case "zcy":
                                         if (sfm.Length == 0)
                                             sfm = usfx.Name;
                                         StartHtmlTextStyle(sfm);
@@ -2784,6 +2790,10 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                     case "wj":
                                     case "cs":
                                     case "rq":
+                                    case "zcr":
+                                    case "zcg":
+                                    case "zcb":
+                                    case "zcy":
                                         EndHtmlTextStyle();
                                         break;
                                     case "table":
@@ -2951,7 +2961,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
             {
                 htm.WriteLine("<div class=\"toc1\"><a href=\"conc/treeMaster.htm\" rel=\"nofollow\">" + ConcordanceLinkText + "</a></div>");
             }
-            htm.WriteLine("<p>&nbsp;<br/><br/></p>");
+            htm.WriteLine("<p>&#160;<br/><br/></p>");
             if (indexDateStamp != String.Empty)
             {
                 htm.WriteLine("<div class=\"fine\">{0}</div>", indexDateStamp);

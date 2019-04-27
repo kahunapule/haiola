@@ -32,12 +32,15 @@ namespace WordSend
             string browserBiblePath = Path.Combine(globe.outputProjectDirectory, "browserBible");
             string browserBibleCssFileName;
             // Using latin.css for ALL projects marked as having a Latin script, regardless of exclusive use of common characters or not per Ken Bitgood 20 April 2016.
-            // TODO: remove the last term of the if condition, below, if there are problems with missing or misdisplayed characters in latin scripts.
-            if ((globe.projectOptions.languageId == "eng") || (globe.projectOptions.commonChars))// || globe.projectOptions.script.StartsWith("Latin"))
+            // Reversed 15 Dec 2018 due to problems with NASB display.
+            if (globe.projectOptions.commonChars)
+            {
                 browserBibleCssFileName = "latin.css";
+            }
             else
+            {
                 browserBibleCssFileName = globe.projectOptions.customCssFileName;
-
+            }
             Utils.EnsureDirectory(browserBiblePath);
             if (String.IsNullOrEmpty(globe.projectOptions.fcbhId))
             {
@@ -143,7 +146,7 @@ namespace WordSend
             toBrowserBible.b64CoverName = covertnb64;
             if ((globe.er != null) && (globe.er.countries != null))
                 toBrowserBible.countries = globe.er.countries;
-            if (globe.projectOptions.commonChars || globe.projectOptions.languageId == "eng")
+            if (globe.projectOptions.commonChars)
             {
                 toBrowserBible.preferredFont = "latin";
             }

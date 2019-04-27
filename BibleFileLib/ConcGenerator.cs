@@ -447,7 +447,7 @@ namespace BibleFileLib
 				string keyLetterPath = Path.Combine(m_outputDirName, "Index" + keyLetterFileSuffix + ".htm");
 				if (expandLetter == keyLetter)
 				{
-					writerMain.Write("<li class=\"liOpen\"><span id=\"open\" class=\"indexKeyLetter\"><span class=\"bullet\" onclick=\"location='{1}#open'\">&nbsp;</span><a href=\"{1}\">{0}</a></span><ul>"+Environment.NewLine,
+					writerMain.Write("<li class=\"liOpen\"><span id=\"open\" class=\"indexKeyLetter\"><span class=\"bullet\" onclick=\"location='{1}#open'\">&#160;</span><a href=\"{1}\">{0}</a></span><ul>"+Environment.NewLine,
 						MakeSafeXml(keyLetter), Path.GetFileName(pathRoot));
 					WriteInnerIndexItems(writerMain, sortedOccurrences, iStartGroup, iLimGroup - iStartGroup);
 					writerMain.Write("</ul></li>"+Environment.NewLine);
@@ -456,7 +456,7 @@ namespace BibleFileLib
 				{
 					// write an element that looks like a closed node, but is actually a hotlink to another index file.
 					// (And do NOT write the subitems!)
-					writerMain.Write("<li class=\"liClosed\"><span class=\"indexKeyLetter\"><span class=\"bullet\"onclick=\"location='{1}'\">&nbsp;</span><a href=\"{1}#open\">{0}</a></span></li>"+Environment.NewLine,
+					writerMain.Write("<li class=\"liClosed\"><span class=\"indexKeyLetter\"><span class=\"bullet\"onclick=\"location='{1}'\">&#160;</span><a href=\"{1}#open\">{0}</a></span></li>"+Environment.NewLine,
 						MakeSafeXml(keyLetter), Path.GetFileName(keyLetterPath));
 				}
 				if (expandLetter == null)

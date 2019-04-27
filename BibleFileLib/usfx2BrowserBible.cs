@@ -298,8 +298,9 @@ namespace WordSend
         protected void StartVerseSpan()
         {
             sqlVerseId = verseId;
-            sqlCanonOrder = ((BibleBookRecord)bookInfo.books[currentBookAbbrev]).sortOrder.ToString("000") + "_" + currentChapter + "_" + currentVerse;
-            WriteHtml(string.Format("<span class='v {0}' data-id='{1}'><span class='{4} v-{2}'>{3}&nbsp;</span>",
+            sqlCanonOrder = ((BibleBookRecord)bookInfo.books[currentBookAbbrev]).sortOrder.ToString("000") + "." + Utils.zeroPad(3, currentChapter) + "." +
+                Utils.zeroPad(3, currentVerse);
+            WriteHtml(string.Format("<span class='v {0}' data-id='{1}'><span class='{4} v-{2}'>{3}&#160;</span>",
                 verseClass, verseId, currentVerse,
                 currentVersePublished, verseNumber == 1 ? "verse1 v-num" : "v-num"));
 
@@ -350,7 +351,7 @@ namespace WordSend
             if ((sqlVerseTable != null) && (null != sqlVerseContents))
             {
                 string verseContents = sqlVerseContents.Replace("\"", "\\\"").ToString();
-                sqlVerseTable.WriteLine(string.Format("INSERT INTO {0} VALUES (\"{1}\",\"{2}\",\"{3}\");", sqlTableName, sqlVerseId, sqlCanonOrder, verseContents));
+                sqlVerseTable.WriteLine($"INSERT INTO {sqlTableName} VALUES (\"{sqlCanonOrder}\",\"{currentBookAbbrev}\",\"{currentChapter}\",\"{sqlVerseId}\",\"{verseContents}\");");
                 sqlVerseContents.Length = 0;
             }
             inVerse = false;
@@ -454,7 +455,7 @@ namespace WordSend
             }
             string s = String.Format("<div class='{0}'>", style);
             if (style == "b")
-                s = s + " &nbsp; ";
+                s = s + " &#160; ";
             WriteHtml(s);
             RestartVerseSpan();
         }
@@ -589,8 +590,8 @@ namespace WordSend
             // Expand cover image link and copy it here IF it exists
             // licenseHtml = coverLink + licenseHtml;
             htm.WriteLine(licenseHtml);
-            htm.WriteLine("<p><a href='https://eBible.org' target='_blank'>eBible.org</a></p>");
-            htm.WriteLine("</div><p>&nbsp;<br/><br/></p>");
+
+            htm.WriteLine("</div><p>&#160;<br/><br/></p>");
             if (indexDateStamp != String.Empty)
                 htm.WriteLine("<div class=\"fine\">{0}</div>", indexDateStamp);
             htm.WriteLine("</body></html>");

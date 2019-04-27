@@ -1487,16 +1487,22 @@ For other uses, please contact the respective copyright owners.</p>
             if (useColor)
             {
                 texFile.WriteLine("\\newcommand{0}\\HeaderFont{1}{0}\\font\\Y=\"\\OtherFontFace:color=000080\" at {2}pt \\Y {1}", LEFTBRACE, RIGHTBRACE, headerPointSize);
-                texFile.WriteLine("\\newcommand{0}\\FnMarkFont{1}{0}\\font\\Z=\"DejaVu Sans:color=000080\" at {2}pt \\Z {1}", LEFTBRACE, RIGHTBRACE, pointSize * 0.75);
+                texFile.WriteLine("\\newcommand{0}\\FnMarkFont{1}{0}\\font\\Z=\"FreeSerif:color=000080\" at {2}pt \\Z {1}", LEFTBRACE, RIGHTBRACE, pointSize * 0.75);
                 texFile.WriteLine(@"\newcommand{\IntroColor}{:color=000080}");
                 texFile.WriteLine(@"\newcommand{\WJColor}{:color=ff0000}");
+                texFile.WriteLine(@"\newcommand{\BlueColor}{:color=0000ff}");
+                texFile.WriteLine(@"\newcommand{\GreenColor}{:color=00ff00}");
+                texFile.WriteLine(@"\newcommand{\YellowColor}{:color=808000}");
             }
             else
             {
                 texFile.WriteLine("\\newcommand{0}\\HeaderFont{1}{0}\\font\\Y=\"\\OtherFontFace:color=000000\" at {2}pt \\Y {1}", LEFTBRACE, RIGHTBRACE, headerPointSize);
-                texFile.WriteLine("\\newcommand{0}\\FnMarkFont{1}{0}\\font\\Z=\"DejaVu Sans:color=000000\" at {2}pt \\Z {1}", LEFTBRACE, RIGHTBRACE, pointSize * 0.75);
+                texFile.WriteLine("\\newcommand{0}\\FnMarkFont{1}{0}\\font\\Z=\"FreeSerif:color=000000\" at {2}pt \\Z {1}", LEFTBRACE, RIGHTBRACE, pointSize * 0.75);
                 texFile.WriteLine(@"\newcommand{\IntroColor}{:color=000000}");
                 texFile.WriteLine(@"\newcommand{\WJColor}{:color=000000}");
+                texFile.WriteLine(@"\newcommand{\BlueColor}{:color=0000ff}");
+                texFile.WriteLine(@"\newcommand{\GreenColor}{:color=000000}");
+                texFile.WriteLine(@"\newcommand{\YellowColor}{:color=000000}");
             }
             texFile.WriteLine("\\newcommand{0}\\RaiseVerse{1}{0}{2}pt{1}", LEFTBRACE, RIGHTBRACE, pointSize/4.0);
             texFile.WriteLine("\\newcommand{0}\\FnSize{1}{0}{2}pt{1}", LEFTBRACE, RIGHTBRACE, pointSize*0.75);

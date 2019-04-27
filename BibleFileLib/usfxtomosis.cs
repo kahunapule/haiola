@@ -977,7 +977,7 @@ namespace WordSend
                         DateTime.Now.Date.ToString("yyyy-MM-dd"),
                         projectOptions.SourceFileDate.Date.ToString("yyyy-MM-dd"));
 
-                config.WriteLine("MinimumVersion=1.7.4");
+                config.WriteLine("MinimumVersion=1.7.0");
                 config.WriteLine("Category=Biblical Texts");
                 config.WriteLine("LCSH=Bible. {0}.", projectOptions.languageNameInEnglish);
                 config.WriteLine("Lang={0}", shortLang);
@@ -1316,6 +1316,10 @@ namespace WordSend
                                     StartElementWithAttribute("rdg");
                                     break;
                                 case "fl":
+                                case "zcr":
+                                case "zcb":
+                                case "zcg":
+                                case "zcy":
                                     // Not supported.
                                     break;
                                 case "fr":
@@ -2055,6 +2059,10 @@ namespace WordSend
                                     break;
                                 case "xk":
                                 case "fl":
+                                case "zcr":
+                                case "zcb":
+                                case "zcg":
+                                case "zcy":
                                     // not supported.
                                     break;
                                     /* Can't get to this case (caught in "if" above)

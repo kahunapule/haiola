@@ -37,7 +37,7 @@ namespace WordSend
         bool inVerse;
         bool inPsalmTitle;
         bool verseEndedWithSpace;
-        BibleBookInfo bookInfo;
+        static BibleBookInfo bookInfo;
         BibleBookRecord bookRecord;
         StringBuilder verseText;
         StringBuilder lemmaText;
@@ -91,6 +91,36 @@ namespace WordSend
                 verseText.Replace("   ", " ");
                 verseText.Replace("  ", " ");
                 verseText.Replace("  ", " ");
+
+                // Normalize small caps to regular caps
+                verseText.Replace('ᴀ', 'A');
+                verseText.Replace('ʙ', 'B');
+                verseText.Replace('ᴄ', 'C');
+                verseText.Replace('ᴅ', 'D');
+                verseText.Replace('ᴇ', 'E');
+                verseText.Replace('ꜰ', 'F');
+                verseText.Replace('ɢ', 'G');
+                verseText.Replace('ʜ', 'H');
+                verseText.Replace('ɪ', 'I');
+                verseText.Replace('ᴊ', 'J');
+                verseText.Replace('ᴋ', 'K');
+                verseText.Replace('ʟ', 'L');
+                verseText.Replace('ᴍ', 'M');
+                verseText.Replace('ɴ', 'N');
+                verseText.Replace("ɴ\u0303", "N\u0303");
+                verseText.Replace('ᴏ', 'O');
+                verseText.Replace('ᴘ', 'P');
+                verseText.Replace('ꞯ', 'Q');
+                verseText.Replace('ʀ', 'R');
+                verseText.Replace('ꜱ', 'S');
+                verseText.Replace('ᴛ', 'T');
+                verseText.Replace('ᴜ', 'U');
+                verseText.Replace('ᴠ', 'V');
+                verseText.Replace('ᴡ', 'W');
+                verseText.Replace('ʏ', 'Y');
+                verseText.Replace('ᴢ', 'Z');
+
+                // Write verse to file.
                 verseFile.WriteStartElement("v");
                 verseFile.WriteAttributeString("b", currentBook);
                 verseFile.WriteAttributeString("c", currentChapter);
@@ -206,6 +236,27 @@ namespace WordSend
                                 }
                                 SkipElement();  // Strip out comment portion.
                                 break;
+                            case "h":
+                                usfx.Read();
+                                if (usfx.NodeType == XmlNodeType.Text)
+                                {
+                                    bookRecord.vernacularShortName = usfx.Value.Trim();
+                                }
+                                break;
+                            case "toc":
+                                usfx.Read();
+                                if (usfx.NodeType == XmlNodeType.Text)
+                                {
+                                    if (level == "1")
+                                    {
+                                        bookRecord.vernacularLongName = usfx.Value.Trim();
+                                    }
+                                    else if (level == "2")
+                                    {
+                                        bookRecord.vernacularShortName = usfx.Value.Trim();
+                                    }
+                                }
+                                break;
                             case "c":
                                 EndVerse(); // In case file lacks <ve /> elements.
                                 currentChapter = id;
@@ -255,8 +306,6 @@ namespace WordSend
                             case "ie":  // Introduction end
                             case "iex": // Introduction explanatory or bridge text
                             case "fp":
-                            case "toc":
-                            case "h":
                             case "rem": // Comment; not part of the actual text
                             case "cl":
                             case "ca":
@@ -352,6 +401,69 @@ namespace WordSend
                 Logit.WriteError(ex.Message);
             }
             return result;
+        }
+
+
+        /// <summary>
+        /// Write a text file for each chapter with no verse numbers or notes for direct conversion to audio
+        /// </summary>
+        /// <param name="verseFileName">Name of the existing XML verse per line file</param>
+        /// <param name="outputDirectory">Directory to write output files to</param>
+        /// <param name="translationId">Bible translation ID</param>
+        public void WriteAudioScriptText(string verseFileName, string outputDirectory, string translationId)
+        {
+            XmlTextReader searchTextXml = new XmlTextReader(verseFileName);
+            string book, ch, verseText, canon_order;
+            string prevChap = "";
+            string prevBook = "";
+            string paddedChapter;
+            string bookName;
+            StreamWriter sf;
+            BibleBookRecord bbr;
+
+            sf = new StreamWriter(Path.Combine(outputDirectory, translationId + "_000_000_000_read.txt"), false, Encoding.UTF8);
+            sf.WriteLine(@"This set of files contains a script of canonical text, chapter by chapter,
+for the purpose of reading to make an audio recording.
+All footnotes, introductions, and verse numbers have been stripped out.
+");
+            while (searchTextXml.Read())
+            {
+                if ((searchTextXml.NodeType == XmlNodeType.Element) && (searchTextXml.Name == "v"))
+                {
+                    book = fileHelper.GetNamedAttribute(searchTextXml, "b");
+                    ch = fileHelper.GetNamedAttribute(searchTextXml, "c");
+                    paddedChapter = ch;
+                    if (paddedChapter.Length < 2)
+                        paddedChapter = "0" + paddedChapter;
+                    if ((book == "PSA") && (paddedChapter.Length < 3))
+                        paddedChapter = "0" + paddedChapter;
+                    if ((ch != prevChap) || (book != prevBook))
+                    {
+                        prevChap = ch;
+                        prevBook = book;
+                        sf.Close();
+                        bbr = (BibleBookRecord)bookInfo.books[book];
+                        canon_order = bbr.sortOrder.ToString("000");
+                        if ((ch == "1") && !string.IsNullOrEmpty(bbr.vernacularLongName))
+                            bookName = bbr.vernacularLongName;
+                        else
+                            bookName = bbr.vernacularShortName;
+                        sf = new StreamWriter(Path.Combine(outputDirectory, translationId+"_"+canon_order+"_"+book+"_"+paddedChapter+"_read.txt"),false,Encoding.UTF8);
+                        sf.WriteLine(bookName + ".");
+                        if (translationId.StartsWith("eng"))
+                            sf.Write("Chapter ");
+                        sf.WriteLine(ch + ".");
+                    }
+                    searchTextXml.Read();
+                    if (searchTextXml.NodeType == XmlNodeType.Text)
+                    {
+                        verseText = searchTextXml.Value;
+                        sf.WriteLine(verseText);
+                    }
+                }
+            }
+            sf.Close();
+            searchTextXml.Close();
         }
 
 

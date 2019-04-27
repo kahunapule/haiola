@@ -133,7 +133,6 @@
     <Compile Include="UsfxToChapterIndex.cs" />
     <Compile Include="UsfxToFramedHtmlConverter.cs" />
     <Compile Include="usfxtomosis.cs" />
-    <Compile Include="usfxToXhtmlConverter.cs" />
     <Compile Include="Usx2Usfx.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="WordformInfo.cs" />

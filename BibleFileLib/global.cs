@@ -825,6 +825,15 @@ For other uses, please contact the respective copyright owners.</p>
 ");
             }
             copr.Append(String.Format("<p><br/>{0}</p>\n", projectOptions.contentUpdateDate.ToString("yyyy-MM-dd")));
+
+            if (projectOptions.eBibledotorgunique)
+            {
+                copr.Append($"<p><a href='https://eBible.org/find/details.php?id={projectOptions.translationId}'>Updates</a>");
+                copr.Append("<p><a href='https://eBible.org' target='_blank'>eBible.org</a></p>");
+
+            }
+
+
             return copr.ToString();
         }
 

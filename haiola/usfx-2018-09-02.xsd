@@ -741,7 +741,7 @@
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="periph" type="xs:string"/>
 			<xs:element name="rem" type="xs:string" maxOccurs="unbounded" minOccurs="0"/>
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="xt" type="noteContents"/>
-			<xs:element name="gw" maxOccurs="unbounded" minOccurs="0">
+			<xs:element name="gw">
 				<xs:complexType>
 					<xs:simpleContent>
 						<xs:extension base="xs:string">
@@ -750,27 +750,6 @@
 						</xs:extension>
 					</xs:simpleContent>
 				</xs:complexType>
-			</xs:element>
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="zcr" type="pType">
-				<xs:annotation>
-					<xs:documentation>Color red, used to mark ANY direct quotes of God the Father, Son, and Holy Spirit
-</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="zcg" type="pType">
-				<xs:annotation>
-					<xs:documentation>Color green, used for a class of speaker in color-coded Bible translations like the SourceView Bible.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="zcb" type="pType">
-				<xs:annotation>
-					<xs:documentation>Color blue, used to mark a class of speaker in color-coded Bible translations like the SourceView Bible and RGB Bible.</xs:documentation>
-				</xs:annotation>
-			</xs:element>
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="zcy" type="pType">
-				<xs:annotation>
-					<xs:documentation>Color yellow or gold, used to designate a class of speaker in color-coded Bible translations like the RGB Bible.</xs:documentation>
-				</xs:annotation>
 			</xs:element>
 		</xs:choice>
 		<xs:attribute name="level" type="xs:unsignedByte" use="optional"/>

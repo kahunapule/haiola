@@ -1030,6 +1030,38 @@
 		<levelExpected>false</levelExpected>
 		<comment>Custom, non-standard, non-recommended character tag. Use this only if you really need it... and remember to define this style in your seed file if you do.</comment>
 	</sfm>
+	<sfm kind="character">
+		<tag>zcr</tag>
+		<endTag>zcr*</endTag>
+		<characterStyle>zcr</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Custom, non-standard, non-recommended character color red tag.</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>zcg</tag>
+		<endTag>zcg*</endTag>
+		<characterStyle>zcg</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Custom, non-standard, non-recommended character color green tag.</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>zcb</tag>
+		<endTag>zcb*</endTag>
+		<characterStyle>zcb</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Custom, non-standard, non-recommended character color blue tag.</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>zcy</tag>
+		<endTag>zcy*</endTag>
+		<characterStyle>zcy</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Custom, non-standard, non-recommended character color yellow/gold tag.</comment>
+	</sfm>
 	<sfm kind="paragraph">
 		<tag>zp</tag>
 		<paragraphStyle>zp</paragraphStyle>

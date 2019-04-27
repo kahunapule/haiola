@@ -1767,6 +1767,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
                             {
                                 DateTime fileDate;
                                 fileDate = File.GetLastWriteTimeUtc(inputFile);
+                                globe.sourceDate = globe.projectOptions.SourceFileDate;
                                 if (fileDate > globe.projectOptions.SourceFileDate)
                                 {
                                     globe.sourceDate = fileDate;
@@ -2014,6 +2015,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
             {
                 ExtractSearchText est = new ExtractSearchText();
                 string vplPath = Path.Combine(globe.outputProjectDirectory, "vpl");
+                string readAloudPath = Path.Combine(globe.outputProjectDirectory, "readaloud");
                 string UsfxPath = Path.Combine(globe.outputProjectDirectory, "usfx");
                 string auxPath = Path.Combine(globe.outputProjectDirectory, "search");
                 string verseText = Path.Combine(auxPath, "verseText.xml");
@@ -2022,8 +2024,10 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 Logit.UpdateStatus = updateConversionProgress;
                 Utils.EnsureDirectory(auxPath);
                 Utils.EnsureDirectory(sqlFile);
+                Utils.EnsureDirectory(readAloudPath);
                 est.Filter(Path.Combine(UsfxPath, "usfx.xml"), verseText);
                 est.WriteSearchSql(verseText, globe.currentProject, Path.Combine(sqlFile, globe.currentProject + "_vpl.sql"));
+                est.WriteAudioScriptText(verseText, readAloudPath, globe.currentProject);
                 est.WriteSearchSql(Path.ChangeExtension(verseText, ".lemma"), globe.currentProject, Path.Combine(sqlFile, globe.currentProject + "_lemma.sql"));
                 if (est.LongestWordLength > globe.projectOptions.longestWordLength)
                     globe.projectOptions.longestWordLength = est.LongestWordLength;
@@ -2238,6 +2242,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
             {
                 DoPostprocess();
                 globe.projectOptions.done = true;
+                globe.projectOptions.selected = !globe.projectOptions.lastRunResult;
                 globe.projectOptions.Write();
             }
             fileHelper.unlockProject();
@@ -2371,8 +2376,8 @@ their generosity, people like you can open up the Bible and hear from God no mat
                             if (fileDate > globe.sourceDate)
                             {
                                 globe.sourceDate = fileDate;
-                                globe.projectOptions.SourceFileDate = globe.sourceDate;
                             }
+                            globe.projectOptions.SourceFileDate = globe.sourceDate;
                         }
 
                     }
@@ -2505,6 +2510,10 @@ their generosity, people like you can open up the Bible and hear from God no mat
             foreach (projectEntry pe in toDoList)
             {
                 ProcessOneProject(pe.name);
+                int j = m_projectsList.Items.IndexOf(pe.name);
+                m_projectsList.SetItemChecked(j, !globe.projectOptions.lastRunResult);
+                m_projectsList_SelectedIndexChanged(null, null);
+
                 numdone++;
                 ts = DateTime.UtcNow - startTime;
                 double secondsLeft = (nummarked - numdone) * (ts.TotalSeconds / numdone);
@@ -3548,6 +3557,8 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
                 currentConversion = String.Empty;
                 batchLabel.Text = (DateTime.UtcNow - startTime).ToString(@"g") + " " + "Done.";
                 messagesListBox.Items.Add(batchLabel.Text);
+                int j = m_projectsList.Items.IndexOf(SelectedProject);
+                m_projectsList.SetItemChecked(j, !globe.projectOptions.lastRunResult);
                 m_projectsList_SelectedIndexChanged(null, null);
                 string indexhtm = Path.Combine(Path.Combine(globe.outputProjectDirectory, "html"), "index.htm");
                 if (File.Exists(indexhtm))
@@ -4155,5 +4166,7 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
                 groupBox1.BackColor = Color.LightPink;
             }
         }
+
+     
     }
 }

@@ -104,6 +104,13 @@ namespace WordSend
             return result;
         }
 
+        public static string zeroPad(int minSize, string s)
+        {
+            string result = s;
+            while (result.Length < minSize)
+                result = "0" + result;
+            return result;
+        }
 
         public static void DeleteDirectory(string destinationPath)
         {

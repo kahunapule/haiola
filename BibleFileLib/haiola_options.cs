@@ -29,9 +29,10 @@ namespace WordSend
                 _books = null;
                 _referenceAbbeviationsMap = null;
                 _crossRefToFilePrefixMap = null;
-                LegacyOptions oldOpts = null;
-                int i, fileCount;
+                /* LegacyOptions oldOpts = null;
+                int i, fileCount;*/
 
+                /*
                 if (!File.Exists(iniName))
                 {
                     // Check for legacy options file.
@@ -42,7 +43,9 @@ namespace WordSend
                         oldOpts.LoadOptions(seppOptions);
                     }
                 }
+                */
                 ini = new XMLini(iniName);
+                /*
                 if (oldOpts != null)
                 {
                     // Read old options that are in current use into new options format.
@@ -65,7 +68,7 @@ namespace WordSend
                     }
                     ini.Write();
                 }
-
+                */
             }
             catch (Exception ex)
             {
@@ -931,7 +934,10 @@ namespace WordSend
 
 		public string indexHtml
 		{
-            get { return ini.ReadString("indexHtml", String.Empty).Replace("<br>", "<br />"); }
+            get
+            {
+                return ini.ReadString("indexHtml", String.Empty).Replace("<br>", "<br />");
+            }
             set { ini.WriteString("indexHtml", value.Trim().Replace("<br>", "<br />")); }
 		}
 
