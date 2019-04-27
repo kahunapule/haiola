@@ -6511,7 +6511,10 @@ namespace WordSend
                                 }
                                 if (noteStyleStackLevel > 8)
                                     Logit.WriteLine("Unexpected noteStyleStackLevel " + noteStyleStackLevel.ToString());
-                                usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag(), stackTag);
+                                if (extendUsfm || !sfm.StartsWith("z"))
+                                {
+                                    usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag(), stackTag);
+                                }
                                 break;
                         }
                     }
@@ -6651,10 +6654,14 @@ namespace WordSend
                                         sfm = csSfm[charStyleStackLevel];
                                     if (String.IsNullOrEmpty(sfm))
                                         Logit.WriteError("Unexpected empty sfm on character style stack!");
-                                    stackTag = charStyleStackLevel > 0;
-                                    if (tags.info(sfm).hasEndTag())
+
+                                    if (extendUsfm || !sfm.StartsWith("z"))
                                     {
-                                        usfmFile.WriteSFM(sfm + "*", "", "", false, stackTag);
+                                        stackTag = charStyleStackLevel > 0;
+                                        if (tags.info(sfm).hasEndTag())
+                                        {
+                                            usfmFile.WriteSFM(sfm + "*", "", "", false, stackTag);
+                                        }
                                     }
                                 }
                                 // else we have a tag with an end element in USFX, but which always explicitly ends in USFM,
