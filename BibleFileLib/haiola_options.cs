@@ -185,6 +185,12 @@ namespace WordSend
             set { ini.WriteBool("done", value); }
         }
 
+        public bool hasAudio
+        {
+            get { return (ini.ReadBool("hasAudio", false)); }
+            set { ini.WriteBool("hasAudio", value); }
+        }
+
         public bool makeHtml
         {
             get { return (ini.ReadBool("makeHtml", true)); }

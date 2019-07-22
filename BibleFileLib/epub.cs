@@ -263,7 +263,7 @@ namespace WordSend
             while ((bookIndex < bookInfo.publishArray.Length) && (startHere == String.Empty))
             {
                 br = bookInfo.publishArray[bookIndex];
-                if (br.isPresent && ((br.testament == "o") || (br.testament == "n") || (br.testament == "a")))
+                if (br.IsPresent && br.includeThisBook && ((br.testament == "o") || (br.testament == "n") || (br.testament == "a")))
                 {
                    startHere = String.Format("{0}", br.tla);
                 }
@@ -578,7 +578,7 @@ namespace WordSend
             }
             foreach (BibleBookRecord br in bookInfo.publishArray)
             {
-                if ((br != null) && br.isPresent)
+                if ((br != null) && br.IsPresent)
                 {
                     string bkName = br.vernacularShortName;
                     if (bkName.Length < 1)
@@ -1004,7 +1004,7 @@ namespace WordSend
                 endNavPoint();
                 foreach (BibleBookRecord bk in bookInfo.publishArray)
                 {
-                    if ((bk != null) && bk.isPresent)
+                    if ((bk != null) && bk.IsPresent)
                     {
                         string bkName = bk.vernacularLongName;
                         if (bkName.Length < 1)
@@ -1190,7 +1190,7 @@ namespace WordSend
                     if (bookInfo.publishArray[i] != null)
                     {
                         br = (BibleBookRecord)bookInfo.publishArray[i];
-                        if (br.isPresent && br.includeThisBook)
+                        if (br.IsPresent)
                         {
                             xw.WriteStartElement("itemref");
                             xw.WriteAttributeString("idref", "x"+br.tla.ToLowerInvariant());

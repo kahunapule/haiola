@@ -115,7 +115,7 @@ namespace WordSend
             while ((bookIndex < bookInfo.publishArray.Length) && (firstChapterFile == String.Empty))
             {
                 br = bookInfo.publishArray[bookIndex];
-                if (br.isPresent && (br.tla == currentBookAbbrev))
+                if (br.IsPresent && (br.tla == currentBookAbbrev))
                 {
                     chapterIndex = 0;
                     while ((chapterIndex < br.chaptersFound.Count) && (firstChapterFile == String.Empty))
@@ -148,7 +148,7 @@ namespace WordSend
             while ((bookIndex < bookInfo.publishArray.Length) && (startHere == String.Empty))
             {
                 br = bookInfo.publishArray[bookIndex];
-                if (br.isPresent && ((br.testament == "o") || (br.testament == "n") || (br.testament == "a")))
+                if (br.IsPresent && ((br.testament == "o") || (br.testament == "n") || (br.testament == "a")))
                 {
                     chapterIndex = 0;
                     while ((chapterIndex < br.chaptersFound.Count) && (startHere == String.Empty))
@@ -919,7 +919,7 @@ namespace WordSend
                 infojson.Write("\"divisionNames\":[");
                 for (i = 0; i < bookInfo.publishArrayCount; i++)
                 {
-                    if (bookInfo.publishArray[i].isPresent && (bookInfo.publishArray[i].chapterFiles != null) && (bookInfo.publishArray[i].chaptersFound.Count > 0))
+                    if (bookInfo.publishArray[i].IsPresent && (bookInfo.publishArray[i].chapterFiles != null) && (bookInfo.publishArray[i].chaptersFound.Count > 0))
                     {   // This book is in the input files and contains at least one character of text.
                         if (needComma)
                         {
@@ -934,7 +934,7 @@ namespace WordSend
                 infojson.Write("\"divisions\":[");
                 for (i = 0; i < bookInfo.publishArrayCount; i++)
                 {
-                    if (bookInfo.publishArray[i].isPresent && (bookInfo.publishArray[i].chapterFiles != null) && (bookInfo.publishArray[i].chaptersFound.Count > 0))
+                    if (bookInfo.publishArray[i].IsPresent && (bookInfo.publishArray[i].chapterFiles != null) && (bookInfo.publishArray[i].chaptersFound.Count > 0))
                     {   // This book is in the input files and contains at least one character of text.
                         if (needComma)
                             infojson.Write(",");
@@ -948,7 +948,7 @@ namespace WordSend
                 needComma = false;
                 for (i = 0; i < bookInfo.publishArrayCount; i++)
                 {
-                    if (bookInfo.publishArray[i].isPresent && (bookInfo.publishArray[i].chapterFiles != null) && (bookInfo.publishArray[i].chaptersFound.Count > 0))
+                    if (bookInfo.publishArray[i].IsPresent && (bookInfo.publishArray[i].chapterFiles != null) && (bookInfo.publishArray[i].chaptersFound.Count > 0))
                     {
                         if (needComma)
                             sb.Append(",");

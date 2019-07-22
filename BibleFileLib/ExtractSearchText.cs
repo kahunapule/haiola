@@ -253,7 +253,9 @@ namespace WordSend
                                     }
                                     else if (level == "2")
                                     {
-                                        bookRecord.vernacularShortName = usfx.Value.Trim();
+                                        string sn = usfx.Value.Trim();
+                                        if ((bookRecord.vernacularShortName.Length < 2) || (sn.Length < bookRecord.vernacularShortName.Length))
+                                          bookRecord.vernacularShortName = sn;
                                     }
                                 }
                                 break;

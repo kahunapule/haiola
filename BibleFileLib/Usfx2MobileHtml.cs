@@ -182,7 +182,7 @@ namespace WordSend
             while ((bookIndex < bookInfo.publishArray.Length) && (firstChapterFile == String.Empty))
             {
                 br = bookInfo.publishArray[bookIndex];
-                if ((br != null) && br.isPresent && (br.tla == currentBookAbbrev) && (br.chaptersFound != null))
+                if ((br != null) && br.IsPresent && (br.tla == currentBookAbbrev) && (br.chaptersFound != null))
                 {
                     chapterIndex = 0;
                     while ((chapterIndex < br.chaptersFound.Count) && (firstChapterFile == String.Empty))

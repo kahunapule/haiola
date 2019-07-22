@@ -28,6 +28,7 @@ namespace WordSend
         public string inputDirectory; // Always under dataRootDir, defaults to Documents/BibleConv/input
         public string inputProjectDirectory; //e.g., full path to BibleConv\input\Kupang
         public string dataRootDir; // Default is BibleConv in the user's Documents folder
+        public string audioDir; // Location of mp3 audio files
         public string currentProject = String.Empty; // e.g., Kupang
         public string projectXiniPath;  // e.g., BibleConv\input\Kupang\options.xini
         public string preferredCover;

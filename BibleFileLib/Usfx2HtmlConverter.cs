@@ -371,7 +371,7 @@ namespace WordSend
                 while (i < bookInfo.publishArrayCount)
                 {
                     bookRec = (BibleBookRecord)bookInfo.publishArray[i];
-                    if (bookRec.isPresent && (bookRec.chapterFiles != null) && (bookRec.chapterFiles.Count > 0))
+                    if (bookRec.IsPresent && (bookRec.chapterFiles != null) && (bookRec.chapterFiles.Count > 0))
                     {
                         bsb.Append("<option value=\"" + bookRec.chapterFiles[0] + ".htm\">" + bookRec.vernacularShortName + "</option>"+Environment.NewLine);
                     }
@@ -433,7 +433,7 @@ namespace WordSend
             while ((bookIndex < bookInfo.publishArray.Length) && (firstChapterFile == String.Empty))
             {
                 br = bookInfo.publishArray[bookIndex];
-                if (br.isPresent && (br.tla == currentBookAbbrev))
+                if (br.IsPresent && (br.tla == currentBookAbbrev))
                 {
                     chapterIndex = 0;
                     while ((chapterIndex < br.chaptersFound.Count) && (firstChapterFile == String.Empty))
@@ -470,7 +470,7 @@ namespace WordSend
             while ((bookIndex < bookInfo.publishArray.Length) && (startHere == String.Empty))
             {
                 br = bookInfo.publishArray[bookIndex];
-                if ((br != null) && br.isPresent)
+                if ((br != null) && br.IsPresent)
                 {
                     if ((br.testament == "o") || (br.testament == "n") || (br.testament == "a"))
                     {
@@ -1952,13 +1952,13 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                     {
                                         SkipElement();
                                         bookRecord.actualChapters = 0;
-                                        bookRecord.isPresent = false;
+                                        bookRecord.IsPresent = false;
                                     }
                                     else if (!projectOptions.allowedBookList.Contains(bookRecord.tla))
                                     {
                                         SkipElement();
                                         bookRecord.actualChapters = 0;
-                                        bookRecord.isPresent = false;
+                                        bookRecord.IsPresent = false;
                                     }
                                     else
                                     {
@@ -1983,7 +1983,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                         }
                                         if (!foundThisBook)
                                         {
-                                            bookRecord.isPresent = false;
+                                            bookRecord.IsPresent = false;
                                             while ((usfx.Name != "book") || (usfx.NodeType != XmlNodeType.EndElement))
                                             {   // Skip book
                                                 usfx.Read();
@@ -2226,7 +2226,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                     {   // We don't count a book as present unless there is some text in it.
                         string s = usfx.Value;
                         if (s.Trim().Length > 1)
-                            bookRecord.isPresent = true;
+                            bookRecord.IsPresent = true;
                         if (inSectionTitle)
                             sectionTitle = sectionTitle + usfx.Value;
                         if (commonChars)
@@ -2251,7 +2251,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                 {
                     for (i = 0; (i < bookInfo.publishArrayCount); i++)
                     {
-                        if (bookInfo.publishArray[i].isPresent && (bookInfo.publishArray[i].chapterFiles != null))
+                        if (bookInfo.publishArray[i].IsPresent && (bookInfo.publishArray[i].chapterFiles != null))
                         {   // This book is in the input files and contains at least one character of text.
                             bookList.Add(bookInfo.publishArray[i]);
                             foreach (string chapFileName in bookInfo.publishArray[i].chapterFiles)
@@ -2427,7 +2427,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                             verseId = chapterId + "_0";
                                             currentBookHeader = bookRecord.vernacularShortName;
                                             currentVernacularAbbreviation = bookRecord.vernacularAbbreviation;
-                                            if (!bookRecord.isPresent)
+                                            if (!bookRecord.IsPresent)
                                             {   // Skip book not on publication list or containing no chapters.
                                                 while ((usfx.Name != "book") || (usfx.NodeType != XmlNodeType.EndElement))
                                                 {

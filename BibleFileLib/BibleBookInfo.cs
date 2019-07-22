@@ -53,8 +53,15 @@ namespace WordSend
         public int publicationOrder;
         public ArrayList chapterFiles;  // Chapter file names only, i.e. PSA119.htm
         public ArrayList chaptersFound; // Contains ChapterInfo records of chapters in this book
-        public bool isPresent;
+        public bool isOnDisk;
         public bool includeThisBook;
+
+        public bool IsPresent
+        {
+            get { return isOnDisk && includeThisBook; }
+            set { isOnDisk = value; }
+        }
+
 
         /// <summary>
         /// Constructor initalizes a (sort of) empty BibleBookRecord
@@ -64,7 +71,7 @@ namespace WordSend
             sortOrder = publicationOrder = 0;
             numChapters = 151;
             actualChapters = 0;
-            isPresent = false;
+            IsPresent = false;
             tla = osisName = name = shortName = testament = vernacularAbbreviation = vernacularHeader = String.Empty;
             vernacularName = vernacularShortName = vernacularLongName = bibleworksCode = String.Empty;
             toc = new StringBuilder();
@@ -93,7 +100,7 @@ namespace WordSend
         /// </summary>
         public bool HasContent
         {
-            get { return isPresent && ((chapterFiles != null && chapterFiles.Count > 0) || (testament == "x")); }
+            get { return IsPresent && ((chapterFiles != null && chapterFiles.Count > 0) || (testament == "x")); }
         }
 
         /// <summary>
@@ -108,7 +115,7 @@ namespace WordSend
             bool result = false;
             int i;
             ChapterInfo ci;
-            if (isPresent)
+            if (IsPresent)
             {
                 for (i = 0; (i < chaptersFound.Count) && (!result); i++)
                 {
@@ -402,7 +409,9 @@ namespace WordSend
             BibleBookRecord br = (BibleBookRecord)books[bk];
             if (br == null)
                 return false;
-            if (!br.isPresent)
+            if (!br.IsPresent)
+                return false;
+            if (!br.includeThisBook)
                 return false;
             return br.isValidTarget(ch, vs);
         }
@@ -654,7 +663,7 @@ namespace WordSend
                         else
                         {
                             br.publicationOrder = i;
-                            br.isPresent = false;
+                            br.IsPresent = false;
                             br.includeThisBook = true;
                             publishArray[i] = br;
                             i++;
@@ -954,7 +963,7 @@ namespace WordSend
                     {
                         if (inParagraph && (usfx.Value.Trim().Length > 0))
                         {
-                            bookRecord.isPresent = true;
+                            bookRecord.IsPresent = true;
                         }
                     }
                     else if (usfx.NodeType == XmlNodeType.EndElement)
@@ -998,7 +1007,7 @@ namespace WordSend
                             {
                                 bookRecord.vernacularAbbreviation = bookRecord.vernacularShortName;
                             }
-                            if ((bookRecord.isPresent) && (chapterNumber == 0))
+                            if ((bookRecord.IsPresent) && (chapterNumber == 0))
                             {
                                 ci = new ChapterInfo();
                                 ci.chapterInteger = chapterNumber;
@@ -1019,7 +1028,7 @@ namespace WordSend
                     }
                     else if ((usfx.NodeType == XmlNodeType.Text) && (bookRecord != null) && (bookRecord.tla == currentBookAbbrev) && (usfx.Value.Trim().Length > 2))
                     {   // We don't count a book as present unless there is some text in it.
-                        bookRecord.isPresent = true;
+                        bookRecord.IsPresent = true;
                     }
                     //conversionProgress = "navigation " + currentBookAbbrev + " " + currentChapter + ":" + currentVerse;
                     //System.Windows.Forms.Application.DoEvents();
@@ -1156,7 +1165,7 @@ namespace WordSend
             for (i = 0; (i < publishArray.Length) && (publishArray[i] != null); i++)
             {
                 br = (BibleBookRecord)publishArray[i];
-                if (br.isPresent)
+                if (br.IsPresent)
                 {
                     switch (br.testament)
                     {
