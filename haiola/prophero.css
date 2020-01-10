@@ -117,10 +117,6 @@ span.sls { font-style: italic }
 div.sp { text-align: left;  font-size: 13pt; font-style: italic }
 span.w, span.wg, span.wh, span.wr, span.zc { font-style: normal }
 span.wj { color: rgb(192,0,0) }
-span.zcr    {color:rgb(128,0,0)}
-span.zcg    {color:rgb(0,128,0)}
-span.zcb    {color:rgb(0,0,128)}
-span.zcy    {color:rgb(128,128,0)}
 span.xk {  font-weight: bold; color: rgb(0,0,128) }
 span.xq {  color: rgb(0,0,128) }
 span.xt, span.xo, span.notebackref {  color: rgb(0,0,128) }

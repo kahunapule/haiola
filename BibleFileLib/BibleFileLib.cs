@@ -6043,7 +6043,7 @@ namespace WordSend
                                     usfmFile.Open(Path.Combine(outDir, bkInfo.FilePrefix(bookId) + outFileName));
                                     chapter = "1";
                                     verse = "0";
-                                    fnReturnVerse = "1";
+                                    fnReturnVerse = "0";
                                 }
                                 break;
                             case "id":
@@ -6061,6 +6061,7 @@ namespace WordSend
                             case "c":
                                 chapter = id;
                                 verse = "0";
+                                fnReturnVerse = "0";
                                 usfmFile.WriteSFM(sfm, "", id, true);
                                 if (!usfxFile.IsEmptyElement)
                                 {

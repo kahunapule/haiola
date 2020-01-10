@@ -609,6 +609,33 @@
 		<numChapters>12</numChapters>
 		<shortCode>DG</shortCode>
 	<bibleworksCode>DNG</bibleworksCode></Book>
+	<Book testament="a">
+		<sfmTla>EZA</sfmTla>
+		<osisName>EzraApocalypse</osisName>
+		<name>Ezra Apocalypse</name>
+		<shortName>Ezra Apocalypse</shortName>
+		<sortOrder>67</sortOrder>
+		<numChapters>16</numChapters>
+		<shortCode>E4</shortCode>
+	<bibleworksCode>EZA</bibleworksCode></Book>
+	<Book testament="a">
+		<sfmTla>5EZ</sfmTla>
+		<osisName>5Ezra</osisName>
+		<name>5 Ezra</name>
+		<shortName>5 Ezra</shortName>
+		<sortOrder>68</sortOrder>
+		<numChapters>2</numChapters>
+		<shortCode>E5</shortCode>
+	<bibleworksCode>5EZ</bibleworksCode></Book>
+	<Book testament="a">
+		<sfmTla>6EZ</sfmTla>
+		<osisName>6Ezra</osisName>
+		<name>6 Ezra</name>
+		<shortName>6 Ezra</shortName>
+		<sortOrder>69</sortOrder>
+		<numChapters>2</numChapters>
+		<shortCode>E6</shortCode>
+	<bibleworksCode>5EZ</bibleworksCode></Book>
 	<Book testament="n">
 		<sfmTla>MAT</sfmTla>
 		<osisName>Matt</osisName>
@@ -968,5 +995,104 @@
 		<sortOrder>109</sortOrder>
 		<numChapters>1</numChapters>
 		<shortCode>NX</shortCode>
+	</Book>
+	<Book testament="x">
+		<sfmTla>PS3</sfmTla>
+		<osisName>ExtraPsalms</osisName>
+		<name>Psalms 152-155</name>
+		<shortName>Extra Psalms</shortName>
+		<sortOrder>110</sortOrder>
+		<numChapters>4</numChapters>
+		<shortCode>P3</shortCode>
+	</Book>
+	<Book testament="x">
+		<sfmTla>2BA</sfmTla>
+		<osisName>2Baruch</osisName>
+		<name>2 Baruch (Apocalypse)</name>
+		<shortName>2 Baruch</shortName>
+		<sortOrder>111</sortOrder>
+		<numChapters>1</numChapters>
+		<shortCode>B2</shortCode>
+	</Book>
+	<Book testament="x">
+		<sfmTla>LBA</sfmTla>
+		<osisName>LBa</osisName>
+		<name>Letter of Baruch</name>
+		<shortName>Letter of Baruch</shortName>
+		<sortOrder>112</sortOrder>
+		<numChapters>1</numChapters>
+		<shortCode>LB</shortCode>
+	</Book>
+	<Book testament="x">
+		<sfmTla>JUB</sfmTla>
+		<osisName>Jubilees</osisName>
+		<name>Jubilees</name>
+		<shortName>Jubilees</shortName>
+		<sortOrder>113</sortOrder>
+		<numChapters>1</numChapters>
+		<shortCode>JX</shortCode>
+	</Book>
+	<Book testament="x">
+		<sfmTla>ENO</sfmTla>
+		<osisName>Enoch</osisName>
+		<name>Enoch</name>
+		<shortName>Enoch</shortName>
+		<sortOrder>114</sortOrder>
+		<numChapters>1</numChapters>
+		<shortCode>EN</shortCode>
+	</Book>
+	<Book testament="x">
+		<sfmTla>1MQ</sfmTla>
+		<osisName>1Mekabis</osisName>
+		<name>1 Mekabis</name>
+		<shortName>1 Mekabis</shortName>
+		<sortOrder>115</sortOrder>
+		<numChapters>1</numChapters>
+		<shortCode>Q1</shortCode>
+	</Book>
+	<Book testament="x">
+		<sfmTla>2MQ</sfmTla>
+		<osisName>2Mekabis</osisName>
+		<name>2 Mekabis</name>
+		<shortName>2 Mekabis</shortName>
+		<sortOrder>116</sortOrder>
+		<numChapters>1</numChapters>
+		<shortCode>Q2</shortCode>
+	</Book>
+	<Book testament="x">
+		<sfmTla>3MQ</sfmTla>
+		<osisName>3Mekabis</osisName>
+		<name>3 Mekabis</name>
+		<shortName>3 Mekabis</shortName>
+		<sortOrder>117</sortOrder>
+		<numChapters>1</numChapters>
+		<shortCode>Q3</shortCode>
+	</Book>
+	<Book testament="x">
+		<sfmTla>REP</sfmTla>
+		<osisName>Reproof</osisName>
+		<name>Reproof</name>
+		<shortName>Reproof</shortName>
+		<sortOrder>118</sortOrder>
+		<numChapters>1</numChapters>
+		<shortCode>XR</shortCode>
+	</Book>
+	<Book testament="x">
+		<sfmTla>4BA</sfmTla>
+		<osisName>4Baruch</osisName>
+		<name>4 Baruch</name>
+		<shortName>4 Baruch</shortName>
+		<sortOrder>119</sortOrder>
+		<numChapters>1</numChapters>
+		<shortCode>X4</shortCode>
+	</Book>
+	<Book testament="x">
+		<sfmTla>LAO</sfmTla>
+		<osisName>Laodiceans</osisName>
+		<name>Letter to the Laodiceans</name>
+		<shortName>Laodiceans</shortName>
+		<sortOrder>120</sortOrder>
+		<numChapters>1</numChapters>
+		<shortCode>XL</shortCode>
 	</Book>
 </BibleBookInfo>

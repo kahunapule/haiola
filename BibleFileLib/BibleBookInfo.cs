@@ -489,6 +489,7 @@ namespace WordSend
             bookMatchList = new List<bookMatch>();
             try
             {
+                Utils.EnsureDirectory(Path.GetDirectoryName(bookNamesFile));
                 xw = new XmlTextWriter(bookNamesFile, Encoding.UTF8);
                 xw.Formatting = Formatting.Indented;
                 xw.WriteStartDocument();

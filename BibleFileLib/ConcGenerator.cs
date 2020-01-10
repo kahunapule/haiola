@@ -244,8 +244,12 @@ namespace BibleFileLib
 			double count = sortedOccurrences.Count;
 			int groupSize = Convert.ToInt32(Math.Sqrt(count));
 			int iStartGroup = 0;
-			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">" + Environment.NewLine
-                + "<html>"+Environment.NewLine+"<head>"+Environment.NewLine+"<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">"+Environment.NewLine+"</head>"+Environment.NewLine+"<body>"+Environment.NewLine+"";
+            string header = "<!doctype html>" + Environment.NewLine
+                + "<html>" + Environment.NewLine + "<head>" + Environment.NewLine +
+                "<meta name='viewport' content='width=device-width', initial-scale=1'>" + Environment.NewLine+
+                "<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">" + Environment.NewLine+
+                "</head>"+Environment.NewLine+
+                "<body>"+Environment.NewLine+"";
 			string trailer = "</body>"+Environment.NewLine+"</html>"+Environment.NewLine+"";
 			string pathMain = Path.Combine(m_outputDirName, "concIndexBar.htm");
 			TextWriter writerMain = new StreamWriter(pathMain, false, Encoding.UTF8);
@@ -289,8 +293,10 @@ namespace BibleFileLib
 			}
 			return sOutput;
 		}
-		string indexHeader = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">"+Environment.NewLine
-                + "<html>"+Environment.NewLine+"<head>"+Environment.NewLine+"<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">"+Environment.NewLine+""    
+		string indexHeader = "<!doctype html>"+Environment.NewLine
+                + "<html>"+Environment.NewLine+"<head>"+Environment.NewLine+
+                "<meta name='viewport' content='width=device-width', initial-scale=1'>"+Environment.NewLine+
+                "<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">"+Environment.NewLine+""    
 				+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"mktree.css\">"+ Environment.NewLine
 				+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">"+Environment.NewLine
 				+ "<script type=\"text/javascript\" src=\"mktree.js\"></script>\n</head>"+Environment.NewLine
@@ -387,7 +393,7 @@ namespace BibleFileLib
 			writerMain.Write(indexTrailer);
 			writerMain.Close();
 		}
-		string indexMfHeader = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">"+Environment.NewLine
+		string indexMfHeader = "<!doctype html>"+Environment.NewLine
             + "<html>"+Environment.NewLine
             + "<head>\n<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">"+Environment.NewLine
 			+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"mktree.css\">"+Environment.NewLine
@@ -523,7 +529,7 @@ namespace BibleFileLib
 		private void WriteInnerIndexFile(string groupFileName, List<WordformInfo> sortedOccurrences, int groupIndex,
 			int iStartGroup, int cThisGroup)
 		{
-			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">"+Environment.NewLine
+			string header = "<!doctype html>"+Environment.NewLine
                 + "<html>\n<head>\n<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"></head>"+Environment.NewLine
                 + "<body>"+Environment.NewLine;
 			string trailer = "</body>\n</html>"+Environment.NewLine;
@@ -686,7 +692,7 @@ namespace BibleFileLib
 			string flags = info.MixedCase ? "i" : "";
 			string infoForm = MakeSafeXml(info.Form);
 			string fixQuoteInfoForm = infoForm.Replace("'", "&#39"); // apostrophe in word can close onclick quote.
-			string header = "<!doctype HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">"+Environment.NewLine
+			string header = "<!doctype html>"+Environment.NewLine
                 + "<html>"+Environment.NewLine
                 + "<head>\n<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">"+Environment.NewLine
 				+ "<script src=\"ConcFuncs.js\" type=\"text/javascript\"></script>"+Environment.NewLine

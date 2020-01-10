@@ -565,6 +565,8 @@ namespace WordSend
             // First, copy BookNames.xml for ready reference. We will update it later.
             string bookNamesCopy = Path.Combine(outputProjectDirectory, "BookNames.xml");
             string bookNamesSource = Path.Combine(SourceDir, "BookNames.xml");
+            if (File.Exists(bookNamesCopy))
+                File.Delete(bookNamesCopy);
             if (File.Exists(bookNamesSource))
                 File.Copy(bookNamesSource, bookNamesCopy, true);
 

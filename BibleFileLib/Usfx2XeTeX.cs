@@ -731,9 +731,11 @@ namespace WordSend
                     s = Regex.Replace(s, (string)FindThis[i], (string)ReplaceWith[i]);
                 }
                 s = DoBiDi(s);
-                s.Replace("</p>", "\\PAR ");
+                s = s.Replace("</p>", "\\PAR ");
+                s = s.Replace("<strong>", @"{\bf ");
+                s = s.Replace("</strong>", @"}");
                 if (s.Contains("<") || s.Contains(">"))
-                    Logit.WriteError("HTML to TeX conversion error.");
+                    Logit.WriteError("HTML to TeX conversion error: "+s);
                 //s = s.Replace("<", " ").Replace(">", " ");
             }
             catch (Exception ex)
@@ -1094,6 +1096,16 @@ For other uses, please contact the respective copyright owners.</p>
                 Logit.WriteError(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Write an (X)HTML line break element
+        /// </summary>
+        protected override void WriteHtmlLineBreak()
+        {
+            WriteHtml("\\par ");
+        }
+
+
 
         /// <summary>
         /// Write HTML indexes of generated PDF files.
@@ -1554,7 +1566,14 @@ For other uses, please contact the respective copyright owners.</p>
                 texFile.Write(@"\input{");
                 texFile.Write(formattingFileName);
                 texFile.WriteLine(@"}%");
-                texFile.WriteLine(@"\input{haiola}%");
+                if (isRtl)
+                {
+                    texFile.WriteLine(@"\input{haiolartl}%");
+                }
+                else
+                {
+                    texFile.WriteLine(@"\input{haiola}%");
+                }
                 texFile.WriteLine(@"\begin{document}%");
                 texFile.WriteLine(@"\makeatletter\def\@evenhead{{\HeaderFont{\rightmark\hfil\thepage\hfil\leftmark}}}\def\@oddhead{{\HeaderFont{\rightmark\hfil\thepage\hfil\leftmark}}}\makeatother\frontmatter\pagenumbering{roman}%");
 

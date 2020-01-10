@@ -582,9 +582,9 @@ namespace WordSend
             htm.WriteLine("<html lang=\"{0}\" dir=\"{1}\">", shortLangId, textDirection);
             htm.WriteLine("<head>");
             htm.WriteLine("<meta charset=\"UTF-8\" />");
-//            htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />");
+            htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />");
             htm.WriteLine("<link rel=\"stylesheet\" href=\"{0}\" type=\"text/css\" />", customCssName);
-            htm.WriteLine("<meta name=\"viewport\" content=\"user-scalable=yes, initial-scale=1, minimum-scale=1, width=device-width\"/>");
+//            htm.WriteLine("<meta name=\"viewport\" content=\"user-scalable=yes, initial-scale=1, minimum-scale=1, width=device-width\"/>");
 //            htm.WriteLine("<meta name=\"viewport\" content=\"user-scalable=yes, initial-scale=1, minimum-scale=1, width=device-width, height=device-height\"/>");
             if (mainScriptureFile)
             {
@@ -922,6 +922,15 @@ namespace WordSend
                 WriteHtml(escapeHtml);
             }
         }
+
+        /// <summary>
+        /// Write an (X)HTML line break element
+        /// </summary>
+        protected virtual void WriteHtmlLineBreak()
+        {
+            WriteHtml("<br/>");
+        }
+
 
         /// <summary>
         /// Write an (X)HTML line break element
@@ -2643,7 +2652,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                         StartHtmlNoteStyle(usfx.Name);
                                         break;
                                     case "fp":
-                                        WriteHtml("<br/>");
+                                        WriteHtmlLineBreak();
                                         break;
                                     case "fr":
                                     case "xo":

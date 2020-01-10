@@ -58,11 +58,11 @@ namespace BibleFileLib
 
 			htm = new StreamWriter(currentFileName, false, Encoding.UTF8);
 			htm.WriteLine(
-				"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+				"<!DOCTYPE html>");
 			htm.WriteLine("<html xmlns:msxsl=\"urn:schemas-microsoft-com:xslt\" xmlns:user=\"urn:nowhere\">");
 			htm.WriteLine("<head>");
 			htm.WriteLine("<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
-			htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width\" />");
+			htm.WriteLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />");
 			htm.WriteLine("<link rel=\"stylesheet\" href=\"" + customCssName + "\" type=\"text/css\">");
 			htm.WriteLine("<title>{0}</title></head>", string.Format(ConcordanceString, LangName));
 			// May want something like this; but goal is to prevent concordance being indexed, so keywords are not relevant.

@@ -2658,6 +2658,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
             BibleBookRecord bkRec;
             string bookCode;
             string nodePath;
+            string completionDate;
             try 
         	{	        
                 if (File.Exists(fileName))
@@ -2695,7 +2696,13 @@ their generosity, people like you can open up the Bible and hear from God no mat
                                         break;
                                     case "identification/dateCompleted":
                                         if (Utils.IsEmpty(copyrightYearTextBox.Text))
-                                            copyrightYearTextBox.Text = MetadataText();
+                                        {
+                                            completionDate = MetadataText();
+                                            if (completionDate.Length > 4)
+                                                copyrightYearTextBox.Text = completionDate.Substring(0, 4);
+                                            else
+                                                copyrightYearTextBox.Text = completionDate;
+                                        }
                                         break;
                                     case "confidential":
                                         // privateCheckBox.Checked = MetadataText() == "true";
@@ -2714,6 +2721,17 @@ their generosity, people like you can open up the Bible and hear from God no mat
                                     case "agencies/creator":
                                         creatorTextBox.Text = MetadataText();
                                         break;
+                                    case "agencies/rightsHolder/name":
+                                        if (Utils.IsEmpty(copyrightOwnerTextBox.Text))
+                                            copyrightOwnerTextBox.Text = MetadataText();
+                                        break;
+                                    case "agencies/rightsHolder/url":
+                                        copyrightOwnerUrlTextBox.Text = MetadataText();
+                                        break;
+                                    case "agencies/rightsHolder/abbr":
+                                        coprAbbrevTextBox.Text = MetadataText();
+                                        break;
+                                    /*
                                     case "agencies/rightsHolder":
                                         coprAbbrevTextBox.Text = metadataXml.GetAttribute("abbr");
                                         localRightsHolderTextBox.Text = metadataXml.GetAttribute("local");
@@ -2721,18 +2739,23 @@ their generosity, people like you can open up the Bible and hear from God no mat
                                         if (Utils.IsEmpty(copyrightOwnerTextBox.Text))
                                             copyrightOwnerTextBox.Text = MetadataText();
                                         break;
-                                    case "agencies/publisher":
+                                    */
+                                    case "agencies/publisher/name":
                                         printPublisherTextBox.Text = MetadataText();
                                         break;
-                                    case "agencies/contributor":
+                                    case "agencies/contributor/name":
                                         contributorTextBox.Text = MetadataText();
                                         break;
                                     case "language/iso":
                                         ethnologueCodeTextBox.Text = MetadataText();
                                         break;
-                                    case "language/name":
-                                        if (Utils.IsEmpty(languageNameTextBox.Text) && Utils.IsEmpty(engLangNameTextBox.Text))
+                                    case "language/nameLocal":
+                                        if (Utils.IsEmpty(languageNameTextBox.Text))
                                             languageNameTextBox.Text = engLangNameTextBox.Text = MetadataText();
+                                        break;
+                                    case "language/name":
+                                        if (Utils.IsEmpty(engLangNameTextBox.Text))
+                                            engLangNameTextBox.Text = MetadataText();
                                         break;
                                     case "language/ldml":
                                         ldmlTextBox.Text = MetadataText();
@@ -2742,7 +2765,8 @@ their generosity, people like you can open up the Bible and hear from God no mat
                                             rodCodeTextBox.Text = MetadataText();
                                         break;
                                     case "language/script":
-                                        scriptTextBox.Text = MetadataText();
+                                        if (Utils.IsEmpty(scriptTextBox.Text))
+                                            scriptTextBox.Text = MetadataText();
                                         break;
                                     case "languge/scriptDirection":
                                         textDirectionComboBox.Text = MetadataText().ToLowerInvariant();
@@ -2811,6 +2835,25 @@ their generosity, people like you can open up the Bible and hear from God no mat
                                             }
                                         }
                                         promoTextBox.Text = sb.ToString();
+                                        break;
+                                    case "names/name":
+                                        bookCode = metadataXml.GetAttribute("id").ToUpperInvariant();
+                                        if (bookCode.Length==8)
+                                            bookCode = bookCode.Substring(5, 3);
+                                        bkRec = (BibleBookRecord)BookInfo.books[bookCode];
+                                        if (bkRec != null)
+                                            br = bkRec;
+                                        else
+                                            MessageBox.Show("Bad book code in metadata.xml: " + bookCode, "Error reading " + fileName);
+                                        break;
+                                    case "names/name/abbr":
+                                        br.vernacularAbbreviation = MetadataText();
+                                        break;
+                                    case "names/name/short":
+                                        br.vernacularShortName = MetadataText();
+                                        break;
+                                    case "names/name/long":
+                                        br.vernacularLongName = MetadataText();
                                         break;
                                     case "bookNames/book":
                                         bookCode = metadataXml.GetAttribute("code");
@@ -3827,6 +3870,7 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
             indexPageTextBox.Text = globe.projectOptions.indexHtml = templateOptions.indexHtml;
             licenseTextBox.Text = globe.projectOptions.licenseHtml = templateOptions.licenseHtml;
             customCssTextBox.Text = globe.projectOptions.customCssFileName = templateOptions.customCssFileName;
+            fontComboBox.Text = globe.projectOptions.fontFamily = templateOptions.fontFamily;
             globe.projectOptions.postprocesses = templateOptions.postprocesses;
             postprocessListBox.SuspendLayout();
             postprocessListBox.Items.Clear();

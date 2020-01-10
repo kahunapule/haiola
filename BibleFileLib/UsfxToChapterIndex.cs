@@ -232,7 +232,7 @@ namespace BibleFileLib
 			// It is important that the DOCTYPE declaration should be a single line, and that the <html> element starts the second line.
 			// This is because the concordance parser uses a ReadLine to skip the DOCTYPE declaration in order to read the rest of the file as XML.
 			htm.WriteLine(
-				"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+				"<!DOCTYPE html>");
 			htm.WriteLine("<html xmlns:msxsl=\"urn:schemas-microsoft-com:xslt\" xmlns:user=\"urn:nowhere\">");
 			htm.WriteLine("<head>");
 			htm.WriteLine("<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");

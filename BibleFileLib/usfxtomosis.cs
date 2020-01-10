@@ -922,6 +922,7 @@ namespace WordSend
                 config.WriteLine("CompressType=ZIP");
                 config.WriteLine("BlockType=BOOK");
                 config.WriteLine("Versification={0}", projectOptions.swordVersification);
+                config.WriteLine("OSISqToTick=false");
                 if (projectOptions.textDir == "rtl")
                     config.WriteLine("Direction=RtoL");
                 config.WriteLine("Font={0}", projectOptions.fontFamily);
@@ -1722,7 +1723,7 @@ namespace WordSend
                                                 mosis.WriteAttributeString("short", toc2);
                                             }
                                             if (toc1.Length > 0)
-                                                mosis.WriteRaw(toc1);
+                                                mosis.WriteString(toc1);
                                             else if (toc2.Length > 0)
                                                 mosis.WriteString(toc2);
                                             else

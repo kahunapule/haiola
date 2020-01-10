@@ -547,6 +547,7 @@ namespace WordSend
             sw.WriteLine("<head>");
             sw.WriteLine("<title>Cover</title>");
             sw.WriteLine("<style type=\"text/css\">");
+            sw.WriteLine("<meta name='viewport' content='width=device-width', initial-scale=1'>");
             sw.WriteLine("body {margin:0em;padding:0em}");
             sw.WriteLine("img {max-width:100%;max-height:100%}");
             sw.WriteLine("</style>");
@@ -565,6 +566,7 @@ namespace WordSend
             htm.WriteLine("<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\">");
             htm.WriteLine("<head>");
 		    htm.WriteLine(" <meta charset=\"utf-8\" />");
+            htm.WriteLine(" <meta name='viewport' content='width=device-width', initial-scale=1'>");
             htm.WriteLine(" <title>{0}</title>", EscapeHtml(translationName));
             htm.WriteLine(" <link href='epub.css' rel='stylesheet' />");
             htm.WriteLine("</head>");

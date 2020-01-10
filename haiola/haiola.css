@@ -98,10 +98,6 @@ h1,h2,h3,.mt,.mt1,.mte,
 .rr,.rq,.rq,.fq,.fqa,.it,.sls,.sp	{font-style:italic}
 .w,.wg,.wh,.wr,.zc	{font-style:normal}
 .wj	{color:rgb(128,0,0)}
-.zcr    {color:rgb(128,0,0)}
-.zcg    {color:rgb(0,128,0)}
-.zcb    {color:rgb(0,0,128)}
-.zcy    {color:rgb(128,128,0)}
 .qt	{font-style:oblique}
 .ord	{vertical-align:super;text-decoration:underline}
 .nb, .ps { text-indent: 0em; margin-top: 0em }

@@ -1351,16 +1351,16 @@
             // 
             // postprocessTextBox
             // 
-            this.postprocessTextBox.Location = new System.Drawing.Point(5, 272);
+            this.postprocessTextBox.Location = new System.Drawing.Point(2, 285);
             this.postprocessTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.postprocessTextBox.Name = "postprocessTextBox";
-            this.postprocessTextBox.Size = new System.Drawing.Size(467, 20);
+            this.postprocessTextBox.Size = new System.Drawing.Size(566, 20);
             this.postprocessTextBox.TabIndex = 70;
             // 
             // textBox1
             // 
             this.textBox1.Enabled = false;
-            this.textBox1.Location = new System.Drawing.Point(5, 153);
+            this.textBox1.Location = new System.Drawing.Point(2, 169);
             this.textBox1.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
@@ -1370,7 +1370,7 @@
             // 
             // mvDownButton
             // 
-            this.mvDownButton.Location = new System.Drawing.Point(196, 242);
+            this.mvDownButton.Location = new System.Drawing.Point(193, 258);
             this.mvDownButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.mvDownButton.Name = "mvDownButton";
             this.mvDownButton.Size = new System.Drawing.Size(56, 23);
@@ -1381,7 +1381,7 @@
             // 
             // mvUpButton
             // 
-            this.mvUpButton.Location = new System.Drawing.Point(127, 242);
+            this.mvUpButton.Location = new System.Drawing.Point(124, 258);
             this.mvUpButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.mvUpButton.Name = "mvUpButton";
             this.mvUpButton.Size = new System.Drawing.Size(51, 23);
@@ -1392,7 +1392,7 @@
             // 
             // deleteButton
             // 
-            this.deleteButton.Location = new System.Drawing.Point(64, 242);
+            this.deleteButton.Location = new System.Drawing.Point(61, 258);
             this.deleteButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.deleteButton.Name = "deleteButton";
             this.deleteButton.Size = new System.Drawing.Size(44, 23);
@@ -1403,7 +1403,7 @@
             // 
             // addProgramButton
             // 
-            this.addProgramButton.Location = new System.Drawing.Point(5, 242);
+            this.addProgramButton.Location = new System.Drawing.Point(2, 258);
             this.addProgramButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.addProgramButton.Name = "addProgramButton";
             this.addProgramButton.Size = new System.Drawing.Size(50, 23);
@@ -1416,19 +1416,19 @@
             // 
             this.postprocessListBox.FormattingEnabled = true;
             this.postprocessListBox.ItemHeight = 14;
-            this.postprocessListBox.Location = new System.Drawing.Point(5, 299);
+            this.postprocessListBox.Location = new System.Drawing.Point(5, 313);
             this.postprocessListBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.postprocessListBox.Name = "postprocessListBox";
-            this.postprocessListBox.Size = new System.Drawing.Size(467, 32);
+            this.postprocessListBox.Size = new System.Drawing.Size(563, 102);
             this.postprocessListBox.TabIndex = 39;
             this.postprocessListBox.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.postprocessListBox_MouseDoubleClick);
             // 
             // moveDownButton
             // 
-            this.moveDownButton.Location = new System.Drawing.Point(196, 63);
+            this.moveDownButton.Location = new System.Drawing.Point(290, 64);
             this.moveDownButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.moveDownButton.Name = "moveDownButton";
-            this.moveDownButton.Size = new System.Drawing.Size(57, 26);
+            this.moveDownButton.Size = new System.Drawing.Size(102, 26);
             this.moveDownButton.TabIndex = 63;
             this.moveDownButton.Text = "Move Down";
             this.moveDownButton.UseVisualStyleBackColor = true;
@@ -1439,7 +1439,7 @@
             this.moveUpButton.Location = new System.Drawing.Point(126, 63);
             this.moveUpButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.moveUpButton.Name = "moveUpButton";
-            this.moveUpButton.Size = new System.Drawing.Size(51, 26);
+            this.moveUpButton.Size = new System.Drawing.Size(99, 26);
             this.moveUpButton.TabIndex = 62;
             this.moveUpButton.Text = "Move Up";
             this.moveUpButton.UseVisualStyleBackColor = true;
@@ -1485,7 +1485,7 @@
             this.listInputProcesses.Location = new System.Drawing.Point(4, 98);
             this.listInputProcesses.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.listInputProcesses.Name = "listInputProcesses";
-            this.listInputProcesses.Size = new System.Drawing.Size(467, 32);
+            this.listInputProcesses.Size = new System.Drawing.Size(564, 60);
             this.listInputProcesses.TabIndex = 65;
             // 
             // mediaPage
@@ -2385,6 +2385,7 @@
             this.colFilesStdAbbr,
             this.colFilesVernAbbr,
             this.colFilesXrefs});
+            this.listBooks.HideSelection = false;
             this.listBooks.Location = new System.Drawing.Point(5, 77);
             this.listBooks.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.listBooks.Name = "listBooks";

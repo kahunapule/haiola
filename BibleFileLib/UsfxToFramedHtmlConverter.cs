@@ -135,7 +135,7 @@ namespace BibleFileLib
 			var htmNav = new StreamWriter(navPath, false, Encoding.UTF8);
 
 			htmNav.WriteLine(
-				"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+				"<!DOCTYPE html>");
 			htmNav.WriteLine("<html xmlns=\"http://www.w3.org/1999/xhtml\" >");
 			htmNav.WriteLine("<head>");
 			htmNav.WriteLine("    <title>Navigation Bar</title>");
@@ -283,7 +283,7 @@ namespace BibleFileLib
             // It is important that the DOCTYPE declaration should be a single line, and that the <html> element starts the second line.
             // This is because the concordance parser uses a ReadLine to skip the DOCTYPE declaration in order to read the rest of the file as XML.
             // Note: we used XHTML in the framed version, instead of HTML 5, because frames are mostly deprecated in HTML 5.
-            htm.WriteLine("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+            htm.WriteLine("<!DOCTYPE html>");
             htm.WriteLine("<html lang=\"{0}\" dir=\"{1}\">", shortLangId, textDirection);
             htm.WriteLine("<head>");
             htm.WriteLine("<meta charset=\"UTF-8\" />");
@@ -331,7 +331,7 @@ namespace BibleFileLib
 		{
 			var htmFrame = new StreamWriter(framePath, false, Encoding.UTF8);
 			htmFrame.WriteLine(
-				"<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+				"<!DOCTYPE html>");
 			htmFrame.WriteLine("<html xmlns:msxsl=\"urn:schemas-microsoft-com:xslt\" xmlns:user=\"urn:nowhere\">");
 			htmFrame.WriteLine("<head>");
 			htmFrame.WriteLine("<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">");
