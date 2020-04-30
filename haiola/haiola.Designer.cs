@@ -173,7 +173,7 @@
             this.extendUsfmCheckBox = new System.Windows.Forms.CheckBox();
             this.label21 = new System.Windows.Forms.Label();
             this.promoTextBox = new System.Windows.Forms.TextBox();
-            this.scriptTextBox = new System.Windows.Forms.TextBox();
+            this.scriptComboBox = new System.Windows.Forms.ComboBox();
             this.label61 = new System.Windows.Forms.Label();
             this.label59 = new System.Windows.Forms.Label();
             this.ldmlTextBox = new System.Windows.Forms.TextBox();
@@ -1768,7 +1768,7 @@
             this.advancedTabPage.Controls.Add(this.extendUsfmCheckBox);
             this.advancedTabPage.Controls.Add(this.label21);
             this.advancedTabPage.Controls.Add(this.promoTextBox);
-            this.advancedTabPage.Controls.Add(this.scriptTextBox);
+            this.advancedTabPage.Controls.Add(this.scriptComboBox);
             this.advancedTabPage.Controls.Add(this.label61);
             this.advancedTabPage.Controls.Add(this.label59);
             this.advancedTabPage.Controls.Add(this.ldmlTextBox);
@@ -1915,13 +1915,216 @@
             this.promoTextBox.Size = new System.Drawing.Size(480, 121);
             this.promoTextBox.TabIndex = 111;
             // 
-            // scriptTextBox
-            // 
-            this.scriptTextBox.Location = new System.Drawing.Point(328, 35);
-            this.scriptTextBox.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.scriptTextBox.Name = "scriptTextBox";
-            this.scriptTextBox.Size = new System.Drawing.Size(167, 20);
-            this.scriptTextBox.TabIndex = 110;
+            // scriptComboBox
+            //
+            this.scriptComboBox.FormattingEnabled = true;
+            // Most recent addition 2020-04-16
+            this.scriptComboBox.Items.AddRange(new object[] {
+            "Adlm-Adlam",
+            "Afak-Afaka",
+            "Aghb-Caucasian Albanian",
+            "Ahom-Ahom, Tai Ahom",
+            "Arab-Arabic",
+            "Aran-Arabic (Nastaliq variant)",
+            "Armi-Imperial Aramaic",
+            "Armn-Armenian",
+            "Avst-Avestan",
+            "Bali-Balinese",
+            "Bamu-Bamum",
+            "Bass-Bassa Vah",
+            "Batk-Batak",
+            "Beng-Bengali (Bangla)",
+            "Bhks-Bhaiksuki",
+            "Blis-Blissymbols",
+            "Bopo-Bopomofo",
+            "Brah-Brahmi",
+            "Brai-Braille",
+            "Bugi-Buginese",
+            "Buhd-Buhid",
+            "Cakm-Chakma",
+            "Cans-Unified Canadian Aboriginal Syllabics",
+            "Cari-Carian",
+            "Cham-Cham",
+            "Cher-Cherokee",
+            "Cirt-Cirth",
+            "Copt-Coptic",
+            "Cpmn-Cypro-Minoan",
+            "Cprt-Cypriot syllabary",
+            "Cyrl-Cyrillic",
+            "Cyrs-Cyrillic (Old Church Slavonic variant)",
+            "Deva-Devanagari (Nagari)",
+            "Dogr-Dogra",
+            "Dsrt-Deseret (Mormon)",
+            "Dupl-Duployan shorthand, Duployan stenography",
+            "Egyd-Egyptian demotic",
+            "Egyh-Egyptian hieratic",
+            "Egyp-Egyptian hieroglyphs",
+            "Elba-Elbasan",
+            "Elym-Elymaic",
+            "Ethi-Ethiopic (Geʻez)",
+            "Geok-Khutsuri (Asomtavruli and Nuskhuri)",
+            "Geor-Georgian (Mkhedruli and Mtavruli)",
+            "Glag-Glagolitic",
+            "Gong-Gunjala Gondi",
+            "Gonm-Masaram Gondi",
+            "Goth-Gothic",
+            "Gran-Grantha",
+            "Grek-Greek",
+            "Gujr-Gujarati",
+            "Guru-Gurmukhi",
+            "Hanb-Han with Bopomofo (alias for Han + Bopomofo)",
+            "Hang-Hangul (Hangŭl, Hangeul)",
+            "Hani-Han (Hanzi, Kanji, Hanja)",
+            "Hano-Hanunoo (Hanunóo)",
+            "Hans-Han (Simplified variant)",
+            "Hant-Han (Traditional variant)",
+            "Hatr-Hatran",
+            "Hebr-Hebrew",
+            "Hira-Hiragana",
+            "Hluw-Anatolian Hieroglyphs (Luwian Hieroglyphs, Hittite Hieroglyphs)",
+            "Hmng-Pahawh Hmong",
+            "Hmnp-Nyiakeng Puachue Hmong",
+            "Hrkt-Japanese syllabaries (alias for Hiragana + Katakana)",
+            "Hung-Old Hungarian (Hungarian Runic)",
+            "Inds-Indus (Harappan)",
+            "Ital-Old Italic (Etruscan, Oscan, etc.)",
+            "Jamo-Jamo (alias for Jamo subset of Hangul)",
+            "Java-Javanese",
+            "Jpan-Japanese (alias for Han + Hiragana + Katakana)",
+            "Jurc-Jurchen",
+            "Kali-Kayah Li",
+            "Kana-Katakana",
+            "Khar-Kharoshthi",
+            "Khmr-Khmer",
+            "Khoj-Khojki",
+            "Kitl-Khitan large script",
+            "Kits-Khitan small script",
+            "Knda-Kannada",
+            "Kore-Korean (alias for Hangul + Han)",
+            "Kpel-Kpelle",
+            "Kthi-Kaithi",
+            "Lana-Tai Tham (Lanna)",
+            "Laoo-Lao",
+            "Latf-Latin (Fraktur variant)",
+            "Latg-Latin (Gaelic variant)",
+            "Latn-Latin",
+            "Leke-Leke",
+            "Lepc-Lepcha (Róng)",
+            "Limb-Limbu",
+            "Lina-Linear A",
+            "Linb-Linear B",
+            "Lisu-Lisu (Fraser)",
+            "Loma-Loma",
+            "Lyci-Lycian",
+            "Lydi-Lydian",
+            "Mahj-Mahajani",
+            "Maka-Makasar",
+            "Mand-Mandaic, Mandaean",
+            "Mani-Manichaean",
+            "Marc-Marchen",
+            "Maya-Mayan hieroglyphs",
+            "Medf-Medefaidrin (Oberi Okaime, Oberi Ɔkaimɛ)",
+            "Mend-Mende Kikakui",
+            "Merc-Meroitic Cursive",
+            "Mero-Meroitic Hieroglyphs",
+            "Mlym-Malayalam",
+            "Modi-Modi, Moḍī",
+            "Mong-Mongolian",
+            "Moon-Moon (Moon code, Moon script, Moon type)",
+            "Mroo-Mro, Mru",
+            "Mtei-Meitei Mayek (Meithei, Meetei)",
+            "Mult-Multani",
+            "Mymr-Myanmar (Burmese)",
+            "Nand-Nandinagari",
+            "Narb-Old North Arabian (Ancient North Arabian)",
+            "Nbat-Nabataean",
+            "Newa-Newa, Newar, Newari, Nepāla lipi",
+            "Nkdb-Naxi Dongba (na²¹ɕi³³ to³³ba²¹, Nakhi Tomba)",
+            "Nkgb-Naxi Geba (na²¹ɕi³³ gʌ²¹ba²¹, 'Na-'Khi ²Ggŏ-¹baw, Nakhi Geba)",
+            "Nkoo-N’Ko",
+            "Nshu-Nüshu",
+            "Ogam-Ogham",
+            "Olck-Ol Chiki (Ol Cemet’, Ol, Santali)",
+            "Orkh-Old Turkic, Orkhon Runic",
+            "Orya-Oriya (Odia)",
+            "Osge-Osage",
+            "Osma-Osmanya",
+            "Palm-Palmyrene",
+            "Pauc-Pau Cin Hau",
+            "Perm-Old Permic",
+            "Phag-Phags-pa",
+            "Phli-Inscriptional Pahlavi",
+            "Phlp-Psalter Pahlavi",
+            "Phlv-Book Pahlavi",
+            "Phnx-Phoenician",
+            "Plrd-Miao (Pollard)",
+            "Piqd-Klingon (KLI pIqaD)",
+            "Prti-Inscriptional Parthian",
+            "Qaaa-Reserved for private use (start)",
+            "Qabx-Reserved for private use (end)",
+            "Rjng-Rejang (Redjang, Kaganga)",
+            "Rohg-Hanifi Rohingya",
+            "Roro-Rongorongo",
+            "Runr-Runic",
+            "Samr-Samaritan",
+            "Sara-Sarati",
+            "Sarb-Old South Arabian",
+            "Saur-Saurashtra",
+            "Sgnw-SignWriting",
+            "Shaw-Shavian (Shaw)",
+            "Shrd-Sharada, Śāradā",
+            "Shui-Shuishu",
+            "Sidd-Siddham, Siddhaṃ, Siddhamātṛkā",
+            "Sind-Khudawadi, Sindhi",
+            "Sinh-Sinhala",
+            "Sogd-Sogdian",
+            "Sogo-Old Sogdian",
+            "Sora-Sora Sompeng",
+            "Soyo-Soyombo",
+            "Sund-Sundanese",
+            "Sylo-Syloti Nagri",
+            "Syrc-Syriac",
+            "Syre-Syriac (Estrangelo variant)",
+            "Syrj-Syriac (Western variant)",
+            "Syrn-Syriac (Eastern variant)",
+            "Tagb-Tagbanwa",
+            "Takr-Takri, Ṭākrī, Ṭāṅkrī",
+            "Tale-Tai Le",
+            "Talu-New Tai Lue",
+            "Taml-Tamil",
+            "Tang-Tangut",
+            "Tavt-Tai Viet",
+            "Telu-Telugu",
+            "Teng-Tengwar",
+            "Tfng-Tifinagh (Berber)",
+            "Tglg-Tagalog (Baybayin, Alibata)",
+            "Thaa-Thaana",
+            "Thai-Thai",
+            "Tibt-Tibetan",
+            "Tirh-Tirhuta",
+            "Toto-Toto",
+            "Ugar-Ugaritic",
+            "Vaii-Vai",
+            "Visp-Visible Speech",
+            "Wara-Warang Citi (Varang Kshiti)",
+            "Wcho-Wancho",
+            "Wole-Woleai",
+            "Xpeo-Old Persian",
+            "Xsux-Cuneiform, Sumero-Akkadian",
+            "Yiii-Yi",
+            "Zanb-Zanabazar Square (Zanabazarin Dörböljin Useg, Xewtee Dörböljin Bicig, Horizontal Square Script)",
+            "Zinh-Code for inherited script",
+            "Zmth-Mathematical notation",
+            "Zsye-Symbols (Emoji variant)",
+            "Zsym-Symbols",
+            "Zxxx-Code for unwritten documents",
+            "Zyyy-Code for undetermined script",
+            "Zzzz-Code for uncoded script"});
+            this.scriptComboBox.Location = new System.Drawing.Point(328, 35);
+            this.scriptComboBox.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.scriptComboBox.Name = "scriptComboBox";
+            this.scriptComboBox.Size = new System.Drawing.Size(167, 20);
+            this.scriptComboBox.TabIndex = 110;
             // 
             // label61
             // 
@@ -2038,7 +2241,8 @@
             this.textDirectionComboBox.Items.AddRange(new object[] {
             "ltr",
             "rtl",
-            "tb-rl"});
+            "ttb-rtl",
+            "ttb-ltr"});
             this.textDirectionComboBox.Location = new System.Drawing.Point(93, 132);
             this.textDirectionComboBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.textDirectionComboBox.Name = "textDirectionComboBox";
@@ -3276,7 +3480,7 @@
         private System.Windows.Forms.Label numberSystemLabel;
         private System.Windows.Forms.Label label59;
         private System.Windows.Forms.TextBox ldmlTextBox;
-        private System.Windows.Forms.TextBox scriptTextBox;
+        private System.Windows.Forms.ComboBox scriptComboBox;
         private System.Windows.Forms.Label label61;
         private System.Windows.Forms.Label label63;
         private System.Windows.Forms.TextBox facebookTextBox;

@@ -566,7 +566,7 @@ namespace WordSend
 
         public string script
         {
-            get { return ini.ReadString("script", "Latin"); }
+            get { return ini.ReadString("script", "Latn-Latin"); }
             set { ini.WriteString("script", value); }
         }
 
