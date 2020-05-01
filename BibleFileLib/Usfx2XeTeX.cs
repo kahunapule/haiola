@@ -334,7 +334,12 @@ namespace WordSend
             text = text.Replace(@"\", @"$\backslash$").Replace("$", @"\$").Replace("#", @"\#").Replace("%", @"\%")
                 .Replace("&", @"\&").Replace("_", @"\_").Replace(LEFTBRACE, @"$\{$").Replace("’”", "’\u00A0”")
                 .Replace("^", "\u2303")    // Replace circumflex with look-alike up arrowhead to avoid TeX math command behavior and old style diacritic behavior
-                .Replace(RIGHTBRACE, @"$\}$").Replace("”’", "”\u00A0’").Replace("‘“", "‘\u00A0“").Replace("“‘", "“\u00A0‘").Replace("ʻ", "{ʻ}");
+                .Replace(RIGHTBRACE, @"$\}$").Replace("”’", "”\u00A0’").Replace("‘“", "‘\u00A0“").Replace("“‘", "“\u00A0‘").Replace("ʻ", "{ʻ}")
+                // TODO get rid of it when the translation is complete
+                // I am perfectly aware that this is a horrible hack.
+                // This is an attempt to bypass USFX and, rightfully so, USFX does not have a "output this if the output format is .." tag.
+                .Replace(@"\$\backslash\$begin$\{$signline$\}$",@"\signline{")
+                .Replace(@"\$\backslash\$end$\{$signline$\}$","}");
             if (!ignore)
             {
                 if (eatSpace)
