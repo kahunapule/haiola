@@ -37,7 +37,7 @@ using System.IO;
         Placement   -- processing the placement of the symbol
         End         -- Time for the outer state machine to finish
 
-    The Punctuation state machine hase the following states:
+    The Punctuation state machine has the following states:
         Symbol      -- processing a base symbol
         Placement   -- processing the placement of the symbol
         End         -- Time for the outer state machine to finish

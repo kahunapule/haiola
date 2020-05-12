@@ -189,41 +189,42 @@ namespace WordSend
                     while(header.IndexOf("))") > 0)
                     {
                         if(header[0]=='0') { result+="\\char\"F2C5F\\,"; header=header.Substring(1); }
-                        if(header[0]=='1') { result+="\\char\"F000F\\,"; header=header.Substring(1); }
-                        if(header[0]=='2') { result+="\\char\"F054F\\,"; header=header.Substring(1); }
-                        if(header[0]=='3') { result+="\\char\"F0B4F\\,"; header=header.Substring(1); }
-                        if(header[0]=='4') { result+="\\char\"F198F\\,"; header=header.Substring(1); }
-                        if(header[0]=='5') { result+="\\char\"F1C8F\\,"; header=header.Substring(1); }
-                        if(header[0]=='6') { result+="\\char\"F32CF\\,"; header=header.Substring(1); }
-                        if(header[0]=='7') { result+="\\char\"F3E0F\\,"; header=header.Substring(1); }
-                        if(header[0]=='8') { result+="\\char\"F464F\\,"; header=header.Substring(1); }
-                        if(header[0]=='9') { result+="\\char\"F4D6F\\,"; header=header.Substring(1); }
-                        if(header[0]=='A' || header[0]=='a') { result+="\\raisebox{\\FontSize/10}{\\char\"F5CCF}\\,"; header=header.Substring(1); }
-                        if(header[0]=='B' || header[0]=='b') { result+="\\char\"F1ACF\\,"; header=header.Substring(1); }
-                        if(header[0]=='C' || header[0]=='c') { result+="\\raisebox{\\FontSize/20}{\\char\"F290F}\\,"; header=header.Substring(1); }
-                        if(header[0]=='D' || header[0]=='d') { result+="\\char\"F007F\\,"; header=header.Substring(1); }
-                        if(header[0]=='E' || header[0]=='e') { result+="\\char\"F1BEF\\,"; header=header.Substring(1); }
-                        if(header[0]=='F' || header[0]=='f') { result+="\\char\"F4D6F\\,"; header=header.Substring(1); }
-                        if(header[0]=='G' || header[0]=='g') { result+="\\raisebox{\\FontSize/3}{\\char\"F5A0F}\\,"; header=header.Substring(1); }
-                        if(header[0]=='H' || header[0]=='h') { result+="\\char\"F07E9\\,"; header=header.Substring(1); }
-                        if(header[0]=='I' || header[0]=='i') { result+="\\char\"F36EF\\,"; header=header.Substring(1); }
-                        if(header[0]=='J' || header[0]=='j') { result+="\\raisebox{\\FontSize/3}{\\char\"F9CC8}\\char\"F36EF\\,"; header=header.Substring(1); }
-                        if(header[0]=='K' || header[0]=='k') { result+="\\char\"F182F\\,"; header=header.Substring(1); }
-                        if(header[0]=='L' || header[0]=='l') { result+="\\char\"F52AF\\,"; header=header.Substring(1); }
-                        if(header[0]=='M' || header[0]=='m') { result+="\\char\"F350F\\,"; header=header.Substring(1); }
-                        if(header[0]=='N' || header[0]=='n') { result+="\\raisebox{\\FontSize/6}{\\char\"F098F}\\,"; header=header.Substring(1); }
-                        if(header[0]=='O' || header[0]=='o') { result+="\\char\"F2C6F\\,"; header=header.Substring(1); }
-                        if(header[0]=='P' || header[0]=='p') { result+="\\raisebox{\\FontSize/3}{\\char\"F1830}\\,"; header=header.Substring(1); }
-                        if(header[0]=='Q' || header[0]=='q') { result+="\\char\"F5A30\\,"; header=header.Substring(1); }
-                        if(header[0]=='R' || header[0]=='r') { result+="\\raisebox{\\FontSize/20}{\\char\"F09EF}\\,"; header=header.Substring(1); }
-                        if(header[0]=='S' || header[0]=='s') { result+="\\char\"F614F\\,"; header=header.Substring(1); }
-                        if(header[0]=='T' || header[0]=='t') { result+="\\char\"F5E4F\\,"; header=header.Substring(1); }
-                        if(header[0]=='U' || header[0]=='u') { result+="\\char\"F080F\\,"; header=header.Substring(1); }
-                        if(header[0]=='V' || header[0]=='v') { result+="\\char\"F056F\\,"; header=header.Substring(1); }
-                        if(header[0]=='W' || header[0]=='w') { result+="\\char\"F32CF\\,"; header=header.Substring(1); }
-                        if(header[0]=='X' || header[0]=='x') { result+="\\char\"F026F\\,"; header=header.Substring(1); }
-                        if(header[0]=='Y' || header[0]=='y') { result+="\\char\"F39EF\\,"; header=header.Substring(1); }
-                        if(header[0]=='Z' || header[0]=='z') { result+="\\char\"F79E5\\char\"F002F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='1') { result+="\\char\"F000F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='2') { result+="\\char\"F054F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='3') { result+="\\char\"F0B4F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='4') { result+="\\char\"F198F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='5') { result+="\\char\"F1C8F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='6') { result+="\\char\"F32CF\\,"; header=header.Substring(1); }
+                        else if(header[0]=='7') { result+="\\char\"F3E0F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='8') { result+="\\char\"F464F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='9') { result+="\\char\"F4D6F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='A' || header[0]=='a') { result+="\\raisebox{\\FontSize/10}{\\char\"F5CCF}\\,"; header=header.Substring(1); }
+                        else if(header[0]=='B' || header[0]=='b') { result+="\\char\"F1ACF\\,"; header=header.Substring(1); }
+                        else if(header[0]=='C' || header[0]=='c') { result+="\\raisebox{\\FontSize/20}{\\char\"F290F}\\,"; header=header.Substring(1); }
+                        else if(header[0]=='D' || header[0]=='d') { result+="\\char\"F007F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='E' || header[0]=='e') { result+="\\char\"F1BEF\\,"; header=header.Substring(1); }
+                        else if(header[0]=='F' || header[0]=='f') { result+="\\char\"F4D6F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='G' || header[0]=='g') { result+="\\raisebox{\\FontSize/3}{\\char\"F5A0F}\\,"; header=header.Substring(1); }
+                        else if(header[0]=='H' || header[0]=='h') { result+="\\char\"F07E9\\,"; header=header.Substring(1); }
+                        else if(header[0]=='I' || header[0]=='i') { result+="\\char\"F36EF\\,"; header=header.Substring(1); }
+                        else if(header[0]=='J' || header[0]=='j') { result+="\\raisebox{\\FontSize/3}{\\char\"F9CC8}\\char\"F36EF\\,"; header=header.Substring(1); }
+                        else if(header[0]=='K' || header[0]=='k') { result+="\\char\"F182F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='L' || header[0]=='l') { result+="\\char\"F52AF\\,"; header=header.Substring(1); }
+                        else if(header[0]=='M' || header[0]=='m') { result+="\\char\"F350F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='N' || header[0]=='n') { result+="\\raisebox{\\FontSize/6}{\\char\"F098F}\\,"; header=header.Substring(1); }
+                        else if(header[0]=='O' || header[0]=='o') { result+="\\char\"F2C6F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='P' || header[0]=='p') { result+="\\raisebox{\\FontSize/3}{\\char\"F1830}\\,"; header=header.Substring(1); }
+                        else if(header[0]=='Q' || header[0]=='q') { result+="\\char\"F5A30\\,"; header=header.Substring(1); }
+                        else if(header[0]=='R' || header[0]=='r') { result+="\\raisebox{\\FontSize/20}{\\char\"F09EF}\\,"; header=header.Substring(1); }
+                        else if(header[0]=='S' || header[0]=='s') { result+="\\char\"F614F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='T' || header[0]=='t') { result+="\\char\"F5E4F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='U' || header[0]=='u') { result+="\\char\"F080F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='V' || header[0]=='v') { result+="\\char\"F056F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='W' || header[0]=='w') { result+="\\char\"F32CF\\,"; header=header.Substring(1); }
+                        else if(header[0]=='X' || header[0]=='x') { result+="\\char\"F026F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='Y' || header[0]=='y') { result+="\\char\"F39EF\\,"; header=header.Substring(1); }
+                        else if(header[0]=='Z' || header[0]=='z') { result+="\\char\"F79E5\\char\"F002F\\,"; header=header.Substring(1); }
+                        else { result += header[0]; header=header.Substring(1); }
                     }
                 }
                 else
