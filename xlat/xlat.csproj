@@ -25,7 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vsE0D0.tmp\x86\Debug\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vs8D22.tmp\x86\Debug\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -36,7 +36,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vsE0D0.tmp\x86\Release\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vs8D22.tmp\x86\Release\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">

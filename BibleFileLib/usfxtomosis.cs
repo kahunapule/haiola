@@ -15,7 +15,7 @@ namespace WordSend
     // Converts USFX to Modified OSIS. The modification is subtle in that the results still validate
     // against the OSIS Schema, but do not strictly comply with some of the more problematical
     // assertions of the OSIS manual. The output is designed for import to Sword Project modules,
-    // and not recommended for archival use, because some of the non-Scripture features of the
+    // and not recommended for archival use, because some of the noncanonical features of the
     // work are stripped out due to incompatibilities between the formats.
     public class usfxToMosisConverter
     {
@@ -1070,7 +1070,7 @@ namespace WordSend
         /// </summary>
         /// <param name="usfxFileName">Full path and file name of USFX file</param>
         /// <param name="mosisFileName">Full path and file name of MOSIS file</param>
-        /// <returns></returns>
+        /// <returns>true iff successful</returns>
         public bool ConvertUsfxToMosis(string usfxFileName, string mosisFileName)
         {
             OsisFileName = mosisFileName;

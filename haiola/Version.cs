@@ -6,9 +6,9 @@ namespace haiola
 	/// </summary>
 	public class Version
 	{
-		public static string date = "2020-01-10";
+		public static string date = "2020-03-08";
 		public static string year = @"2020";
-		public static string time = @"23:54:39";
+		public static string time = @"23:32:27";
 		public Version()
 		{
 		}

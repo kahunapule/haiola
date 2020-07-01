@@ -32,6 +32,7 @@ namespace WordSend
     {
         public int startVerse;  // First or only verse of verse range
         public int endVerse;    // Last or only verse of verse range
+        public string verseMarker;  // This is the "name" of the verse, which normally is the string corresponding to startVerse, but may be something like "6a", "1-2", or "3b-4a".
         public string verse;    // String verse as given in verse marker
     }
 

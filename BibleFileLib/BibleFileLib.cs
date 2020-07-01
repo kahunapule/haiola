@@ -858,8 +858,7 @@ namespace WordSend
                     {
                         for (i = 0; i < attribute.Length; i++)
                         {
-                            if (!((attribute[i] == '-') || (attribute[i] == '\u200F') || Char.IsDigit(attribute[i]) || (attribute[i] == 'a') || (attribute[i] == 'b')
-                                || (attribute[i] == 'A') || (attribute[i] == 'B')))
+                            if (!((attribute[i] == '-') || (attribute[i] == '\u200F') || Char.IsLetterOrDigit(attribute[i])))
                             {
                                 Logit.WriteError("Bad verse value of " + attribute + " at " + currentBook + " " + currentChapter + ":" + attribute);
                                 i = attribute.Length;

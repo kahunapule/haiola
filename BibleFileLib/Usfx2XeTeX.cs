@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
-using System.Globalization;
-using System.Data;
 using System.IO;
 using System.Collections;
 using System.Text.RegularExpressions;
 using System.Xml;
-using System.Xml.Schema;
-using System.Diagnostics;
 
 namespace WordSend
 {
@@ -138,6 +133,7 @@ namespace WordSend
 
 
 
+        /*
         /// <summary>
         /// Figure out what the file name of current book is.
         /// This is trivially simple in the case of XeTeX files, which contain whole books.
@@ -148,6 +144,7 @@ namespace WordSend
         {
             return currentBookAbbrev + ".tex";
         }
+        */
 
 
         /// <summary>

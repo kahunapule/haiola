@@ -39,7 +39,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vsDFFE.tmp\x86\Debug\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vs8914.tmp\x86\Debug\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -50,7 +50,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vsDFFE.tmp\x86\Release\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vs8914.tmp\x86\Release\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Trumpet.ico</ApplicationIcon>

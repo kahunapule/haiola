@@ -24,7 +24,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vsE03E.tmp\x86\Debug\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vs8A4E.tmp\x86\Debug\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -35,7 +35,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vsE03E.tmp\x86\Release\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vs8A4E.tmp\x86\Release\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

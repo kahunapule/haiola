@@ -53,7 +53,7 @@
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
-    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vsE0B0.tmp\Debug\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vs8C75.tmp\Debug\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -78,7 +78,7 @@
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
-    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vsE0B0.tmp\Release\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vs8C75.tmp\Release\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
