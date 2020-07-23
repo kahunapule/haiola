@@ -518,6 +518,11 @@
 					<xs:documentation>Ordinal number ending; may be superscripted and underlined.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="sup" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Superscript.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="add" type="pType" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation>Additional material; supplied words to make sense in a target language when the translation style is very literal. This would be used to mark the italics in the KJV, for example.</xs:documentation>
@@ -773,11 +778,6 @@
 					<xs:documentation>Color yellow or gold, used to designate a class of speaker in color-coded Bible translations like the RGB Bible.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="sup" type="xs:string">
-				<xs:annotation>
-					<xs:documentation>Superscripted text, as for critical apparatus annotations</xs:documentation>
-				</xs:annotation>
-			</xs:element>
 		</xs:choice>
 		<xs:attribute name="level" type="xs:unsignedByte" use="optional"/>
 		<xs:attribute name="sfm" type="xs:string" use="optional"/>
@@ -856,6 +856,11 @@
 			<xs:element name="ord" type="xs:string" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation>Ordinal number ending; may be superscripted and underlined.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="sup" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:documentation>Superscript</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="add" type="pType" minOccurs="0" maxOccurs="unbounded">
@@ -1080,6 +1085,7 @@
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="pn" type="noteContents"/>
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="k" type="noteContents"/>
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="ord" type="noteContents"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="sup" type="noteContents"/>
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="add" type="noteContents"/>
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="bd" type="noteContents"/>
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="sc" type="noteContents"/>
