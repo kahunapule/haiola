@@ -156,6 +156,84 @@ namespace WordSend
         }
 
         /// <summary>
+        /// Translate a ((...)) string into a set of SignWriting ASL fingerspelling
+        /// </summary>
+        /// <param name="header">The string which we are potentially translating.</param>
+        private string FingerSpell(string header)
+        {
+            // TODO: Figure how to get surrogate pairs/placement to transmit and remove this function
+            string result="";
+            while(header.Length>0)
+            {
+                if(header.IndexOf("((") == -1)
+                {
+                    result += header;
+                    header = "";
+                }
+                else if(header.IndexOf("))") == -1)
+                {
+                    result += header;
+                    header = "";
+                }
+                else if(header.IndexOf("))") < header.IndexOf("(("))
+                {
+                    result += header.Substring(header.IndexOf("))")+2);
+                    header = header.Substring(header.IndexOf("))")+2);
+                }
+                else if(header.IndexOf("((") == 0)
+                {
+                    header = header.Substring(2);
+                    while(header.IndexOf("))") > 0)
+                    {
+                        if(header[0]=='0') { result+="\\char\"F2C5F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='1') { result+="\\char\"F000F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='2') { result+="\\char\"F054F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='3') { result+="\\char\"F0B4F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='4') { result+="\\char\"F198F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='5') { result+="\\char\"F1C8F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='6') { result+="\\char\"F32CF\\,"; header=header.Substring(1); }
+                        else if(header[0]=='7') { result+="\\char\"F3E0F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='8') { result+="\\char\"F464F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='9') { result+="\\char\"F4D6F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='A' || header[0]=='a') { result+="\\raisebox{\\FontSize/10}{\\char\"F5CCF}\\,"; header=header.Substring(1); }
+                        else if(header[0]=='B' || header[0]=='b') { result+="\\char\"F1ACF\\,"; header=header.Substring(1); }
+                        else if(header[0]=='C' || header[0]=='c') { result+="\\raisebox{\\FontSize/20}{\\char\"F290F}\\,"; header=header.Substring(1); }
+                        else if(header[0]=='D' || header[0]=='d') { result+="\\char\"F007F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='E' || header[0]=='e') { result+="\\char\"F1BEF\\,"; header=header.Substring(1); }
+                        else if(header[0]=='F' || header[0]=='f') { result+="\\char\"F4D6F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='G' || header[0]=='g') { result+="\\raisebox{\\FontSize/3}{\\char\"F5A0F}\\,"; header=header.Substring(1); }
+                        else if(header[0]=='H' || header[0]=='h') { result+="\\char\"F07E9\\,"; header=header.Substring(1); }
+                        else if(header[0]=='I' || header[0]=='i') { result+="\\char\"F36EF\\,"; header=header.Substring(1); }
+                        else if(header[0]=='J' || header[0]=='j') { result+="\\raisebox{\\FontSize/3}{\\char\"F9CC8}\\char\"F36EF\\,"; header=header.Substring(1); }
+                        else if(header[0]=='K' || header[0]=='k') { result+="\\char\"F182F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='L' || header[0]=='l') { result+="\\char\"F52AF\\,"; header=header.Substring(1); }
+                        else if(header[0]=='M' || header[0]=='m') { result+="\\char\"F350F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='N' || header[0]=='n') { result+="\\raisebox{\\FontSize/6}{\\char\"F098F}\\,"; header=header.Substring(1); }
+                        else if(header[0]=='O' || header[0]=='o') { result+="\\char\"F2C6F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='P' || header[0]=='p') { result+="\\raisebox{\\FontSize/3}{\\char\"F1830}\\,"; header=header.Substring(1); }
+                        else if(header[0]=='Q' || header[0]=='q') { result+="\\char\"F5A30\\,"; header=header.Substring(1); }
+                        else if(header[0]=='R' || header[0]=='r') { result+="\\raisebox{\\FontSize/20}{\\char\"F09EF}\\,"; header=header.Substring(1); }
+                        else if(header[0]=='S' || header[0]=='s') { result+="\\char\"F614F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='T' || header[0]=='t') { result+="\\char\"F5E4F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='U' || header[0]=='u') { result+="\\char\"F080F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='V' || header[0]=='v') { result+="\\char\"F056F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='W' || header[0]=='w') { result+="\\char\"F32CF\\,"; header=header.Substring(1); }
+                        else if(header[0]=='X' || header[0]=='x') { result+="\\char\"F026F\\,"; header=header.Substring(1); }
+                        else if(header[0]=='Y' || header[0]=='y') { result+="\\char\"F39EF\\,"; header=header.Substring(1); }
+                        else if(header[0]=='Z' || header[0]=='z') { result+="\\char\"F79E5\\char\"F002F\\,"; header=header.Substring(1); }
+                        else { result += header[0]; header=header.Substring(1); }
+                    }
+                }
+                else
+                {
+                    result += header.Substring(header.IndexOf("(("));
+                    header = header.Substring(header.IndexOf("(("));
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
         /// In this overridden version, we actually open a TeX file for the whole book, not just a chapter.
         /// </summary>
         /// <param name="fileName">Name of file to open if other than a Bible book.</param>
@@ -197,9 +275,16 @@ namespace WordSend
             {
                 currentFileName = Path.Combine(texDir, fileName);
             }
+            if (projectOptions.script.Substring(0,4) == "Sgnw")
+            {
+                currentFileName = Path.ChangeExtension(currentFileName, "fsw");
+            }
             // TODO: refactor to use htm instead of texFile throughout OR get the htm references out of the core function in Usfx2HtmlConverter.cs
             htm = texFile = new StreamWriter(currentFileName, false, Encoding.UTF8);
             
+            // TODO: figure out how to get surrogate pairs to transmit and get rid of this
+            runningHeader = FingerSpell(runningHeader);
+
             if (projectOptions.textDir == "rtl")
                 texFile.WriteLine(@"\setRTL");
             else if (texDir == "ltr")
@@ -226,6 +311,38 @@ namespace WordSend
                 // WriteHtmlFootnotes();
                 texFile.Close();
                 htm = texFile = null;
+                if (projectOptions.script.Substring(0,4) == "Sgnw")
+                {
+                    string fswFileName = currentFileName;
+                    currentFileName = Path.ChangeExtension(currentFileName, "tex");
+                    string command = "./fswtotex \"" + fswFileName + "\" \"" + currentFileName + "\"";
+                    conversionProgress = "Converting " + currentBookAbbrev + ".fsw to " + currentBookAbbrev + ".tex";
+                    try
+                    {
+                        if (!fileHelper.RunCommand(command, "."))
+                        {
+                            Logit.WriteError("Error running command " + command);
+                            Logit.WriteError(fileHelper.runCommandError);
+                            Logit.WriteError("fsw2tex failed to run.");
+                            throw new Exception("fsw2tex failed to run.");
+                        }
+                        if (!File.Exists(currentFileName))
+                        {
+                            Logit.WriteError("Failed to generate " + currentFileName + ".");
+                            throw new Exception("fsw2tex failed to generate.");
+                        }
+                        File.Delete(fswFileName);
+                        System.Windows.Forms.Application.DoEvents();
+                        if (!fileHelper.fAllRunning)
+                            throw new Exception("Not all running.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Logit.WriteError("Failed to generate TeX file with fsw2tex: " + fswFileName + ".");
+                        Logit.WriteError(ex.Message);
+                        Logit.WriteError(ex.StackTrace);
+                    }
+                }
                 previousFileName = currentFileName;
                 noteNumber = 0;
             }
@@ -295,7 +412,14 @@ namespace WordSend
             text = text.Replace(@"\", @"$\backslash$").Replace("$", @"\$").Replace("#", @"\#").Replace("%", @"\%")
                 .Replace("&", @"\&").Replace("_", @"\_").Replace(LEFTBRACE, @"$\{$").Replace("’”", "’\u00A0”")
                 .Replace("^", "\u2303")    // Replace circumflex with look-alike up arrowhead to avoid TeX math command behavior and old style diacritic behavior
-                .Replace(RIGHTBRACE, @"$\}$").Replace("”’", "”\u00A0’").Replace("‘“", "‘\u00A0“").Replace("“‘", "“\u00A0‘").Replace("ʻ", "{ʻ}");
+                .Replace(RIGHTBRACE, @"$\}$").Replace("”’", "”\u00A0’").Replace("‘“", "‘\u00A0“").Replace("“‘", "“\u00A0‘").Replace("ʻ", "{ʻ}")
+                // TODO: get rid of it when the translation is complete
+                // I am perfectly aware that this is a horrible hack.
+                // This is an attempt to bypass USFX and, rightfully so, USFX does not have a "output this if the output format is .." tag.
+                .Replace(@"\$\backslash\$begin$\{$signline$\}$",@"\signline{")
+                .Replace(@"\$\backslash\$end$\{$signline$\}$","}");
+            // TODO: figure out how to get surrogate pairs to transmit and get rid of this
+            text = FingerSpell(text);
             if (!ignore)
             {
                 if (eatSpace)
@@ -570,6 +694,8 @@ namespace WordSend
                 if (usfx.NodeType == XmlNodeType.Text)
                     currentChapterPublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
             }
+            if (projectOptions.script.Substring(0,4) == "Sgnw")
+                currentChapterPublished = "\\signdigits" + LEFTBRACE + currentChapterPublished + RIGHTBRACE;
             int chNum;
             if (Int32.TryParse(id, out chNum))
                 chapterNumber = chNum;
@@ -1041,6 +1167,7 @@ For other uses, please contact the respective copyright owners.</p>
         protected string texPrintFileName;
         protected string texA4Name;
         protected string texNTName;
+        protected string texNTPName;
         protected string texBookName;
 
         /// <summary>
@@ -1357,33 +1484,52 @@ For other uses, please contact the respective copyright owners.</p>
         protected override void ZipResults()
         {
             string bookFileName;
-            fileHelper.CopyFile(FindInputFile("haiola.tex"), Path.Combine(texDir, "haiola.tex"));
-            fileHelper.CopyFile(FindInputFile("haiolartl.tex"), Path.Combine(texDir, "haiolartl.tex"));
             //TODO: move the following hard-coded dimensions and options to the user interface
             if (projectOptions.textDir == "rtl")
             {
-                WriteXeTeXHeader(Path.Combine(texDir, "12ptrtl.tex"), "11in", "8.5in", "1in", "0.75in", "0.75in", "0.75in", "11.0pt", "12pt", 12.0, 1, true, true);
-                WriteXeTeXHeader(Path.Combine(texDir, "12pta4rtl.tex"), "297mm", "210mm", "30mm", "30mm", "25mm", "25mm", "11.0pt", "12pt", 12.0, 1, true, true);
-                WriteXeTeXHeader(Path.Combine(texDir, "12pta5rtl.tex"), "210mm", "148mm", "25mm", "25mm", "25mm", "25mm", "11.0pt", "12pt", 12.0, 1, true, true);
-                WriteXeTeXHeader(Path.Combine(texDir, "printrtl.tex"), "9in", "6in", "0.75in", "0.75in", "0.75in", "0.75in", "11.0pt", "6pt", 9.0, 1, true, false);
-                WriteXeTeXHeader(Path.Combine(texDir, "bookrtl.tex"), "228.6mm", "152.4mm", "23mm", "8mm", "8mm", "10mm", "11.0pt", "6pt", 8.0, 1, true, false);
-                WriteXeTeXHeader(Path.Combine(texDir, "ntrtl.tex"), "200mm", "120mm", "10mm", "10mm", "7.5mm", "7.5mm", "11.0pt", "6pt", 9.0, 1, false, false);
-                WriteXeTeXHeader(Path.Combine(texDir, "ntprtl.tex"), "200mm", "120mm", "10mm", "10mm", "7.5mm", "7.5mm", "11.0pt", "6pt", 8.0, 1, false, false);
+                fileHelper.CopyFile(FindInputFile("haiolartl.tex"), Path.Combine(texDir, "haiolartl.tex"));
+                WriteXeTeXHeader(Path.Combine(texDir, "12ptrtl.tex"), "11in", "8.5in", "1in", "0.75in", "0.75in", "0.75in", "11.0pt", "12pt", 12.0, 1, true, false, true);
+                WriteXeTeXHeader(Path.Combine(texDir, "12pta4rtl.tex"), "297mm", "210mm", "30mm", "30mm", "25mm", "25mm", "11.0pt", "12pt", 12.0, 1, true, false, true);
+                WriteXeTeXHeader(Path.Combine(texDir, "12pta5rtl.tex"), "210mm", "148mm", "25mm", "25mm", "25mm", "25mm", "11.0pt", "12pt", 12.0, 1, true, false, true);
+                WriteXeTeXHeader(Path.Combine(texDir, "printrtl.tex"), "9in", "6in", "0.75in", "0.75in", "0.75in", "0.75in", "11.0pt", "6pt", 9.0, 1, true, false, false);
+                WriteXeTeXHeader(Path.Combine(texDir, "bookrtl.tex"), "228.6mm", "152.4mm", "23mm", "8mm", "8mm", "10mm", "11.0pt", "6pt", 8.0, 1, true, false, false);
+                WriteXeTeXHeader(Path.Combine(texDir, "ntrtl.tex"), "200mm", "120mm", "10mm", "10mm", "7.5mm", "7.5mm", "11.0pt", "6pt", 9.0, 1, false, false, false);
+                WriteXeTeXHeader(Path.Combine(texDir, "ntprtl.tex"), "200mm", "120mm", "10mm", "10mm", "7.5mm", "7.5mm", "11.0pt", "6pt", 8.0, 1, false, false, false);
+            }
+            else if (projectOptions.textDir == "ttb-ltr")
+            {
+                //TODO: Make this a generic ttb-ltr instead of SignWriting specific
+                //TODO: Use the actual size (6pt) instead of equivalent (12pt) for SignWriting
+                fileHelper.CopyFile(FindInputFile("haiolasw.tex"), Path.Combine(texDir, "haiolasw.tex"));
+                WriteXeTeXHeader(Path.Combine(texDir, "12ptsw.tex"), "8.5in", "11in", "0.75in", "0.75in", "1in", "1in", "11.0pt", "12pt", 6.0, 2, false, true, true);
+                WriteXeTeXHeader(Path.Combine(texDir, "12pta4sw.tex"), "210mm", "297mm", "25mm", "25mm", "30mm", "30mm", "11.0pt", "12pt", 6.0, 2, false, true, true);
+                WriteXeTeXHeader(Path.Combine(texDir, "12pta5sw.tex"), "148mm", "210mm", "25mm", "25mm", "25mm", "25mm", "11.0pt", "12pt", 6.0, 1, false, true, true);
+                WriteXeTeXHeader(Path.Combine(texDir, "printsw.tex"), "6in", "9in", "0.35in", "0.35in", "0.5in", "0.5in", "11.0pt", "9pt", 4.5, 1, false, true, false);
+                WriteXeTeXHeader(Path.Combine(texDir, "booksw.tex"), "152.4mm", "228.6mm", "10mm", "10mm", "23mm", "23mm", "11.0pt", "6pt", 4.0, 2, false, true, false);
+                WriteXeTeXHeader(Path.Combine(texDir, "ntsw.tex"), "120mm", "200mm", "7.5mm", "7.5mm", "10mm", "10mm", "11.0pt", "6pt", 4.5, 2, false, true, false);
+                WriteXeTeXHeader(Path.Combine(texDir, "ntpsw.tex"), "120mm", "200mm", "7.5mm", "7.5mm", "10mm", "10mm", "11.0pt", "6pt", 4.0, 2, false, true, false);
             }
             else
             {
-                WriteXeTeXHeader(Path.Combine(texDir, "12pt.tex"), "11in", "8.5in", "1in", "0.75in", "0.75in", "0.75in", "11.0pt", "12pt", 12.0, 2, false, true);
-                WriteXeTeXHeader(Path.Combine(texDir, "12pta4.tex"), "297mm", "210mm", "30mm", "30mm", "25mm", "25mm", "11.0pt", "12pt", 12.0, 2, false, true);
-                WriteXeTeXHeader(Path.Combine(texDir, "12pta5.tex"), "210mm", "148mm", "25mm", "25mm", "25mm", "25mm", "11.0pt", "12pt", 12.0, 1, false, true);
-                WriteXeTeXHeader(Path.Combine(texDir, "print.tex"), "9in", "6in", "0.5in", "0.35in", "0.35in", "0.35in", "11.0pt", "9pt", 9.0, 1, false, false);
-                WriteXeTeXHeader(Path.Combine(texDir, "book.tex"), "228.6mm", "152.4mm", "23mm", "8mm", "8mm", "10mm", "11.0pt", "6pt", 8.0, 2, false, false);
-                WriteXeTeXHeader(Path.Combine(texDir, "nt.tex"), "200mm", "120mm", "10mm", "10mm", "7.5mm", "7.5mm", "11.0pt", "6pt", 9.0, 2, false, false);
-                WriteXeTeXHeader(Path.Combine(texDir, "ntp.tex"), "200mm", "120mm", "10mm", "10mm", "7.5mm", "7.5mm", "11.0pt", "6pt", 8.0, 2, false, false);
+                fileHelper.CopyFile(FindInputFile("haiola.tex"), Path.Combine(texDir, "haiola.tex"));
+                WriteXeTeXHeader(Path.Combine(texDir, "12pt.tex"), "11in", "8.5in", "1in", "0.75in", "0.75in", "0.75in", "11.0pt", "12pt", 12.0, 2, false, false, true);
+                WriteXeTeXHeader(Path.Combine(texDir, "12pta4.tex"), "297mm", "210mm", "30mm", "30mm", "25mm", "25mm", "11.0pt", "12pt", 12.0, 2, false, false, true);
+                WriteXeTeXHeader(Path.Combine(texDir, "12pta5.tex"), "210mm", "148mm", "25mm", "25mm", "25mm", "25mm", "11.0pt", "12pt", 12.0, 1, false, false, true);
+                WriteXeTeXHeader(Path.Combine(texDir, "print.tex"), "9in", "6in", "0.5in", "0.35in", "0.35in", "0.35in", "11.0pt", "9pt", 9.0, 1, false, false, false);
+                WriteXeTeXHeader(Path.Combine(texDir, "book.tex"), "228.6mm", "152.4mm", "23mm", "8mm", "8mm", "10mm", "11.0pt", "6pt", 8.0, 2, false, false, false);
+                WriteXeTeXHeader(Path.Combine(texDir, "nt.tex"), "200mm", "120mm", "10mm", "10mm", "7.5mm", "7.5mm", "11.0pt", "6pt", 9.0, 2, false, false, false);
+                WriteXeTeXHeader(Path.Combine(texDir, "ntp.tex"), "200mm", "120mm", "10mm", "10mm", "7.5mm", "7.5mm", "11.0pt", "6pt", 8.0, 2, false, false, false);
             }
             fileHelper.CopyFile(FindInputFile("footkmpj.sty"), Path.Combine(texDir, "footkmpj.sty"));
 
             if (callXetex)
             {
+                texScreenFileName = Path.Combine(texDir, projectOptions.translationId + "_all.tex");
+                texPrintFileName = Path.Combine(texDir, projectOptions.translationId + "_prt.tex");
+                texA4Name = Path.Combine(texDir, projectOptions.translationId + "_a4.tex");
+                texBookName = Path.Combine(texDir, projectOptions.translationId + "_book.tex");
+                texNTName = Path.Combine(texDir, projectOptions.translationId + "_nt.tex");
+                texNTPName = Path.Combine(texDir, projectOptions.translationId + "_ntp.tex");
 
                 if (!RunXeTeX(texScreenFileName))
                     return;
@@ -1391,6 +1537,7 @@ For other uses, please contact the respective copyright owners.</p>
                 RunXeTeX(texA4Name);
                 RunXeTeX(texBookName);
                 RunXeTeX(texNTName);
+                RunXeTeX(texNTPName);
                 if ((projectOptions.textDir == "rtl") && (Path.DirectorySeparatorChar == '/'))
                 {
                     string printPDF = Path.ChangeExtension(texPrintFileName, "pdf");
@@ -1439,9 +1586,10 @@ For other uses, please contact the respective copyright owners.</p>
         /// <param name="pointSize">Base point size for the main text, normally between 8 and 12, inclusive</param>
         /// <param name="columns">Number of columns of text (1 or 2)</param>
         /// <param name="bidi">True iff the text contains right-to-left writing of more than one word at a time</param>
+        /// <param name="vertical">True iff the text contains vertical text and the page should be rotated (and possibly mirrored)</param>
         /// <param name="useColor">True iff peripheral words should be blue and words of Jesus Christ red</param>
         protected void WriteXeTeXHeader(string texHeaderName, string paperHeight, string paperWidth, string innerMargin, string outerMargin,
-            string topMargin, string bottomMargin, string columnSep, string headSep, double pointSize, int columns, bool bidi, bool useColor)
+            string topMargin, string bottomMargin, string columnSep, string headSep, double pointSize, int columns, bool bidi, bool vertical, bool useColor)
         {
             double headerPointSize = Math.Max(pointSize * 0.6, 8.0);
             string scriptName = projectOptions.script;
@@ -1500,6 +1648,16 @@ For other uses, please contact the respective copyright owners.</p>
             {
                 texFile.WriteLine(@"\usepackage{ucharclasses}");
             }
+            if (vertical)
+            {
+                //TODO: Account for vertial text going the other direction
+                texFile.WriteLine(@"\usepackage[mirror]{crop}");
+                texFile.WriteLine(@"\usepackage{everypage}");
+                texFile.WriteLine(@"\AddEverypageHook{\special{pdf: put @thispage <</Rotate -90>>}}");
+                texFile.WriteLine(@"\usepackage{fancyhdr}");
+                texFile.WriteLine(@"\usepackage{fontspec}");
+                texFile.WriteLine(@"\usepackage{tikz}");
+            }
             texFile.WriteLine("\\newcommand{0}\\TocFont{1}{0}\\font\\Y=\"\\OtherFontFace:color=000000\" at {2}pt\\Y {1}", LEFTBRACE, RIGHTBRACE, pointSize.ToString());
             texFile.WriteLine(@"\newcommand{\TextColor}{:color=000000}");
             texFile.WriteLine("\\newcommand{0}\\TinyFontSize{1}{0}{2}pt{1}", LEFTBRACE, RIGHTBRACE, Math.Max(6.8, pointSize * 2.0 / 3.0));
@@ -1541,11 +1699,17 @@ For other uses, please contact the respective copyright owners.</p>
             StreamWriter texFile;
             shortLangId = langCodes.ShortCode(langId);
             bool isRtl = projectOptions.textDir == "rtl";
+            bool isVertical = projectOptions.textDir == "ttb-ltr";
             if (isRtl)
             {
                 formattingFileName = formattingFileName + "rtl";
                 numColumns = 1;
-
+            }
+            // TODO: Make this a generic ttb-ltr instead of SignWriting specific
+            else if (isVertical)
+            {
+                formattingFileName = formattingFileName + "sw";
+                numColumns = 1;
             }
             if (projectOptions.longestWordLength > 20)
             {
@@ -1567,12 +1731,32 @@ For other uses, please contact the respective copyright owners.</p>
                 {
                     texFile.WriteLine(@"\input{haiolartl}%");
                 }
+                // TODO: Make this a generic ttb-ltr instead of SignWriting specific
+                else if (isVertical)
+                {
+                    texFile.WriteLine(@"\def\SWFontFill{SuttonSignWritingFill}%");
+                    texFile.WriteLine(@"\def\SWFontLine{SuttonSignWritingLine}%");
+                    texFile.WriteLine(@"\input{haiolasw}%");
+                }
                 else
                 {
                     texFile.WriteLine(@"\input{haiola}%");
                 }
                 texFile.WriteLine(@"\begin{document}%");
-                texFile.WriteLine(@"\makeatletter\def\@evenhead{{\HeaderFont{\rightmark\hfil\thepage\hfil\leftmark}}}\def\@oddhead{{\HeaderFont{\rightmark\hfil\thepage\hfil\leftmark}}}\makeatother\frontmatter\pagenumbering{roman}%");
+                // TODO: Make this a generic ttb-ltr instead of SignWriting specific
+                if (isVertical)
+                {
+                    texFile.WriteLine(@"\fancyfoot[LO]{\uccoff\swline\fontsize{\FontSize}{\FontSize}\selectfont\rightmark\uccon}%");
+                    texFile.WriteLine(@"\fancyfoot[CO]{\thepage}%");
+                    texFile.WriteLine(@"\fancyfoot[RO]{\uccoff\swline\fontsize{\FontSize}{\FontSize}\selectfont\leftmark\uccon}%");
+                    texFile.WriteLine(@"\fancyhead[LE]{\uccoff\swline\fontsize{\FontSize}{\FontSize}\selectfont\rightmark\uccon}%");
+                    texFile.WriteLine(@"\fancyhead[CE]{\thepage}%");
+                    texFile.WriteLine(@"\fancyhead[RE]{\uccoff\swline\fontsize{\FontSize}{\FontSize}\selectfont\leftmark\uccon}%");
+                }
+                else
+                {
+                    texFile.WriteLine(@"\makeatletter\def\@evenhead{{\HeaderFont{\rightmark\hfil\thepage\hfil\leftmark}}}\def\@oddhead{{\HeaderFont{\rightmark\hfil\thepage\hfil\leftmark}}}\makeatother\frontmatter\pagenumbering{roman}%");
+                }
 
                 string coverFile = Path.Combine(projectInputDir, "insidecover.png");
                 string coverDestination = Path.Combine(texDir, "cover.png");
@@ -1590,7 +1774,10 @@ For other uses, please contact the respective copyright owners.</p>
                 if (File.Exists(coverDestination))
                 {
                     texFile.WriteLine(@"\thispagestyle{empty}\markboth{\HeaderFont }{\HeaderFont }%");
-                    texFile.WriteLine("\\resizebox{0}!{2}{0}\\textwidth{2}{0}\\includegraphics{0}{1}{2}{2}", LEFTBRACE, "cover.png", RIGHTBRACE);
+                    if(isVertical)
+                        texFile.WriteLine("\\resizebox{0}!{2}{0}\\textwidth/2{2}{0}\\includegraphics[angle=90]{0}{1}{2}{2}", LEFTBRACE, "cover.png", RIGHTBRACE);
+                    else
+                        texFile.WriteLine("\\resizebox{0}!{2}{0}\\textwidth{2}{0}\\includegraphics{0}{1}{2}{2}", LEFTBRACE, "cover.png", RIGHTBRACE);
                     texFile.WriteLine(@"\vfill\eject");
                 }
 
@@ -1598,7 +1785,10 @@ For other uses, please contact the respective copyright owners.</p>
                 texFile.WriteLine(@"\tableofcontents\clearpage");
                 if (numColumns > 1)
                     texFile.WriteLine(@"\begin{multicols}{2}%");
-                texFile.WriteLine(@"\setcounter{page}{1}\pagenumbering{arabic}\mainmatter%");
+                if (projectOptions.script.Substring(0,4) == "Sgnw")
+                    texFile.WriteLine(@"\setcounter{page}{1}\mainmatter\renewcommand{\thepage}{\HeaderFont\uccoff\swline\fontsize{\FontSize}{\FontSize}\selectfont\signnumeral{page}\uccon}%");
+                else
+                    texFile.WriteLine(@"\setcounter{page}{1}\pagenumbering{arabic}\mainmatter%");
                 foreach (BibleBookRecord br in bookInfo.publishArray)
                 {
                     if ((br != null) && br.IsPresent)
@@ -1658,6 +1848,7 @@ For other uses, please contact the respective copyright owners.</p>
             string bookFileName;
             StreamWriter texFile;
             bool isRtl = projectOptions.textDir == "rtl";
+            bool isVertical = projectOptions.textDir == "ttb-ltr";
             shortLangId = langCodes.ShortCode(langId);
 
             WriteMasterTexFile(Path.Combine(texDir, projectOptions.translationId + "_all.tex"), "12pt", 2, "*");
@@ -1685,6 +1876,14 @@ For other uses, please contact the respective copyright owners.</p>
                             texFile.WriteLine(@"\input{12pta5rtl}");
                             texFile.WriteLine(@"\input{haiolartl}");
                         }
+                        // TODO: Make this a generic ttb-ltr instead of SignWriting specific
+                        else if (isVertical)
+                        {
+                            texFile.WriteLine(@"\input{12pta5sw}");
+                            texFile.WriteLine(@"\def\SWFontFill{SuttonSignWritingFill}");
+                            texFile.WriteLine(@"\def\SWFontLine{SuttonSignWritingLine}");
+                            texFile.WriteLine(@"\input{haiolasw}");
+                        }
                         else
                         {
                             texFile.WriteLine(@"\input{12pta5}");
@@ -1692,7 +1891,21 @@ For other uses, please contact the respective copyright owners.</p>
                         }
                         //texFile.WriteLine("\\newfontfamily\\{0}font[Script={1}]{2}{3}{4}", projectOptions.languageNameInEnglish.ToLowerInvariant(), projectOptions.script, LEFTBRACE, projectOptions.fontFamily, RIGHTBRACE);
                         texFile.WriteLine(@"\begin{document}");
-                        texFile.WriteLine(@"\makeatletter\def\@evenhead{{\HeaderFont{\rightmark\hfil\thepage\hfil\leftmark}}}\def\@oddhead{{\HeaderFont{\rightmark\hfil\thepage\hfil\leftmark}}}\makeatother\mainmatter%");
+                        // TODO: Make this a generic ttb-ltr instead of SignWriting specific
+                        if (isVertical)
+                        {
+                            texFile.WriteLine(@"\fancyfoot[LO]{\uccoff\swline\fontsize{\FontSize}{\FontSize}\selectfont\rightmark\uccon}");
+                            texFile.WriteLine(@"\fancyfoot[CO]{\thepage}");
+                            texFile.WriteLine(@"\fancyfoot[RO]{\uccoff\swline\fontsize{\FontSize}{\FontSize}\selectfont\leftmark\uccon}");
+                            texFile.WriteLine(@"\fancyhead[LE]{\uccoff\swline\fontsize{\FontSize}{\FontSize}\selectfont\rightmark\uccon}");
+                            texFile.WriteLine(@"\fancyhead[CE]{\thepage}");
+                            texFile.WriteLine(@"\fancyhead[RE]{\uccoff\swline\fontsize{\FontSize}{\FontSize}\selectfont\leftmark\uccon}");
+                            texFile.WriteLine(@"\mainmatter\renewcommand{\thepage}{\HeaderFont\uccoff\swline\fontsize{\FontSize}{\FontSize}\selectfont\signnumeral{page}\uccon}");
+                        }
+                        else
+                        {
+                            texFile.WriteLine(@"\makeatletter\def\@evenhead{{\HeaderFont{\rightmark\hfil\thepage\hfil\leftmark}}}\def\@oddhead{{\HeaderFont{\rightmark\hfil\thepage\hfil\leftmark}}}\makeatother\mainmatter%");
+                        }
                         texFile.WriteLine("\\input{0}{1}_src{2}", LEFTBRACE, br.tla, RIGHTBRACE);
                         texFile.WriteLine(@"\vfill\eject");
                         texFile.WriteLine("\\input{0}CPR{1}", LEFTBRACE, RIGHTBRACE);
@@ -1911,6 +2124,9 @@ For other uses, please contact the respective copyright owners.</p>
                     currentVersePublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
                 }
             }
+            // TODO: Make more of these and adjust to not use the lookup.
+            if (projectOptions.script.Substring(0,4) == "Sgnw")
+                currentVersePublished = "\\signdigits" + LEFTBRACE + currentVersePublished + RIGHTBRACE;
             currentBCV = currentBookAbbrev + " " + currentChapter + ":" + currentVerse;
             int vnum;
             if (Int32.TryParse(id, out vnum))

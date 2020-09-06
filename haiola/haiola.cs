@@ -2765,8 +2765,10 @@ their generosity, people like you can open up the Bible and hear from God no mat
                                             rodCodeTextBox.Text = MetadataText();
                                         break;
                                     case "language/script":
-                                        if (Utils.IsEmpty(scriptTextBox.Text))
-                                            scriptTextBox.Text = MetadataText();
+                                        if (MetadataText() == String.Empty)
+                                            scriptComboBox.Text = "Latn-Latin";
+                                        else
+                                            scriptComboBox.Text = MetadataText();
                                         break;
                                     case "languge/scriptDirection":
                                         textDirectionComboBox.Text = MetadataText().ToLowerInvariant();
@@ -2957,7 +2959,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
             audioRecordingCopyrightTextBox.Text = globe.projectOptions.AudioCopyrightNotice;
             rodCodeTextBox.Text = globe.projectOptions.rodCode;
             ldmlTextBox.Text = globe.projectOptions.ldml;
-            scriptTextBox.Text = globe.projectOptions.script;
+            scriptComboBox.Text = globe.projectOptions.script;
             localRightsHolderTextBox.Text = globe.projectOptions.localRightsHolder;
             facebookTextBox.Text = globe.projectOptions.facebook;
             countryTextBox.Text = globe.projectOptions.country;
@@ -3268,7 +3270,7 @@ FCBH Dramatized OT: {13}  FCBH Dramatized NT: {14}  FCBH OT: {15}  FCBH NT: {16}
             globe.projectOptions.AudioCopyrightNotice = audioRecordingCopyrightTextBox.Text;
             globe.projectOptions.rodCode = rodCodeTextBox.Text;
             globe.projectOptions.ldml = ldmlTextBox.Text;
-            globe.projectOptions.script = scriptTextBox.Text;
+            globe.projectOptions.script = scriptComboBox.Text;
             globe.projectOptions.localRightsHolder = localRightsHolderTextBox.Text;
             globe.projectOptions.facebook = facebookTextBox.Text;
             globe.projectOptions.country = countryTextBox.Text;
