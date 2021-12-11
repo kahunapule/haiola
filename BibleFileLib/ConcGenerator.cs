@@ -246,7 +246,7 @@ namespace BibleFileLib
 			int iStartGroup = 0;
             string header = "<!doctype html>" + Environment.NewLine
                 + "<html>" + Environment.NewLine + "<head>" + Environment.NewLine +
-                "<meta name='viewport' content='width=device-width', initial-scale=1'>" + Environment.NewLine+
+                "<meta name='viewport' content='width=device-width,initial-scale=1'/>" + Environment.NewLine+
                 "<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">" + Environment.NewLine+
                 "</head>"+Environment.NewLine+
                 "<body>"+Environment.NewLine+"";
@@ -295,7 +295,7 @@ namespace BibleFileLib
 		}
 		string indexHeader = "<!doctype html>"+Environment.NewLine
                 + "<html>"+Environment.NewLine+"<head>"+Environment.NewLine+
-                "<meta name='viewport' content='width=device-width', initial-scale=1'>"+Environment.NewLine+
+                "<meta name='viewport' content='width=device-width,initial-scale=1'/>"+Environment.NewLine+
                 "<meta name=\"robots\" content=\"noindex, nofollow\"><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">"+Environment.NewLine+""    
 				+ "<link rel=\"stylesheet\" type=\"text/css\" href=\"mktree.css\">"+ Environment.NewLine
 				+ "<link rel=\"stylesheet\" href=\"display.css\" type=\"text/css\">"+Environment.NewLine

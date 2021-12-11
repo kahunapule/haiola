@@ -12,6 +12,7 @@ using BibleFileLib;
 using WordSend;
 using System.Net;
 using System.Windows.Forms; // For Application.ProcessMessages
+using System.Data.Common;
 
 namespace WordSend
 {
@@ -34,6 +35,7 @@ namespace WordSend
         public string preferredCover;
         public ethnorecord er;
         public LanguageCodeInfo languageCodes;
+        public string currentConversion;   // e.g., "Preprocessing" or "Portable HTML"
 
 
         public BoolStringDelegate GUIWriteString;
@@ -52,17 +54,18 @@ namespace WordSend
             set { xini.WriteString("swordSuffix", value); }
         }
 
-        public bool getFCBHkeys
-        {
-            get { return xini.ReadBool("downloadFcbhAudio", false); }
-            set { xini.WriteBool("downloadFcbhAudio", value); }
-        }
-
         public bool generateUsfm3Fig
         {
-            get { return xini.ReadBool("generateUsfm3Fig", false); }
+            get { return xini.ReadBool("generateUsfm3Fig", true); }
             set { xini.WriteBool("generateUsfm3Fig", value); }
         }
+
+        public bool rebuild
+        {
+            get { return xini.ReadBool("rebuild", false); }
+            set { xini.WriteBool("rebuild", value); }
+        }
+
 
         public bool runXetex
         {
@@ -609,8 +612,10 @@ namespace WordSend
                     (fileType != ".CSS") && (fileType != ".SWP") &&
                     (fileType != ".ID") && (fileType != ".DIC") &&
                     (fileType != ".LDML") && (fileType != ".JSON") &&
-                    (fileType != ".VRS") && (fileType != ".INI") && (fileType != ".CSV") && (fileType != ".TSV") &&
+                    (fileType != ".VRS") && (fileType != ".INI") &&
+                    (fileType != ".CSV") && (fileType != ".TSV") &&
                     (fileType != ".CCT") && (!inputFile.EndsWith("~")) &&
+                    (!lowerName.StartsWith("regexbackup")) &&
                     (lowerName != "autocorrect.txt") &&
                     (lowerName != "tmp.txt") &&
                     (lowerName != "changes.txt") &&
@@ -827,6 +832,24 @@ For other uses, please contact the respective copyright owners.</p>
 For other uses, please contact the respective copyright owners.</p>
 ");
             }
+            else if (projectOptions.ccbync)
+            {
+                copr.Append(@"<p>This translation is made available to you under the terms of the
+<a href='http://creativecommons.org/licenses/by-nc/4.0/'>Creative Commons Attribution-No Derivatives license 4.0.</a></p>
+<p>You may share, redistribute, or adapt this Bible translation or extracts from it in any format, provided that:</p>
+<ul>
+<li>You include the above copyright and source information.</li>
+<li>You do not use this work for commercial purposes.</li>
+</ul>
+<p>Pictures included with Scriptures and other documents on this site are licensed just for use with those Scriptures and documents.
+For other uses, please contact the respective copyright owners.</p>
+");
+            }
+            else if (projectOptions.wbtverbatim)
+            {
+                copr.Append(@"<p>All rights reserved.</p>
+");
+            }
             copr.Append(String.Format("<p><br/>{0}</p>\n", projectOptions.contentUpdateDate.ToString("yyyy-MM-dd")));
 
             if (projectOptions.eBibledotorgunique)
@@ -838,6 +861,518 @@ For other uses, please contact the respective copyright owners.</p>
 
 
             return copr.ToString();
+        }
+
+        public void SetcurrentProject(string projDirName)
+        {
+            currentProject = projDirName;
+            inputProjectDirectory = Path.Combine(inputDirectory, currentProject);
+            outputProjectDirectory = Path.Combine(outputDirectory, currentProject);
+            fileHelper.EnsureDirectory(outputProjectDirectory);
+        }
+
+
+
+        public string GetUsfxFilePath()
+        {
+            return Path.Combine(GetUsfxDirectoryPath(), "usfx.xml");
+        }
+
+        public string GetUsfxDirectoryPath()
+        {
+            return Path.Combine(outputProjectDirectory, "usfx");
+        }
+
+
+        private void ConvertUsfmToUsfx()
+        {
+            string UsfmDir = Path.Combine(outputProjectDirectory, "extendedusfm");
+            string UsfxPath = GetUsfxDirectoryPath();
+            string usfxName = GetUsfxFilePath();
+            if (!Directory.Exists(UsfmDir))
+            {
+                UsfmDir = Path.Combine(outputProjectDirectory, "usfm");
+            }
+            if (!Directory.Exists(UsfmDir))
+            {
+                Logit.WriteError("ERROR: " + UsfmDir + " not found!");
+                return;
+            }
+            // Start with an EMPTY USFX directory to avoid problems with old files
+            Utils.DeleteDirectory(UsfxPath);
+            fileHelper.EnsureDirectory(UsfxPath);
+            currentConversion = "converting from USFM to USFX; reading USFM";
+            Application.DoEvents();
+            Utils.DeleteDirectory(UsfxPath);
+            if ((projectOptions.languageId.Length < 3) || (projectOptions.translationId.Length < 3))
+            {
+                Logit.WriteError(string.Format(
+                                    "ERROR: language and translation ids (%0 and %1) must be at least three characters each",
+                                    projectOptions.languageId, projectOptions.translationId));
+                return;
+            }
+            Utils.EnsureDirectory(UsfxPath);
+            string logFile = Path.Combine(outputProjectDirectory, "ConversionReports.txt");
+            Logit.OpenFile(logFile);
+            SFConverter.scripture = new Scriptures(this);
+            Logit.loggedError = false;
+            Logit.loggedWarning = false;
+            // Read a copy of BookNames.xml copied from the source USFM directory, if any.
+            SFConverter.scripture.bkInfo.ReadDefaultBookNames(Path.Combine(outputProjectDirectory, "BookNames.xml"));
+            SFConverter.scripture.assumeAllNested = projectOptions.relaxUsfmNesting;
+            // Read the input USFM files into internal data structures.
+            SFConverter.ProcessFilespec(Path.Combine(UsfmDir, "*.usfm"), Encoding.UTF8);
+            currentConversion = "converting from USFM to USFX; writing USFX";
+            Application.DoEvents();
+
+            // Write out the USFX file.
+            SFConverter.scripture.languageCode = projectOptions.languageId;
+            SFConverter.scripture.WriteUSFX(usfxName);
+            SFConverter.scripture.bkInfo.ReadUsfxVernacularNames(Path.Combine(Path.Combine(outputProjectDirectory, "usfx"), "usfx.xml"));
+            string bookNames = Path.Combine(outputProjectDirectory, "BookNames.xml");
+            SFConverter.scripture.bkInfo.WriteDefaultBookNames(bookNames);
+            File.Copy(bookNames, Path.Combine(Path.Combine(outputProjectDirectory, "usfx"), "BookNames.xml"), true);
+            bool runResult = projectOptions.lastRunResult;
+            bool errorState = Logit.loggedError;
+            fileHelper.revisePua(usfxName);
+            if (!SFConverter.scripture.hasRefTags)
+            {
+                projectOptions.makeHotLinks = true;
+                SFConverter.scripture.ReadRefTags(usfxName);
+            }
+            if (!SFConverter.scripture.ValidateUsfx(usfxName))
+            {
+                if (projectOptions.makeHotLinks && File.Exists(Path.ChangeExtension(usfxName, ".norefxml")))
+                {
+                    File.Move(usfxName, Path.ChangeExtension(usfxName, ".bad"));
+                    File.Move(Path.ChangeExtension(usfxName, ".norefxml"), usfxName);
+                    Logit.WriteLine("Retrying validation on usfx.xml without expanded references.");
+                    if (SFConverter.scripture.ValidateUsfx(usfxName))
+                    {
+                        Logit.loggedError = errorState;
+                        projectOptions.lastRunResult = runResult;
+                        Logit.WriteLine("Validation passed without expanded references.");
+                        projectOptions.makeHotLinks = false;
+                    }
+                    else
+                    {
+                        Logit.WriteError("Second validation failed.");
+                    }
+                }
+                else
+                {
+                    Logit.WriteError("USFX validation failed. Please correct the input markup. Paratext basic checks, including schema checks, are recommended.");
+                }
+            }
+            Logit.CloseFile();
+            if (Logit.loggedError)
+            {
+                projectOptions.lastRunResult = false;
+            }
+            if (Logit.loggedWarning)
+            {
+                projectOptions.warningsFound = true;
+            }
+            currentConversion = "converted USFM to USFX.";
+            Application.DoEvents();
+        }
+
+
+        /// <summary>
+        /// Reads the first 3 lines of a text file into a string.
+        /// </summary>
+        /// <param name="FileName">name of the text file to read from</param>
+        /// <returns>String with the first 3 lines of the file concatenated together</returns>
+        public string ReadFirstLines(string FileName)
+        {
+            StreamReader sr = new StreamReader(FileName);
+            string result = sr.ReadLine();
+            result = result + sr.ReadLine();
+            result = result + sr.ReadLine();
+            sr.Close();
+            return result;
+        }
+
+        /// <summary>
+        /// Examines file(s) in the named directory to determine what sort of input files are there based on their
+        /// preambles, and to a lesser extent, on their suffixes. If the input is USX, it is expected to be in a DBL
+        /// bundle, with metadata.xml in the named directory. The first .zip file found in the directory will be
+        /// unzipped.
+        /// </summary>
+        /// <param name="dirName">The directory containing the source files (or the root level of the source files in the case of a DBL bundle</param>
+        /// <returns>A string indicating the kind of source file, one of "usfx", "usx", or "usfm".</returns>
+        public string GetSourceKind(string dirName)
+        {
+            string result = String.Empty;
+            string s;
+            string suffix;
+            int i;
+
+            if (!Directory.Exists(dirName))
+                return result;
+            string [] fileNames = Directory.GetFiles(dirName);
+            foreach (string fileName in fileNames)
+            {
+                suffix = Path.GetExtension(fileName).ToLowerInvariant();
+                if (suffix == ".zip")
+                    fileHelper.RunCommand("unzip -n \"" + fileName + "\"", dirName);
+            }
+            fileNames = Directory.GetFiles(dirName);
+            for (i = 0; (i < fileNames.Length) && (result == String.Empty); i++)
+            {
+                string fileName = fileNames[i];
+                if (File.Exists(fileName))
+                {
+                    suffix = Path.GetExtension(fileName).ToLowerInvariant();
+                    if (!".zip .bak .lds .ssf .dbg .wdl .sty .htm .kb2 . html .css .swp .id .dic .ldml .json .vrs .ini .csv .tsv .cct".Contains(suffix)
+                            && !fileName.EndsWith("~"))
+                    {
+                        s = ReadFirstLines(fileName);
+                        if (!String.IsNullOrEmpty(s))
+                        {
+                            if (s.Contains("\\id "))
+                                result = "usfm";
+                            else if (s.Contains("<usfx"))
+                                result = "usfx";
+                            else if (s.Contains("<usx"))
+                                result = "usx";
+                            else if (s.Contains("<osis"))
+                                result = "osis";
+                        }
+                    }
+                }
+                else if (Directory.Exists(fileName))
+                {
+                    result = GetSourceKind(fileName);
+                }
+            }
+            if (String.IsNullOrEmpty(result))
+            {
+                string[] subdirectoryEntries = Directory.GetDirectories(dirName);
+                for (i = 0; (i < subdirectoryEntries.Length) && (result == String.Empty); i++)
+                {
+                    result = GetSourceKind(subdirectoryEntries[i]);
+                }
+            }
+            return result;
+        }
+
+
+        /// <summary>
+        /// Create USFM from USFX
+        /// </summary>
+        private void NormalizeUsfm()
+        {
+            string logFile;
+            try
+            {
+
+                string UsfmDir = Path.Combine(outputProjectDirectory, "extendedusfm");
+                string UsfxName = Path.Combine(Path.Combine(outputProjectDirectory, "usfx"), "usfx.xml");
+                if (!File.Exists(UsfxName))
+                {
+                    Logit.WriteError("ERROR normalizing USFM from USFX: " + UsfxName + " not found!");
+                    return;
+                }
+                // Start with an EMPTY USFM directory to avoid problems with old files 
+                Utils.DeleteDirectory(UsfmDir);
+                fileHelper.EnsureDirectory(UsfmDir);
+                currentConversion = "Normalizing extended USFM from USFX. ";
+                Application.DoEvents();
+                if (!fileHelper.fAllRunning)
+                    return;
+                logFile = Path.Combine(outputProjectDirectory, "usfx2usfm2_log.txt");
+                Logit.OpenFile(logFile);
+                SFConverter.scripture = new Scriptures(this);
+                Logit.loggedError = false;
+                Logit.loggedWarning = false;
+                SFConverter.scripture.USFXtoUSFM(UsfxName, UsfmDir, projectOptions.translationId + ".usfm", true, projectOptions);
+
+                UsfmDir = Path.Combine(outputProjectDirectory, "usfm");
+                Utils.DeleteDirectory(UsfmDir);
+                fileHelper.EnsureDirectory(UsfmDir);
+                currentConversion = "Normalizing USFM from USFX. ";
+                SFConverter.scripture.USFXtoUSFM(UsfxName, UsfmDir, projectOptions.translationId + ".usfm", false, projectOptions);
+                Logit.CloseFile();
+                if (Logit.loggedError)
+                {
+                    projectOptions.lastRunResult = false;
+                }
+                currentConversion = "Converted USFX to USFM.";
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError("Error normalizing USFM from USFX: "+ ex.Message);
+            }
+        }
+
+
+
+        /// <summary>
+        /// Import all USX files in a directory to USFX, then normalize by converting to USFM and back to USFX.
+        /// </summary>
+        /// <param name="SourceDir">directory containing USX files</param>
+        private void ImportUsx(string SourceDir)
+        {
+            string usfxDir = Path.Combine(outputProjectDirectory, "usfx");
+            string tmpname = Path.Combine(usfxDir, "tempusfx.xml");
+            string bookNamesFile = Path.Combine(SourceDir, "BookNames.xml");
+            try
+            {
+                string logFile = Path.Combine(outputProjectDirectory, "UsxConversionReports.txt");
+                Logit.OpenFile(logFile);
+                Logit.loggedError = false;
+                Logit.loggedWarning = false;
+                // Sanity check
+                if (!Directory.Exists(SourceDir))
+                {
+                    Logit.WriteError("ERROR: "+SourceDir + " not found!");
+                    return;
+                }
+
+                currentConversion = "converting from USX to temporary USFX";
+                Application.DoEvents();
+
+                // Convert from USX to USFX. The first USFX file will be out of order and lack <ve/> tags.
+                // Start with an EMPTY USFM directory to avoid problems with old files 
+                fileHelper.EnsureDirectory(usfxDir);
+                string usfxName = Path.Combine(usfxDir, "usfx.xml");
+                fileHelper.CopyFile(bookNamesFile, Path.Combine(usfxDir, "BookNames.xml"), true);
+                Usx2Usfx uu = new Usx2Usfx();
+                currentConversion = "Converting " + SourceDir + " to " + usfxName;
+                uu.Convert(SourceDir, usfxName);
+
+                try
+                {
+                    fileHelper.CopyFile(usfxName, tmpname, true);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "ERROR copying tempusfx.xml");
+                }
+
+                // Convert from USFX to USFM.
+                currentConversion = "converting from initial USFX to USFM";
+                Application.DoEvents();
+                if (!fileHelper.fAllRunning)
+                    return;
+                string usfmDir = Path.Combine(outputProjectDirectory, "usfm");
+                Utils.DeleteDirectory(usfmDir);
+                fileHelper.EnsureDirectory(usfmDir);
+                fileHelper.CopyFile(bookNamesFile, Path.Combine(usfmDir, "BookNames.xml"), true);
+                SFConverter.scripture = new Scriptures(this);
+                SFConverter.scripture.bkInfo.ReadDefaultBookNames(bookNamesFile);
+                SFConverter.scripture.USFXtoUSFM(usfxName, usfmDir, projectOptions.translationId + ".usfm", false, projectOptions);
+
+                usfmDir = Path.Combine(outputProjectDirectory, "extendedusfm");
+                Utils.DeleteDirectory(usfmDir);
+                fileHelper.EnsureDirectory(usfmDir);
+                fileHelper.CopyFile(bookNamesFile, Path.Combine(usfmDir, "BookNames.xml"), true);
+                SFConverter.scripture = new Scriptures(this);
+                SFConverter.scripture.bkInfo.ReadDefaultBookNames(bookNamesFile);
+                SFConverter.scripture.USFXtoUSFM(usfxName, usfmDir, projectOptions.translationId + ".usfm", true, projectOptions);
+
+                // Recreate USFX from USFM, this time with <ve/> tags and in canonical order
+                SFConverter.scripture.assumeAllNested = projectOptions.relaxUsfmNesting;
+                // Read the input USFM files into internal data structures.
+                SFConverter.ProcessFilespec(Path.Combine(usfmDir, "*.usfm"), Encoding.UTF8);
+                currentConversion = "converting from USFM to USFX; writing USFX";
+                Application.DoEvents();
+
+                // Write out the USFX file.
+                SFConverter.scripture.languageCode = projectOptions.languageId;
+                SFConverter.scripture.WriteUSFX(usfxName);
+                string bookNames = Path.Combine(Path.Combine(outputProjectDirectory, "usfx"), "BookNames.xml");
+                SFConverter.scripture.bkInfo.WriteDefaultBookNames(bookNames);
+                bool errorState = Logit.loggedError;
+                bool runResult = projectOptions.lastRunResult;
+                fileHelper.revisePua(usfxName);
+                SFConverter.scripture.ReadRefTags(usfxName);
+                if (!SFConverter.scripture.ValidateUsfx(usfxName))
+                {
+                    File.Move(usfxName, Path.ChangeExtension(usfxName, ".bad"));
+                    File.Move(Path.ChangeExtension(usfxName, ".norefxml"), usfxName);
+                    Logit.WriteLine("Retrying validation on usfx.xml without expanded references.");
+                    if (SFConverter.scripture.ValidateUsfx(usfxName))
+                    {
+                        projectOptions.lastRunResult = runResult;
+                        Logit.loggedError = errorState;
+                        Logit.WriteLine("Validation passed without expanded references.");
+                        projectOptions.makeHotLinks = false;
+                    }
+                    else
+                    {
+                        Logit.WriteError("Second validation failed.");
+                    }
+                }
+                Logit.CloseFile();
+                if (Logit.loggedError)
+                {
+                    projectOptions.lastRunResult = false;
+                }
+                else
+                {
+
+                    Utils.DeleteFile(tmpname);
+                }
+                if (Logit.loggedWarning)
+                {
+                    projectOptions.warningsFound = true;
+                }
+
+                currentConversion = "converted USFM to USFX.";
+                Application.DoEvents();
+            }
+            catch (Exception ex)
+            {
+
+                Logit.WriteError("Error importing USX: "+ex.Message);
+            }
+        }
+
+
+
+        /// <summary>
+        /// Import a USFX source file.
+        /// </summary>
+        /// <param name="SourceDir"></param>
+        private void ImportUsfx(string SourceDir)
+        {
+            string logFile;
+            try
+            {
+
+                string UsfmDir = Path.Combine(outputProjectDirectory, "extendedusfm");
+                if (!Directory.Exists(SourceDir))
+                {
+                    Logit.WriteError("ERROR: " + SourceDir + " not found!");
+                    return;
+                }
+                // Start with an EMPTY USFM directory to avoid problems with old files 
+                Utils.DeleteDirectory(UsfmDir);
+                fileHelper.EnsureDirectory(UsfmDir);
+                string usfxDir = Path.Combine(outputProjectDirectory, "usfx");
+                fileHelper.EnsureDirectory(usfxDir);
+                string[] inputFileNames = Directory.GetFiles(SourceDir);
+                if (inputFileNames.Length == 0)
+                {
+                    Logit.WriteError("ERROR: no files found in " + SourceDir);
+                    return;
+                }
+
+                foreach (string inputFile in inputFileNames)
+                {
+                    string filename = Path.GetFileName(inputFile);
+                    string fileType = Path.GetExtension(filename).ToUpper();
+                    if ((fileType == ".USFX") || (fileType == ".XML"))
+                    {
+                        currentConversion = "processing " + filename;
+                        Application.DoEvents();
+                        if (!fileHelper.fAllRunning)
+                            break;
+                        XmlTextReader xr = new XmlTextReader(inputFile);
+                        if (xr.MoveToContent() == XmlNodeType.Element)
+                        {
+                            if (xr.Name == "usfx")
+                            {
+                                DateTime fileDate;
+                                fileDate = File.GetLastWriteTimeUtc(inputFile);
+                                sourceDate = projectOptions.SourceFileDate;
+                                if (fileDate > projectOptions.SourceFileDate)
+                                {
+                                    sourceDate = fileDate;
+                                    projectOptions.SourceFileDate = sourceDate;
+                                }
+
+                                logFile = Path.Combine(outputProjectDirectory, "usfx2usfm_log.txt");
+                                Logit.OpenFile(logFile);
+                                SFConverter.scripture = new Scriptures(this);
+                                Logit.loggedError = false;
+                                Logit.loggedWarning = false;
+                                currentConversion = "converting from USFX to USFM";
+                                Application.DoEvents();
+                                SFConverter.scripture.USFXtoUSFM(inputFile, UsfmDir, projectOptions.translationId + ".usfm", true, projectOptions);
+                                UsfmDir = Path.Combine(outputProjectDirectory, "usfm");
+                                // Start with an EMPTY USFM directory to avoid problems with old files 
+                                Utils.DeleteDirectory(UsfmDir);
+                                fileHelper.EnsureDirectory(UsfmDir);
+                                SFConverter.scripture.USFXtoUSFM(inputFile, UsfmDir, projectOptions.translationId + ".usfm", false, projectOptions);
+                                Logit.CloseFile();
+                                if (Logit.loggedError)
+                                {
+                                    projectOptions.lastRunResult = false;
+                                }
+                                if (Logit.loggedWarning)
+                                {
+                                    projectOptions.warningsFound = true;
+                                }
+                                currentConversion = "converted USFX to USFM.";
+                                File.Copy(inputFile, Path.Combine(usfxDir, "usfx.xml"), true);
+                            }
+                            else if (xr.Name == "vernacularParms")
+                            {
+                                // TODO: Insert code here to read metadata in this file into options file.
+                                File.Copy(inputFile, Path.Combine(usfxDir, "vernacularParms.xml"), true);
+                            }
+                            else if (xr.Name == "vernacularParmsMiscellaneous")
+                            {
+                                // TODO: Insert code here to read this file into options file.
+                                File.Copy(inputFile, Path.Combine(usfxDir, "vernacularParmsMiscellaneous.xml"), true);
+                            }
+                        }
+                        xr.Close();
+                        Application.DoEvents();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error importing USFX");
+            }
+        }
+
+
+        public bool GetSource()
+        {
+            bool result = false;
+            string source = projectOptions.customSourcePath;
+            string sourceKind = GetSourceKind(source);
+            switch (sourceKind)
+            {
+                case "usfm":
+                    PreprocessUsfmFiles(source);
+                    if (fileHelper.fAllRunning)
+                    {
+                        ConvertUsfmToUsfx();
+                        NormalizeUsfm();
+                    }
+                    result = true;
+                    break;
+                case "usfx":
+                    ImportUsfx(source);
+                    NormalizeUsfm();
+                    result = true;
+                    break;
+                case "usx":
+                    ImportUsx(source);
+                    string metadataXml = Path.Combine(source, "metadata.xml");
+                    if (File.Exists(metadataXml))
+                    {
+                        DateTime fileDate = File.GetLastWriteTimeUtc(metadataXml);
+                        if (fileDate > sourceDate)
+                        {
+                            sourceDate = fileDate;
+                        }
+                        projectOptions.SourceFileDate = sourceDate;
+                    }
+                    result = true;
+                    break;
+                case "osis":
+                    Logit.WriteError("OSIS IMPORT NOT IMPLEMENTED.");
+                    result = false;
+                    break;
+            }
+            return result;
         }
 
 

@@ -82,9 +82,9 @@ namespace WordSend
             hash = hash / 1000;
             if (theWord[0] == 'H')
                 hash += 6;
-            if (hash >= HASHSIZE)
+            if (hash >= LEMMASIZE)
             {
-                Logit.WriteError("Bad Strong's number: " + theWord);
+                // Logit.WriteError("Bad Strong's number: " + theWord);
                 hash = 0;
             }
             return hash;
@@ -236,7 +236,7 @@ namespace WordSend
             }
             catch (Exception ex)
             {
-                Logit.WriteError(ex.Message);
+                Logit.WriteError(ex.Message + '\n' + ex.StackTrace);
             }
         }
 
@@ -347,7 +347,7 @@ namespace WordSend
 DROP TABLE IF EXISTS sofia.{0};
 CREATE TABLE {0} (
     keyWord VARCHAR(128) COLLATE UTF8_GENERAL_CI NOT NULL,
-    verseList TEXT NOT NULL) ENGINE=MyISAM;
+    verseList MEDIUMTEXT NOT NULL) ENGINE=MyISAM;
 LOCK TABLES {0} WRITE;", concTableName);
 
 

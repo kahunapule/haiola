@@ -23,6 +23,7 @@ namespace WordSend
     public class ExtractSearchText
     {
         public int LongestWordLength;
+        public Options projectOptions = null;
         protected string currentBook;
         protected string BibleWorksBook;
         protected string currentChapter;
@@ -227,6 +228,8 @@ namespace WordSend
                                 {   // Skip peripherals.
                                     SkipElement();
                                 }
+                                if (!projectOptions.allowedBookList.Contains(bookRecord.tla))
+                                    SkipElement();
                                 currentPlace = currentBook;
                                 break;
                             case "id":
@@ -308,6 +311,7 @@ namespace WordSend
                             case "ie":  // Introduction end
                             case "iex": // Introduction explanatory or bridge text
                             case "fp":
+                            case "usfm":
                             case "rem": // Comment; not part of the actual text
                             case "cl":
                             case "ca":

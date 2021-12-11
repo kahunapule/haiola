@@ -725,18 +725,18 @@ namespace WordSend
             {
                 if (redistributable)
                 {
-                    htm.WriteLine("<div class=\"toc\">epub3: <a href=\"http://eBible.org/epub/{0}.epub\">{0}.epub</a></div>", translationId);
+                    htm.WriteLine("<div class=\"toc\">epub3: <a href=\"https://eBible.org/epub/{0}.epub\">{0}.epub</a></div>", translationId);
                     if (File.Exists(String.Format("/home/kahunapule/vhosts/ebible.org/httpdocs/epub/{0}.mobi", translationId)))
-                        htm.WriteLine("<div class=\"toc\">Kindle mobi: <a href=\"http://eBible.org/epub/{0}.mobi\">{0}.mobi</a></div>", translationId);
+                        htm.WriteLine("<div class=\"toc\">Kindle mobi: <a href=\"https://eBible.org/epub/{0}.mobi\">{0}.mobi</a></div>", translationId);
                     if (projectOptions.homeDomain == "png.bible")
                     {
-                        htm.WriteLine("<div class=\"toc\"><a href=\"http://PNG.Bible/pdf/{0}/\" target=\"_blank\">PDF</a></div>", translationId);
+                        htm.WriteLine("<div class=\"toc\"><a href=\"https://PNG.Bible/pdf/{0}/\" target=\"_blank\">PDF</a></div>", translationId);
                     }
                     else
                     {
-                        htm.WriteLine("<div class=\"toc\"><a href=\"http://eBible.org/pdf/{0}/\" target=\"_blank\">PDF</a></div>", translationId);
+                        htm.WriteLine("<div class=\"toc\"><a href=\"https://eBible.org/pdf/{0}/\" target=\"_blank\">PDF</a></div>", translationId);
                     }
-                    htm.WriteLine("<div class=\"toc\"><a href=\"http://ebible.org/study/?w1=bible&t1=local%3A{0}&v1={1}1_1\" target=\"_blank\">Browser Bible</a></div>",
+                    htm.WriteLine("<div class=\"toc\"><a href=\"https://ebible.org/study/?w1=bible&t1=local%3A{0}&v1={1}1_1\" target=\"_blank\">Browser Bible</a></div>",
                         translationId, StartingShortCode);
                     htm.WriteLine("<div Class=\"toc\"><a href=\"ftp://ebible.org/pub/sword/zip/{0}.zip\">Crosswire Sword module</a></div>", projectOptions.SwordName);
                 }

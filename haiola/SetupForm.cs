@@ -19,9 +19,8 @@ namespace WordSend
         {
             InitializeComponent();
             projectDirectoryLabel.Text = hf.globe.dataRootDir;
-            paratextDirLabel.Text = hf.globe.paratextProjectsDir;
-            loadFCBHKeysCheckBox.Checked = hf.globe.getFCBHkeys;
-            //loadFCBHKeysCheckBox.Visible = hf.plugin.PluginLoaded();
+            RebuildCheckBox.Checked = hf.globe.rebuild;
+            // runXetexCheckBox.Checked = hf.globe.runXetex;
             coprLabel.Text = String.Format("Haiola version {0}.{1} ©2003-{2} SIL, EBT, && eBible.org. Released under Gnu LGPL 3 or later.",
                 haiola.Version.date, haiola.Version.time, haiola.Version.year); 
             //extensionLabel.Text = hf.plugin.PluginMessage();
@@ -59,24 +58,17 @@ namespace WordSend
             if (File.Exists(Path.Combine(dlg.SelectedPath, "usfm.sty")))
             {
                 hf.globe.paratextProjectsDir = dlg.SelectedPath;
-                paratextDirLabel.Text = hf.globe.paratextProjectsDir;
                 hf.globe.xini.Write();
-                hf.LoadParatextProjectList();
-                hf.LoadParatext8ProjectList();
             }
         }
 
-        private void loadFCBHKeysCheckBox_CheckedChanged(object sender, EventArgs e)
-        {
-            hf.globe.getFCBHkeys = loadFCBHKeysCheckBox.Checked;
-            hf.globe.xini.WriteBool("downloadFcbhAudio", hf.globe.getFCBHkeys);
-            hf.globe.xini.Write();
-        }
 
         private void closeButton_Click(object sender, EventArgs e)
         {
             hf.globe.m_swordSuffix = swordSuffixTextBox.Text;
             hf.globe.generateUsfm3Fig = usfm3figTagsCheckBox.Checked;
+            hf.globe.rebuild = RebuildCheckBox.Checked;
+            // hf.globe.runXetex = runXetexCheckBox.Checked;
             hf.globe.xini.Write();
             Close();
         }
@@ -94,10 +86,7 @@ namespace WordSend
             if (File.Exists(Path.Combine(dlg.SelectedPath, "usfm.sty")))
             {
                 hf.globe.paratext8ProjectsDir = dlg.SelectedPath;
-                paratext8DirectoryLabel.Text = hf.globe.paratext8ProjectsDir;
                 hf.globe.xini.Write();
-                hf.LoadParatextProjectList();
-                hf.LoadParatext8ProjectList();
             }
 
         }

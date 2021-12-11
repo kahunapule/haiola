@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
-using System.Globalization;
-using System.Data;
 using System.IO;
 using System.Collections;
 using System.Text.RegularExpressions;
 using System.Xml;
-using System.Xml.Schema;
-using System.Diagnostics;
 
 namespace WordSend
 {
@@ -138,6 +133,7 @@ namespace WordSend
 
 
 
+        /*
         /// <summary>
         /// Figure out what the file name of current book is.
         /// This is trivially simple in the case of XeTeX files, which contain whole books.
@@ -148,6 +144,7 @@ namespace WordSend
         {
             return currentBookAbbrev + ".tex";
         }
+        */
 
 
         /// <summary>
@@ -166,12 +163,12 @@ namespace WordSend
         protected override void OpenHtmlFile(string fileName, bool mainScriptureFile = true, bool skipNav = false)
         {
             string runningHeader = currentBookHeader;
-            if (runningHeader.Length > 17)
+            if (runningHeader.Length > 34)
             {
                 if (bookRecord.vernacularShortName.Length < runningHeader.Length)
                     runningHeader = bookRecord.vernacularShortName;
             }
-            if (runningHeader.Length > 17)
+            if (runningHeader.Length > 34)
             {
                 if ((currentBookAbbrev == "CPR") || (currentBookAbbrev == "FRT") || (currentBookAbbrev == "TDX") || (currentBookAbbrev == "GLO") ||
                     (currentBookAbbrev == "INT") || (currentBookAbbrev.StartsWith("X")) || (currentBookAbbrev == "BAK"))
@@ -186,7 +183,7 @@ namespace WordSend
                     }
                 }
             }
-            if (runningHeader.Length > 30)
+            if (runningHeader.Length > 34)
             {
                 Logit.WriteWarning("No abbreviation or short name found for " + currentBookHeader + " (" + currentBookAbbrev + ").");
             }
@@ -1040,12 +1037,6 @@ For other uses, please contact the respective copyright owners.</p>
         }
 
 
-        protected string texScreenFileName;
-        protected string texPrintFileName;
-        protected string texA4Name;
-        protected string texNTName;
-        protected string texBookName;
-
         /// <summary>
         /// Find an input file in the input project directory, input directory, or program directory
         /// </summary>
@@ -1277,6 +1268,8 @@ For other uses, please contact the respective copyright owners.</p>
             int i, j, pageCount;
             bool result = true;
             StreamReader sr;
+            if (String.IsNullOrEmpty(texFileName))
+                return false;
             conversionProgress = "Generating " + pdfName;
             try
             {
@@ -1359,7 +1352,7 @@ For other uses, please contact the respective copyright owners.</p>
         /// </summary>
         protected override void ZipResults()
         {
-            string bookFileName;
+            // string bookFileName;
             fileHelper.CopyFile(FindInputFile("haiola.tex"), Path.Combine(texDir, "haiola.tex"));
             fileHelper.CopyFile(FindInputFile("haiolartl.tex"), Path.Combine(texDir, "haiolartl.tex"));
             //TODO: move the following hard-coded dimensions and options to the user interface
@@ -1385,24 +1378,9 @@ For other uses, please contact the respective copyright owners.</p>
             }
             fileHelper.CopyFile(FindInputFile("footkmpj.sty"), Path.Combine(texDir, "footkmpj.sty"));
 
+            /*
             if (callXetex)
             {
-
-                if (!RunXeTeX(texScreenFileName))
-                    return;
-                RunXeTeX(texPrintFileName);
-                RunXeTeX(texA4Name);
-                RunXeTeX(texBookName);
-                RunXeTeX(texNTName);
-                if ((projectOptions.textDir == "rtl") && (Path.DirectorySeparatorChar == '/'))
-                {
-                    string printPDF = Path.ChangeExtension(texPrintFileName, "pdf");
-                    string reversedPDF = printPDF.Replace("_prt.pdf", "_rtlprint.pdf");
-                    string reverseCommand = String.Format("pdftk {0} cat end-1 output {1}", printPDF, reversedPDF);
-                    fileHelper.RunCommand(reverseCommand, texDir);
-                }
-
-
                 foreach (BibleBookRecord br in bookInfo.publishArray)
                 {
                     if ((br != null) && br.IsPresent)
@@ -1415,8 +1393,11 @@ For other uses, please contact the respective copyright owners.</p>
             }
             else
             {
+            */
                 WritePDFTemplate();
+            /*
             }
+            */
         }
 
     
@@ -1535,6 +1516,11 @@ For other uses, please contact the respective copyright owners.</p>
             texFile.WriteLine("\\newcommand{0}\\MTDSize{1}{0}{2}pt{1}", LEFTBRACE, RIGHTBRACE, pointSize*1.083);
             texFile.WriteLine("\\newcommand{0}\\VerseFontSize{1}{0}{2}pt{1}", LEFTBRACE, RIGHTBRACE, pointSize*0.75);
             texFile.Close();
+            /* if (callXetex)
+            {
+                if (!RunXeTeX(texHeaderName))
+                    Logit.WriteError("Unable to run XeLaTeX on " + texHeaderName);
+            } */
         }
 
 

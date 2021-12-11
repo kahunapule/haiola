@@ -1,0 +1,16 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "d520ccd6-b7a4-4d7e-bdfe-1df89111383a": {
+      "ProjectGuid": "d520ccd6-b7a4-4d7e-bdfe-1df89111383a",
+      "DisplayName": "haiola",
+      "ColorIndex": 0
+    },
+    "f8aab011-442b-46e6-91d4-b130c74f081b": {
+      "ProjectGuid": "f8aab011-442b-46e6-91d4-b130c74f081b",
+      "DisplayName": "BibleFileLib",
+      "ColorIndex": 1
+    }
+  },
+  "NextColorIndex": 2
+}

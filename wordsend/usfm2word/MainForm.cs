@@ -247,6 +247,7 @@ namespace WordSend
 			insertCallingVerseRefCheckBox.Checked = SFConverter.jobIni.ReadBool("insertCallingVerseRef", true);
 			customFootnoteCallerCheckBox.Checked = SFConverter.jobIni.ReadBool("useCustomFootnoteCaller", false);
 			customFootnoteCallerTextBox.Text = SFConverter.jobIni.ReadString("customFootnoteCaller", "* † ‡");
+            
 			customFootnoteCallerTextBox.Enabled = customFootnoteCallerCheckBox.Checked;
 			insertXrefVerseCheckBox.Checked = SFConverter.jobIni.ReadBool("insertXrefVerse", true);
 			customXrefCallerCheckBox.Checked = SFConverter.jobIni.ReadBool("useCustomXrefCaller", true);

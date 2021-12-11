@@ -195,9 +195,9 @@ namespace WordSend
             return actualName;
         }
 
-        public FootNoteCaller footNoteCall = new FootNoteCaller("* † ‡ § ** †† ‡‡ §§ *** ††† ‡‡‡ §§§");
+        public FootNoteCaller footNoteCall = new FootNoteCaller(SFConverter.jobIni.ReadString("customFootnoteCaller", "* † ‡"));
 
-        public FootNoteCaller xrefCall = new FootNoteCaller("✡");
+        public FootNoteCaller xrefCall = new FootNoteCaller(SFConverter.jobIni.ReadString("xrefCallers", "a b c d e f g h i j k l m n o p q r s t u v w x y z"));
 
         /// <summary>
         /// Start a new HTML paragraph
@@ -2328,6 +2328,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                         break;
                                     case "sectionBoundary":
                                     case "generated":
+                                    case "usfm":
                                     case "rem":
                                     case "periph":
                                     case "ndx":
@@ -2595,6 +2596,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                     case "bk":
                                     case "pn":
                                     case "k":
+                                    case "sup":
                                     case "ord":
                                     case "add":
                                     case "sig":
@@ -2646,6 +2648,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                     case "fqa":
                                     case "fl":
                                     case "fv":
+                                    case "fw":
                                     case "ft":
                                     case "xk":
                                     case "xt":
@@ -2709,6 +2712,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                     case "ide":
                                     case "generated":
                                     case "sectionBoundary":
+                                    case "usfm":
                                     case "rem":
                                     case "periph":
                                     case "ndx":
@@ -2787,6 +2791,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                     case "bk":
                                     case "pn":
                                     case "k":
+                                    case "sup":
                                     case "ord":
                                     case "add":
                                     case "sig":
@@ -2830,6 +2835,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                     case "fqa":
                                     case "fl":
                                     case "fv":
+                                    case "fw":
                                     case "ft":
                                     case "xk":
                                     case "xt":

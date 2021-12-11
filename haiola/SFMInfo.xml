@@ -293,6 +293,13 @@
 		<nestingAllowed>true</nestingAllowed>
 		<levelExpected>false</levelExpected>
 	</sfm>
+	<sfm kind="character">
+		<tag>fw</tag>
+		<endTag>fw*,fq,ft,fk,fv</endTag>
+		<characterStyle>Witness list</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
 	<sfm kind="paragraph">
 		<tag>glo</tag>
 		<paragraphStyle>Glossary</paragraphStyle>
@@ -881,6 +888,14 @@
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
 	</sfm>
+	<sfm kind="character">
+		<tag>sup</tag>
+		<endTag>sup*</endTag>
+		<characterStyle>Superscript</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>superscript</comment>
+	</sfm>
 	<sfm kind="meta"><tag>sts</tag><parameterName>status</parameterName><nestingAllowed>false</nestingAllowed><levelExpected>false</levelExpected><usfx>sts</usfx><usfxAttribute>status</usfxAttribute><milestone>true</milestone><comment>status is a single digit: 1=first draft, 2=team draft, 3=reviewed draft, 4=clean text</comment></sfm><sfm kind="table">
 		<tag>tc</tag>
 		<endTag>tc, tr,p,q,tcr</endTag>
@@ -922,6 +937,10 @@
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
 	</sfm>
+	<sfm kind="meta">
+		<tag>usfm</tag>
+		<paragraphStyle>Invisible Paragraph</paragraphStyle><parameterName>usfmVersion</parameterName><nestingAllowed>false</nestingAllowed><levelExpected>false</levelExpected>
+	<usfx>rem</usfx><milestone>false</milestone><comment>Blank if less than 3.0.</comment></sfm>
 	<sfm kind="meta">
 		<tag>v</tag>
 		<parameterName>currentVerse</parameterName>

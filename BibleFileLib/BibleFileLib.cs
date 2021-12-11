@@ -30,7 +30,8 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Schema;
 using System.Diagnostics;
-
+using ICSharpCode.SharpZipLib.Zip;
+using System.Collections.Specialized;
 
 namespace WordSend
 {
@@ -575,89 +576,97 @@ namespace WordSend
 			TagRecord tagRec = null;
 			int i;
 			tags = new Hashtable(251);
-			XmlTextReader xr = new XmlTextReader(fileName);
-			xr.WhitespaceHandling = WhitespaceHandling.Significant;
-			while (xr.Read())
-			{
-				if (xr.NodeType == XmlNodeType.Element)
-				{
-					switch (xr.Name)
-					{
-						case "sfm":
-							tagRec = new TagRecord();
-							for (i = 0; i < xr.AttributeCount; i++)
-							{
-								xr.MoveToAttribute(i);
-								if (xr.Name == "kind")
-								{
-									tagRec.kind = xr.Value;
-								}
-							}
-							xr.MoveToElement();
-							break;
-						case "tag":
-							xr.Read();
-							tagRec.tag = xr.Value;
-							break;
-						case "endTag":
-							xr.Read();
-							tagRec.endTag = xr.Value;
-							break;
-						case "paragraphStyle":
-							xr.Read();
-							tagRec.paragraphStyle = xr.Value;
-							break;
-						case "characterStyle":
-							xr.Read();
-							tagRec.characterStyle = xr.Value;
-							break;
-						case "parameterName":
-							xr.Read();
-							tagRec.parameterName = xr.Value;
-							break;
-						case "contentName":
-							xr.Read();
-							tagRec.contentName = xr.Value;
-							break;
-						case "nestingAllowed":
-							xr.Read();
-							tagRec.nestingAllowed = Convert.ToBoolean(xr.Value);
-							break;
-						case "levelExpected":
-							xr.Read();
-							tagRec.levelExpected = Convert.ToBoolean(xr.Value);
-							break;
-						case "usfx":
-							xr.Read();
-							tagRec.usfx = xr.Value;
-							break;
-						case "usfxAttribute":
-							xr.Read();
-							tagRec.usfxAttribute = xr.Value;
-							break;
-						case "TeXcode":
-							xr.Read();
-							tagRec.TeXcode = xr.Value;
-							break;
-						case "comment":
-							xr.Read();
-							tagRec.comment = xr.Value;
-							break;
-					}
-				}
-				else if (xr.NodeType == XmlNodeType.EndElement)
-				{
-					if (xr.Name == "sfm")
-					{
-						tags[tagRec.tag] = tagRec;
-						if ((tagRec.endTag != "") && (tagRec.endTag.StartsWith(tagRec.tag)))
-						{
-							tags[tagRec.tag + "*"] = tagRec;
-						}
-					}
-				}
-			}
-			xr.Close();
+            try
+            {
+                XmlTextReader xr = new XmlTextReader(fileName);
+                xr.WhitespaceHandling = WhitespaceHandling.Significant;
+                while (xr.Read())
+                {
+                    if (xr.NodeType == XmlNodeType.Element)
+                    {
+                        switch (xr.Name)
+                        {
+                            case "sfm":
+                                tagRec = new TagRecord();
+                                for (i = 0; i < xr.AttributeCount; i++)
+                                {
+                                    xr.MoveToAttribute(i);
+                                    if (xr.Name == "kind")
+                                    {
+                                        tagRec.kind = xr.Value;
+                                    }
+                                }
+                                xr.MoveToElement();
+                                break;
+                            case "tag":
+                                xr.Read();
+                                tagRec.tag = xr.Value;
+                                break;
+                            case "endTag":
+                                xr.Read();
+                                tagRec.endTag = xr.Value;
+                                break;
+                            case "paragraphStyle":
+                                xr.Read();
+                                tagRec.paragraphStyle = xr.Value;
+                                break;
+                            case "characterStyle":
+                                xr.Read();
+                                tagRec.characterStyle = xr.Value;
+                                break;
+                            case "parameterName":
+                                xr.Read();
+                                tagRec.parameterName = xr.Value;
+                                break;
+                            case "contentName":
+                                xr.Read();
+                                tagRec.contentName = xr.Value;
+                                break;
+                            case "nestingAllowed":
+                                xr.Read();
+                                tagRec.nestingAllowed = Convert.ToBoolean(xr.Value);
+                                break;
+                            case "levelExpected":
+                                xr.Read();
+                                tagRec.levelExpected = Convert.ToBoolean(xr.Value);
+                                break;
+                            case "usfx":
+                                xr.Read();
+                                tagRec.usfx = xr.Value;
+                                break;
+                            case "usfxAttribute":
+                                xr.Read();
+                                tagRec.usfxAttribute = xr.Value;
+                                break;
+                            case "TeXcode":
+                                xr.Read();
+                                tagRec.TeXcode = xr.Value;
+                                break;
+                            case "comment":
+                                xr.Read();
+                                tagRec.comment = xr.Value;
+                                break;
+                        }
+                    }
+                    else if (xr.NodeType == XmlNodeType.EndElement)
+                    {
+                        if (xr.Name == "sfm")
+                        {
+                            tags[tagRec.tag] = tagRec;
+                            if ((tagRec.endTag != "") && (tagRec.endTag.StartsWith(tagRec.tag)))
+                            {
+                                tags[tagRec.tag + "*"] = tagRec;
+                            }
+                        }
+                    }
+                }
+                xr.Close();
+
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError("Error reading tag info: " + ex.Message);
+            }
 		}
 
 		public TagInfo(string fileName)
@@ -718,51 +727,59 @@ namespace WordSend
             string bla = String.Empty;
             langCodes = new Hashtable(509);
             shortLanguageCodes = new Hashtable(509);
-            XmlTextReader langInfo = new XmlTextReader(SFConverter.FindAuxFile("langnames.xml"));
-            langInfo.WhitespaceHandling = WhitespaceHandling.Significant;
-            while (langInfo.Read())
+            try
             {
-                if (langInfo.NodeType == XmlNodeType.Element)
+                XmlTextReader langInfo = new XmlTextReader(SFConverter.FindAuxFile("langnames.xml"));
+                langInfo.WhitespaceHandling = WhitespaceHandling.Significant;
+                while (langInfo.Read())
                 {
-                    switch (langInfo.Name)
+                    if (langInfo.NodeType == XmlNodeType.Element)
                     {
-                        case "lang":
-                            tla = bla = String.Empty;
-                            break;
-                        case "tla":
-                            if (!langInfo.IsEmptyElement)
-                            {
-                                langInfo.Read();
-                                if (langInfo.NodeType == XmlNodeType.Text)
-                                {
-                                    tla = langInfo.Value;
-                                }
-                            }
-                            break;
-                        case "bla":
-                            if (!langInfo.IsEmptyElement)
-                            {
-                                langInfo.Read();
-                                if (langInfo.NodeType == XmlNodeType.Text)
-                                {
-                                    bla = langInfo.Value;
-                                }
-                            }
-                            break;
-                    }
-                }
-                else if (langInfo.NodeType == XmlNodeType.EndElement)
-                {
-                    if (langInfo.Name == "lang")
-                    {
-                        if (bla.Length == 2)
+                        switch (langInfo.Name)
                         {
-                            langCodes[tla] = bla;
-                            shortLanguageCodes[bla] = tla;
+                            case "lang":
+                                tla = bla = String.Empty;
+                                break;
+                            case "tla":
+                                if (!langInfo.IsEmptyElement)
+                                {
+                                    langInfo.Read();
+                                    if (langInfo.NodeType == XmlNodeType.Text)
+                                    {
+                                        tla = langInfo.Value;
+                                    }
+                                }
+                                break;
+                            case "bla":
+                                if (!langInfo.IsEmptyElement)
+                                {
+                                    langInfo.Read();
+                                    if (langInfo.NodeType == XmlNodeType.Text)
+                                    {
+                                        bla = langInfo.Value;
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                    else if (langInfo.NodeType == XmlNodeType.EndElement)
+                    {
+                        if (langInfo.Name == "lang")
+                        {
+                            if (bla.Length == 2)
+                            {
+                                langCodes[tla] = bla;
+                                shortLanguageCodes[bla] = tla;
+                            }
                         }
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                Logit.WriteError("Error reading sfm info: " + ex.Message);
+            }
+
         }
     }
 
@@ -858,8 +875,7 @@ namespace WordSend
                     {
                         for (i = 0; i < attribute.Length; i++)
                         {
-                            if (!((attribute[i] == '-') || (attribute[i] == '\u200F') || Char.IsDigit(attribute[i]) || (attribute[i] == 'a') || (attribute[i] == 'b')
-                                || (attribute[i] == 'A') || (attribute[i] == 'B')))
+                            if (!((attribute[i] == '-') || (attribute[i] == '\u200F') || Char.IsLetterOrDigit(attribute[i])))
                             {
                                 Logit.WriteError("Bad verse value of " + attribute + " at " + currentBook + " " + currentChapter + ":" + attribute);
                                 i = attribute.Length;
@@ -1765,6 +1781,25 @@ namespace WordSend
         {
             clear();
         }
+    }
+
+
+    public class Jump
+    {
+        // \jmp Some text|XXA 1:1\jmp*
+        // \jmp Some text|link-href="link"\jmp* where link can be a URI or prj:ProjectID MAT 1:1-4
+        // Additional parameters possible: link-title, link-id
+        // Default parameter is link-href.
+        // Missing prj:XX assumes the current project.
+        public string linkText;
+        public string src;  // link-id
+        public string tgt;  // link-href (Verse reference)
+        public string web;  // link-href (web address or file)
+
+        public void clear()
+        {
+            linkText = src = tgt = web = String.Empty;
+        }
 
     }
 
@@ -1871,7 +1906,7 @@ namespace WordSend
             {
                 if (barCount != 6)
                 {
-                    Logit.WriteError("Unexpected bar count in figure specification: " + s);
+                    Logit.WriteWarning("Unexpected bar count in figure specification: " + s);
                 }
                 description = firstField(s);
                 catalog = nextField(s);
@@ -2018,6 +2053,9 @@ namespace WordSend
 		protected SubstituteStrings substitutions;
 		protected string ns;
 		protected bool inUSFXNote;
+        protected bool inWJ;
+        protected bool wjOut;
+
 		protected int inUSFXNoteStyle;
 		protected string currentFootnoteCaller;
         public bool sfmErrorsFound;
@@ -2075,7 +2113,7 @@ namespace WordSend
             customFootnoteMark = SFConverter.jobIni.ReadBool("useCustomFootnoteCaller", false);
             customXrefMark = SFConverter.jobIni.ReadBool("useCustomXrefCaller", true);
             footnoteMark = new FootNoteCaller(SFConverter.jobIni.ReadString("customFootnoteCaller", "* † ‡"));
-            xrefMark = new FootNoteCaller(SFConverter.jobIni.ReadString("customXrefCaller", "#"));
+            xrefMark = new FootNoteCaller(SFConverter.jobIni.ReadString("xrefCallers", "a b c d e f g h i j k l m n o p q r s t u v w x y z"));
             markFirstVerse = SFConverter.jobIni.ReadBool("verse1", true);
             markFirstChapter = SFConverter.jobIni.ReadBool("chapter1", true);
             markPsalmV1 = SFConverter.jobIni.ReadBool("labelPsalmV1", true);
@@ -2575,8 +2613,15 @@ namespace WordSend
 							xw.WriteAttributeString("level", level.ToString());
 					}
 				}
-				if (contents != null)
-					WriteUSFXText(StripLeadingWhiteSpace(contents));
+                if (contents != null)
+                {
+                    if (inWJ && !wjOut && !isAllWhiteSpace(contents))
+                    {
+                        StartUSFXStyle("wj", "", false);
+                        wjOut = true;
+                    }
+                    WriteUSFXText(StripLeadingWhiteSpace(contents));
+                }
                 if (sfm == "b")
                     EndUSFXParagraph();
 			}
@@ -2656,17 +2701,24 @@ namespace WordSend
 		protected void WriteUSFXText(string contents)
 		{
             int lineBreakPlace;
+            string s;
 			if ((contents != null) && (contents != ""))
 			{
-                lineBreakPlace = contents.IndexOf("http://");
+                s = "http://";
+                lineBreakPlace = contents.IndexOf(s);
+                if (lineBreakPlace < 0)
+                {
+                    s = "https://";
+                    lineBreakPlace = contents.IndexOf(s);
+                }
                 if (lineBreakPlace >= 0)
                 {
                     if (lineBreakPlace > 0)
                     {
                         WriteUSFXText(contents.Substring(0, lineBreakPlace));
                     }
-                    xw.WriteString("http://");
-                    WriteUSFXText(contents.Substring(lineBreakPlace + 7));
+                    xw.WriteString(s);
+                    WriteUSFXText(contents.Substring(lineBreakPlace + s.Length));
                 }
                 else
                 {
@@ -3130,7 +3182,7 @@ namespace WordSend
 			WriteUSFXText(content);
 		}
 
-		protected static string charStyleTagList = " add bd bdit bk em it k nd no ord pn pro qac qr qs qt rq sc sig sls tl wr wj fk fm fq fr ft fv xk xo xq xt ";
+		protected static string charStyleTagList = " add bd bdit bk em it k nd no ord pn pro qac qr qs qt rq sc sig sls tl wr wj fk fm fq fr ft fv fw xk xo xq xt ";
 
 		protected bool UsfxStyleSuspended;
         protected static string[] activeCharacterStyle;
@@ -3787,7 +3839,9 @@ namespace WordSend
 							case "id":
 							case "ide":
 								break;
-							case "rem":
+                            case "usfm":
+                            case "rem":
+                            case "sts":
                             case "periph":
                                 break;
 							case "h":
@@ -3809,7 +3863,6 @@ namespace WordSend
                             case "zws*":
                             case "fdc":
                             case "fdc*":
-                                WriteWordMLTextRun(sf.text);
                                 break;
                             case "cl":
                             case "toc":
@@ -3909,7 +3962,23 @@ namespace WordSend
 							break;
 						case "character":
 							EndWordMLTextRun();
-							if (sf.tag.EndsWith("*"))
+                            if (sf.tag == "w")
+                            {
+                                int pos;
+                                string actualWord = sf.text;
+                                if (!String.IsNullOrEmpty(actualWord))
+                                {
+                                    pos = actualWord.IndexOf('|');
+                                    if (pos >= 0)
+                                        actualWord = actualWord.Substring(0, pos);
+                                    WriteWordMLTextRun(actualWord);
+                                }
+                            }
+                            else if (sf.tag == "w*")
+                            {
+                                WriteWordMLTextRun(sf.text);
+                            }
+                            else if (sf.tag.EndsWith("*"))
 							{
 								if (inFootnote || inEndnote)
 									EndFootnoteCharStyle();
@@ -4180,11 +4249,24 @@ namespace WordSend
 
         public bool hasRefTags;
 
-        protected const string EXCLUSIVETAGS = "xo xk xt xdc fr fk fq fqa fl fp ft fdc ";
+        protected const string EXCLUSIVETAGS = "xo xk xt xdc fr fk fq fqa fl fp ft fdc fw ";
 
         public bool isUnclosedNoteTag(string sfm)
         {
             return EXCLUSIVETAGS.Contains(sfm + " ");
+        }
+
+        protected bool isAllWhiteSpace(string s)
+        {
+            int i;
+            if (string.IsNullOrEmpty(s))
+                return true;
+            for (i=0; i < s.Length; i++)
+            {
+                if (!Char.IsWhiteSpace(s[i]))
+                    return false;
+            }
+            return true;
         }
 
 		protected void WriteUSFXBook(int bknum)
@@ -4196,6 +4278,8 @@ namespace WordSend
             inTableColumn = false;
             inToc = false;
             inUSFXNote = false;
+            inWJ = false;
+            wjOut = false;
             embedUsfx = true;
             string strongs, lemma, morphology;
             try
@@ -4219,6 +4303,7 @@ namespace WordSend
 				sf = book.FirstSfm();
 				xw.WriteStartElement(ns+"book");
 				xw.WriteAttributeString("id", book.bookCode);
+
 				// Logit.WriteLine("Starting book: "+book.vernacularName+" ("+book.bookCode+").");
 
 				while (sf != null)
@@ -4226,6 +4311,11 @@ namespace WordSend
                     switch (sf.info.kind)
 					{
 						case "paragraph":
+                            if (inWJ)
+                            {
+                                EndUSFXStyle();   // Temporarily suspend \wj
+                                wjOut = false;
+                            }
                             if (inToc)
                             {
                                 EndUSFXElement();
@@ -4252,7 +4342,12 @@ namespace WordSend
 							StartUSFXParagraph(sf.tag, sf.level, sf.info.paragraphStyle, sf.text);
 							break;
 						case "meta":
-						    switch (sf.tag)
+                            if (inWJ)
+                            {
+                                EndUSFXStyle();   // Temporarily suspend \wj
+                                wjOut = false;
+                            }
+                            switch (sf.tag)
 						    {
 							    case "c":
                                     EndUsfxVerse();
@@ -4294,8 +4389,14 @@ namespace WordSend
                                         EndUSFXStyle();
                                     }
 								    StartUSFXElement(sf.tag, "id", sf.attribute, null);
-								    EndUSFXElement();	// ns+v
-								    WriteUSFXText(sf.text);
+								    EndUSFXElement();   // ns+v
+                                    if (inWJ && !wjOut && !isAllWhiteSpace(sf.text))
+                                    {
+                                        StartUSFXStyle("wj", "", false);
+                                        wjOut = true;
+                                    }
+
+                                    WriteUSFXText(sf.text);
 
                                     break;
                                 case "va":
@@ -4312,18 +4413,26 @@ namespace WordSend
 								    StartUSFXParagraph(sf.tag, sf.level, sf.info.paragraphStyle, sf.text);
 								    break;
 							    case "id":
-                                    verseMark = chapterMark = String.Empty;
-                                    if (inUSFXNote)
+                                    if (sf.attribute != book.bookCode)
                                     {
-                                        EndUSFXNote();
-                                        Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
-                                            ":" + verseMark + "  (id)");
-                                        fatalError = true;
+                                        Logit.WriteError("book id mismatch: " + sf.attribute + " != " + book.bookCode);
+
                                     }
-                                    EndUsfxVerse();
-                                    EndUSFXParagraph();
-								    StartUSFXElement(sf.tag, "id", sf.attribute, sf.text);
-								    EndUSFXElement();
+                                    else
+                                    {
+                                        verseMark = chapterMark = String.Empty;
+                                        if (inUSFXNote)
+                                        {
+                                            EndUSFXNote();
+                                            Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
+                                                ":" + verseMark + "  (id)");
+                                            fatalError = true;
+                                        }
+                                        EndUsfxVerse();
+                                        EndUSFXParagraph();
+                                        StartUSFXElement(sf.tag, "id", sf.attribute, sf.text);
+                                        EndUSFXElement();
+                                    }
 								    break;
                                 case "ztoc":
                                 case "toc":
@@ -4340,6 +4449,10 @@ namespace WordSend
 								    EndUSFXElement();
 								    break;
 							    case "rem":
+                                case "sts":
+                                case "usfm":
+                                    EndUSFXParagraph();
+                                    break;
                                 case "periph":
                                     EndUSFXParagraph();
                                     StartUSFXElement(sf.tag, null, null, sf.text);
@@ -4349,7 +4462,6 @@ namespace WordSend
                                     StartUSFXElement(sf.tag, "id", sf.attribute, null);
                                     EndUSFXElement();
                                     break;
-                                case "sts":
 							    case "e":
                                         // EndUSFXParagraph();
 								    StartUSFXElement(sf.tag, null, null, sf.text);
@@ -4380,14 +4492,14 @@ namespace WordSend
                                     break;
                                 case "zw":
                                     StartWordTag();
-                                    strongs = sf.text.Trim();
+                                    strongs = PadStrongs(sf.text.Trim());
                                     if (strongs.Length > 1)
                                     {
                                         xw.WriteAttributeString("s", strongs);
                                     }
                                     break;
                                 case "zws":
-                                    strongs = sf.text.Trim();
+                                    strongs = PadStrongs(sf.text.Trim());
                                     if (strongs.Length > 1)
                                         xw.WriteAttributeString("s", strongs);
                                     break;
@@ -4493,8 +4605,14 @@ namespace WordSend
 						switch (sf.tag)
 						{
 							case "f":	// Regular footnote
-							case "x":	// Cross reference footnote
-                                StartUSFXNote(sf.tag, sf.attribute, sf.text);
+							case "x":   // Cross reference footnote
+                                if (inWJ)
+                                {
+                                    EndUSFXStyle();   // Temporarily suspend \wj
+                                    wjOut = false;
+                                }
+
+                                    StartUSFXNote(sf.tag, sf.attribute, sf.text);
 								break;
 							case "fe":	// End note
                                 if (inUSFXNote)
@@ -4512,7 +4630,12 @@ namespace WordSend
 							case "fe*":
 							case "x*":
 								EndUSFXNote();
-								WriteUSFXText(sf.text);
+                                    if (inWJ && !wjOut && !isAllWhiteSpace(sf.text))
+                                    {
+                                        StartUSFXStyle("wj", "", false);
+                                        wjOut = true;
+                                    }
+                                    WriteUSFXText(sf.text);
 								break;
                             case "fp":
                                 if (inUSFXNote)
@@ -4534,6 +4657,11 @@ namespace WordSend
 						case "character":
 							if (sf.tag.EndsWith("*"))
 							{
+                                if (sf.tag == "wj*")
+                                {
+                                    inWJ = false;
+                                    wjOut = false;
+                                }
 								if (inUSFXNote)
 								{
 									EndUSFXNoteStyle();
@@ -4546,7 +4674,12 @@ namespace WordSend
 							}
 							else
 							{
-								if (inUSFXNote)
+                                if (sf.tag == "wj")
+                                {
+                                    inWJ = true;
+                                    wjOut = true;
+                                }
+                                if (inUSFXNote)
 								{
 									StartUSFXNoteStyle(sf.tag, sf.text, sf.nested);
 								}
@@ -4871,7 +5004,7 @@ namespace WordSend
 								if (xr.Name != "xmlns:ns0")
 									xw.WriteAttributeString(xr.Name, xr.Value);
 							}
-							xw.WriteAttributeString("xmlns:ns0", "http://ebible.org/" + UsfxSchema);
+							xw.WriteAttributeString("xmlns:ns0", "https://ebible.org/" + UsfxSchema);
 							xr.MoveToElement();
 						}
 						else if (xr.Name == "w:ftr")
@@ -5648,41 +5781,49 @@ namespace WordSend
             settings.ValidationType = ValidationType.Schema;
             settings.ValidationFlags = XmlSchemaValidationFlags.ReportValidationWarnings;
             settings.ValidationEventHandler += new ValidationEventHandler(UsfxValidationCallBack);
-            XmlReader mr = XmlTextReader.Create(UsfxFileName, settings);
-
-            while (mr.Read())
+            try
             {
-                if (mr.NodeType == XmlNodeType.Element)
+                XmlReader mr = XmlTextReader.Create(UsfxFileName, settings);
+
+                while (mr.Read())
                 {
-                    currentElement = mr.Name;
-                    string id = mr.GetAttribute("id");
-                    if (id != null)
+                    if (mr.NodeType == XmlNodeType.Element)
                     {
-                        switch (mr.Name)
+                        currentElement = mr.Name;
+                        string id = mr.GetAttribute("id");
+                        if (id != null)
                         {
-                            case "book":
-                                validationBook = validationLocation = id;
-                                break;
-                            case "c":
-                                validationChapter = id;
-                                validationLocation = validationBook + "." + validationChapter;
-                                break;
-                            case "v":
-                                validationVerse = id;
-                                validationLocation = validationBook + "." + validationChapter + "." + validationVerse;
-                                break;
+                            switch (mr.Name)
+                            {
+                                case "book":
+                                    validationBook = validationLocation = id;
+                                    break;
+                                case "c":
+                                    validationChapter = id;
+                                    validationLocation = validationBook + "." + validationChapter;
+                                    break;
+                                case "v":
+                                    validationVerse = id;
+                                    validationLocation = validationBook + "." + validationChapter + "." + validationVerse;
+                                    break;
+                            }
+                            Logit.ShowStatus("validating USFX " + validationLocation);
                         }
-                    Logit.ShowStatus("validating USFX " + validationLocation);
                     }
                 }
+                mr.Close();
             }
-            mr.Close();
+            catch (Exception ex)
+            {
+                usfxValid = false;
+                Logit.WriteError("Error validating USFX: " + ex.Message);
+            }
             Utils.DeleteFile(localSchemaName);
             return usfxValid;
         }
 
         protected const string UsfxSchema = "usfx.xsd";  // File name only for speed; expected to be on the aux file path
-        protected const string UsfxNamespace = "http://eBible.org/usfx.xsd";    // This alias will point to the latest USFX schema.
+        protected const string UsfxNamespace = "https://eBible.org/usfx.xsd";    // This alias will point to the latest USFX schema.
 
         public void OpenUsfx(string fileName)
         {
@@ -5698,7 +5839,7 @@ namespace WordSend
             activeCharacterStyle[0] = String.Empty;
             xw.WriteStartElement(ns + "usfx");
             xw.WriteAttributeString("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", UsfxSchema);
+            xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", UsfxNamespace);
             if (languageCode.Length == 3)
                 xw.WriteElementString("languageCode", languageCode);
         }
@@ -5789,7 +5930,7 @@ namespace WordSend
 						{
 							xw.WriteStartElement("usfx");
 							xw.WriteAttributeString("xmlns:xsi", @"http://www.w3.org/2001/XMLSchema-instance");
-							xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", UsfxSchema);
+							xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", UsfxNamespace);
 							inBody = true;
 						}
 						else if (xr.Name.StartsWith(ns))
@@ -5879,6 +6020,35 @@ namespace WordSend
 
         public global globe;
 
+        /// <summary>
+        /// Forces strongs number format to H or G followed by 4 digits. Removes non-digit suffixes.
+        /// </summary>
+        /// <param name="s">Unpadded Strong's number, like H1a or G20</param>
+        /// <returns>Padded Strong's number like H0001 or G0020</returns>
+        public string PadStrongs(string s)
+        {
+            int i;
+
+            if (String.IsNullOrEmpty(s))
+                return String.Empty;
+            StringBuilder sb = new StringBuilder();
+            if ((s[0] == 'H') || (s[0] == 'h'))
+                sb.Append('H');
+            else if ((s[0] == 'G') || (s[0] == 'g'))
+                sb.Append('G');
+            else
+                return String.Empty;
+            for (i = 1; i < s.Length; i++)
+            {
+                if (Char.IsDigit(s[i]))
+                  sb.Append(s[i]);
+            }
+            if (sb.Length < 2)
+                return String.Empty;
+            while (sb.Length < 5)
+                sb.Insert(1, '0');
+            return (sb.ToString());
+        }
 
         public void USFXtoUSFM(string inFileName, string outDir, string outFileName, bool extendUsfm, Options m_options)
 		{
@@ -6040,10 +6210,24 @@ namespace WordSend
                                 if (id != "")
                                 {
                                     bookId = id;
-                                    usfmFile.Open(Path.Combine(outDir, bkInfo.FilePrefix(bookId) + outFileName));
-                                    chapter = "1";
-                                    verse = "0";
-                                    fnReturnVerse = "0";
+                                    if (projectOptions.allowedBookList.Contains(bookId))
+                                    {
+                                        usfmFile.Open(Path.Combine(outDir, bkInfo.FilePrefix(bookId) + outFileName));
+                                        chapter = "1";
+                                        verse = "0";
+                                        fnReturnVerse = "0";
+                                    }
+                                    else
+                                    {
+                                        do
+                                        {   // Skip book, because it isn't in the allowed book list.
+                                            usfxFile.Read();
+                                        }
+                                        while (!((usfxFile.Name == "book") && (usfxFile.NodeType == XmlNodeType.EndElement)));
+                                    }
+
+
+
                                 }
                                 break;
                             case "id":
@@ -6351,6 +6535,7 @@ namespace WordSend
                             case "xt":
                                 if (inXref || inFootnote)
                                 {
+                                    needNoteTextMarker = false;
                                     needXrefTextMarker = false;
                                     noteSfm[noteStyleStackLevel] = sfm;
                                     noteStyleStackLevel = 1;
@@ -6392,6 +6577,7 @@ namespace WordSend
                                 break;
                             case "zw":
                             case "w":
+                                string strngs;
                                 StringBuilder sb = new StringBuilder("|");
                                 if (!string.IsNullOrEmpty(lemma))
                                 {
@@ -6401,11 +6587,15 @@ namespace WordSend
                                 }
                                 if (!string.IsNullOrEmpty(strongs))
                                 {
-                                    if (sb.Length > 1)
-                                        sb.Append(" ");
-                                    sb.Append("strong=\"");
-                                    sb.Append(strongs);
-                                    sb.Append("\"");
+                                    strngs = PadStrongs(strongs);
+                                    if (!string.IsNullOrEmpty(strngs))
+                                    {
+                                        if (sb.Length > 1)
+                                            sb.Append(" ");
+                                        sb.Append("strong=\"");
+                                        sb.Append(strngs);
+                                        sb.Append("\"");
+                                    }
                                 }
                                 if (!string.IsNullOrEmpty(srcloc))
                                 {
@@ -6473,7 +6663,7 @@ namespace WordSend
                                         shortName = usfxFile.Value;
                                     }
                                 break;
-                            default:    // Includes "cs" and "gw"
+                            default:    // Includes "gw"
                                 if (tags.info(sfm).kind == "character")
                                 {
 
@@ -6600,6 +6790,7 @@ namespace WordSend
                             case "fq":
                             case "fqa":
                             case "fl":
+                            case "fw":
                                 noteStyleStackLevel = 0;
                                 needNoteTextMarker = true;
                                 break;
@@ -6625,6 +6816,20 @@ namespace WordSend
                                 inXref = false;
                                 noteStyleStackLevel = 0;
                                 break;
+                            case "cs":
+                                if (charStyleStackLevel > 0)
+                                {
+                                    charStyleStackLevel--;
+                                    sfm = csSfm[charStyleStackLevel];
+                                    usfmFile.WriteSFM(sfm + "*", "", "", false, charStyleStackLevel > 0);
+                                }
+                                else if (noteStyleStackLevel > 0)
+                                {
+                                    noteStyleStackLevel--;
+                                    sfm = noteSfm[noteStyleStackLevel];
+                                    usfmFile.WriteSFM(sfm + "*", "", "", false, noteStyleStackLevel > 0);
+                                }
+                                break;
                             default:
                                 if ((sfm == "gw") && (!string.IsNullOrEmpty(root)))
                                 {
@@ -6634,7 +6839,7 @@ namespace WordSend
                                 {
                                     if (noteStyleStackLevel > 0)
                                         noteStyleStackLevel--;
-                                    if ((sfm == "cs") || (sfm == "gw"))
+                                    if (sfm == "gw")
                                         sfm = noteSfm[noteStyleStackLevel];
                                     if (String.IsNullOrEmpty(sfm))
                                         Logit.WriteError("Unexpected empty sfm on character note style stack!");
@@ -6651,7 +6856,7 @@ namespace WordSend
                                 {
                                     if (charStyleStackLevel > 0)
                                         charStyleStackLevel--;
-                                    if ((sfm == "cs") || (sfm == "gw"))
+                                    if (sfm == "gw")
                                         sfm = csSfm[charStyleStackLevel];
                                     if (String.IsNullOrEmpty(sfm))
                                         Logit.WriteError("Unexpected empty sfm on character style stack!");

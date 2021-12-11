@@ -15,7 +15,7 @@ namespace WordSend
     // Converts USFX to Modified OSIS. The modification is subtle in that the results still validate
     // against the OSIS Schema, but do not strictly comply with some of the more problematical
     // assertions of the OSIS manual. The output is designed for import to Sword Project modules,
-    // and not recommended for archival use, because some of the non-Scripture features of the
+    // and not recommended for archival use, because some of the noncanonical features of the
     // work are stripped out due to incompatibilities between the formats.
     public class usfxToMosisConverter
     {
@@ -95,7 +95,6 @@ namespace WordSend
         protected bool inLineGroup = false;
         protected bool inPoetryLine = false;
         protected bool inNote = false;
-        protected bool eatPoetryLineEnd = false;
         protected bool inReference = false;
         protected int listLevel = 0;
         protected int itemLevel = 0;
@@ -107,10 +106,46 @@ namespace WordSend
         protected string lastElementWritten = String.Empty;
         protected int mosisNestLevel = 0;
         protected ArrayList elementContext = new ArrayList();
+        Dictionary<string, int> containers = new Dictionary<string, int>();
+
 
         public static ArrayList bookList = new ArrayList();
 
         public LanguageCodeInfo langCodes;
+
+        protected void OpenContainer(string divName, bool nestable)
+        {
+            int nesting;
+            if (!containers.TryGetValue(divName, out nesting))
+            {
+                containers[divName] = nesting = 0;
+            }
+            if (!nestable)
+            {
+                if (nesting > 0)
+                {
+                    WriteMosisEndElement();
+                    nesting--;
+                    containers[divName] = nesting;
+                }
+            }
+            StartMosisElement(divName);
+            nesting++;
+            containers[divName] = nesting;
+        }
+
+        protected void CloseContainer(string divName)
+        {
+            int nesting;
+            if (!containers.TryGetValue(divName, out nesting))
+                nesting = 0;
+            if (nesting > 0)
+            {
+                WriteMosisEndElement();
+                nesting--;
+                containers[divName] = nesting;
+            }
+        }
 
 
         protected void StartMosisElement(string elementName)
@@ -203,35 +238,36 @@ namespace WordSend
 
         protected void SetListLevel(int level, bool canonical = false)
         {
-            while (listLevel > level)
-            {   // Let the XmlTextWriter sort out the actual order of the list and item end elements.
-                listLevel--;
-                WriteMosisEndElement(); // list or item
-            }
-            while (itemLevel > level)
+            while ((listLevel > level) || (itemLevel > level))
             {
-                itemLevel--;
-                WriteMosisEndElement(); // item or list
+                if (itemLevel > level)
+                {
+                    CloseContainer("item");
+                    itemLevel--;
+                }
+                if (listLevel > level)
+                {
+                    CloseContainer("list");
+                    listLevel--;
+                }
             }
 
-            while (listLevel < level)
+            while ((listLevel < level) || (itemLevel < level))
             {
+                if (listLevel < level)
+                {
+                    OpenContainer("list", true);
+                    listLevel++;
+                }
                 if (itemLevel < listLevel)
                 {
+                    OpenContainer("item", true);
+                    if (!canonical)
+                    {
+                        mosis.WriteAttributeString("canonical", "false");
+                    }
                     itemLevel++;
-                    StartMosisElement("item");
                 }
-                listLevel++;
-                StartMosisElement("list");
-                if (!canonical)
-                {
-                    mosis.WriteAttributeString("canonical", "false");
-                }
-            }
-            if (itemLevel < level)
-            {
-                StartMosisElement("item");
-                itemLevel++;
             }
         }
 
@@ -321,11 +357,11 @@ namespace WordSend
             mosis = new XmlTextWriter(mosisFileName, Encoding.UTF8);
             mosis.Formatting = Formatting.Indented;
             mosis.WriteStartDocument();
-            StartMosisElement("osis");
+            OpenContainer("osis", false);
             mosis.WriteAttributeString("xmlns", osisNamespace);
             mosis.WriteAttributeString("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
             mosis.WriteAttributeString("xsi:schemaLocation", osisNamespace + " " + osisSchema);
-            StartMosisElement("osisText");
+            OpenContainer("osisText", false);
             mosis.WriteAttributeString("osisIDWork", osisWorkId);
             mosis.WriteAttributeString("osisRefWork", "bible");
             string osisLang = langCodes.ShortCode(languageCode);
@@ -334,7 +370,7 @@ namespace WordSend
             mosis.WriteAttributeString("xml:lang", osisLang);
             mosis.WriteAttributeString("canonical", "true");
 
-            StartMosisElement("header");
+            OpenContainer("header", false);
             StartMosisElement("revisionDesc");
             WriteMosisElementString("date", OsisDateTime(DateTime.UtcNow));
             WriteMosisElementString("p", @"generated");
@@ -381,14 +417,14 @@ namespace WordSend
             WriteMosisElementString("refSystem", "Bible");
             //mosis.WriteAttributeString("path", osisWorkId);
             WriteMosisEndElement();    //work
-            WriteMosisEndElement();    // header
+            CloseContainer("header");
         }
 
         protected void CloseMosisFile()
         {
             EndTestament();
-            WriteMosisEndElement();    // osisText
-            WriteMosisEndElement();    // osis
+            CloseContainer("osisText");    // osisText
+            CloseContainer("osis");
             mosis.WriteEndDocument();
             mosis.Close();
             mosis = null;
@@ -401,7 +437,7 @@ namespace WordSend
         {
             if (currentTestament != String.Empty)
             {
-                WriteMosisEndElement();    // div type="bookGroup"
+                CloseContainer("div");  // div type="bookGroup"
                 currentTestament = String.Empty;
             }
         }
@@ -411,7 +447,7 @@ namespace WordSend
             if (currentTestament != testament)
             {
                 EndTestament();
-                StartMosisElement("div");
+                OpenContainer("div", true);
                 mosis.WriteAttributeString("type", "bookGroup");
                 switch (testament)
                 {
@@ -450,7 +486,7 @@ namespace WordSend
         {
             if (inLineGroup)
             {
-                WriteMosisEndElement();    // lg
+                CloseContainer("lg");
                 inLineGroup = false;
             }
         }
@@ -458,7 +494,7 @@ namespace WordSend
         protected void StartLineGroup()
         {
             EndLineGroup();
-            StartMosisElement("lg");
+            OpenContainer("lg", false);
             inLineGroup = true;
         }
 
@@ -524,7 +560,7 @@ namespace WordSend
             if (!usfx.IsEmptyElement)
             {
                 EndTitledPsalm();   // Here for the use of \d in acrostic headings
-                StartElementWithAttribute("div");
+                OpenContainer("div", true);
                 inTitledPsalm = true;
             }
         }
@@ -533,7 +569,7 @@ namespace WordSend
         {
             if (inTitledPsalm)
             {
-                WriteMosisEndElement();
+                CloseContainer("div");
                 inTitledPsalm = false;
             }
         }
@@ -546,7 +582,8 @@ namespace WordSend
             if (!usfx.IsEmptyElement)
             {
                 EndMajorSection();
-                StartElementWithAttribute("div", "type", "majorSection");
+                OpenContainer("div", true);
+                mosis.WriteAttributeString("type", "majorSection");
                 inMajorSection = true;
             }
         }
@@ -561,7 +598,7 @@ namespace WordSend
             EndSection();
             if (inMajorSection)
             {
-                WriteMosisEndElement();
+                CloseContainer("div");  // type="majorSection"
                 inMajorSection = false;
             }
         }
@@ -571,7 +608,8 @@ namespace WordSend
             if (!usfx.IsEmptyElement)
             {
                 EndSection();
-                StartElementWithAttribute("div", "type", "section");
+                OpenContainer("div", true);
+                mosis.WriteAttributeString("type", "section");
                 inSection = true;
             }
         }
@@ -584,7 +622,7 @@ namespace WordSend
             EndSubSection();
             if (inSection)
             {
-                WriteMosisEndElement();
+                CloseContainer("div");
                 inSection = false;
             }
         }
@@ -597,7 +635,8 @@ namespace WordSend
             if (!usfx.IsEmptyElement)
             {
                 EndSubSection();
-                StartElementWithAttribute("div", "type", "subSection");
+                OpenContainer("div", true);
+                mosis.WriteAttributeString("type", "section");
                 inSubSection = true;
             }
         }
@@ -609,7 +648,7 @@ namespace WordSend
         {
             if (inSubSection)
             {
-                WriteMosisEndElement();
+                CloseContainer("div");
                 inSubSection = false;
             }
         }
@@ -619,13 +658,18 @@ namespace WordSend
         /// </summary>
         protected void StartIntroduction()
         {
-            EndMajorSection();
-            if (!usfx.IsEmptyElement)
+            if (!inIntroduction)
             {
-                if (!inIntroduction)
+                EndMajorSection();
+                if (!usfx.IsEmptyElement)
                 {
-                    StartElementWithAttribute("div", "type", "introduction", "canonical", "false");
-                    inIntroduction = true;
+                    if (!inIntroduction)
+                    {
+                        OpenContainer("div", true);
+                        mosis.WriteAttributeString("type", "introduction");
+                        mosis.WriteAttributeString("canonical", "false");
+                        inIntroduction = true;
+                    }
                 }
             }
         }
@@ -637,7 +681,8 @@ namespace WordSend
         {
             if (inIntroduction)
             {
-                WriteMosisEndElement(); // div type="introduction" canonical="false"
+                EndLineGroup();
+                CloseContainer("div"); // type="introduction" canonical="false"
                 inIntroduction = false;
             }
         }
@@ -900,7 +945,13 @@ namespace WordSend
             {
                 Utils.EnsureDirectory(modsd);
                 StreamWriter config = new StreamWriter(swordConfName);
+                config.WriteLine("## Sword module configuration file");
+                config.WriteLine();
+                config.WriteLine("## Required elements");
+                config.WriteLine("# Module unique identifier");
                 config.WriteLine("[{0}]", swordName);
+                config.WriteLine("");
+                config.WriteLine("# Short well-known abbreviation for the module");
                 if (String.IsNullOrEmpty(projectOptions.translationTraditionalAbbreviation))
                 {
                     config.WriteLine("Abbreviation={0}", translationId.ToUpperInvariant().Replace("-", "").Replace("_", ""));
@@ -909,23 +960,49 @@ namespace WordSend
                 {
                     config.WriteLine("Abbreviation={0}", projectOptions.translationTraditionalAbbreviation);
                 }
+                config.WriteLine();
+                config.WriteLine("# Short description of the module");
                 if (!String.IsNullOrEmpty(projectOptions.shortTitle))
                     config.WriteLine("Description={0}", projectOptions.shortTitle);
                 else if (!String.IsNullOrEmpty(projectOptions.EnglishDescription))
                     config.WriteLine("Description={0}", projectOptions.EnglishDescription);
                 else if (!String.IsNullOrEmpty(projectOptions.vernacularTitle))
                     config.WriteLine("Description={0}", projectOptions.vernacularTitle);
+                config.WriteLine();
+                config.WriteLine("# Path to the module data files relative to the Sword module library root directory");
                 config.WriteLine("DataPath=./modules/texts/ztext/{0}/", swordName);
+                config.WriteLine();
+                config.WriteLine("# Driver used for reading the module");
                 config.WriteLine("ModDrv=zText");
+                config.WriteLine();
+                config.WriteLine("## Required elements with defaults");
+                config.WriteLine("# Markup used in the module");
                 config.WriteLine("SourceType=OSIS");
+                config.WriteLine();
+                config.WriteLine("# Character encoding used in the module and this conf file");
                 config.WriteLine("Encoding=UTF-8");
+                config.WriteLine();
+                config.WriteLine("# Compression algorithm");
                 config.WriteLine("CompressType=ZIP");
+                config.WriteLine();
+                config.WriteLine("# How much of the work is compressed into a block");
                 config.WriteLine("BlockType=BOOK");
+                config.WriteLine();
+                config.WriteLine("# Closest standard versification to what is used in this work");
                 config.WriteLine("Versification={0}", projectOptions.swordVersification);
+                config.WriteLine();
+                config.WriteLine("## Elements required for proper rendering");
+                config.WriteLine("# Never use <q> to supply quotation punctuation. All required and allowed punctuation is in the text already.");
                 config.WriteLine("OSISqToTick=false");
                 if (projectOptions.textDir == "rtl")
+                {
+                    config.WriteLine("# Primary text reading direction is right to left.");
                     config.WriteLine("Direction=RtoL");
+                }
+                config.WriteLine();
+                config.WriteLine("# Recommended font");
                 config.WriteLine("Font={0}", projectOptions.fontFamily);
+                config.WriteLine("# Filters");
                 if (OSISLemma)
                     config.WriteLine("GlobalOptionFilter=OSISLemma");
                 if (OSISStrongs)
@@ -948,7 +1025,11 @@ namespace WordSend
                     config.WriteLine("GlobalOptionFilter=UTF8Cantillation");
                     config.WriteLine("GlobalOptionFilter=UTF8HebrewPoints");
                 }
+                config.WriteLine();
+                config.WriteLine("# Longer description of the text");
                 config.WriteLine("About={0}", HTMLtoRTF(projectOptions.promoHtml + "<br/>" + infoPage));
+                config.WriteLine();
+                config.WriteLine("# Sword module version number and date");
                 if ((projectOptions.SwordVersionDate <= projectOptions.SourceFileDate) || (projectOptions.SwordVersionDate <= projectOptions.contentUpdateDate))
                 {
                     projectOptions.SwordMajorVersion++;
@@ -978,12 +1059,26 @@ namespace WordSend
                         DateTime.Now.Date.ToString("yyyy-MM-dd"),
                         projectOptions.SourceFileDate.Date.ToString("yyyy-MM-dd"));
 
+                config.WriteLine();
+                config.WriteLine("# Minimum version of the Sword libary needed to load this module");
                 config.WriteLine("MinimumVersion=1.7.0");
+                config.WriteLine();
+                config.WriteLine("# This is a Bible translation.");
                 config.WriteLine("Category=Biblical Texts");
+                config.WriteLine();
+                config.WriteLine("# Library of Congress subject heading");
                 config.WriteLine("LCSH=Bible. {0}.", projectOptions.languageNameInEnglish);
+                config.WriteLine();
+                config.WriteLine("# Language code (2 letters if available, otherwise 3 letters)");
                 config.WriteLine("Lang={0}", shortLang);
+                config.WriteLine();
+                config.WriteLine("# Number of bytes this module takes up on disk");
                 config.WriteLine("InstallSize={0}", installSize.ToString());
+                config.WriteLine();
+                config.WriteLine("# OSIS isn't currently being developed or changed, so this is a constant version number.");
                 config.WriteLine("OSISVersion=2.1.1");
+                config.WriteLine();
+                config.WriteLine("# Copyright and licensing information");
                 if (projectOptions.publicDomain)
                 {
                     config.WriteLine("Copyright=PUBLIC DOMAIN");
@@ -1017,7 +1112,7 @@ namespace WordSend
                     {
                         config.WriteLine("DistributionLicense=Copyrighted; Free non-commercial distribution");
                     }
-                    else if (projectOptions.downloadsAllowed && "eBible.org".Contains(projectOptions.textSourceUrl))
+                    else if (projectOptions.downloadsAllowed)
                     {
                         config.WriteLine("DistributionLicense=Copyrighted; Permission to distribute granted to eBible.org");    // TODO: generalize permittee
                     }
@@ -1028,6 +1123,8 @@ namespace WordSend
                 }
                 if (!String.IsNullOrEmpty(projectOptions.ObsoleteSwordName))
                 {
+                    config.WriteLine();
+                    config.WriteLine("# Old module names made obsolete by this module");
                     foreach (string oldName in oldNames)
                     {
                         if (oldName.ToUpperInvariant() != swordName.ToUpperInvariant())
@@ -1070,7 +1167,7 @@ namespace WordSend
         /// </summary>
         /// <param name="usfxFileName">Full path and file name of USFX file</param>
         /// <param name="mosisFileName">Full path and file name of MOSIS file</param>
-        /// <returns></returns>
+        /// <returns>true iff successful</returns>
         public bool ConvertUsfxToMosis(string usfxFileName, string mosisFileName)
         {
             OsisFileName = mosisFileName;
@@ -1082,11 +1179,17 @@ namespace WordSend
             bool inToc2 = false;
             bool titleWritten = false;
             bool inStrongs = false;
+            bool inPsalmTitle = false;
+            bool inCell = false;
+            bool inSC = false;
+            bool inHi = false;
+            bool inTl = false;
             OSISRedLetterWords = OSISFootnotes = OSISHeadings = OSISMorph = OSISStrongs = OSISScripref = false;
             SwordVs = new SwordVersifications();
 
             string toc1 = String.Empty;
             string toc2 = String.Empty;
+            string lastSfm = String.Empty;
             inIntroduction = inMajorSection = inSection = inSubSection = inTitledPsalm = false;
             int i;
             try
@@ -1098,7 +1201,6 @@ namespace WordSend
                 //langCodes = new LanguageCodeInfo();
                 altChapterID = chaptereID = epeID = vpeID = qeID = verseeID = currentTestament = osisVersesId = osisVerseId = String.Empty;
                 inPoetryLine = false;
-                eatPoetryLineEnd = false;
 
                 usfx = new XmlTextReader(usfxFileName);
                 usfx.WhitespaceHandling = WhitespaceHandling.All;
@@ -1136,6 +1238,20 @@ namespace WordSend
                         }
                         else
                         {
+                            if (usfx.Name != "v")
+                                if (inPsalmTitle)
+                                {
+                                    inPsalmTitle = false;
+                                    EndLineGroup();
+                                    SetListLevel(0, true);
+                                    if (!usfx.IsEmptyElement)
+                                    {
+                                        StartTitledPsalm();
+                                        StartElementWithAttribute("title", "type", "psalm", "canonical", "true");
+                                    }
+                                    mosis.WriteString(usfx.Value);
+                                }
+
                             switch (usfx.Name)
                             {
                                 case "languageCode":
@@ -1198,7 +1314,7 @@ namespace WordSend
                                     }
                                     break;
                                 case "add":
-                                    if (!inNote)
+                                    if (!(inNote || inSC))
                                         StartElementWithAttribute("transChange", "type", "added");
                                     break;
                                 case "bd":
@@ -1213,10 +1329,12 @@ namespace WordSend
                                     if (!inStrongs)
                                     {
                                         StartElementWithAttribute("hi", "type", "italic");
+                                        inHi = true;
                                     }
                                     break;
                                 case "em":
                                     StartElementWithAttribute("hi", "type", "emphasis");
+                                    inHi = true;
                                     break;
                                 case "optionalLineBreak":
                                     // Discard. No true standard equivalent, and not very meaningful in electronic publishing.
@@ -1229,6 +1347,7 @@ namespace WordSend
                                     break;
                                 case "sc":
                                     StartElementWithAttribute("hi", "type", "small-caps");
+                                    inSC = true;
                                     break;
                                 case "sig":
                                     StartElementWithAttribute("signed");
@@ -1238,6 +1357,7 @@ namespace WordSend
                                     break;
                                 case "tl":
                                     StartElementWithAttribute("foreign");
+                                    inTl = true;
                                     break;
                                 case "b":
                                     EndLineGroup();
@@ -1324,9 +1444,12 @@ namespace WordSend
                                     // Not supported.
                                     break;
                                 case "fr":
-                                    StartElementWithAttribute("reference", "type", "source", "osisRef", osisVerseId);
+                                    OpenContainer("reference", false);
+                                    mosis.WriteAttributeString("type", "source");
+                                    mosis.WriteAttributeString("osisRef", osisVerseId);
                                     break;
                                 case "fk":
+                                case "fw":
                                     StartElementWithAttribute("catchWord");
                                     break;
                                 case "fv":
@@ -1357,6 +1480,7 @@ namespace WordSend
                                         SkipElement();
                                     }
                                     break;
+                                case "usfm":    // Irrelevant to OSIS
                                 case "rem": // Comment; not part of the actual text
                                     SkipElement();
                                     break;
@@ -1480,6 +1604,25 @@ namespace WordSend
                                     */
                                     break;
                                 case "v":
+                                    if (inPsalmTitle)
+                                    {
+                                        inPsalmTitle = false;
+                                        SetListLevel(0, true);
+                                        EndIntroduction();
+                                        if ((verseNumber == 0) && (chapterNumber == 1) && !inMajorSection && !inSection && !inSubSection && !inTitledPsalm)
+                                        {
+                                            StartMajorSection();
+                                        }
+                                        if (level == String.Empty)
+                                            level = "1";
+                                        if ((level == "1") || !inLineGroup)
+                                        {
+                                            StartLineGroup();
+                                        }
+                                        StartMosisElement("l");
+                                        mosis.WriteAttributeString("level", "1");
+                                        inPoetryLine = true;
+                                    }
                                     EndIntroduction();
                                     EndCurrentVerse();
                                     currentVersePublished = fileHelper.LocalizeDigits(id);
@@ -1594,16 +1737,14 @@ namespace WordSend
                                     }
                                     break;
                                 case "d":
-                                    EndLineGroup();
-                                    SetListLevel(0, true);
-                                    if (!usfx.IsEmptyElement)
-                                    {
-                                        StartTitledPsalm();
-                                        StartElementWithAttribute("title", "type", "psalm", "canonical", "true");
-                                    }
+                                    // Compensate for Sword defect: Psalm descriptive title as verse one
+                                    // loses canonical data if the descriptive title ends before verse one ends.
+                                    // Therefore, in this case, we change paragraph type to \q1 (<l>).
+                                    inPsalmTitle = true;
                                     break;
                                 case "nd":
-                                    StartElementWithAttribute("seg");
+                                    if (!inCell)
+                                        StartElementWithAttribute("seg");
                                     StartElementWithAttribute("divineName");
                                     break;
                                 case "no":
@@ -1628,65 +1769,102 @@ namespace WordSend
                                     OSISHeadings = true;
                                     break;
                                 case "q":
-                                    SetListLevel(0, true);
                                     EndIntroduction();
+                                    SetListLevel(0, true);
                                     if ((verseNumber == 0) && (chapterNumber == 1) && !inMajorSection && !inSection && !inSubSection && !inTitledPsalm)
                                     {
                                         StartMajorSection();
                                     }
                                     if (level == String.Empty)
                                         level = "1";
-                                    if ((level == "1") || !inLineGroup)
+                                    if (!inLineGroup)
                                     {
                                         StartLineGroup();
                                     }
-                                    StartElementWithAttribute("l", "level", level);
+                                    OpenContainer("l", false);
+                                    mosis.WriteAttributeString("level", level);
+                                    if (usfx.IsEmptyElement)
+                                    {
+                                        CloseContainer("l");
+                                        inPoetryLine = false;
+                                    }
+                                    else
+                                    {
+                                        inPoetryLine = true;
+                                    }
+                                    break;
+                                case "qr":
+                                    EndIntroduction();
+                                    SetListLevel(0, true);
+                                    if ((verseNumber == 0) && (chapterNumber == 1) && !inMajorSection && !inSection && !inSubSection && !inTitledPsalm)
+                                    {
+                                        StartMajorSection();
+                                    }
+                                    level = "4";
+                                    if (!inLineGroup)
+                                    {
+                                        StartLineGroup();
+                                    }
+                                    OpenContainer("l", false);
+                                    mosis.WriteAttributeString("level", level);
                                     if (!usfx.IsEmptyElement)
                                         inPoetryLine = true;
                                     break;
                                 case "qs":
+                                    EndIntroduction();
+                                    SetListLevel(0, true);
+                                    if ((verseNumber == 0) && (chapterNumber == 1) && !inMajorSection && !inSection && !inSubSection && !inTitledPsalm)
+                                    {
+                                        StartMajorSection();
+                                    }
+                                    if (level == String.Empty)
+                                        level = "1";
                                     if (inLineGroup)
                                     {
-                                        if (inPoetryLine)
-                                        {
-                                            eatPoetryLineEnd = true;
-                                            WriteMosisEndElement();
-                                            //inPoetryLine = false;
-                                        }
-                                        StartElementWithAttribute("l", "type", "selah");
-                                        inPoetryLine = true;
+                                        OpenContainer("l", false);
+                                        mosis.WriteAttributeString("type", "selah");
+                                        if (!usfx.IsEmptyElement)
+                                            inPoetryLine = true;
                                     }
                                     break;
                                 case "ref":
                                     string tgt = GetNamedAttribute("tgt");
-                                    if (tgt.Length > 6)
+                                    if (!usfx.IsEmptyElement)
                                     {
-                                        string[] bcv = tgt.Split(new Char[] { '.' });
-                                        if (bcv.Length >= 3)
+                                        if ((tgt.Length > 6) && (!tgt.Contains("-")))
                                         {
-                                            StartElementWithAttribute("reference", "osisRef", bookInfo.OsisID(bcv[0]) + "." + bcv[1] + "." + bcv[2]);
-                                            inReference = true;
+                                            string[] bcv = tgt.Split(new Char[] { '.' });
+                                            if (bcv.Length >= 3)
+                                            {
+                                                OpenContainer("reference", false);
+                                                mosis.WriteAttributeString("osisRef", bookInfo.OsisID(bcv[0]) + "." + bcv[1] + "." + bcv[2]);
+                                                inReference = true;
+                                            }
                                         }
                                     }
                                     break;
                                 case "table":
                                     SetListLevel(0, true);
-                                    StartMosisElement("table");
+                                    OpenContainer("table", false);
                                     break;
                                 case "tr":
-                                    StartMosisElement("row");
+                                    OpenContainer("row", false);
                                     break;
                                 case "th":
                                     StartElementWithAttribute("cell", "align", "left", "type", "x-header");
+                                    inCell = true;
                                     break;
                                 case "thr":
                                     StartElementWithAttribute("cell", "align", "right", "type", "x-header");
+                                    inCell = true;
                                     break;
                                 case "tc":
                                     StartElementWithAttribute("cell", "align", "left");
+                                    inCell = true;
                                     break;
                                 case "tcr":
                                     StartElementWithAttribute("cell", "align", "right");
+                                    inCell = true;
                                     break;
                                 case "periph":
                                     SkipElement();
@@ -1696,6 +1874,7 @@ namespace WordSend
                                     Logit.WriteLine("Warning: milestone encountered at " + osisVerseId);
                                     break;
                                 case "p":
+                                    lastSfm = sfm;
                                     if (sfm != "iq")
                                     {
                                         EndLineGroup();
@@ -1746,6 +1925,7 @@ namespace WordSend
                                                 StartElementWithAttribute("p");
                                                 break;
                                             case "m":
+                                            case "pi":
                                             case "":
                                                 EndIntroduction();
                                                 if ((verseNumber == 0) && (chapterNumber == 1) && !inMajorSection && !inSection && !inSubSection && !inTitledPsalm)
@@ -1797,7 +1977,9 @@ namespace WordSend
                                                 {
                                                     StartLineGroup();
                                                 }
-                                                StartElementWithAttribute("l", "level", level, "canonical", "false");
+                                                OpenContainer("l", false);
+                                                mosis.WriteAttributeString("level", level);
+                                                mosis.WriteAttributeString("canonical", "false");
                                                 if (!usfx.IsEmptyElement)
                                                     inPoetryLine = true;
                                                 break;
@@ -1823,7 +2005,6 @@ namespace WordSend
                                                 indentLevel = int.Parse(level.Trim());
                                                 SetListLevel(indentLevel, false);
                                                 break;
-                                            case "pi":
                                             case "li":
                                                 EndIntroduction();
                                                 if (level == String.Empty)
@@ -1869,7 +2050,10 @@ namespace WordSend
                                     }
                                     else
                                     {
-                                        StartElementWithAttribute("note", "type", "crossReference", "osisRef", osisVerseId, "osisID", NoteId());
+                                        OpenContainer("note", false);
+                                        mosis.WriteAttributeString("type", "crossReference");
+                                        mosis.WriteAttributeString("osisRef", osisVerseId);
+                                        mosis.WriteAttributeString("osisID", NoteId());
                                         mosis.WriteAttributeString("placement", "inline");
                                         inNote = true;
                                     }
@@ -1881,10 +2065,13 @@ namespace WordSend
                                 case "xt":  // Do nothing. This tag is meaningless in OSIS.
                                     break;
                                 case "wj":
-                                    StartMosisElement("q");
-                                    mosis.WriteAttributeString("who", "Jesus");
-                                    mosis.WriteAttributeString("marker", String.Empty);
-                                    OSISRedLetterWords = true;
+                                    if ((!inHi) && (!inTl))
+                                    {
+                                        StartMosisElement("q");
+                                        mosis.WriteAttributeString("who", "Jesus");
+                                        mosis.WriteAttributeString("marker", String.Empty);
+                                        OSISRedLetterWords = true;
+                                    }
                                     break;
                                 case "ft":
                                     // Ignore. It does nothing useful, but is an artifact of USFM exclusive character styles.
@@ -1899,6 +2086,7 @@ namespace WordSend
                                 case "xq":  // Not useful for Sword modules.
                                     // StartElementWithAttribute("q", "marker", "");
                                     break;
+                                case "sup":
                                 case "ord":
                                     StartElementWithAttribute("hi", "type", "super");
                                     break;
@@ -1925,6 +2113,7 @@ namespace WordSend
                             else if (inToc1 && usfx.Name == "it")
                             {
                                 toc1 += "</hi></seg>";
+                                inHi = false;
                             }
                             else
                             {
@@ -1946,7 +2135,10 @@ namespace WordSend
                                     }
                                     break;
                                 case "wj":
-                                    WriteMosisEndElement();    // q
+                                    if ((!inHi) && (!inTl))
+                                    {
+                                        WriteMosisEndElement();    // q
+                                    }
                                     break;
                                 case "book":
                                     EndLineGroup();
@@ -1954,7 +2146,10 @@ namespace WordSend
                                     EndCurrentChapter();
                                     EndIntroduction();
                                     EndMajorSection();
-                                    WriteMosisEndElement();  // div type="book"
+                                    if (mosisNestLevel > 3)
+                                        WriteMosisEndElement();  // div type="book"
+                                    else
+                                        Logit.WriteWarning("Warning writing MOSIS: nest level is " + mosisNestLevel.ToString() + ", but expected level is 4 at " + osisVerseId);
                                     CheckElementLevel(3, "closed book");
                                     break;
                                 case "bdit":
@@ -1962,33 +2157,31 @@ namespace WordSend
                                     WriteMosisEndElement();    // hi bold
                                     break;
                                 case "p":
-                                    if (itemLevel > 0)
-                                        itemLevel--;
                                     CheckMinimumLevel(5, "Ending " + usfx.Name + " " + osisVerseId);
                                     inNote = false;
-                                    if (eatPoetryLineEnd)
+                                    if (lastSfm == "iq")
                                     {
-                                        eatPoetryLineEnd = false;
+                                        CloseContainer("l");
+                                    }
+                                    else
+                                    if ((lastSfm == "li") || (lastSfm == "ili"))
+                                    {
+                                        SetListLevel(0);
                                     }
                                     else
                                     {
                                         WriteMosisEndElement();
                                     }
                                     break;
+                                case "qr":
                                 case "q":
-                                    if (eatPoetryLineEnd)
-                                    {
-                                        eatPoetryLineEnd = false;
-                                    }
-                                    else
-                                    {
-                                        WriteMosisEndElement();
-                                    }
+                                    CloseContainer("l");
+                                    inPoetryLine = false;
                                     break;
                                 case "ref":
                                     if (inReference)
                                     {
-                                        WriteMosisEndElement(); // reference
+                                        CloseContainer("reference");
                                         inReference = false;
                                     }
                                     break;
@@ -2002,61 +2195,88 @@ namespace WordSend
                                     }
                                     break;
                                 case "add":
-                                    if (!inNote)
+                                    if (!(inNote || inSC))
                                         WriteMosisEndElement();
                                     break;
                                 case "qs":
                                     if (inLineGroup)
                                     {
-                                        WriteMosisEndElement();
+                                        CloseContainer("l");
                                         inPoetryLine = false;
                                     }
 
+                                    break;
+                                case "table":
+                                    CloseContainer("table");
+                                    break;
+                                case "tr":
+                                    CloseContainer("row");
+                                    break;
+                                case "rq":
+                                    CloseContainer("note");
+                                    break;
+                                case "fr":
+                                    CloseContainer("reference");
+                                    break;
+                                case "iq":
+                                    CloseContainer("l");
+                                    break;
+                                case "em":
+                                    WriteMosisEndElement();    // note, hi, reference, title, l, transChange, etc.
+                                    inHi = false;
+                                    break;
+                                case "tl":
+                                    WriteMosisEndElement();    // note, hi, reference, title, l, transChange, etc.
+                                    inTl = false;
                                     break;
                                 case "bd":
                                 case "bk":
                                 case "cl":
                                 case "d":
                                 case "dc":
-                                case "em":
                                 case "fk":
                                 case "fp":
                                 case "fq":
                                 case "fqa":
-                                case "fr":
                                 case "fv":
+                                case "fw":
                                 case "k":
                                 case "no":
                                 case "pn":
                                 case "qac":
                                 case "qt":
                                 case "r":
-                                case "rq":
                                 case "s":
-                                case "sc":
                                 case "sig":
                                 case "sls":
-                                case "table":
+                                case "xo":
+                                case "sup":
+                                case "ord":
+                                    // case "xq": Not useful for Sword modules.
+                                    WriteMosisEndElement();    // note, hi, reference, title, l, transChange, etc.
+                                    break;
                                 case "tc":
                                 case "tcr":
                                 case "th":
                                 case "thr":
-                                case "tl":
-                                case "tr":
-                                case "xo":
-                                case "ord":
-                                    // case "xq": Not useful for Sword modules.
-                                    WriteMosisEndElement();    // note, hi, reference, title, l, transChange, etc.
+                                    WriteMosisEndElement();
+                                    inCell = false;
+                                    break;
+                                case "sc":
+                                    inSC = false;
+                                    WriteMosisEndElement();
                                     break;
                                 case "it":
                                     if (!inStrongs)
                                     {
                                         WriteMosisEndElement();
+                                        inHi = false;
                                     }
                                     break;
                                 case "nd":
                                     WriteMosisEndElement(); // divineName
-                                    WriteMosisEndElement(); // seg
+                                    if (!inCell)
+                                        WriteMosisEndElement(); // seg
                                     break;
                                 case "xk":
                                 case "fl":
@@ -2064,6 +2284,8 @@ namespace WordSend
                                 case "zcb":
                                 case "zcg":
                                 case "zcy":
+                                case "xt":
+                                case "gw":
                                     // not supported.
                                     break;
                                     /* Can't get to this case (caught in "if" above)
@@ -2079,6 +2301,18 @@ namespace WordSend
                             toc1 = toc1 + usfx.Value;
                         else if (inToc2)
                             toc2 = toc2 + usfx.Value;
+                        else if (inPsalmTitle && (usfx.NodeType == XmlNodeType.Text))
+                        {
+                            inPsalmTitle = false;
+                            EndLineGroup();
+                            SetListLevel(0, true);
+                            if (!usfx.IsEmptyElement)
+                            {
+                                StartTitledPsalm();
+                                StartElementWithAttribute("title", "type", "psalm", "canonical", "true");
+                            }
+                            mosis.WriteString(usfx.Value);
+                        }
                         else
                             mosis.WriteString(usfx.Value);
                     }

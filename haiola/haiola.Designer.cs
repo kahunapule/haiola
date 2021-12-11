@@ -37,9 +37,19 @@
             this.WorkOnAllButton = new System.Windows.Forms.Button();
             this.btnSetRootDirectory = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.startTabPage = new System.Windows.Forms.TabPage();
+            this.createNewProjectButton = new System.Windows.Forms.Button();
+            this.label23 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
+            this.dataDirLabel = new System.Windows.Forms.Label();
+            this.helpButton = new System.Windows.Forms.Button();
+            this.sourceTabPage = new System.Windows.Forms.TabPage();
+            this.WBTUSXimportButton = new System.Windows.Forms.Button();
+            this.customSourceFolderTextBox = new System.Windows.Forms.TextBox();
+            this.findSourceFolderButton = new System.Windows.Forms.Button();
+            this.sourceInstructionsLabel = new System.Windows.Forms.Label();
+            this.translationIDLabel = new System.Windows.Forms.Label();
             this.idTabPage = new System.Windows.Forms.TabPage();
-            this.label78 = new System.Windows.Forms.Label();
-            this.paratext8ComboBox = new System.Windows.Forms.ComboBox();
             this.rodCodeTextBox = new System.Windows.Forms.TextBox();
             this.label60 = new System.Windows.Forms.Label();
             this.label76 = new System.Windows.Forms.Label();
@@ -61,8 +71,6 @@
             this.fontComboBox = new System.Windows.Forms.ComboBox();
             this.traditionalAbbreviationTextBox = new System.Windows.Forms.TextBox();
             this.label53 = new System.Windows.Forms.Label();
-            this.paratextcomboBox = new System.Windows.Forms.ComboBox();
-            this.label52 = new System.Windows.Forms.Label();
             this.lwcDescriptionTextBox = new System.Windows.Forms.TextBox();
             this.label20 = new System.Windows.Forms.Label();
             this.homeDomainTextBox = new System.Windows.Forms.TextBox();
@@ -77,13 +85,13 @@
             this.engLangNameTextBox = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.dialectTextBox = new System.Windows.Forms.TextBox();
-            this.translationIdTextBox = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.languageNameTextBox = new System.Windows.Forms.TextBox();
             this.ethnologueCodeTextBox = new System.Windows.Forms.TextBox();
             this.label25 = new System.Windows.Forms.Label();
             this.label24 = new System.Windows.Forms.Label();
             this.copyrightTabPage = new System.Windows.Forms.TabPage();
+            this.label26 = new System.Windows.Forms.Label();
+            this.licenseExpirationDateTextBox = new System.Windows.Forms.TextBox();
             this.anonymousCheckBox = new System.Windows.Forms.CheckBox();
             this.privateCheckBox = new System.Windows.Forms.CheckBox();
             this.downloadsAllowedCheckBox = new System.Windows.Forms.CheckBox();
@@ -104,6 +112,8 @@
             this.coprAbbrevTextBox = new System.Windows.Forms.TextBox();
             this.stripExtrasCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.wbtVerbatimRadioButton = new System.Windows.Forms.RadioButton();
+            this.ccbyncRadioButton = new System.Windows.Forms.RadioButton();
             this.ccbyRadioButton = new System.Windows.Forms.RadioButton();
             this.CCBySaRadioButton = new System.Windows.Forms.RadioButton();
             this.CCByNdRadioButton = new System.Windows.Forms.RadioButton();
@@ -191,49 +201,6 @@
             this.numberSystemComboBox = new System.Windows.Forms.ComboBox();
             this.versificationComboBox = new System.Windows.Forms.ComboBox();
             this.label17 = new System.Windows.Forms.Label();
-            this.concordanceTabPage = new System.Windows.Forms.TabPage();
-            this.framedConcordanceRadioButton = new System.Windows.Forms.RadioButton();
-            this.concordanceRadioButton = new System.Windows.Forms.RadioButton();
-            this.legacyHtmlRadioButton = new System.Windows.Forms.RadioButton();
-            this.mobileHtmlRadioButton = new System.Windows.Forms.RadioButton();
-            this.label31 = new System.Windows.Forms.Label();
-            this.tbxPhrases = new System.Windows.Forms.TextBox();
-            this.label30 = new System.Windows.Forms.Label();
-            this.tbxExcludeWords = new System.Windows.Forms.TextBox();
-            this.label22 = new System.Windows.Forms.Label();
-            this.tbxMaxFreq = new System.Windows.Forms.TextBox();
-            this.label23 = new System.Windows.Forms.Label();
-            this.tbxMinContext = new System.Windows.Forms.TextBox();
-            this.label28 = new System.Windows.Forms.Label();
-            this.tbxMaxContext = new System.Windows.Forms.TextBox();
-            this.label29 = new System.Windows.Forms.Label();
-            this.tbxWordformingChars = new System.Windows.Forms.TextBox();
-            this.chkMergeCase = new System.Windows.Forms.CheckBox();
-            this.booksPage = new System.Windows.Forms.TabPage();
-            this.label32 = new System.Windows.Forms.Label();
-            this.listBooks = new System.Windows.Forms.ListView();
-            this.colFilesStdAbbr = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.colFilesVernAbbr = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.colFilesXrefs = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.framesPage = new System.Windows.Forms.TabPage();
-            this.psalmLabelTextBox = new System.Windows.Forms.TextBox();
-            this.chapterLabelTextBox = new System.Windows.Forms.TextBox();
-            this.label71 = new System.Windows.Forms.Label();
-            this.label26 = new System.Windows.Forms.Label();
-            this.showNavigationTextBox = new System.Windows.Forms.TextBox();
-            this.label39 = new System.Windows.Forms.Label();
-            this.hideNavigationPanesTextBox = new System.Windows.Forms.TextBox();
-            this.label38 = new System.Windows.Forms.Label();
-            this.nextChapterLinkTextBox = new System.Windows.Forms.TextBox();
-            this.label33 = new System.Windows.Forms.Label();
-            this.previousChapterLinkTextBox = new System.Windows.Forms.TextBox();
-            this.label34 = new System.Windows.Forms.Label();
-            this.introductionLinkTextBox = new System.Windows.Forms.TextBox();
-            this.label35 = new System.Windows.Forms.Label();
-            this.booksAndChaptersLinkTextBox = new System.Windows.Forms.TextBox();
-            this.label36 = new System.Windows.Forms.Label();
-            this.concordanceLinkTextBox = new System.Windows.Forms.TextBox();
-            this.label37 = new System.Windows.Forms.Label();
             this.layoutTabPage = new System.Windows.Forms.TabPage();
             this.pageLengthTextBox = new System.Windows.Forms.TextBox();
             this.label74 = new System.Windows.Forms.Label();
@@ -255,6 +222,7 @@
             this.prepublicationChecksCheckBox = new System.Windows.Forms.CheckBox();
             this.statisticsTextBox = new System.Windows.Forms.TextBox();
             this.outputsTabPage = new System.Windows.Forms.TabPage();
+            this.makeSileCheckBox = new System.Windows.Forms.CheckBox();
             this.makePDFCheckBox = new System.Windows.Forms.CheckBox();
             this.makeBrowserBibleCheckBox = new System.Windows.Forms.CheckBox();
             this.label77 = new System.Windows.Forms.Label();
@@ -262,18 +230,17 @@
             this.makeSwordCheckBox = new System.Windows.Forms.CheckBox();
             this.makeEPubCheckBox = new System.Windows.Forms.CheckBox();
             this.makeHtmlCheckBox = new System.Windows.Forms.CheckBox();
-            this.messagesTabPage = new System.Windows.Forms.TabPage();
+            this.RunTabPage = new System.Windows.Forms.TabPage();
             this.messagesListBox = new System.Windows.Forms.ListBox();
+            this.resumeButton = new System.Windows.Forms.Button();
+            this.markRetryButton = new System.Windows.Forms.Button();
+            this.runHighlightedButton = new System.Windows.Forms.Button();
             this.statsLabel = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.helpButton = new System.Windows.Forms.Button();
-            this.runHighlightedButton = new System.Windows.Forms.Button();
-            this.markRetryButton = new System.Windows.Forms.Button();
-            this.resumeButton = new System.Windows.Forms.Button();
             this.sourceLabel = new System.Windows.Forms.Label();
-            this.RebuildCheckBox = new System.Windows.Forms.CheckBox();
-            this.runXetexCheckBox = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
+            this.startTabPage.SuspendLayout();
+            this.sourceTabPage.SuspendLayout();
             this.idTabPage.SuspendLayout();
             this.copyrightTabPage.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -281,13 +248,10 @@
             this.mediaPage.SuspendLayout();
             this.htmlTabPage.SuspendLayout();
             this.advancedTabPage.SuspendLayout();
-            this.concordanceTabPage.SuspendLayout();
-            this.booksPage.SuspendLayout();
-            this.framesPage.SuspendLayout();
             this.layoutTabPage.SuspendLayout();
             this.statsTabPage.SuspendLayout();
             this.outputsTabPage.SuspendLayout();
-            this.messagesTabPage.SuspendLayout();
+            this.RunTabPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // m_projectsList
@@ -310,7 +274,7 @@
             // batchLabel
             // 
             this.batchLabel.AutoSize = true;
-            this.batchLabel.Location = new System.Drawing.Point(7, 54);
+            this.batchLabel.Location = new System.Drawing.Point(7, 37);
             this.batchLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.batchLabel.Name = "batchLabel";
             this.batchLabel.Size = new System.Drawing.Size(37, 14);
@@ -319,10 +283,10 @@
             // 
             // unmarkAllButton
             // 
-            this.unmarkAllButton.Location = new System.Drawing.Point(215, 1);
+            this.unmarkAllButton.Location = new System.Drawing.Point(170, 7);
             this.unmarkAllButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.unmarkAllButton.Name = "unmarkAllButton";
-            this.unmarkAllButton.Size = new System.Drawing.Size(77, 24);
+            this.unmarkAllButton.Size = new System.Drawing.Size(79, 24);
             this.unmarkAllButton.TabIndex = 3;
             this.unmarkAllButton.Text = "&Unmark all";
             this.unmarkAllButton.UseVisualStyleBackColor = true;
@@ -330,10 +294,10 @@
             // 
             // reloadButton
             // 
-            this.reloadButton.Location = new System.Drawing.Point(58, 1);
+            this.reloadButton.Location = new System.Drawing.Point(5, 7);
             this.reloadButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.reloadButton.Name = "reloadButton";
-            this.reloadButton.Size = new System.Drawing.Size(80, 24);
+            this.reloadButton.Size = new System.Drawing.Size(76, 24);
             this.reloadButton.TabIndex = 1;
             this.reloadButton.Text = "M&ark ready";
             this.reloadButton.UseVisualStyleBackColor = true;
@@ -341,21 +305,22 @@
             // 
             // WorkOnAllButton
             // 
-            this.WorkOnAllButton.Location = new System.Drawing.Point(296, 0);
+            this.WorkOnAllButton.BackColor = System.Drawing.Color.Yellow;
+            this.WorkOnAllButton.Location = new System.Drawing.Point(491, 7);
             this.WorkOnAllButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.WorkOnAllButton.Name = "WorkOnAllButton";
-            this.WorkOnAllButton.Size = new System.Drawing.Size(71, 24);
+            this.WorkOnAllButton.Size = new System.Drawing.Size(85, 24);
             this.WorkOnAllButton.TabIndex = 4;
             this.WorkOnAllButton.Text = "&Run marked";
-            this.WorkOnAllButton.UseVisualStyleBackColor = true;
+            this.WorkOnAllButton.UseVisualStyleBackColor = false;
             this.WorkOnAllButton.Click += new System.EventHandler(this.WorkOnAllButton_Click);
             // 
             // btnSetRootDirectory
             // 
-            this.btnSetRootDirectory.Location = new System.Drawing.Point(0, 1);
+            this.btnSetRootDirectory.Location = new System.Drawing.Point(17, 66);
             this.btnSetRootDirectory.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.btnSetRootDirectory.Name = "btnSetRootDirectory";
-            this.btnSetRootDirectory.Size = new System.Drawing.Size(52, 24);
+            this.btnSetRootDirectory.Size = new System.Drawing.Size(76, 24);
             this.btnSetRootDirectory.TabIndex = 0;
             this.btnSetRootDirectory.Text = "&Settings";
             this.btnSetRootDirectory.UseVisualStyleBackColor = true;
@@ -365,32 +330,161 @@
             // 
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.tabControl1.Controls.Add(this.startTabPage);
+            this.tabControl1.Controls.Add(this.sourceTabPage);
             this.tabControl1.Controls.Add(this.idTabPage);
             this.tabControl1.Controls.Add(this.copyrightTabPage);
             this.tabControl1.Controls.Add(this.processTabPage);
             this.tabControl1.Controls.Add(this.mediaPage);
             this.tabControl1.Controls.Add(this.htmlTabPage);
             this.tabControl1.Controls.Add(this.advancedTabPage);
-            this.tabControl1.Controls.Add(this.concordanceTabPage);
-            this.tabControl1.Controls.Add(this.booksPage);
-            this.tabControl1.Controls.Add(this.framesPage);
             this.tabControl1.Controls.Add(this.layoutTabPage);
             this.tabControl1.Controls.Add(this.statsTabPage);
             this.tabControl1.Controls.Add(this.outputsTabPage);
-            this.tabControl1.Controls.Add(this.messagesTabPage);
-            this.tabControl1.Location = new System.Drawing.Point(2, 101);
+            this.tabControl1.Controls.Add(this.RunTabPage);
+            this.tabControl1.Location = new System.Drawing.Point(2, 55);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.ShowToolTips = true;
-            this.tabControl1.Size = new System.Drawing.Size(600, 449);
+            this.tabControl1.Size = new System.Drawing.Size(600, 497);
             this.tabControl1.TabIndex = 10;
             this.tabControl1.Leave += new System.EventHandler(this.tabControl1_Leave);
             // 
+            // startTabPage
+            // 
+            this.startTabPage.Controls.Add(this.createNewProjectButton);
+            this.startTabPage.Controls.Add(this.label23);
+            this.startTabPage.Controls.Add(this.label22);
+            this.startTabPage.Controls.Add(this.dataDirLabel);
+            this.startTabPage.Controls.Add(this.btnSetRootDirectory);
+            this.startTabPage.Controls.Add(this.helpButton);
+            this.startTabPage.Location = new System.Drawing.Point(4, 23);
+            this.startTabPage.Name = "startTabPage";
+            this.startTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.startTabPage.Size = new System.Drawing.Size(592, 470);
+            this.startTabPage.TabIndex = 15;
+            this.startTabPage.Text = "Start";
+            this.startTabPage.UseVisualStyleBackColor = true;
+            // 
+            // createNewProjectButton
+            // 
+            this.createNewProjectButton.Location = new System.Drawing.Point(117, 66);
+            this.createNewProjectButton.Name = "createNewProjectButton";
+            this.createNewProjectButton.Size = new System.Drawing.Size(163, 24);
+            this.createNewProjectButton.TabIndex = 11;
+            this.createNewProjectButton.Text = "Create New project";
+            this.createNewProjectButton.UseVisualStyleBackColor = true;
+            this.createNewProjectButton.Click += new System.EventHandler(this.createNewProjectButton_Click);
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(14, 37);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(468, 14);
+            this.label23.TabIndex = 10;
+            this.label23.Text = "If you change the master data folder, you must move the configuration files you w" +
+    "ant to keep using.";
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(14, 23);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(496, 14);
+            this.label22.TabIndex = 9;
+            this.label22.Text = "Only projects with configuration data in that folder will be visible. Select Sett" +
+    "ings if you want to change it.";
+            // 
+            // dataDirLabel
+            // 
+            this.dataDirLabel.AutoSize = true;
+            this.dataDirLabel.Location = new System.Drawing.Point(14, 3);
+            this.dataDirLabel.Name = "dataDirLabel";
+            this.dataDirLabel.Size = new System.Drawing.Size(195, 14);
+            this.dataDirLabel.TabIndex = 8;
+            this.dataDirLabel.Text = "Project folders must be inside this folder:";
+            // 
+            // helpButton
+            // 
+            this.helpButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
+            this.helpButton.Location = new System.Drawing.Point(17, 98);
+            this.helpButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
+            this.helpButton.Name = "helpButton";
+            this.helpButton.Size = new System.Drawing.Size(76, 24);
+            this.helpButton.TabIndex = 7;
+            this.helpButton.Text = "&Help";
+            this.helpButton.UseVisualStyleBackColor = false;
+            this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
+            // 
+            // sourceTabPage
+            // 
+            this.sourceTabPage.Controls.Add(this.WBTUSXimportButton);
+            this.sourceTabPage.Controls.Add(this.customSourceFolderTextBox);
+            this.sourceTabPage.Controls.Add(this.findSourceFolderButton);
+            this.sourceTabPage.Controls.Add(this.sourceInstructionsLabel);
+            this.sourceTabPage.Controls.Add(this.translationIDLabel);
+            this.sourceTabPage.Location = new System.Drawing.Point(4, 23);
+            this.sourceTabPage.Name = "sourceTabPage";
+            this.sourceTabPage.Size = new System.Drawing.Size(592, 470);
+            this.sourceTabPage.TabIndex = 17;
+            this.sourceTabPage.Text = "Source";
+            this.sourceTabPage.UseVisualStyleBackColor = true;
+            // 
+            // WBTUSXimportButton
+            // 
+            this.WBTUSXimportButton.Enabled = false;
+            this.WBTUSXimportButton.Location = new System.Drawing.Point(265, 360);
+            this.WBTUSXimportButton.Name = "WBTUSXimportButton";
+            this.WBTUSXimportButton.Size = new System.Drawing.Size(285, 42);
+            this.WBTUSXimportButton.TabIndex = 259;
+            this.WBTUSXimportButton.Text = "WBT USX Import Button";
+            this.WBTUSXimportButton.UseVisualStyleBackColor = true;
+            this.WBTUSXimportButton.Visible = false;
+            this.WBTUSXimportButton.Click += new System.EventHandler(this.WBTUSXimportButton_Click);
+            // 
+            // customSourceFolderTextBox
+            // 
+            this.customSourceFolderTextBox.Location = new System.Drawing.Point(21, 118);
+            this.customSourceFolderTextBox.Name = "customSourceFolderTextBox";
+            this.customSourceFolderTextBox.Size = new System.Drawing.Size(555, 20);
+            this.customSourceFolderTextBox.TabIndex = 258;
+            this.customSourceFolderTextBox.TextChanged += new System.EventHandler(this.customSourceFolderTextBox_TextChanged);
+            // 
+            // findSourceFolderButton
+            // 
+            this.findSourceFolderButton.Location = new System.Drawing.Point(19, 70);
+            this.findSourceFolderButton.Name = "findSourceFolderButton";
+            this.findSourceFolderButton.Size = new System.Drawing.Size(136, 33);
+            this.findSourceFolderButton.TabIndex = 257;
+            this.findSourceFolderButton.Text = "&Find source folder";
+            this.findSourceFolderButton.UseVisualStyleBackColor = true;
+            this.findSourceFolderButton.Click += new System.EventHandler(this.findSourceFolderButton_Click);
+            // 
+            // sourceInstructionsLabel
+            // 
+            this.sourceInstructionsLabel.AutoSize = true;
+            this.sourceInstructionsLabel.Location = new System.Drawing.Point(5, 32);
+            this.sourceInstructionsLabel.Name = "sourceInstructionsLabel";
+            this.sourceInstructionsLabel.Size = new System.Drawing.Size(516, 14);
+            this.sourceInstructionsLabel.TabIndex = 256;
+            this.sourceInstructionsLabel.Text = "You can put USFM, USX, or USFX source files in the default directory or specify a" +
+    "n alternate directory, below:";
+            // 
+            // translationIDLabel
+            // 
+            this.translationIDLabel.AutoSize = true;
+            this.translationIDLabel.Location = new System.Drawing.Point(5, 9);
+            this.translationIDLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.translationIDLabel.Name = "translationIDLabel";
+            this.translationIDLabel.Size = new System.Drawing.Size(67, 14);
+            this.translationIDLabel.TabIndex = 250;
+            this.translationIDLabel.Text = "Directory/ID";
+            this.translationIDLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // idTabPage
             // 
-            this.idTabPage.Controls.Add(this.label78);
-            this.idTabPage.Controls.Add(this.paratext8ComboBox);
             this.idTabPage.Controls.Add(this.rodCodeTextBox);
             this.idTabPage.Controls.Add(this.label60);
             this.idTabPage.Controls.Add(this.label76);
@@ -412,8 +506,6 @@
             this.idTabPage.Controls.Add(this.fontComboBox);
             this.idTabPage.Controls.Add(this.traditionalAbbreviationTextBox);
             this.idTabPage.Controls.Add(this.label53);
-            this.idTabPage.Controls.Add(this.paratextcomboBox);
-            this.idTabPage.Controls.Add(this.label52);
             this.idTabPage.Controls.Add(this.lwcDescriptionTextBox);
             this.idTabPage.Controls.Add(this.label20);
             this.idTabPage.Controls.Add(this.homeDomainTextBox);
@@ -428,8 +520,6 @@
             this.idTabPage.Controls.Add(this.engLangNameTextBox);
             this.idTabPage.Controls.Add(this.label2);
             this.idTabPage.Controls.Add(this.dialectTextBox);
-            this.idTabPage.Controls.Add(this.translationIdTextBox);
-            this.idTabPage.Controls.Add(this.label1);
             this.idTabPage.Controls.Add(this.languageNameTextBox);
             this.idTabPage.Controls.Add(this.ethnologueCodeTextBox);
             this.idTabPage.Controls.Add(this.label25);
@@ -438,30 +528,10 @@
             this.idTabPage.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.idTabPage.Name = "idTabPage";
             this.idTabPage.Padding = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.idTabPage.Size = new System.Drawing.Size(592, 422);
+            this.idTabPage.Size = new System.Drawing.Size(592, 470);
             this.idTabPage.TabIndex = 0;
             this.idTabPage.Text = "ID";
             this.idTabPage.UseVisualStyleBackColor = true;
-            // 
-            // label78
-            // 
-            this.label78.AutoSize = true;
-            this.label78.Location = new System.Drawing.Point(330, 35);
-            this.label78.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label78.Name = "label78";
-            this.label78.Size = new System.Drawing.Size(95, 14);
-            this.label78.TabIndex = 249;
-            this.label78.Text = "Paratext 8 project:";
-            // 
-            // paratext8ComboBox
-            // 
-            this.paratext8ComboBox.FormattingEnabled = true;
-            this.paratext8ComboBox.Location = new System.Drawing.Point(430, 32);
-            this.paratext8ComboBox.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.paratext8ComboBox.Name = "paratext8ComboBox";
-            this.paratext8ComboBox.Size = new System.Drawing.Size(96, 22);
-            this.paratext8ComboBox.TabIndex = 248;
-            this.paratext8ComboBox.SelectedIndexChanged += new System.EventHandler(this.paratext8ComboBox_SelectedIndexChanged);
             // 
             // rodCodeTextBox
             // 
@@ -658,27 +728,6 @@
             this.label53.TabIndex = 42;
             this.label53.Text = "Abbr.:";
             // 
-            // paratextcomboBox
-            // 
-            this.paratextcomboBox.FormattingEnabled = true;
-            this.paratextcomboBox.Location = new System.Drawing.Point(430, 8);
-            this.paratextcomboBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.paratextcomboBox.Name = "paratextcomboBox";
-            this.paratextcomboBox.Size = new System.Drawing.Size(96, 22);
-            this.paratextcomboBox.Sorted = true;
-            this.paratextcomboBox.TabIndex = 204;
-            this.paratextcomboBox.SelectedIndexChanged += new System.EventHandler(this.paratextcomboBox_SelectedIndexChanged);
-            // 
-            // label52
-            // 
-            this.label52.AutoSize = true;
-            this.label52.Location = new System.Drawing.Point(340, 6);
-            this.label52.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label52.Name = "label52";
-            this.label52.Size = new System.Drawing.Size(86, 14);
-            this.label52.TabIndex = 40;
-            this.label52.Text = "Paratext project:";
-            // 
             // lwcDescriptionTextBox
             // 
             this.lwcDescriptionTextBox.Location = new System.Drawing.Point(164, 282);
@@ -815,26 +864,6 @@
             this.dialectTextBox.Size = new System.Drawing.Size(150, 20);
             this.dialectTextBox.TabIndex = 214;
             // 
-            // translationIdTextBox
-            // 
-            this.translationIdTextBox.Location = new System.Drawing.Point(248, 4);
-            this.translationIdTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.translationIdTextBox.Name = "translationIdTextBox";
-            this.translationIdTextBox.ReadOnly = true;
-            this.translationIdTextBox.Size = new System.Drawing.Size(77, 20);
-            this.translationIdTextBox.TabIndex = 202;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(180, 6);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(70, 14);
-            this.label1.TabIndex = 13;
-            this.label1.Text = "Directory/ID:";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
             // languageNameTextBox
             // 
             this.languageNameTextBox.Location = new System.Drawing.Point(5, 100);
@@ -877,6 +906,8 @@
             // 
             // copyrightTabPage
             // 
+            this.copyrightTabPage.Controls.Add(this.label26);
+            this.copyrightTabPage.Controls.Add(this.licenseExpirationDateTextBox);
             this.copyrightTabPage.Controls.Add(this.anonymousCheckBox);
             this.copyrightTabPage.Controls.Add(this.privateCheckBox);
             this.copyrightTabPage.Controls.Add(this.downloadsAllowedCheckBox);
@@ -910,10 +941,26 @@
             this.copyrightTabPage.Location = new System.Drawing.Point(4, 23);
             this.copyrightTabPage.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.copyrightTabPage.Name = "copyrightTabPage";
-            this.copyrightTabPage.Size = new System.Drawing.Size(592, 422);
+            this.copyrightTabPage.Size = new System.Drawing.Size(592, 470);
             this.copyrightTabPage.TabIndex = 2;
             this.copyrightTabPage.Text = "©";
             this.copyrightTabPage.UseVisualStyleBackColor = true;
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Location = new System.Drawing.Point(432, 112);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(81, 14);
+            this.label26.TabIndex = 234;
+            this.label26.Text = "License expires:";
+            // 
+            // licenseExpirationDateTextBox
+            // 
+            this.licenseExpirationDateTextBox.Location = new System.Drawing.Point(431, 128);
+            this.licenseExpirationDateTextBox.Name = "licenseExpirationDateTextBox";
+            this.licenseExpirationDateTextBox.Size = new System.Drawing.Size(143, 20);
+            this.licenseExpirationDateTextBox.TabIndex = 233;
             // 
             // anonymousCheckBox
             // 
@@ -965,7 +1012,7 @@
             // 
             // contributorTextBox
             // 
-            this.contributorTextBox.Location = new System.Drawing.Point(336, 264);
+            this.contributorTextBox.Location = new System.Drawing.Point(340, 298);
             this.contributorTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.contributorTextBox.Name = "contributorTextBox";
             this.contributorTextBox.Size = new System.Drawing.Size(206, 20);
@@ -974,7 +1021,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(229, 264);
+            this.label8.Location = new System.Drawing.Point(233, 298);
             this.label8.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(103, 14);
@@ -984,7 +1031,7 @@
             // 
             // creatorTextBox
             // 
-            this.creatorTextBox.Location = new System.Drawing.Point(91, 258);
+            this.creatorTextBox.Location = new System.Drawing.Point(95, 292);
             this.creatorTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.creatorTextBox.Name = "creatorTextBox";
             this.creatorTextBox.Size = new System.Drawing.Size(129, 20);
@@ -993,7 +1040,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(4, 264);
+            this.label7.Location = new System.Drawing.Point(8, 298);
             this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(84, 14);
@@ -1004,7 +1051,7 @@
             // label63
             // 
             this.label63.AutoSize = true;
-            this.label63.Location = new System.Drawing.Point(46, 396);
+            this.label63.Location = new System.Drawing.Point(50, 430);
             this.label63.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label63.Name = "label63";
             this.label63.Size = new System.Drawing.Size(54, 14);
@@ -1013,7 +1060,7 @@
             // 
             // facebookTextBox
             // 
-            this.facebookTextBox.Location = new System.Drawing.Point(116, 393);
+            this.facebookTextBox.Location = new System.Drawing.Point(120, 427);
             this.facebookTextBox.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.facebookTextBox.Name = "facebookTextBox";
             this.facebookTextBox.Size = new System.Drawing.Size(352, 20);
@@ -1021,7 +1068,7 @@
             // 
             // localRightsHolderTextBox
             // 
-            this.localRightsHolderTextBox.Location = new System.Drawing.Point(115, 364);
+            this.localRightsHolderTextBox.Location = new System.Drawing.Point(119, 398);
             this.localRightsHolderTextBox.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.localRightsHolderTextBox.Name = "localRightsHolderTextBox";
             this.localRightsHolderTextBox.Size = new System.Drawing.Size(353, 20);
@@ -1030,7 +1077,7 @@
             // label62
             // 
             this.label62.AutoSize = true;
-            this.label62.Location = new System.Drawing.Point(14, 367);
+            this.label62.Location = new System.Drawing.Point(18, 401);
             this.label62.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label62.Name = "label62";
             this.label62.Size = new System.Drawing.Size(97, 14);
@@ -1040,7 +1087,7 @@
             // label57
             // 
             this.label57.AutoSize = true;
-            this.label57.Location = new System.Drawing.Point(262, 172);
+            this.label57.Location = new System.Drawing.Point(266, 206);
             this.label57.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label57.Name = "label57";
             this.label57.Size = new System.Drawing.Size(91, 14);
@@ -1049,7 +1096,7 @@
             // 
             // audioRecordingCopyrightTextBox
             // 
-            this.audioRecordingCopyrightTextBox.Location = new System.Drawing.Point(366, 170);
+            this.audioRecordingCopyrightTextBox.Location = new System.Drawing.Point(370, 204);
             this.audioRecordingCopyrightTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.audioRecordingCopyrightTextBox.Name = "audioRecordingCopyrightTextBox";
             this.audioRecordingCopyrightTextBox.Size = new System.Drawing.Size(130, 20);
@@ -1058,7 +1105,7 @@
             // label41
             // 
             this.label41.AutoSize = true;
-            this.label41.Location = new System.Drawing.Point(9, 170);
+            this.label41.Location = new System.Drawing.Point(13, 204);
             this.label41.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label41.Name = "label41";
             this.label41.Size = new System.Drawing.Size(74, 14);
@@ -1068,7 +1115,7 @@
             // 
             // copyrightOwnerUrlTextBox
             // 
-            this.copyrightOwnerUrlTextBox.Location = new System.Drawing.Point(85, 170);
+            this.copyrightOwnerUrlTextBox.Location = new System.Drawing.Point(89, 204);
             this.copyrightOwnerUrlTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.copyrightOwnerUrlTextBox.Name = "copyrightOwnerUrlTextBox";
             this.copyrightOwnerUrlTextBox.Size = new System.Drawing.Size(174, 20);
@@ -1077,7 +1124,7 @@
             // label40
             // 
             this.label40.AutoSize = true;
-            this.label40.Location = new System.Drawing.Point(350, 120);
+            this.label40.Location = new System.Drawing.Point(354, 154);
             this.label40.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label40.Name = "label40";
             this.label40.Size = new System.Drawing.Size(82, 14);
@@ -1087,7 +1134,7 @@
             // 
             // coprAbbrevTextBox
             // 
-            this.coprAbbrevTextBox.Location = new System.Drawing.Point(351, 137);
+            this.coprAbbrevTextBox.Location = new System.Drawing.Point(355, 171);
             this.coprAbbrevTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.coprAbbrevTextBox.Name = "coprAbbrevTextBox";
             this.coprAbbrevTextBox.Size = new System.Drawing.Size(102, 20);
@@ -1096,7 +1143,7 @@
             // stripExtrasCheckBox
             // 
             this.stripExtrasCheckBox.AutoSize = true;
-            this.stripExtrasCheckBox.Location = new System.Drawing.Point(9, 342);
+            this.stripExtrasCheckBox.Location = new System.Drawing.Point(13, 376);
             this.stripExtrasCheckBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.stripExtrasCheckBox.Name = "stripExtrasCheckBox";
             this.stripExtrasCheckBox.Size = new System.Drawing.Size(282, 18);
@@ -1106,6 +1153,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.wbtVerbatimRadioButton);
+            this.groupBox1.Controls.Add(this.ccbyncRadioButton);
             this.groupBox1.Controls.Add(this.ccbyRadioButton);
             this.groupBox1.Controls.Add(this.CCBySaRadioButton);
             this.groupBox1.Controls.Add(this.CCByNdRadioButton);
@@ -1118,10 +1167,33 @@
             this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.groupBox1.Size = new System.Drawing.Size(422, 101);
+            this.groupBox1.Size = new System.Drawing.Size(422, 141);
             this.groupBox1.TabIndex = 11;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = " Freedom ";
+            // 
+            // wbtVerbatimRadioButton
+            // 
+            this.wbtVerbatimRadioButton.AutoSize = true;
+            this.wbtVerbatimRadioButton.Location = new System.Drawing.Point(313, 57);
+            this.wbtVerbatimRadioButton.Name = "wbtVerbatimRadioButton";
+            this.wbtVerbatimRadioButton.Size = new System.Drawing.Size(95, 18);
+            this.wbtVerbatimRadioButton.TabIndex = 21;
+            this.wbtVerbatimRadioButton.TabStop = true;
+            this.wbtVerbatimRadioButton.Text = "WBT Verbatim";
+            this.wbtVerbatimRadioButton.UseVisualStyleBackColor = true;
+            this.wbtVerbatimRadioButton.CheckedChanged += new System.EventHandler(this.wbtVerbatimRadioButton_CheckedChanged);
+            // 
+            // ccbyncRadioButton
+            // 
+            this.ccbyncRadioButton.AutoSize = true;
+            this.ccbyncRadioButton.Location = new System.Drawing.Point(8, 83);
+            this.ccbyncRadioButton.Name = "ccbyncRadioButton";
+            this.ccbyncRadioButton.Size = new System.Drawing.Size(245, 18);
+            this.ccbyncRadioButton.TabIndex = 20;
+            this.ccbyncRadioButton.TabStop = true;
+            this.ccbyncRadioButton.Text = "Creative Commons Attribution Noncommercial";
+            this.ccbyncRadioButton.UseVisualStyleBackColor = true;
             // 
             // ccbyRadioButton
             // 
@@ -1168,7 +1240,7 @@
             // silentRadioButton
             // 
             this.silentRadioButton.AutoSize = true;
-            this.silentRadioButton.Location = new System.Drawing.Point(328, 83);
+            this.silentRadioButton.Location = new System.Drawing.Point(336, 108);
             this.silentRadioButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.silentRadioButton.Name = "silentRadioButton";
             this.silentRadioButton.Size = new System.Drawing.Size(51, 18);
@@ -1194,7 +1266,7 @@
             // otherRadioButton
             // 
             this.otherRadioButton.AutoSize = true;
-            this.otherRadioButton.Location = new System.Drawing.Point(313, 57);
+            this.otherRadioButton.Location = new System.Drawing.Point(336, 82);
             this.otherRadioButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.otherRadioButton.Name = "otherRadioButton";
             this.otherRadioButton.Size = new System.Drawing.Size(50, 18);
@@ -1208,7 +1280,7 @@
             // 
             this.ccbyndncRadioButton.AutoSize = true;
             this.ccbyndncRadioButton.Font = new System.Drawing.Font("Times New Roman", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ccbyndncRadioButton.Location = new System.Drawing.Point(8, 85);
+            this.ccbyndncRadioButton.Location = new System.Drawing.Point(8, 108);
             this.ccbyndncRadioButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.ccbyndncRadioButton.Name = "ccbyndncRadioButton";
             this.ccbyndncRadioButton.Size = new System.Drawing.Size(318, 18);
@@ -1235,7 +1307,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(9, 316);
+            this.label16.Location = new System.Drawing.Point(13, 350);
             this.label16.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(102, 14);
@@ -1244,7 +1316,7 @@
             // 
             // electronicPublisherTextBox
             // 
-            this.electronicPublisherTextBox.Location = new System.Drawing.Point(114, 315);
+            this.electronicPublisherTextBox.Location = new System.Drawing.Point(118, 349);
             this.electronicPublisherTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.electronicPublisherTextBox.Name = "electronicPublisherTextBox";
             this.electronicPublisherTextBox.Size = new System.Drawing.Size(277, 20);
@@ -1252,7 +1324,7 @@
             // 
             // printPublisherTextBox
             // 
-            this.printPublisherTextBox.Location = new System.Drawing.Point(91, 290);
+            this.printPublisherTextBox.Location = new System.Drawing.Point(95, 324);
             this.printPublisherTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.printPublisherTextBox.Name = "printPublisherTextBox";
             this.printPublisherTextBox.Size = new System.Drawing.Size(313, 20);
@@ -1260,7 +1332,7 @@
             // 
             // rightsStatementTextBox
             // 
-            this.rightsStatementTextBox.Location = new System.Drawing.Point(9, 212);
+            this.rightsStatementTextBox.Location = new System.Drawing.Point(13, 246);
             this.rightsStatementTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.rightsStatementTextBox.Multiline = true;
             this.rightsStatementTextBox.Name = "rightsStatementTextBox";
@@ -1270,7 +1342,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(8, 193);
+            this.label15.Location = new System.Drawing.Point(12, 227);
             this.label15.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(115, 14);
@@ -1280,7 +1352,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(7, 290);
+            this.label14.Location = new System.Drawing.Point(11, 324);
             this.label14.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(78, 14);
@@ -1289,7 +1361,7 @@
             // 
             // copyrightYearTextBox
             // 
-            this.copyrightYearTextBox.Location = new System.Drawing.Point(9, 137);
+            this.copyrightYearTextBox.Location = new System.Drawing.Point(13, 171);
             this.copyrightYearTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.copyrightYearTextBox.Name = "copyrightYearTextBox";
             this.copyrightYearTextBox.Size = new System.Drawing.Size(129, 20);
@@ -1298,7 +1370,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(9, 120);
+            this.label13.Location = new System.Drawing.Point(13, 154);
             this.label13.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(92, 14);
@@ -1308,7 +1380,7 @@
             // 
             // copyrightOwnerTextBox
             // 
-            this.copyrightOwnerTextBox.Location = new System.Drawing.Point(152, 137);
+            this.copyrightOwnerTextBox.Location = new System.Drawing.Point(156, 171);
             this.copyrightOwnerTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.copyrightOwnerTextBox.Name = "copyrightOwnerTextBox";
             this.copyrightOwnerTextBox.Size = new System.Drawing.Size(186, 20);
@@ -1317,7 +1389,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(151, 117);
+            this.label12.Location = new System.Drawing.Point(155, 151);
             this.label12.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(111, 14);
@@ -1344,7 +1416,7 @@
             this.processTabPage.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.processTabPage.Name = "processTabPage";
             this.processTabPage.Padding = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.processTabPage.Size = new System.Drawing.Size(592, 422);
+            this.processTabPage.Size = new System.Drawing.Size(592, 470);
             this.processTabPage.TabIndex = 1;
             this.processTabPage.Text = "Proc.";
             this.processTabPage.UseVisualStyleBackColor = true;
@@ -1497,7 +1569,7 @@
             this.mediaPage.Location = new System.Drawing.Point(4, 23);
             this.mediaPage.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.mediaPage.Name = "mediaPage";
-            this.mediaPage.Size = new System.Drawing.Size(592, 422);
+            this.mediaPage.Size = new System.Drawing.Size(592, 470);
             this.mediaPage.TabIndex = 12;
             this.mediaPage.Text = "Media";
             this.mediaPage.UseVisualStyleBackColor = true;
@@ -1562,7 +1634,7 @@
             this.htmlTabPage.Location = new System.Drawing.Point(4, 23);
             this.htmlTabPage.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.htmlTabPage.Name = "htmlTabPage";
-            this.htmlTabPage.Size = new System.Drawing.Size(592, 422);
+            this.htmlTabPage.Size = new System.Drawing.Size(592, 470);
             this.htmlTabPage.TabIndex = 3;
             this.htmlTabPage.Text = "HTML";
             this.htmlTabPage.UseVisualStyleBackColor = true;
@@ -1627,7 +1699,7 @@
             // templateLabel
             // 
             this.templateLabel.AutoSize = true;
-            this.templateLabel.Location = new System.Drawing.Point(102, 10);
+            this.templateLabel.Location = new System.Drawing.Point(116, 12);
             this.templateLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.templateLabel.Name = "templateLabel";
             this.templateLabel.Size = new System.Drawing.Size(89, 14);
@@ -1636,10 +1708,10 @@
             // 
             // copyFromTemplateButton
             // 
-            this.copyFromTemplateButton.Location = new System.Drawing.Point(379, 6);
+            this.copyFromTemplateButton.Location = new System.Drawing.Point(408, 7);
             this.copyFromTemplateButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.copyFromTemplateButton.Name = "copyFromTemplateButton";
-            this.copyFromTemplateButton.Size = new System.Drawing.Size(92, 25);
+            this.copyFromTemplateButton.Size = new System.Drawing.Size(182, 25);
             this.copyFromTemplateButton.TabIndex = 81;
             this.copyFromTemplateButton.Text = "Copy from template";
             this.copyFromTemplateButton.UseVisualStyleBackColor = true;
@@ -1647,10 +1719,10 @@
             // 
             // makeTemplateButton
             // 
-            this.makeTemplateButton.Location = new System.Drawing.Point(4, 6);
+            this.makeTemplateButton.Location = new System.Drawing.Point(3, 6);
             this.makeTemplateButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.makeTemplateButton.Name = "makeTemplateButton";
-            this.makeTemplateButton.Size = new System.Drawing.Size(84, 26);
+            this.makeTemplateButton.Size = new System.Drawing.Size(109, 26);
             this.makeTemplateButton.TabIndex = 80;
             this.makeTemplateButton.Text = "Use as template";
             this.makeTemplateButton.UseVisualStyleBackColor = true;
@@ -1789,7 +1861,7 @@
             this.advancedTabPage.Location = new System.Drawing.Point(4, 23);
             this.advancedTabPage.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.advancedTabPage.Name = "advancedTabPage";
-            this.advancedTabPage.Size = new System.Drawing.Size(592, 422);
+            this.advancedTabPage.Size = new System.Drawing.Size(592, 470);
             this.advancedTabPage.TabIndex = 6;
             this.advancedTabPage.Text = "Adv.";
             this.advancedTabPage.UseVisualStyleBackColor = true;
@@ -1917,7 +1989,7 @@
             // 
             // scriptTextBox
             // 
-            this.scriptTextBox.Location = new System.Drawing.Point(328, 35);
+            this.scriptTextBox.Location = new System.Drawing.Point(395, 35);
             this.scriptTextBox.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.scriptTextBox.Name = "scriptTextBox";
             this.scriptTextBox.Size = new System.Drawing.Size(167, 20);
@@ -1926,7 +1998,7 @@
             // label61
             // 
             this.label61.AutoSize = true;
-            this.label61.Location = new System.Drawing.Point(284, 38);
+            this.label61.Location = new System.Drawing.Point(351, 38);
             this.label61.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label61.Name = "label61";
             this.label61.Size = new System.Drawing.Size(36, 14);
@@ -1936,7 +2008,7 @@
             // label59
             // 
             this.label59.AutoSize = true;
-            this.label59.Location = new System.Drawing.Point(290, 13);
+            this.label59.Location = new System.Drawing.Point(357, 13);
             this.label59.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label59.Name = "label59";
             this.label59.Size = new System.Drawing.Size(30, 14);
@@ -1945,7 +2017,7 @@
             // 
             // ldmlTextBox
             // 
-            this.ldmlTextBox.Location = new System.Drawing.Point(328, 6);
+            this.ldmlTextBox.Location = new System.Drawing.Point(395, 6);
             this.ldmlTextBox.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.ldmlTextBox.Name = "ldmlTextBox";
             this.ldmlTextBox.Size = new System.Drawing.Size(62, 20);
@@ -2142,471 +2214,6 @@
             this.label17.Text = "Versification:";
             this.label17.Visible = false;
             // 
-            // concordanceTabPage
-            // 
-            this.concordanceTabPage.Controls.Add(this.framedConcordanceRadioButton);
-            this.concordanceTabPage.Controls.Add(this.concordanceRadioButton);
-            this.concordanceTabPage.Controls.Add(this.legacyHtmlRadioButton);
-            this.concordanceTabPage.Controls.Add(this.mobileHtmlRadioButton);
-            this.concordanceTabPage.Controls.Add(this.label31);
-            this.concordanceTabPage.Controls.Add(this.tbxPhrases);
-            this.concordanceTabPage.Controls.Add(this.label30);
-            this.concordanceTabPage.Controls.Add(this.tbxExcludeWords);
-            this.concordanceTabPage.Controls.Add(this.label22);
-            this.concordanceTabPage.Controls.Add(this.tbxMaxFreq);
-            this.concordanceTabPage.Controls.Add(this.label23);
-            this.concordanceTabPage.Controls.Add(this.tbxMinContext);
-            this.concordanceTabPage.Controls.Add(this.label28);
-            this.concordanceTabPage.Controls.Add(this.tbxMaxContext);
-            this.concordanceTabPage.Controls.Add(this.label29);
-            this.concordanceTabPage.Controls.Add(this.tbxWordformingChars);
-            this.concordanceTabPage.Controls.Add(this.chkMergeCase);
-            this.concordanceTabPage.Location = new System.Drawing.Point(4, 23);
-            this.concordanceTabPage.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.concordanceTabPage.Name = "concordanceTabPage";
-            this.concordanceTabPage.Size = new System.Drawing.Size(592, 422);
-            this.concordanceTabPage.TabIndex = 7;
-            this.concordanceTabPage.Text = "Conc";
-            this.concordanceTabPage.UseVisualStyleBackColor = true;
-            // 
-            // framedConcordanceRadioButton
-            // 
-            this.framedConcordanceRadioButton.AutoSize = true;
-            this.framedConcordanceRadioButton.Location = new System.Drawing.Point(395, 9);
-            this.framedConcordanceRadioButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.framedConcordanceRadioButton.Name = "framedConcordanceRadioButton";
-            this.framedConcordanceRadioButton.Size = new System.Drawing.Size(122, 18);
-            this.framedConcordanceRadioButton.TabIndex = 121;
-            this.framedConcordanceRadioButton.TabStop = true;
-            this.framedConcordanceRadioButton.Text = "Framed Concordance";
-            this.framedConcordanceRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // concordanceRadioButton
-            // 
-            this.concordanceRadioButton.AutoSize = true;
-            this.concordanceRadioButton.Location = new System.Drawing.Point(237, 9);
-            this.concordanceRadioButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.concordanceRadioButton.Name = "concordanceRadioButton";
-            this.concordanceRadioButton.Size = new System.Drawing.Size(160, 18);
-            this.concordanceRadioButton.TabIndex = 120;
-            this.concordanceRadioButton.Text = " Concordance without frames";
-            this.concordanceRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // legacyHtmlRadioButton
-            // 
-            this.legacyHtmlRadioButton.AutoSize = true;
-            this.legacyHtmlRadioButton.Location = new System.Drawing.Point(111, 9);
-            this.legacyHtmlRadioButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.legacyHtmlRadioButton.Name = "legacyHtmlRadioButton";
-            this.legacyHtmlRadioButton.Size = new System.Drawing.Size(92, 18);
-            this.legacyHtmlRadioButton.TabIndex = 119;
-            this.legacyHtmlRadioButton.Text = "Classic HTML";
-            this.legacyHtmlRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // mobileHtmlRadioButton
-            // 
-            this.mobileHtmlRadioButton.AutoSize = true;
-            this.mobileHtmlRadioButton.Checked = true;
-            this.mobileHtmlRadioButton.Location = new System.Drawing.Point(9, 9);
-            this.mobileHtmlRadioButton.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.mobileHtmlRadioButton.Name = "mobileHtmlRadioButton";
-            this.mobileHtmlRadioButton.Size = new System.Drawing.Size(93, 18);
-            this.mobileHtmlRadioButton.TabIndex = 118;
-            this.mobileHtmlRadioButton.TabStop = true;
-            this.mobileHtmlRadioButton.Text = "Mobile HTML";
-            this.mobileHtmlRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // label31
-            // 
-            this.label31.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label31.AutoSize = true;
-            this.label31.Location = new System.Drawing.Point(235, 228);
-            this.label31.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(241, 14);
-            this.label31.TabIndex = 25;
-            this.label31.Text = "Make extra entries for these phrases (one per line)";
-            // 
-            // tbxPhrases
-            // 
-            this.tbxPhrases.Location = new System.Drawing.Point(237, 248);
-            this.tbxPhrases.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.tbxPhrases.Multiline = true;
-            this.tbxPhrases.Name = "tbxPhrases";
-            this.tbxPhrases.Size = new System.Drawing.Size(164, 93);
-            this.tbxPhrases.TabIndex = 117;
-            // 
-            // label30
-            // 
-            this.label30.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label30.AutoSize = true;
-            this.label30.Location = new System.Drawing.Point(12, 228);
-            this.label30.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(257, 14);
-            this.label30.TabIndex = 23;
-            this.label30.Text = "Also omit words in the following list (space separated)";
-            // 
-            // tbxExcludeWords
-            // 
-            this.tbxExcludeWords.Location = new System.Drawing.Point(8, 248);
-            this.tbxExcludeWords.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.tbxExcludeWords.Multiline = true;
-            this.tbxExcludeWords.Name = "tbxExcludeWords";
-            this.tbxExcludeWords.Size = new System.Drawing.Size(218, 93);
-            this.tbxExcludeWords.TabIndex = 116;
-            this.tbxExcludeWords.Text = "- --";
-            // 
-            // label22
-            // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(9, 201);
-            this.label22.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(478, 14);
-            this.label22.TabIndex = 21;
-            this.label22.Text = "Maximum frequency (words occurring more often than this will be excluded; use \'un" +
-    "limited\' if no limit)";
-            // 
-            // tbxMaxFreq
-            // 
-            this.tbxMaxFreq.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxMaxFreq.Location = new System.Drawing.Point(450, 199);
-            this.tbxMaxFreq.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.tbxMaxFreq.Name = "tbxMaxFreq";
-            this.tbxMaxFreq.Size = new System.Drawing.Size(66, 20);
-            this.tbxMaxFreq.TabIndex = 115;
-            this.tbxMaxFreq.Text = "unlimited";
-            // 
-            // label23
-            // 
-            this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(9, 167);
-            this.label23.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(348, 14);
-            this.label23.TabIndex = 19;
-            this.label23.Text = "Word-split context length (split words if needed to get this much context)";
-            // 
-            // tbxMinContext
-            // 
-            this.tbxMinContext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxMinContext.Location = new System.Drawing.Point(450, 167);
-            this.tbxMinContext.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.tbxMinContext.Name = "tbxMinContext";
-            this.tbxMinContext.Size = new System.Drawing.Size(66, 20);
-            this.tbxMinContext.TabIndex = 114;
-            this.tbxMinContext.Text = "40";
-            // 
-            // label28
-            // 
-            this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(9, 130);
-            this.label28.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(386, 14);
-            this.label28.TabIndex = 17;
-            this.label28.Text = "Maximum context length (number of characters shown before and after key word)";
-            // 
-            // tbxMaxContext
-            // 
-            this.tbxMaxContext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxMaxContext.Location = new System.Drawing.Point(450, 127);
-            this.tbxMaxContext.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.tbxMaxContext.Name = "tbxMaxContext";
-            this.tbxMaxContext.Size = new System.Drawing.Size(66, 20);
-            this.tbxMaxContext.TabIndex = 113;
-            this.tbxMaxContext.Text = "60";
-            // 
-            // label29
-            // 
-            this.label29.AutoSize = true;
-            this.label29.Location = new System.Drawing.Point(8, 69);
-            this.label29.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(393, 14);
-            this.label29.TabIndex = 15;
-            this.label29.Text = "Characters that should be treated as parts of words (in addition to standard Unic" +
-    "ode)";
-            // 
-            // tbxWordformingChars
-            // 
-            this.tbxWordformingChars.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbxWordformingChars.Location = new System.Drawing.Point(8, 93);
-            this.tbxWordformingChars.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.tbxWordformingChars.Name = "tbxWordformingChars";
-            this.tbxWordformingChars.Size = new System.Drawing.Size(502, 20);
-            this.tbxWordformingChars.TabIndex = 112;
-            this.tbxWordformingChars.Text = "\'-";
-            // 
-            // chkMergeCase
-            // 
-            this.chkMergeCase.AutoSize = true;
-            this.chkMergeCase.Checked = true;
-            this.chkMergeCase.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkMergeCase.Location = new System.Drawing.Point(8, 41);
-            this.chkMergeCase.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.chkMergeCase.Name = "chkMergeCase";
-            this.chkMergeCase.Size = new System.Drawing.Size(302, 18);
-            this.chkMergeCase.TabIndex = 111;
-            this.chkMergeCase.Text = "Merge wordforms that differ only by case into single entries";
-            this.chkMergeCase.UseVisualStyleBackColor = true;
-            // 
-            // booksPage
-            // 
-            this.booksPage.Controls.Add(this.label32);
-            this.booksPage.Controls.Add(this.listBooks);
-            this.booksPage.Location = new System.Drawing.Point(4, 23);
-            this.booksPage.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.booksPage.Name = "booksPage";
-            this.booksPage.Size = new System.Drawing.Size(592, 422);
-            this.booksPage.TabIndex = 8;
-            this.booksPage.Text = "Books";
-            this.booksPage.UseVisualStyleBackColor = true;
-            // 
-            // label32
-            // 
-            this.label32.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.label32.Location = new System.Drawing.Point(5, 11);
-            this.label32.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(502, 62);
-            this.label32.TabIndex = 4;
-            this.label32.Text = resources.GetString("label32.Text");
-            this.label32.UseCompatibleTextRendering = true;
-            // 
-            // listBooks
-            // 
-            this.listBooks.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.colFilesStdAbbr,
-            this.colFilesVernAbbr,
-            this.colFilesXrefs});
-            this.listBooks.HideSelection = false;
-            this.listBooks.Location = new System.Drawing.Point(5, 77);
-            this.listBooks.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.listBooks.Name = "listBooks";
-            this.listBooks.Size = new System.Drawing.Size(468, 267);
-            this.listBooks.TabIndex = 120;
-            this.listBooks.UseCompatibleStateImageBehavior = false;
-            this.listBooks.View = System.Windows.Forms.View.Details;
-            this.listBooks.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ListBooks_MouseUp);
-            // 
-            // colFilesStdAbbr
-            // 
-            this.colFilesStdAbbr.Text = "Std. Abbr.";
-            this.colFilesStdAbbr.Width = 76;
-            // 
-            // colFilesVernAbbr
-            // 
-            this.colFilesVernAbbr.Text = "Abbr. for refs";
-            this.colFilesVernAbbr.Width = 117;
-            // 
-            // colFilesXrefs
-            // 
-            this.colFilesXrefs.Text = "Book name used in cross refs";
-            this.colFilesXrefs.Width = 393;
-            // 
-            // framesPage
-            // 
-            this.framesPage.Controls.Add(this.psalmLabelTextBox);
-            this.framesPage.Controls.Add(this.chapterLabelTextBox);
-            this.framesPage.Controls.Add(this.label71);
-            this.framesPage.Controls.Add(this.label26);
-            this.framesPage.Controls.Add(this.showNavigationTextBox);
-            this.framesPage.Controls.Add(this.label39);
-            this.framesPage.Controls.Add(this.hideNavigationPanesTextBox);
-            this.framesPage.Controls.Add(this.label38);
-            this.framesPage.Controls.Add(this.nextChapterLinkTextBox);
-            this.framesPage.Controls.Add(this.label33);
-            this.framesPage.Controls.Add(this.previousChapterLinkTextBox);
-            this.framesPage.Controls.Add(this.label34);
-            this.framesPage.Controls.Add(this.introductionLinkTextBox);
-            this.framesPage.Controls.Add(this.label35);
-            this.framesPage.Controls.Add(this.booksAndChaptersLinkTextBox);
-            this.framesPage.Controls.Add(this.label36);
-            this.framesPage.Controls.Add(this.concordanceLinkTextBox);
-            this.framesPage.Controls.Add(this.label37);
-            this.framesPage.Location = new System.Drawing.Point(4, 23);
-            this.framesPage.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.framesPage.Name = "framesPage";
-            this.framesPage.Size = new System.Drawing.Size(592, 422);
-            this.framesPage.TabIndex = 9;
-            this.framesPage.Text = "Frames";
-            this.framesPage.UseVisualStyleBackColor = true;
-            // 
-            // psalmLabelTextBox
-            // 
-            this.psalmLabelTextBox.Location = new System.Drawing.Point(285, 321);
-            this.psalmLabelTextBox.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.psalmLabelTextBox.Name = "psalmLabelTextBox";
-            this.psalmLabelTextBox.Size = new System.Drawing.Size(104, 20);
-            this.psalmLabelTextBox.TabIndex = 141;
-            // 
-            // chapterLabelTextBox
-            // 
-            this.chapterLabelTextBox.Location = new System.Drawing.Point(284, 289);
-            this.chapterLabelTextBox.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.chapterLabelTextBox.Name = "chapterLabelTextBox";
-            this.chapterLabelTextBox.Size = new System.Drawing.Size(105, 20);
-            this.chapterLabelTextBox.TabIndex = 140;
-            // 
-            // label71
-            // 
-            this.label71.AutoSize = true;
-            this.label71.Location = new System.Drawing.Point(11, 321);
-            this.label71.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label71.Name = "label71";
-            this.label71.Size = new System.Drawing.Size(108, 14);
-            this.label71.TabIndex = 139;
-            this.label71.Text = "\"Psalm\" in vernacular";
-            // 
-            // label26
-            // 
-            this.label26.AutoSize = true;
-            this.label26.Location = new System.Drawing.Point(11, 291);
-            this.label26.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(117, 14);
-            this.label26.TabIndex = 138;
-            this.label26.Text = "\"Chapter\" in vernacular";
-            // 
-            // showNavigationTextBox
-            // 
-            this.showNavigationTextBox.Location = new System.Drawing.Point(335, 250);
-            this.showNavigationTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.showNavigationTextBox.Name = "showNavigationTextBox";
-            this.showNavigationTextBox.Size = new System.Drawing.Size(106, 20);
-            this.showNavigationTextBox.TabIndex = 137;
-            this.showNavigationTextBox.Text = "Show Navigation Panes";
-            // 
-            // label39
-            // 
-            this.label39.AutoSize = true;
-            this.label39.Location = new System.Drawing.Point(11, 256);
-            this.label39.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label39.Name = "label39";
-            this.label39.Size = new System.Drawing.Size(268, 14);
-            this.label39.TabIndex = 40;
-            this.label39.Text = "Text of button that shows navigation panes when hidden";
-            // 
-            // hideNavigationPanesTextBox
-            // 
-            this.hideNavigationPanesTextBox.Location = new System.Drawing.Point(335, 212);
-            this.hideNavigationPanesTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.hideNavigationPanesTextBox.Name = "hideNavigationPanesTextBox";
-            this.hideNavigationPanesTextBox.Size = new System.Drawing.Size(106, 20);
-            this.hideNavigationPanesTextBox.TabIndex = 136;
-            this.hideNavigationPanesTextBox.Text = "Hide Navigation Panes";
-            // 
-            // label38
-            // 
-            this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(11, 218);
-            this.label38.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label38.Name = "label38";
-            this.label38.Size = new System.Drawing.Size(204, 14);
-            this.label38.TabIndex = 38;
-            this.label38.Text = "Text of button that hides navigation panes";
-            // 
-            // nextChapterLinkTextBox
-            // 
-            this.nextChapterLinkTextBox.Location = new System.Drawing.Point(335, 177);
-            this.nextChapterLinkTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.nextChapterLinkTextBox.Name = "nextChapterLinkTextBox";
-            this.nextChapterLinkTextBox.Size = new System.Drawing.Size(106, 20);
-            this.nextChapterLinkTextBox.TabIndex = 135;
-            this.nextChapterLinkTextBox.Text = "Next Chapter";
-            // 
-            // label33
-            // 
-            this.label33.AutoSize = true;
-            this.label33.Location = new System.Drawing.Point(11, 180);
-            this.label33.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(185, 14);
-            this.label33.TabIndex = 36;
-            this.label33.Text = "Text of button linking to next chapter";
-            // 
-            // previousChapterLinkTextBox
-            // 
-            this.previousChapterLinkTextBox.Location = new System.Drawing.Point(338, 131);
-            this.previousChapterLinkTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.previousChapterLinkTextBox.Name = "previousChapterLinkTextBox";
-            this.previousChapterLinkTextBox.Size = new System.Drawing.Size(106, 20);
-            this.previousChapterLinkTextBox.TabIndex = 134;
-            this.previousChapterLinkTextBox.Text = "Previous Chapter";
-            // 
-            // label34
-            // 
-            this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(11, 137);
-            this.label34.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(203, 14);
-            this.label34.TabIndex = 34;
-            this.label34.Text = "Text of button linking to previous chapter";
-            // 
-            // introductionLinkTextBox
-            // 
-            this.introductionLinkTextBox.Location = new System.Drawing.Point(338, 92);
-            this.introductionLinkTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.introductionLinkTextBox.Name = "introductionLinkTextBox";
-            this.introductionLinkTextBox.Size = new System.Drawing.Size(106, 20);
-            this.introductionLinkTextBox.TabIndex = 133;
-            this.introductionLinkTextBox.Text = "Introduction";
-            // 
-            // label35
-            // 
-            this.label35.AutoSize = true;
-            this.label35.Location = new System.Drawing.Point(11, 98);
-            this.label35.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(301, 14);
-            this.label35.TabIndex = 32;
-            this.label35.Text = "Hotlink to the Introduction of any individual book that has one";
-            // 
-            // booksAndChaptersLinkTextBox
-            // 
-            this.booksAndChaptersLinkTextBox.Location = new System.Drawing.Point(338, 57);
-            this.booksAndChaptersLinkTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.booksAndChaptersLinkTextBox.Name = "booksAndChaptersLinkTextBox";
-            this.booksAndChaptersLinkTextBox.Size = new System.Drawing.Size(106, 20);
-            this.booksAndChaptersLinkTextBox.TabIndex = 132;
-            this.booksAndChaptersLinkTextBox.Text = "Books and Chapters";
-            // 
-            // label36
-            // 
-            this.label36.AutoSize = true;
-            this.label36.Location = new System.Drawing.Point(11, 57);
-            this.label36.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label36.Name = "label36";
-            this.label36.Size = new System.Drawing.Size(323, 14);
-            this.label36.TabIndex = 30;
-            this.label36.Text = "Hotlink in the concordace index back to the main Table of Contents";
-            // 
-            // concordanceLinkTextBox
-            // 
-            this.concordanceLinkTextBox.Location = new System.Drawing.Point(338, 14);
-            this.concordanceLinkTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.concordanceLinkTextBox.Name = "concordanceLinkTextBox";
-            this.concordanceLinkTextBox.Size = new System.Drawing.Size(106, 20);
-            this.concordanceLinkTextBox.TabIndex = 131;
-            this.concordanceLinkTextBox.Text = "Concordance";
-            // 
-            // label37
-            // 
-            this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(11, 17);
-            this.label37.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label37.Name = "label37";
-            this.label37.Size = new System.Drawing.Size(274, 14);
-            this.label37.TabIndex = 28;
-            this.label37.Text = "Hotlink in the main table of contents to the Concordance";
-            // 
             // layoutTabPage
             // 
             this.layoutTabPage.Controls.Add(this.pageLengthTextBox);
@@ -2620,7 +2227,7 @@
             this.layoutTabPage.Location = new System.Drawing.Point(4, 23);
             this.layoutTabPage.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.layoutTabPage.Name = "layoutTabPage";
-            this.layoutTabPage.Size = new System.Drawing.Size(592, 422);
+            this.layoutTabPage.Size = new System.Drawing.Size(592, 470);
             this.layoutTabPage.TabIndex = 13;
             this.layoutTabPage.Text = "Layout";
             this.layoutTabPage.UseVisualStyleBackColor = true;
@@ -2720,7 +2327,7 @@
             this.statsTabPage.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.statsTabPage.Name = "statsTabPage";
             this.statsTabPage.Padding = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.statsTabPage.Size = new System.Drawing.Size(592, 422);
+            this.statsTabPage.Size = new System.Drawing.Size(592, 470);
             this.statsTabPage.TabIndex = 11;
             this.statsTabPage.Text = "Stats";
             this.statsTabPage.UseVisualStyleBackColor = true;
@@ -2835,6 +2442,7 @@
             // 
             // outputsTabPage
             // 
+            this.outputsTabPage.Controls.Add(this.makeSileCheckBox);
             this.outputsTabPage.Controls.Add(this.makePDFCheckBox);
             this.outputsTabPage.Controls.Add(this.makeBrowserBibleCheckBox);
             this.outputsTabPage.Controls.Add(this.label77);
@@ -2845,10 +2453,20 @@
             this.outputsTabPage.Location = new System.Drawing.Point(4, 23);
             this.outputsTabPage.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.outputsTabPage.Name = "outputsTabPage";
-            this.outputsTabPage.Size = new System.Drawing.Size(592, 422);
+            this.outputsTabPage.Size = new System.Drawing.Size(592, 470);
             this.outputsTabPage.TabIndex = 14;
             this.outputsTabPage.Text = "Outputs";
             this.outputsTabPage.UseVisualStyleBackColor = true;
+            // 
+            // makeSileCheckBox
+            // 
+            this.makeSileCheckBox.AutoSize = true;
+            this.makeSileCheckBox.Location = new System.Drawing.Point(35, 161);
+            this.makeSileCheckBox.Name = "makeSileCheckBox";
+            this.makeSileCheckBox.Size = new System.Drawing.Size(41, 18);
+            this.makeSileCheckBox.TabIndex = 7;
+            this.makeSileCheckBox.Text = "sile";
+            this.makeSileCheckBox.UseVisualStyleBackColor = true;
             // 
             // makePDFCheckBox
             // 
@@ -2856,9 +2474,9 @@
             this.makePDFCheckBox.Location = new System.Drawing.Point(35, 116);
             this.makePDFCheckBox.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.makePDFCheckBox.Name = "makePDFCheckBox";
-            this.makePDFCheckBox.Size = new System.Drawing.Size(47, 18);
+            this.makePDFCheckBox.Size = new System.Drawing.Size(71, 18);
             this.makePDFCheckBox.TabIndex = 6;
-            this.makePDFCheckBox.Text = "PDF";
+            this.makePDFCheckBox.Text = "XeLaTeX";
             this.makePDFCheckBox.UseVisualStyleBackColor = true;
             // 
             // makeBrowserBibleCheckBox
@@ -2926,17 +2544,22 @@
             this.makeHtmlCheckBox.Text = "HTML";
             this.makeHtmlCheckBox.UseVisualStyleBackColor = true;
             // 
-            // messagesTabPage
+            // RunTabPage
             // 
-            this.messagesTabPage.Controls.Add(this.messagesListBox);
-            this.messagesTabPage.Location = new System.Drawing.Point(4, 23);
-            this.messagesTabPage.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.messagesTabPage.Name = "messagesTabPage";
-            this.messagesTabPage.Padding = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.messagesTabPage.Size = new System.Drawing.Size(592, 422);
-            this.messagesTabPage.TabIndex = 10;
-            this.messagesTabPage.Text = "Messages";
-            this.messagesTabPage.UseVisualStyleBackColor = true;
+            this.RunTabPage.Controls.Add(this.messagesListBox);
+            this.RunTabPage.Controls.Add(this.reloadButton);
+            this.RunTabPage.Controls.Add(this.resumeButton);
+            this.RunTabPage.Controls.Add(this.markRetryButton);
+            this.RunTabPage.Controls.Add(this.runHighlightedButton);
+            this.RunTabPage.Controls.Add(this.unmarkAllButton);
+            this.RunTabPage.Controls.Add(this.WorkOnAllButton);
+            this.RunTabPage.Location = new System.Drawing.Point(4, 23);
+            this.RunTabPage.Name = "RunTabPage";
+            this.RunTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.RunTabPage.Size = new System.Drawing.Size(592, 470);
+            this.RunTabPage.TabIndex = 16;
+            this.RunTabPage.Text = "Run!";
+            this.RunTabPage.UseVisualStyleBackColor = true;
             // 
             // messagesListBox
             // 
@@ -2945,17 +2568,50 @@
             this.messagesListBox.FormattingEnabled = true;
             this.messagesListBox.HorizontalScrollbar = true;
             this.messagesListBox.ItemHeight = 14;
-            this.messagesListBox.Location = new System.Drawing.Point(0, 6);
+            this.messagesListBox.Location = new System.Drawing.Point(2, 37);
             this.messagesListBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.messagesListBox.Name = "messagesListBox";
             this.messagesListBox.ScrollAlwaysVisible = true;
-            this.messagesListBox.Size = new System.Drawing.Size(588, 410);
-            this.messagesListBox.TabIndex = 140;
+            this.messagesListBox.Size = new System.Drawing.Size(588, 438);
+            this.messagesListBox.TabIndex = 141;
+            // 
+            // resumeButton
+            // 
+            this.resumeButton.Location = new System.Drawing.Point(358, 7);
+            this.resumeButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
+            this.resumeButton.Name = "resumeButton";
+            this.resumeButton.Size = new System.Drawing.Size(84, 24);
+            this.resumeButton.TabIndex = 6;
+            this.resumeButton.Text = "Resume";
+            this.resumeButton.UseVisualStyleBackColor = true;
+            this.resumeButton.Click += new System.EventHandler(this.resumeButton_Click);
+            // 
+            // markRetryButton
+            // 
+            this.markRetryButton.Location = new System.Drawing.Point(85, 7);
+            this.markRetryButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
+            this.markRetryButton.Name = "markRetryButton";
+            this.markRetryButton.Size = new System.Drawing.Size(81, 24);
+            this.markRetryButton.TabIndex = 2;
+            this.markRetryButton.Text = "Mark &failed";
+            this.markRetryButton.UseVisualStyleBackColor = true;
+            this.markRetryButton.Click += new System.EventHandler(this.markRetryButton_Click);
+            // 
+            // runHighlightedButton
+            // 
+            this.runHighlightedButton.Location = new System.Drawing.Point(253, 7);
+            this.runHighlightedButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
+            this.runHighlightedButton.Name = "runHighlightedButton";
+            this.runHighlightedButton.Size = new System.Drawing.Size(101, 24);
+            this.runHighlightedButton.TabIndex = 5;
+            this.runHighlightedButton.Text = "Ru&n Highlighted";
+            this.runHighlightedButton.UseVisualStyleBackColor = true;
+            this.runHighlightedButton.Click += new System.EventHandler(this.runHighlightedButton_Click);
             // 
             // statsLabel
             // 
             this.statsLabel.AutoSize = true;
-            this.statsLabel.Location = new System.Drawing.Point(7, 41);
+            this.statsLabel.Location = new System.Drawing.Point(7, 23);
             this.statsLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.statsLabel.Name = "statsLabel";
             this.statsLabel.Size = new System.Drawing.Size(47, 14);
@@ -2967,84 +2623,15 @@
             this.timer1.Interval = 250;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // helpButton
-            // 
-            this.helpButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(128)))));
-            this.helpButton.Location = new System.Drawing.Point(561, 0);
-            this.helpButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.helpButton.Name = "helpButton";
-            this.helpButton.Size = new System.Drawing.Size(37, 24);
-            this.helpButton.TabIndex = 7;
-            this.helpButton.Text = "&Help";
-            this.helpButton.UseVisualStyleBackColor = false;
-            this.helpButton.Click += new System.EventHandler(this.helpButton_Click);
-            // 
-            // runHighlightedButton
-            // 
-            this.runHighlightedButton.Location = new System.Drawing.Point(371, 1);
-            this.runHighlightedButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.runHighlightedButton.Name = "runHighlightedButton";
-            this.runHighlightedButton.Size = new System.Drawing.Size(110, 24);
-            this.runHighlightedButton.TabIndex = 5;
-            this.runHighlightedButton.Text = "Ru&n Highlighted";
-            this.runHighlightedButton.UseVisualStyleBackColor = true;
-            this.runHighlightedButton.Click += new System.EventHandler(this.runHighlightedButton_Click);
-            // 
-            // markRetryButton
-            // 
-            this.markRetryButton.Location = new System.Drawing.Point(141, 0);
-            this.markRetryButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.markRetryButton.Name = "markRetryButton";
-            this.markRetryButton.Size = new System.Drawing.Size(70, 24);
-            this.markRetryButton.TabIndex = 2;
-            this.markRetryButton.Text = "Mark &failed";
-            this.markRetryButton.UseVisualStyleBackColor = true;
-            this.markRetryButton.Click += new System.EventHandler(this.markRetryButton_Click);
-            // 
-            // resumeButton
-            // 
-            this.resumeButton.Location = new System.Drawing.Point(485, 1);
-            this.resumeButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.resumeButton.Name = "resumeButton";
-            this.resumeButton.Size = new System.Drawing.Size(72, 24);
-            this.resumeButton.TabIndex = 6;
-            this.resumeButton.Text = "Resume";
-            this.resumeButton.UseVisualStyleBackColor = true;
-            this.resumeButton.Click += new System.EventHandler(this.resumeButton_Click);
-            // 
             // sourceLabel
             // 
             this.sourceLabel.AutoSize = true;
-            this.sourceLabel.Location = new System.Drawing.Point(7, 28);
+            this.sourceLabel.Location = new System.Drawing.Point(7, 9);
             this.sourceLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.sourceLabel.Name = "sourceLabel";
             this.sourceLabel.Size = new System.Drawing.Size(154, 14);
             this.sourceLabel.TabIndex = 34;
             this.sourceLabel.Text = "NO SOURCE! Please read Help.";
-            // 
-            // RebuildCheckBox
-            // 
-            this.RebuildCheckBox.AutoSize = true;
-            this.RebuildCheckBox.Location = new System.Drawing.Point(397, 78);
-            this.RebuildCheckBox.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.RebuildCheckBox.Name = "RebuildCheckBox";
-            this.RebuildCheckBox.Size = new System.Drawing.Size(59, 18);
-            this.RebuildCheckBox.TabIndex = 241;
-            this.RebuildCheckBox.Text = "Rebuild";
-            this.RebuildCheckBox.UseVisualStyleBackColor = true;
-            this.RebuildCheckBox.CheckedChanged += new System.EventHandler(this.RebuildCheckBox_CheckedChanged);
-            // 
-            // runXetexCheckBox
-            // 
-            this.runXetexCheckBox.AutoSize = true;
-            this.runXetexCheckBox.Location = new System.Drawing.Point(466, 78);
-            this.runXetexCheckBox.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
-            this.runXetexCheckBox.Name = "runXetexCheckBox";
-            this.runXetexCheckBox.Size = new System.Drawing.Size(80, 18);
-            this.runXetexCheckBox.TabIndex = 242;
-            this.runXetexCheckBox.Text = "Run &XeTeX";
-            this.runXetexCheckBox.UseVisualStyleBackColor = true;
-            this.runXetexCheckBox.CheckedChanged += new System.EventHandler(this.runXetexCheckBox_CheckedChanged);
             // 
             // haiolaForm
             // 
@@ -3052,20 +2639,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(784, 561);
-            this.Controls.Add(this.runXetexCheckBox);
-            this.Controls.Add(this.RebuildCheckBox);
             this.Controls.Add(this.sourceLabel);
-            this.Controls.Add(this.resumeButton);
-            this.Controls.Add(this.markRetryButton);
-            this.Controls.Add(this.runHighlightedButton);
-            this.Controls.Add(this.helpButton);
             this.Controls.Add(this.statsLabel);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.batchLabel);
-            this.Controls.Add(this.unmarkAllButton);
-            this.Controls.Add(this.reloadButton);
-            this.Controls.Add(this.WorkOnAllButton);
-            this.Controls.Add(this.btnSetRootDirectory);
             this.Controls.Add(this.m_projectsList);
             this.Font = new System.Drawing.Font("Times New Roman", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.Black;
@@ -3073,9 +2650,14 @@
             this.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.Name = "haiolaForm";
             this.Text = "Haiola Scripture file format converter";
+            this.Activated += new System.EventHandler(this.haiolaForm_Activated);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.haiolaForm_FormClosing);
             this.Load += new System.EventHandler(this.haiolaForm_Load);
             this.tabControl1.ResumeLayout(false);
+            this.startTabPage.ResumeLayout(false);
+            this.startTabPage.PerformLayout();
+            this.sourceTabPage.ResumeLayout(false);
+            this.sourceTabPage.PerformLayout();
             this.idTabPage.ResumeLayout(false);
             this.idTabPage.PerformLayout();
             this.copyrightTabPage.ResumeLayout(false);
@@ -3090,18 +2672,13 @@
             this.htmlTabPage.PerformLayout();
             this.advancedTabPage.ResumeLayout(false);
             this.advancedTabPage.PerformLayout();
-            this.concordanceTabPage.ResumeLayout(false);
-            this.concordanceTabPage.PerformLayout();
-            this.booksPage.ResumeLayout(false);
-            this.framesPage.ResumeLayout(false);
-            this.framesPage.PerformLayout();
             this.layoutTabPage.ResumeLayout(false);
             this.layoutTabPage.PerformLayout();
             this.statsTabPage.ResumeLayout(false);
             this.statsTabPage.PerformLayout();
             this.outputsTabPage.ResumeLayout(false);
             this.outputsTabPage.PerformLayout();
-            this.messagesTabPage.ResumeLayout(false);
+            this.RunTabPage.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -3127,8 +2704,6 @@
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox dialectTextBox;
-        private System.Windows.Forms.TextBox translationIdTextBox;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox engLangNameTextBox;
         private System.Windows.Forms.TextBox textBox4;
@@ -3171,7 +2746,6 @@
         private System.Windows.Forms.Button moveDownButton;
         private System.Windows.Forms.Button moveUpButton;
         private System.Windows.Forms.CheckBox stripExtrasCheckBox;
-		private System.Windows.Forms.TabPage concordanceTabPage;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button helpButton;
         private System.Windows.Forms.Label label18;
@@ -3188,40 +2762,6 @@
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.TextBox lwcDescriptionTextBox;
         private System.Windows.Forms.Label label20;
-		private System.Windows.Forms.Label label31;
-		private System.Windows.Forms.TextBox tbxPhrases;
-		private System.Windows.Forms.Label label30;
-		private System.Windows.Forms.TextBox tbxExcludeWords;
-		private System.Windows.Forms.Label label22;
-		private System.Windows.Forms.TextBox tbxMaxFreq;
-		private System.Windows.Forms.Label label23;
-		private System.Windows.Forms.TextBox tbxMinContext;
-		private System.Windows.Forms.Label label28;
-		private System.Windows.Forms.TextBox tbxMaxContext;
-		private System.Windows.Forms.Label label29;
-		private System.Windows.Forms.TextBox tbxWordformingChars;
-		private System.Windows.Forms.CheckBox chkMergeCase;
-		private System.Windows.Forms.TabPage booksPage;
-		private System.Windows.Forms.Label label32;
-		private System.Windows.Forms.ListView listBooks;
-		private System.Windows.Forms.ColumnHeader colFilesStdAbbr;
-		private System.Windows.Forms.ColumnHeader colFilesVernAbbr;
-        private System.Windows.Forms.ColumnHeader colFilesXrefs;
-        private System.Windows.Forms.TabPage framesPage;
-		private System.Windows.Forms.TextBox nextChapterLinkTextBox;
-		private System.Windows.Forms.Label label33;
-		private System.Windows.Forms.TextBox previousChapterLinkTextBox;
-		private System.Windows.Forms.Label label34;
-		private System.Windows.Forms.TextBox introductionLinkTextBox;
-		private System.Windows.Forms.Label label35;
-		private System.Windows.Forms.TextBox booksAndChaptersLinkTextBox;
-		private System.Windows.Forms.Label label36;
-		private System.Windows.Forms.TextBox concordanceLinkTextBox;
-		private System.Windows.Forms.Label label37;
-		private System.Windows.Forms.TextBox showNavigationTextBox;
-		private System.Windows.Forms.Label label39;
-		private System.Windows.Forms.TextBox hideNavigationPanesTextBox;
-        private System.Windows.Forms.Label label38;
         private System.Windows.Forms.Label label40;
         private System.Windows.Forms.TextBox coprAbbrevTextBox;
         private System.Windows.Forms.Label label41;
@@ -3235,8 +2775,6 @@
         private System.Windows.Forms.Label label44;
         private System.Windows.Forms.Label label46;
         private System.Windows.Forms.ComboBox numberSystemComboBox;
-        private System.Windows.Forms.TabPage messagesTabPage;
-        private System.Windows.Forms.ListBox messagesListBox;
         private System.Windows.Forms.Button markRetryButton;
         private System.Windows.Forms.CheckBox relaxNestingSyntaxCheckBox;
         private System.Windows.Forms.Label label47;
@@ -3245,8 +2783,6 @@
         private System.Windows.Forms.TextBox xoTextBox;
         private System.Windows.Forms.CheckBox stripOriginCheckBox;
         private System.Windows.Forms.Label label49;
-        private System.Windows.Forms.ComboBox paratextcomboBox;
-        private System.Windows.Forms.Label label52;
         private System.Windows.Forms.TabPage statsTabPage;
         private System.Windows.Forms.TextBox statisticsTextBox;
         private System.Windows.Forms.TextBox traditionalAbbreviationTextBox;
@@ -3263,10 +2799,6 @@
         private System.Windows.Forms.Button resumeButton;
         private System.Windows.Forms.ComboBox dependsComboBox;
         private System.Windows.Forms.Label label58;
-        private System.Windows.Forms.RadioButton concordanceRadioButton;
-        private System.Windows.Forms.RadioButton legacyHtmlRadioButton;
-        private System.Windows.Forms.RadioButton mobileHtmlRadioButton;
-        private System.Windows.Forms.RadioButton framedConcordanceRadioButton;
         private System.Windows.Forms.Label label51;
         private System.Windows.Forms.CheckBox subsetCheckBox;
         private System.Windows.Forms.CheckBox archivedCheckBox;
@@ -3310,10 +2842,6 @@
         private System.Windows.Forms.Label certLabel;
         private System.Windows.Forms.CheckBox redistributableCheckBox;
         private System.Windows.Forms.CheckBox customPermissionsCheckBox;
-        private System.Windows.Forms.TextBox psalmLabelTextBox;
-        private System.Windows.Forms.TextBox chapterLabelTextBox;
-        private System.Windows.Forms.Label label71;
-        private System.Windows.Forms.Label label26;
         private System.Windows.Forms.TabPage layoutTabPage;
         private System.Windows.Forms.CheckBox cropCheckBox;
         private System.Windows.Forms.TextBox pageLengthTextBox;
@@ -3330,7 +2858,6 @@
         private System.Windows.Forms.Label label75;
         private System.Windows.Forms.Label label76;
         private System.Windows.Forms.TextBox oldSwordIdTextBox;
-        private System.Windows.Forms.CheckBox RebuildCheckBox;
         private System.Windows.Forms.TabPage outputsTabPage;
         private System.Windows.Forms.Label label77;
         private System.Windows.Forms.CheckBox makeWordMLCheckBox;
@@ -3346,12 +2873,27 @@
         private System.Windows.Forms.RadioButton CCBySaRadioButton;
         private System.Windows.Forms.RadioButton CCByNdRadioButton;
         private System.Windows.Forms.CheckBox privateCheckBox;
-        private System.Windows.Forms.CheckBox runXetexCheckBox;
         private System.Windows.Forms.CheckBox recheckedCheckBox;
-        private System.Windows.Forms.Label label78;
-        private System.Windows.Forms.ComboBox paratext8ComboBox;
         private System.Windows.Forms.CheckBox anonymousCheckBox;
         private System.Windows.Forms.RadioButton ccbyRadioButton;
+        private System.Windows.Forms.CheckBox makeSileCheckBox;
+        private System.Windows.Forms.TabPage startTabPage;
+        private System.Windows.Forms.TabPage RunTabPage;
+        private System.Windows.Forms.ListBox messagesListBox;
+        private System.Windows.Forms.Label dataDirLabel;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Button createNewProjectButton;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.TabPage sourceTabPage;
+        private System.Windows.Forms.Label translationIDLabel;
+        private System.Windows.Forms.Label sourceInstructionsLabel;
+        private System.Windows.Forms.TextBox customSourceFolderTextBox;
+        private System.Windows.Forms.Button findSourceFolderButton;
+        private System.Windows.Forms.RadioButton wbtVerbatimRadioButton;
+        private System.Windows.Forms.RadioButton ccbyncRadioButton;
+        private System.Windows.Forms.Label label26;
+        private System.Windows.Forms.TextBox licenseExpirationDateTextBox;
+        private System.Windows.Forms.Button WBTUSXimportButton;
     }
 }
 

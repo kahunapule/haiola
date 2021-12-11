@@ -144,6 +144,7 @@ namespace WordSend
     public class BibleBookInfo
     {
         public const int MAXNUMBOOKS = 125;	// Includes Apocrypha + extrabiblical helps, front & back matter, etc.
+        public const int MAXNUMCHAPTERS = 2000;  // Because someone used XXA for a hymnal, one chapter per hymn.
         public Hashtable books;
         public BibleBookRecord[] bookArray = new BibleBookRecord[MAXNUMBOOKS];
         public BibleBookRecord[] publishArray = new BibleBookRecord[MAXNUMBOOKS];
@@ -587,7 +588,7 @@ namespace WordSend
                         case "numChapters":
                             xr.Read();
                             bkRecord.numChapters = Convert.ToInt32(xr.Value);
-                            bkRecord.verseCount = new int[155];
+                            bkRecord.verseCount = new int[MAXNUMCHAPTERS];
                             if ((bkRecord.sortOrder < 0) || (bkRecord.sortOrder >= BibleBookInfo.MAXNUMBOOKS))
                             {
                                 Logit.WriteError("ERROR: bad sort order number:" + bkRecord.sortOrder.ToString());
@@ -723,7 +724,7 @@ namespace WordSend
             string bookNamesFile = Path.Combine(Path.GetDirectoryName(usfxName), "BookNames.xml");
             int verseNumber = 0;
             int verseRangeEndNumber = 0;
-            int i;
+            //int i;
             bool inParagraph = false;
             allChapters = new ArrayList(1195);  // Big enough for OT + NT + some peripherals. Reallocation will happen with Apocrypha/Deuterocanon.
             ChapterInfo ci = new ChapterInfo();
@@ -817,6 +818,11 @@ namespace WordSend
                                 if (Int32.TryParse(chapterString, out chNum))
                                 {
                                     chapterNumber = chNum;
+                                    if (chapterNumber >= MAXNUMCHAPTERS)
+                                    {
+                                        chapterNumber = MAXNUMCHAPTERS - 1;
+                                        Logit.WriteError("Bad chapter number at " + currentBookAbbrev + " " + chapterString + " in " + usfxName);
+                                    }
                                 }
                                 else
                                 {
@@ -938,22 +944,19 @@ namespace WordSend
                                 }
                                 bookRecord.verseCount[chapterNumber] = verseRangeEndNumber;
                                 ci.maxVerse = Math.Max(ci.maxVerse, verseRangeEndNumber);
-                                ci.verseCount += verseRangeEndNumber - verseNumber + 1;
-                                for (i = verseNumber; i <= verseRangeEndNumber; i++)
+                                if (ci.verseCount < ChapterInfo.MAXNUMVERSES)
                                 {
-                                    if ((i >= 0) && (i < ChapterInfo.MAXNUMVERSES))
-                                    {
-                                        ci.verses[i] = new VerseInfo();
-                                        ci.verses[i].startVerse = verseNumber;
-                                        ci.verses[i].endVerse = verseRangeEndNumber;
-                                        ci.verses[i].verse = verseString;
-                                    }
-                                    else
-                                    {
-                                        Logit.WriteError("Bad verse number: " + i.ToString() + " in " + currentBookAbbrev + " " + chapterString);
-                                    }
+                                    ci.verses[ci.verseCount] = new VerseInfo();
+                                    ci.verses[ci.verseCount].verseMarker = verseString;
+                                    ci.verses[ci.verseCount].startVerse = verseNumber;
+                                    ci.verses[ci.verseCount].endVerse = verseRangeEndNumber;
+                                    ci.verses[ci.verseCount].verse = verseString;
+                                    ci.verseCount++;
                                 }
-
+                                else
+                                {
+                                    Logit.WriteError("Bad verse number: " + verseString + " in " + currentBookAbbrev + " " + chapterString);
+                                }
                                 break;
                             case "x":
 
@@ -1072,7 +1075,7 @@ namespace WordSend
         {
             BCVInfo result = new BCVInfo();
             result.exists = false;
-            int i, j;
+            int i, j, k;
             int vnum;
             int chapNum;
             if (bookTla.Length != 3)
@@ -1127,9 +1130,16 @@ namespace WordSend
                                 if ((foundCi.chapterInteger == chapNum) || (chapNum == 0))
                                 {   // We found the chapter.
                                     result.chapInfo = foundCi;
-                                    foundVi = foundCi.verses[vnum];
+                                    k = 0;
+                                    foundVi = foundCi.verses[k];
+                                    while ((foundVi != null) && (foundVi.verseMarker != vs) && (k <= foundCi.maxVerse))
+                                    {
+                                        k++;
+                                    }
                                     if (foundVi == null)
+                                    {
                                         return result;  // No such verse in this translation.
+                                    }
                                     result.vsInfo = foundVi;
                                     result.exists = true;
                                     found = true;

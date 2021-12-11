@@ -903,7 +903,7 @@
 		<name>XXA</name>
 		<shortName>XXA</shortName>
 		<sortOrder>99</sortOrder>
-		<numChapters>151</numChapters>
+		<numChapters>1000</numChapters>
 		<shortCode>XA</shortCode>
 	</Book>
 	<Book testament="x">
@@ -912,7 +912,7 @@
 		<name>XXB</name>
 		<shortName>XXB</shortName>
 		<sortOrder>100</sortOrder>
-		<numChapters>151</numChapters>
+		<numChapters>1000</numChapters>
 		<shortCode>XB</shortCode>
 	</Book>
 	<Book testament="x">
@@ -921,7 +921,7 @@
 		<name>XXC</name>
 		<shortName>XXC</shortName>
 		<sortOrder>101</sortOrder>
-		<numChapters>151</numChapters>
+		<numChapters>1000</numChapters>
 		<shortCode>XC</shortCode>
 	</Book>
 	<Book testament="x">
@@ -930,7 +930,7 @@
 		<name>XXD</name>
 		<shortName>XXD</shortName>
 		<sortOrder>102</sortOrder>
-		<numChapters>151</numChapters>
+		<numChapters>1000</numChapters>
 		<shortCode>XD</shortCode>
 	</Book>
 	<Book testament="x">
@@ -939,7 +939,7 @@
 		<name>XXE</name>
 		<shortName>XXE</shortName>
 		<sortOrder>103</sortOrder>
-		<numChapters>151</numChapters>
+		<numChapters>1000</numChapters>
 		<shortCode>XE</shortCode>
 	</Book>
 	<Book testament="x">
@@ -948,7 +948,7 @@
 		<name>XXF</name>
 		<shortName>XXF</shortName>
 		<sortOrder>104</sortOrder>
-		<numChapters>151</numChapters>
+		<numChapters>1000</numChapters>
 		<shortCode>XF</shortCode>
 	</Book>
 	<Book testament="x">
@@ -957,7 +957,7 @@
 		<name>XXG</name>
 		<shortName>XXG</shortName>
 		<sortOrder>105</sortOrder>
-		<numChapters>151</numChapters>
+		<numChapters>1000</numChapters>
 		<shortCode>XG</shortCode>
 	</Book>
 	<Book testament="x">
@@ -1094,5 +1094,32 @@
 		<sortOrder>120</sortOrder>
 		<numChapters>1</numChapters>
 		<shortCode>XL</shortCode>
+	</Book>
+	<Book testament="x">
+		<sfmTla>ODA</sfmTla>
+		<osisName>Odes</osisName>
+		<name>Odes</name>
+		<shortName>Odes</shortName>
+		<sortOrder>121</sortOrder>
+		<numChapters>1</numChapters>
+		<shortCode>YO</shortCode>
+	</Book>
+	<Book testament="x">
+		<sfmTla>JSA</sfmTla>
+		<osisName>JoshuaA</osisName>
+		<name>Joshua A</name>
+		<shortName>Joshua A</shortName>
+		<sortOrder>122</sortOrder>
+		<numChapters>1</numChapters>
+		<shortCode>XO</shortCode>
+	</Book>
+	<Book testament="x">
+		<sfmTla>JDB</sfmTla>
+		<osisName>JudgesB</osisName>
+		<name>Judges B</name>
+		<shortName>Judges B</shortName>
+		<sortOrder>123</sortOrder>
+		<numChapters>1</numChapters>
+		<shortCode>XJ</shortCode>
 	</Book>
 </BibleBookInfo>

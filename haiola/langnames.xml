@@ -21,6 +21,7 @@
 <lang><tla>anp</tla><bla></bla><engName>Angika</engName></lang>
 <lang><tla>apa</tla><bla></bla><engName>Apache languages</engName></lang>
 <lang><tla>ara</tla><bla>ar</bla><engName>Arabic</engName></lang>
+<lang><tla>arb</tla><bla>ar</bla><engName>Standard Arabic</engName></lang>
 <lang><tla>arc</tla><bla></bla><engName>Official Aramaic (700-300 BCE); Imperial Aramaic (700-300 BCE)</engName></lang>
 <lang><tla>arg</tla><bla>an</bla><engName>Aragonese</engName></lang>
 <lang><tla>hye</tla><bla>hy</bla><engName>Armenian</engName></lang>
@@ -81,6 +82,7 @@
 <lang><tla>che</tla><bla>ce</bla><engName>Chechen</engName></lang>
 <lang><tla>chg</tla><bla></bla><engName>Chagatai</engName></lang>
 <lang><tla>zho</tla><bla>zh</bla><engName>Chinese</engName></lang>
+<lang><tla>cmn</tla><bla>zh</bla><engName>Mandarin Chinese</engName></lang>
 <lang><tla>chk</tla><bla></bla><engName>Chuukese</engName></lang>
 <lang><tla>chm</tla><bla></bla><engName>Mari</engName></lang>
 <lang><tla>chn</tla><bla></bla><engName>Chinook jargon</engName></lang>

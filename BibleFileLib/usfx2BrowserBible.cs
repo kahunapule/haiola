@@ -348,7 +348,7 @@ namespace WordSend
         {
             if (inVerse && (htm != null))
                 WriteHtml("</span>");
-            if ((sqlVerseTable != null) && (null != sqlVerseContents))
+            if ((sqlVerseTable != null) && (null != sqlVerseContents) && (bookRecord.testament != "x"))
             {
                 string verseContents = sqlVerseContents.Replace("\"", "\\\"").ToString();
                 sqlVerseTable.WriteLine($"INSERT INTO {sqlTableName} VALUES (\"{sqlCanonOrder}\",\"{currentBookAbbrev}\",\"{currentChapter}\",\"{sqlVerseId}\",\"{verseContents}\");");
@@ -583,7 +583,7 @@ namespace WordSend
             htm.WriteLine("<html><head>");
             htm.WriteLine("<link href='fallback.css' rel='stylesheet' />");
             htm.WriteLine("<link href='{0}' rel='stylesheet' />", customCssName);
-            htm.WriteLine("<meta name='viewport' content='width=device-width', initial-scale=1'>");
+            htm.WriteLine("<meta name='viewport' content='width=device-width,initial-scale=1'/>");
             htm.WriteLine("<meta charset='UTF-8' /><title>{0}</title>", translationName);
             htm.WriteLine("</head><body>");
             // htm.WriteLine("<h1>{0}</h1>", translationName);

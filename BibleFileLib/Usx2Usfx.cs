@@ -32,12 +32,17 @@ namespace WordSend
         /// <summary>
         /// Takes a string like "PSA 2:7" from the loc attribute of a USX ref tag and 
         /// converts it to a string like "PSA.2.7" for the tgt attribute of a USFX ref tag.
+        /// If there is more than one segment in the source reference, we just convert the
+        /// first one by truncating the list at the first comma or semicolon.
         /// </summary>
         /// <param name="loc">USX ref loc reference target</param>
         /// <returns>USFX ref tgt reference target</returns>
         string usxLoc2usfxTgt(string loc)
         {
+            char[] listSep = { ',', ';' };
             string result = loc.Replace(' ', '.').Replace(':', '.').Replace("a", "").Replace("b", "");
+            if (result.Contains(",") || result.Contains(";"))
+                result = result.Substring(0, result.IndexOfAny(listSep));
             if (result.Contains(".-"))
                 return string.Empty;
             return result;
@@ -61,11 +66,13 @@ namespace WordSend
             string level;
             string caller;
             string loc;
-            string closed;
+            //string closed;
             string thisBook = String.Empty;
             string thisChapter = String.Empty;
             string thisVerse = String.Empty;
-            bool badNoteCharSyntaxUsed = false;
+            string sid = String.Empty;
+            string eid = String.Empty;
+            //bool badNoteCharSyntaxUsed = false;
             bool inNote = false;
             try
             {
@@ -79,15 +86,17 @@ namespace WordSend
                         number = GetAnAttribute("number");
                         code = GetAnAttribute("code");
                         caller = GetAnAttribute("caller");
-                        closed = GetAnAttribute("closed");
+                        //closed = GetAnAttribute("closed");
                         loc = GetAnAttribute("loc");
+                        sid = GetAnAttribute("sid");
+                        eid = GetAnAttribute("eid");
                         switch (usx.Name)
                         {
                                 // TODO: Handle: rem, cl, cp, ca, va, vp
                             case "usx": // Ignore this one and use </usx> to close the <book> tag.
                                 break;
                             case "book":    // In usfx, <book> is a container around a book.
-                                            // In usx, <book> is encompasses only the \id line
+                                            // In usx, <book> encompasses only the \id line
                                 if (processedUsxBooks.Contains(code))
                                 {
                                     usx.Close();
@@ -104,28 +113,30 @@ namespace WordSend
                                 CloseEmptyElement();
                                 break;
                             case "chapter":
-                                scrp.xw.WriteStartElement(style);
-                                scrp.xw.WriteAttributeString("id", number);
-                                thisChapter = number;
-                                thisVerse = "0";
-                                CloseEmptyElement();
+                                if (style != String.Empty)
+                                {
+                                    scrp.xw.WriteStartElement(style);
+                                    scrp.xw.WriteAttributeString("id", number);
+                                    thisChapter = number;
+                                    thisVerse = "0";
+                                    CloseEmptyElement();
+                                }
                                 break;
                             case "verse":
-                                number = number.Replace(',', '-');  // Paratext allows comma or dash as a separator in verse ranges.
-                                scrp.xw.WriteStartElement(style);
-                                scrp.xw.WriteAttributeString("id", number);
-                                thisVerse = number;
-                                CloseEmptyElement();
-                                /*
-                                if ((thisBook == "ACT") && (thisChapter == "11") && (thisVerse == "11"))
-                                    Logit.WriteLine("Acts 11:11");
-                                 */
+                                if (style != String.Empty)
+                                {
+                                    number = number.Replace(',', '-');  // Paratext allows comma or dash as a separator in verse ranges.
+                                    scrp.xw.WriteStartElement(style);
+                                    scrp.xw.WriteAttributeString("id", number);
+                                    thisVerse = number;
+                                    CloseEmptyElement();
+                                }
                                 break;
                             case "note":
                                 scrp.xw.WriteStartElement(style);
                                 scrp.xw.WriteAttributeString("caller", caller);
                                 scrp.xw.WriteAttributeString("sfm", style);
-                                badNoteCharSyntaxUsed = false;
+                                //badNoteCharSyntaxUsed = false;
                                 inNote = true;
                                 CloseEmptyElement();
                                 break;
@@ -138,11 +149,11 @@ namespace WordSend
                                     else
                                         charNesting++;
                                 }
-                                if ((closed == "false") && (usx.IsEmptyElement))
-                                {
-                                    badNoteCharSyntaxUsed = true;
-                                    Logit.WriteError("Empty unclosed char element at " + thisBook + " " + thisChapter + ":" + thisVerse);
-                                }
+                                //else if (closed == "false")
+                                //{
+                                //    badNoteCharSyntaxUsed = true;
+                                //    Logit.WriteError("Empty unclosed char element at " + thisBook + " " + thisChapter + ":" + thisVerse);
+                                //}
                                 else
                                 {
                                     CloseEmptyElement();
@@ -186,6 +197,11 @@ namespace WordSend
                                     case "s":
                                     case "mt":
                                         scrp.xw.WriteStartElement(sfm);
+                                        if (!String.IsNullOrEmpty(level))
+                                            scrp.xw.WriteAttributeString("level", level);
+                                        break;
+                                    case "imte":
+                                        scrp.xw.WriteStartElement("mt");
                                         if (!String.IsNullOrEmpty(level))
                                             scrp.xw.WriteAttributeString("level", level);
                                         break;
@@ -255,6 +271,10 @@ namespace WordSend
                                     scrp.xw.WriteAttributeString("tgt", reftgt);
                                 }
                                 break;
+                            case "periph":
+                                // scrp.xw.WriteElementString("rem", "periph " + GetAnAttribute("id")+", " + GetAnAttribute("alt"));
+                                // scrp.xw.WriteEndElement();  // rem
+                                break;
                             default:
                                 Logit.WriteError("Unrecognized USX element name: " + usx.Name);
                                 break;
@@ -267,6 +287,10 @@ namespace WordSend
                             if (reftgt.Length > 6)
                                 scrp.xw.WriteEndElement();
                         }
+                        else if (usx.Name == "periph")
+                        {
+                            // Do nothing.
+                        }
                         else
                         {
                             if (usx.Name == "char")
@@ -278,6 +302,7 @@ namespace WordSend
                             }
                             if ((noteCharNesting < 0) || (charNesting < 0))
                                 Logit.WriteError(String.Format("Unexpected char nesting value: {0} normal {1} in notes", charNesting, noteCharNesting));
+                            /***
                             if ((usx.Name == "note") && badNoteCharSyntaxUsed)
                             {
                                 inNote = false;
@@ -287,6 +312,7 @@ namespace WordSend
                                     badNoteCharSyntaxUsed = false;
                                 }
                             }
+                            ***/
                             scrp.xw.WriteEndElement();
                         }
                     }

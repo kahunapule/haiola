@@ -137,6 +137,12 @@ namespace WordSend
             set { ini.WriteString("shortTitle", value); }
         }
 
+		public string licenseExpiration
+        {
+			get { return ini.ReadString("licenseExpiration", String.Empty); }
+			set { ini.WriteString("licenseExpiration", value); }
+        }
+
         public string epubId
         {
             get { return ini.ReadString("epubId", String.Empty); }
@@ -145,17 +151,22 @@ namespace WordSend
 
         public bool redistributable
         {
-            get { return ((ini.ReadBool("redistributable", false) || publicDomain || ccby || ccbyndnc || ccbysa || ccbynd) && !privateProject); }
-            set { ini.WriteBool("redistributable", (!privateProject) && (value || publicDomain || ccbyndnc || ccbysa || ccbynd || ccby)); }
+            get { return ((ini.ReadBool("redistributable", false) || publicDomain || ccby || ccbyndnc || ccbysa || ccbynd || ccbync) && !privateProject); }
+            set { ini.WriteBool("redistributable", (!privateProject) && (value || publicDomain || ccbyndnc || ccbysa || ccbynd || ccby || ccbync)); }
         }
 
-        public bool ccby
-        {
-            get { return (ini.ReadBool("ccby", !(ccbysa || ccbynd || publicDomain || ccbyndnc || allRightsReserved || silentCopyright || otherLicense))); }
-            set { ini.WriteBool("ccby", value); }
-        }
+		public bool ccby
+		{
+			get { return (ini.ReadBool("ccby", false)); }
+			set { ini.WriteBool("ccby", value); }
+		}
+		public bool ccbync
+		{
+			get { return (ini.ReadBool("ccbync", false)); }
+			set { ini.WriteBool("ccbync", value); }
+		}
 
-        public bool ccbysa
+		public bool ccbysa
         {
             get { return (ini.ReadBool("ccbysa", false)); }
             set { ini.WriteBool("ccbysa", value); }
@@ -173,7 +184,14 @@ namespace WordSend
             set { ini.WriteBool("ccbynd", value); }
         }
 
-        public bool anonymous
+		public bool wbtverbatim
+		{
+			get { return (ini.ReadBool("wbtverbatim", false)); }
+			set { ini.WriteBool("wbtverbatim", value); }
+		}
+
+
+		public bool anonymous
         {
             get { return (ini.ReadBool("anonymous", false)); }
             set { ini.WriteBool("anonymous", value); }
@@ -195,6 +213,12 @@ namespace WordSend
         {
             get { return (ini.ReadBool("makeHtml", true)); }
             set { ini.WriteBool("makeHtml", value); }
+        }
+
+        public bool makeSile
+        {
+            get { return (ini.ReadBool("makeSile", true)); }
+            set { ini.WriteBool("makeSile", value); }
         }
 
         public bool makeSword
@@ -264,6 +288,12 @@ namespace WordSend
             get { return ini.ReadBool("customPermissions", false); }
             set { ini.WriteBool("customPermissions", value); }
         }
+
+		public string customSourcePath
+		{
+			get { return ini.ReadString("customSourcePath", ""); }
+			set { ini.WriteString("customSourcePath", value); }
+		}
 
         public bool commonChars
         {
@@ -480,17 +510,6 @@ namespace WordSend
 			set { ini.WriteString("translationId", value.Trim()); }
 		}
 
-        public bool rebuild
-        {
-            get { return ini.ReadBool("rebuild", false); }
-            set { ini.WriteBool("rebuild", value); }
-        }
-
-        public bool runXetex
-        {
-            get { return ini.ReadBool("runXini", false); }
-            set { ini.WriteBool("runXini", value); }
-        }
 
         public string fontFamily
         {
@@ -614,7 +633,7 @@ namespace WordSend
 
         public bool downloadsAllowed
         {
-            get { return ini.ReadBool("downloadsAllowed", redistributable || ccby || ccbyndnc || publicDomain || ccbysa || ccbynd) && !privateProject; }
+            get { return ini.ReadBool("downloadsAllowed", redistributable || ccby || ccbyndnc || publicDomain || ccbysa || ccbynd || wbtverbatim) && !privateProject; }
             set { ini.WriteBool("downloadsAllowed", value); }
         }
 
@@ -727,8 +746,14 @@ namespace WordSend
 
         public DateTime SwordVersionDate
         {
-            get { return ini.ReadDateTime("SwordVersionDate", contentUpdateDate); }
+            get { return ini.ReadDateTime("SwordVersionDate", DateTime.MinValue); }
             set { ini.WriteDateTime("SwordVersionDate", value); }
+        }
+
+        public DateTime SileVersionDate
+        {
+            get { return ini.ReadDateTime("SileVersionDate", DateTime.MinValue); }
+            set { ini.WriteDateTime("SileVersionDate", value); }
         }
 
         public DateTime SourceFileDate
@@ -892,7 +917,7 @@ namespace WordSend
 
 		public string electronicPublisher
 		{
-			get { return ini.ReadString("electronicPublisher", "PNG Bible Translation Association"); }
+			get { return ini.ReadString("electronicPublisher", String.Empty); }
 			set { ini.WriteString("electronicPublisher", value.Trim()); }
 		}
 

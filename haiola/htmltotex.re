@@ -19,6 +19,8 @@
 |<li>([^☻]*?)</li>|\{\\TINYLI $1\\par\}|
 |<b>|\\BDB |
 |</b>|\\BDE |
+|<em>|\\BDB |
+|</em>|\\BDE |
 |<table[^>]*>| |\\begin\{center\}\\begin\{tabular\}\{ l l \}|
 |</table>| |\\end\{tabular\}\\end\{center\}|
 |<tr[^>]*>| |[^☻]*?<td[^>]*>([^☻]*?)</td[^>]*>[^☻]*?<td[^>]*>([^☻]*?)</td[^>]*>[^☻]*?</tr[^>]*>|$1 & $2 \\\\|

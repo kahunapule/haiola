@@ -62,7 +62,7 @@ namespace WordSend
                             {
                                 looking = false;
                                 shortBookCode = bookInfo.publishArray[i].shortCode;
-                                if (bookInfo.publishArray[i].chaptersFound.Count > 1)
+                                if ((bookInfo.publishArray[i].chaptersFound != null) && (bookInfo.publishArray[i].chaptersFound.Count > 1))
                                 {
                                     btns.Append("<ul class='tnav'>");
                                     foreach (ChapterInfo ci in bookInfo.publishArray[i].chaptersFound)
@@ -369,14 +369,16 @@ namespace WordSend
                 {   // Label in line, above the chapter
                     WriteHtml(String.Format("\n<div class='psalmlabel'{0}>{1} {2}</div>", chapterIdAttribute, psalmLabel, currentChapterPublished));
                 }
-                else if (style.StartsWith("q"))
+                else // if (style.StartsWith("q"))
                 {
                     WriteHtml(String.Format("\n<div class='psalmlabel'{0}>{1} {2}</div>", chapterIdAttribute, chapterLabel, currentChapterPublished));
                 }
+                /****
                 else
                 {   // Label off to the left (or right for rtl scripts), just the number
                     WriteHtml(String.Format("\n<div class='chapterlabel'{0}>{1}</div>", chapterIdAttribute, currentChapterPublished));
                 }
+                ****/
                 newChapterMarkNeeded = newChapterFound = false;
                 chapterIdAttribute = String.Empty;
             }
@@ -547,7 +549,7 @@ namespace WordSend
             sw.WriteLine("<head>");
             sw.WriteLine("<title>Cover</title>");
             sw.WriteLine("<style type=\"text/css\">");
-            sw.WriteLine("<meta name='viewport' content='width=device-width', initial-scale=1'>");
+            sw.WriteLine("<meta name='viewport' content='width=device-width,initial-scale=1'/>");
             sw.WriteLine("body {margin:0em;padding:0em}");
             sw.WriteLine("img {max-width:100%;max-height:100%}");
             sw.WriteLine("</style>");
@@ -566,7 +568,7 @@ namespace WordSend
             htm.WriteLine("<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:epub=\"http://www.idpf.org/2007/ops\">");
             htm.WriteLine("<head>");
 		    htm.WriteLine(" <meta charset=\"utf-8\" />");
-            htm.WriteLine(" <meta name='viewport' content='width=device-width', initial-scale=1'>");
+            htm.WriteLine(" <meta name='viewport' content='width=device-width,initial-scale=1'/>");
             htm.WriteLine(" <title>{0}</title>", EscapeHtml(translationName));
             htm.WriteLine(" <link href='epub.css' rel='stylesheet' />");
             htm.WriteLine("</head>");
@@ -1235,12 +1237,12 @@ namespace WordSend
                 di = new DirectoryInfo(metaName);
                 foreach (var fi in di.GetFiles())
                 {
-                    zip.Add(fi.FullName, "META-INF/" + fi.Name);
+                    zip.Add(fi.FullName, Path.Combine("META-INF",fi.Name));
                 }
                 di = new DirectoryInfo(OEBPS);
                 foreach (var fi in di.GetFiles())
                 {
-                    zip.Add(fi.FullName, "OEBPS/" + fi.Name);
+                    zip.Add(fi.FullName, Path.Combine("OEBPS",fi.Name));
                 }
                 zip.CommitUpdate();
                 zip.Close();

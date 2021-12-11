@@ -280,11 +280,6 @@ namespace WordSend
         /// <param name="command">Command to run, with or without full path.</param>
         public static bool RunCommand(string command, string defaultDirectory = "")
         {
-            if (!fileHelper.fAllRunning)
-            {
-                Logit.WriteError("Stopped before running " + command);
-                return false;
-            }
             runCommandError = String.Empty;
             System.Diagnostics.Process runningCommand = null;
             try
@@ -314,11 +309,13 @@ namespace WordSend
                         System.Windows.Forms.Application.DoEvents();
                         System.Threading.Thread.Sleep(200);
                     }
+                    /*
                     if ((!runningCommand.HasExited) && (!fileHelper.fAllRunning))
                     {
                         Logit.WriteLine("Killing command " + command);
                         runningCommand.Kill();
                     }
+                    */
                 }
             }
             catch (Exception ex)

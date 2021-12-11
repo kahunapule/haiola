@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
     <ProductVersion>8.0.50727</ProductVersion>
@@ -28,7 +28,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -54,7 +54,7 @@
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
-    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vsDFAF.tmp\Debug\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\kahun\AppData\Local\Temp\vs776A.tmp\Debug\</IntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -79,7 +79,7 @@
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
-    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vsDFAF.tmp\Release\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\kahun\AppData\Local\Temp\vs776A.tmp\Release\</IntermediateOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib">
@@ -115,6 +115,7 @@
     <Compile Include="global.cs" />
     <Compile Include="readssf.cs" />
     <Compile Include="usfx2BrowserBible.cs" />
+    <Compile Include="usfx2sile.cs" />
     <Compile Include="Versification.cs" />
     <Compile Include="epub.cs" />
     <Compile Include="ethnologue.cs" />
