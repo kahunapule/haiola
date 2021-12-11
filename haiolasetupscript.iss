@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Haiola"
-#define MyAppVersion "2020-01-10"
+#define MyAppVersion "2020-12-11"
 #define MyAppPublisher "eBible.org"
 #define MyAppURL "http://haiola.org"
 #define MyAppExeName "haiola.exe"
@@ -21,11 +21,11 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
-LicenseFile=Z:\Documents\source\haiola\haiola\dist\Haiola\copyright.txt
-InfoAfterFile=Z:\Documents\source\haiola\haiola\dist\Haiola\getstarted.txt
-OutputDir=Z:\Documents\source\haiola\haiola\dist
+LicenseFile=Y:\sync\source\haiola\haiola\dist\Haiola\copyright.txt
+InfoAfterFile=Y:\sync\source\haiola\haiola\dist\Haiola\getstarted.txt
+OutputDir=Y:\sync\source\haiola\haiola\dist
 OutputBaseFilename=setuphaiola
-SetupIconFile=Z:\Documents\source\haiola\haiola\dist\Haiola\Trumpet.ico
+SetupIconFile=Y:\sync\source\haiola\haiola\dist\Haiola\Trumpet.ico
 Compression=lzma
 SolidCompression=yes
 
@@ -37,8 +37,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: "Z:\Documents\source\haiola\haiola\dist\Haiola\haiola.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Z:\Documents\source\haiola\haiola\dist\Haiola\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "Y:\sync\source\haiola\haiola\dist\Haiola\haiola.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Y:\sync\source\haiola\haiola\dist\Haiola\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
