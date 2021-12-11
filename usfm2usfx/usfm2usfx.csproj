@@ -23,7 +23,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+<<<<<<< HEAD
     <IntermediateOutputPath>C:\Users\kahun\AppData\Local\Temp\vs7A21.tmp\Debug\</IntermediateOutputPath>
+=======
+    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vs8BD8.tmp\Debug\</IntermediateOutputPath>
+>>>>>>> 654734e24038a45d7e40054f7a6b81dafbb10ecb
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -34,7 +38,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+<<<<<<< HEAD
     <IntermediateOutputPath>C:\Users\kahun\AppData\Local\Temp\vs7A21.tmp\Release\</IntermediateOutputPath>
+=======
+    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vs8BD8.tmp\Release\</IntermediateOutputPath>
+>>>>>>> 654734e24038a45d7e40054f7a6b81dafbb10ecb
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">

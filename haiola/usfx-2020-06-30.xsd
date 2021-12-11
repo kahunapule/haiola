@@ -280,6 +280,7 @@
 									</xs:annotation>
 								</xs:element>
 							</xs:choice>
+<<<<<<< HEAD
 							<xs:element maxOccurs="unbounded" minOccurs="0" name="usfm"
 								type="xs:string">
 								<xs:annotation>
@@ -287,6 +288,8 @@
 </xs:documentation>
 								</xs:annotation>
 							</xs:element>
+=======
+>>>>>>> 654734e24038a45d7e40054f7a6b81dafbb10ecb
 						</xs:sequence>
 						<xs:attribute name="id" type="xs:string" use="optional"/>
 					</xs:complexType>

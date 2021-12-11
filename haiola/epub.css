@@ -78,6 +78,7 @@ h1,h2,h3,.mt,.mt1,.mte,
 .qs	{text-align:right}
 .qt	{font-style:oblique}
 .ord	{vertical-align:super;text-decoration:underline}
+.sup	{vertical-align:super}
 .nb, .ps { text-indent: 0em; margin-top: 0em }
 .p,.p1,.pb,.pde,.pdi	{text-indent:2em;margin-top:.5em}
 .p,.nb	{display:block;font-size:1em}
