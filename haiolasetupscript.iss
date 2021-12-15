@@ -2,11 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Haiola"
-<<<<<<< HEAD
 #define MyAppVersion "2020-12-11"
-=======
-#define MyAppVersion "2020-06-30"
->>>>>>> 654734e24038a45d7e40054f7a6b81dafbb10ecb
 #define MyAppPublisher "eBible.org"
 #define MyAppURL "http://haiola.org"
 #define MyAppExeName "haiola.exe"

@@ -54,11 +54,7 @@
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
-<<<<<<< HEAD
     <IntermediateOutputPath>C:\Users\kahun\AppData\Local\Temp\vs776A.tmp\Debug\</IntermediateOutputPath>
-=======
-    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vs86D1.tmp\Debug\</IntermediateOutputPath>
->>>>>>> 654734e24038a45d7e40054f7a6b81dafbb10ecb
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -83,11 +79,7 @@
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
-<<<<<<< HEAD
     <IntermediateOutputPath>C:\Users\kahun\AppData\Local\Temp\vs776A.tmp\Release\</IntermediateOutputPath>
-=======
-    <IntermediateOutputPath>C:\Users\KAHUNA~1\AppData\Local\Temp\vs86D1.tmp\Release\</IntermediateOutputPath>
->>>>>>> 654734e24038a45d7e40054f7a6b81dafbb10ecb
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ICSharpCode.SharpZipLib">
