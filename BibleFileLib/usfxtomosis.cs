@@ -1737,6 +1737,7 @@ namespace WordSend
                                     }
                                     break;
                                 case "d":
+                                case "qd":
                                     // Compensate for Sword defect: Psalm descriptive title as verse one
                                     // loses canonical data if the descriptive title ends before verse one ends.
                                     // Therefore, in this case, we change paragraph type to \q1 (<l>).
@@ -2233,6 +2234,7 @@ namespace WordSend
                                 case "bk":
                                 case "cl":
                                 case "d":
+                                case "qd":
                                 case "dc":
                                 case "fk":
                                 case "fp":

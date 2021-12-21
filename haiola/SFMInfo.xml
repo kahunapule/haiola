@@ -782,6 +782,13 @@
 		<TeXcode>poetryCentered</TeXcode>
 	</sfm>
 	<sfm kind="paragraph">
+		<tag>qd</tag>
+		<paragraphStyle>Hebrew Title</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>hebTitle</TeXcode>
+	</sfm>
+	<sfm kind="paragraph">
 		<tag>qm</tag>
 		<paragraphStyle>Embedded Poetry</paragraphStyle>
 		<nestingAllowed>false</nestingAllowed>

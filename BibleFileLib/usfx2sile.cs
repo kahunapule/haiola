@@ -393,6 +393,7 @@ namespace WordSend
                                     SkipElement();
                                 break;
                             case "d":
+                            case "qd":
                             case "s":
                                 if (sileFile != null)
                                 {

@@ -2075,6 +2075,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                 break;
                             case "s":
                             case "d":
+                            case "qd":
                                 ChapterToc();
                                 hasContentsPage = true;
                                 inSectionTitle = true;
@@ -2210,6 +2211,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                 break;
                             case "d":
                             case "s":
+                            case "qd":
                                 if (inSectionTitle)
                                 {
                                     AppendToc("toc2", sectionTitle.Trim());
@@ -2522,6 +2524,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                         break;
                                     case "mt":
                                     case "d":
+                                    case "qd":
                                     case "s":
                                         ProcessParagraphStart(true);
                                         break;
@@ -2762,6 +2765,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                         break;
                                     case "ms":
                                     case "d":
+                                    case "qd":
                                     case "s":
                                         if (bookRecord.testament.CompareTo("x") == 0)
                                         {

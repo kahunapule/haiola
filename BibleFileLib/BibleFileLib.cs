@@ -2594,7 +2594,7 @@ namespace WordSend
 					if (sfm != null)
 					{
 						inUsfxParagraph = true;
-                        if ((sfm == "d") || (sfm == "s"))
+                        if ((sfm == "d") || (sfm == "s") || (sfm == "qd"))
                         {
                             xw.WriteStartElement(ns + sfm);
                         }
@@ -3626,7 +3626,7 @@ namespace WordSend
 								EndWordMLParagraph();
 								bookStarted = true;
 							}
-							if (chapterStart && (sf.text != "") && (sf.tag.StartsWith("p") || sf.tag.StartsWith("q") || (sf.tag == "d")))
+							if (chapterStart && (sf.text != "") && (sf.tag.StartsWith("p") || sf.tag.StartsWith("q") || (sf.tag == "d") || (sf.tag == "qd")))
 							{
 								if (DropCapChapter(chapterMark) && (sf.tag.StartsWith("p") || (sf.tag.StartsWith("q"))))
 								{
@@ -5648,6 +5648,7 @@ namespace WordSend
                                 case "h":
                                 case "s":
                                 case "d":
+                                case "qd":
                                 case "cl":
                                     parseThis = false;
                                     break;

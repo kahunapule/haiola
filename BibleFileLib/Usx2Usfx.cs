@@ -194,6 +194,7 @@ namespace WordSend
                                     case "p":
                                     case "q":
                                     case "d":
+                                    case "qd":
                                     case "s":
                                     case "mt":
                                         scrp.xw.WriteStartElement(sfm);

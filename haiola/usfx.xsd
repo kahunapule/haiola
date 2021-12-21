@@ -286,6 +286,12 @@
 										</xs:simpleContent>
 									</xs:complexType>
 								</xs:element>
+								<xs:element maxOccurs="unbounded" minOccurs="0" name="qd"
+									type="pType">
+									<xs:annotation>
+										<xs:documentation>Canonical Hebrew notation, like canonical title, but after the poem.</xs:documentation>
+									</xs:annotation>
+								</xs:element>
 							</xs:choice>
 						</xs:sequence>
 						<xs:attribute name="id" type="xs:string" use="optional"/>

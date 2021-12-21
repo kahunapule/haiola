@@ -290,6 +290,7 @@ namespace WordSend
                                     verseText.Append(' ');
                                 break;
                             case "d":   // Make canonical psalm titles searchable
+                            case "qd":
                                 inPsalmTitle = true;
                                 break;
                             case "add":
@@ -372,6 +373,7 @@ namespace WordSend
                                 currentBook = currentChapter = currentVerse = String.Empty;
                                 break;
                             case "d":
+                            case "qd":
                                 inPsalmTitle = false;
                                 break;
                             case "add":
