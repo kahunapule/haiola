@@ -976,14 +976,17 @@ namespace WordSend
                         {
                             if (bookRecord.vernacularName == String.Empty)
                             {
-                                if ((bookRecord.testament == "o") || (bookRecord.testament == "n") || (bookRecord.testament == "a"))
-                                {
-                                    Logit.WriteError("Missing main title in " + currentBookAbbrev + " in " + usfxName);
-                                }
                                 bookRecord.vernacularName = bookRecord.vernacularLongName;
                                 if (bookRecord.vernacularName == String.Empty)
                                 {
                                     bookRecord.vernacularName = bookRecord.vernacularShortName;
+                                }
+                                if ((bookRecord.testament == "o") || (bookRecord.testament == "n") || (bookRecord.testament == "a"))
+                                {
+                                    if (bookRecord.vernacularName == String.Empty)
+                                    {
+                                        Logit.WriteError("Missing main title in " + currentBookAbbrev + " in " + usfxName);
+                                    }
                                 }
                             }
                             if (bookRecord.vernacularLongName == String.Empty)

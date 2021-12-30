@@ -738,7 +738,11 @@ namespace WordSend
                     }
                     htm.WriteLine("<div class=\"toc\"><a href=\"https://ebible.org/study/?w1=bible&t1=local%3A{0}&v1={1}1_1\" target=\"_blank\">Browser Bible</a></div>",
                         translationId, StartingShortCode);
-                    htm.WriteLine("<div Class=\"toc\"><a href=\"ftp://ebible.org/pub/sword/zip/{0}.zip\">Crosswire Sword module</a></div>", projectOptions.SwordName);
+                    htm.WriteLine("<div Class=\"toc\"><a href=\"https://ebible.org/sword/zip/{0}.zip\">Crosswire Sword module</a></div>", projectOptions.SwordName);
+                    if (!indexHtml.Contains("details.php"))
+                    {
+                        htm.WriteLine("<div Class=\"toc\"><a href=\"https://ebible.org/find/details.php?id={0}\">More formats to read or download...</a>", translationId);
+                    }
                 }
             }
             htm.WriteLine(indexHtml, langId, translationId);

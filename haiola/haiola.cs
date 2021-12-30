@@ -1687,7 +1687,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 htm.WriteLine("<body class=\"mainDoc\"");
                 htm.WriteLine("<p>This archive contains BIBLE TEXT ONLY. All formatting, paragraph breaks, notes, introductions, noncanonical section titles, etc., have been removed. The file ending \"_vpl.txt\" is designed for import into BibleWorks and similar Bible study programs. The file ending \"_vpl.xml\" contains the same information, but is in XML format and uses standard SIL/UBS book abbreviations.");
                 htm.WriteLine("The file ending \"_vpl.sql\" contains the same information formatted to create a SQL data table.</p>");
-                htm.WriteLine(@"<p>Check for updates and other Bible translations in this format at <a href='https:\\Bible.cx\Scriptures\'>https:\\Bible.cx\Scriptures\</a> or <a href='ftp:\\eBible.org\pub\Scriptures\'>ftp:\\eBible.org\pub\Scriptures\</a></p>");
+                htm.WriteLine(@"<p>Check for updates and other Bible translations in this format at <a href='https:\\eBible.org\Scriptures\'>http:\\eBible.org\Scriptures\</a></p>");
                 htm.WriteLine("<hr />");
                 htm.WriteLine(globe.copyrightPermissionsStatement());
                 htm.WriteLine("</body></html>");

@@ -1015,7 +1015,12 @@ For other uses, please contact the respective copyright owners.</p>
             {
                 suffix = Path.GetExtension(fileName).ToLowerInvariant();
                 if (suffix == ".zip")
+                {
                     fileHelper.RunCommand("unzip -n \"" + fileName + "\"", dirName);
+                    string receivedDir = Path.Combine(inputProjectDirectory, "Received");
+                    fileHelper.EnsureDirectory(receivedDir);
+                    File.Move(fileName, Path.Combine(receivedDir, Path.GetFileName(fileName)));
+                }
             }
             fileNames = Directory.GetFiles(dirName);
             for (i = 0; (i < fileNames.Length) && (result == String.Empty); i++)
