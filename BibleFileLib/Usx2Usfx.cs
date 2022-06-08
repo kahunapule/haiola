@@ -276,6 +276,9 @@ namespace WordSend
                                 // scrp.xw.WriteElementString("rem", "periph " + GetAnAttribute("id")+", " + GetAnAttribute("alt"));
                                 // scrp.xw.WriteEndElement();  // rem
                                 break;
+                            case "sidebar":
+                                scrp.xw.WriteStartElement("sidebar");
+                                break;
                             default:
                                 Logit.WriteError("Unrecognized USX element name: " + usx.Name);
                                 break;

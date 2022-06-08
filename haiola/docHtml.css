@@ -266,16 +266,16 @@ div.annotation table td{
 }
 
 /*  Hierarchy */
-ul > li{
+ul > li.internal, ul > li.schemaHierarchy {
     list-style:none;
 }
 
-ul {
+ul.internal {
     margin:2px;
     padding:0;
 }
 
-ul ul li {
+ul ul li.internal {
     padding-left:10px;
     
     list-style-image:url('img/hierarchy_arrow.gif');
@@ -290,6 +290,7 @@ ul ul li.schemaHierarchy {
 }
 
 ul.schemaHierarchy {
+    margin:2px;
     padding-left:20px;
 }
 
@@ -535,18 +536,33 @@ div.toTop a{
     height:60px;
 }
 
-.toc div.componentGroupTitle{
-    font-weight:bold;
-    margin-bottom:0.5em;
-    color:black;
-    background-color:inherit;
-}
-
 /* Namespacces or system ids in the TOC. */
 .toc .indexGroupTitle {
     font-weight:bold;
     margin-bottom:0.5em;
 }
+
+/* Components group*/
+
+div.componentGroupTitle {
+    font-weight: bold;
+    color: black;
+    background-color: inherit;
+}
+
+div.componentGroup {
+    padding-top: 4px;
+}
+
+table.componentGroup {
+    border-spacing: 1px;
+}
+
+td.componentGroup {
+    padding: 0px 0px 0px 0px;
+}
+
+
 
 /*----------------
     The footer. 
@@ -573,6 +589,11 @@ ul > li.doc{
     margin-left:10px;
 }
 
+/* No margin for pre from the table.*/
+td > pre {
+    margin:0px;
+}
+
 /* Wrap the long lines in the 'pre' section. */
 pre {
     white-space: pre-wrap;       /* css-3 */
@@ -580,5 +601,5 @@ pre {
     white-space: -pre-wrap;      /* Opera 4-6 */
     white-space: -o-pre-wrap;    /* Opera 7 */
     word-wrap: break-word;       /* Internet Explorer 5.5+ */
-    _white-space: pre;   /* IE only hack to re-specify in addition to            word-wrap  */
+
 }

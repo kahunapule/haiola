@@ -26,6 +26,16 @@
 		<milestone>false</milestone>
 		<comment>Added words (i. e. KJV italics)</comment>
 	</sfm>
+	<sfm kind="character">
+		<tag>addpn</tag>
+		<endTag>addpn*</endTag>
+		<characterStyle>Supplied proper name</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<usfx>add</usfx>
+		<milestone>false</milestone>
+		<comment>Added words (i. e. KJV italics) AND proper name, same as overlapping pn and add.</comment>
+	</sfm>
 	<sfm kind="paragraph">
 		<tag>b</tag>
 		<paragraphStyle>Stanza Break</paragraphStyle>
@@ -51,7 +61,7 @@
 		<nestingAllowed>true</nestingAllowed>
 		<levelExpected>false</levelExpected>
 		<milestone>false</milestone>
-		<comment>Not recommended</comment>
+		<comment>Not recommended, same as overlapping bd and it</comment>
 	</sfm>
 	<sfm kind="character">
 		<tag>bk</tag>
@@ -74,6 +84,14 @@
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
 		<milestone>true</milestone>
+	</sfm>
+	<sfm kind="meta">
+		<tag>cat</tag>
+		<endTag>cat*</endTag>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<milestone>false</milestone>
+		<comment>Study Bible category used for invisible indexing</comment>
 	</sfm>
 	<sfm kind="paragraph">
 		<tag>cd</tag>
@@ -180,6 +198,17 @@
 		<levelExpected>false</levelExpected>
 		<comment>Emphasis, maybe bold</comment>
 	</sfm>
+	<sfm kind="meta">
+		<tag>esb</tag>
+		<endTag>esbe</endTag>
+		<levelExpected>false</levelExpected>
+		<comment>Extended sidebar contents start</comment>
+	</sfm>
+	<sfm kind="meta">
+		<tag>esbe</tag>
+		<levelExpected>false</levelExpected>
+		<comment>Extended sidebar contents end</comment>
+	</sfm>
 	<sfm kind="note">
 		<tag>ex</tag>
 		<endTag>ex*</endTag>
@@ -219,7 +248,7 @@
 		<characterStyle>Figure</characterStyle>
 		<nestingAllowed>true</nestingAllowed>
 		<levelExpected>false</levelExpected>
-		<defaultAttribute sequence="1" usfxName="description">default</defaultAttribute>
+		<defaultAttribute sequence="1" usfxName="description">alt</defaultAttribute>
 		<defaultAttribute sequence="2" usfxName="catalog">src</defaultAttribute>
 		<defaultAttribute sequence="3" usfxName="size">size</defaultAttribute>
 		<defaultAttribute sequence="4" usfxName="location">loc</defaultAttribute>
@@ -227,6 +256,16 @@
 		<defaultAttribute sequence="6" usfxName="caption">cap</defaultAttribute>
 		<defaultAttribute sequence="7" usfxName="reference">ref</defaultAttribute>
 		<comment>For USFM 2.4, all 7 fields separated by vertical bars and without attribute names are required; default is description/alt. For USFM 3.0, there is only one vertical bar. Before that is the caption. After that are the named attributes.</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>jmp</tag>
+		<endTag>jmp*</endTag>
+		<characterStyle>Link</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<milestone>false</milestone>
+		<defaultAttribute sequence="1" usfxName="tgt">link-href</defaultAttribute>
+		<comment>Other attributes are link-title (description of remote text for tool tip) and link-id (anchor). link-href may be a web URL, or it may be prj:shortname TLA 1:1-3, where shortname is the Paratext short project name, and TLA is the book code. Chapter and verse are separated by colon. Link to an anchor may be #linkid, where linkid is defined with a link-id somewhere else.</comment>
 	</sfm>
 	<sfm kind="character">
 		<tag>fk</tag>
@@ -522,11 +561,51 @@
 		<comment>Concordance or glossary keyword; note: this should really be just k, not keyword, but only if in a concordance or glossary. The difference is hard coded in the program, not here in this XML file.</comment>
 	</sfm>
 	<sfm kind="paragraph">
+		<tag>lf</tag>
+		<paragraphStyle>Paragraph Continuation</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>noIndent</TeXcode>
+		<comment>List footer. No indent or space at beginning, otherwise normal</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>lh</tag>
+		<paragraphStyle>Paragraph Continuation</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>noIndent</TeXcode>
+		<comment>List header. No indent or space at beginning, otherwise normal</comment>
+	</sfm>
+	<sfm kind="paragraph">
 		<tag>li</tag>
 		<paragraphStyle>List Item</paragraphStyle>
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>true</levelExpected>
 		<TeXcode>listItem</TeXcode>
+	</sfm>
+	<sfm kind="character">
+		<tag>lik</tag>
+		<endTag>lik*</endTag>
+		<characterStyle/>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Structured list "key" of key-value pair</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>liv</tag>
+		<endTag>liv*</endTag>
+		<characterStyle/>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>true</levelExpected>
+		<comment>Structured list "value" number # of key-value pair; tab implied before this field</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>lim</tag>
+		<paragraphStyle>List Item</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+		<TeXcode>listItem</TeXcode>
+		<comment>List item starting at the left margin (less indent than li?)</comment>
 	</sfm>
 	<sfm kind="paragraph">
 		<tag>lit</tag>
@@ -534,6 +613,14 @@
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
 		<comment>Not recommended</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>litl</tag>
+		<endTag>litl*</endTag>
+		<characterStyle>Total</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>List item total, with an implied right-justified tab before the total.</comment>
 	</sfm>
 	<sfm kind="paragraph">
 		<tag>m</tag>
@@ -696,6 +783,34 @@
 		<nestingAllowed>true</nestingAllowed>
 		<levelExpected>false</levelExpected>
 	</sfm>
+	<sfm kind="character">
+		<tag>png</tag>
+		<endTag>png*</endTag>
+		<characterStyle>Geographic proper name</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>po</tag>
+		<paragraphStyle>Paragraph Continuation</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<TeXcode>noIndent</TeXcode>
+		<comment>Opening of an epistle/letter. No indent or space at beginning, otherwise normal</comment>
+	</sfm>
+	<sfm kind="paragraph"><tag>pr</tag><paragraphStyle>Right Aligned</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed><levelExpected>false</levelExpected>
+		<TeXcode>rightAligned</TeXcode>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>pref</tag>
+		<paragraphStyle>Preface</paragraphStyle>
+		<levelExpected>false</levelExpected>
+		<usfx>pref</usfx>
+		<milestone>false</milestone>
+		<comment>Starts preface</comment>
+	</sfm>
+	
 	<sfm kind="paragraph"><tag>pr</tag><paragraphStyle>Embedded Refrain</paragraphStyle><nestingAllowed>false</nestingAllowed><levelExpected>false</levelExpected></sfm><sfm kind="paragraph">
 		<tag>pref</tag>
 		<paragraphStyle>Preface</paragraphStyle>
@@ -720,6 +835,7 @@
 		<characterStyle>Pronunciation</characterStyle>
 		<nestingAllowed>true</nestingAllowed>
 		<levelExpected>false</levelExpected>
+		<comment>Deprecated pronunciation annotation for CJK text. Use of rb encouraged instead.</comment>
 	</sfm>
 	<sfm kind="paragraph">
 		<tag>ps</tag>
@@ -815,12 +931,37 @@
 		<nestingAllowed>true</nestingAllowed>
 		<levelExpected>false</levelExpected>
 	</sfm>
+	<sfm kind="milestone">
+		<tag>qt-e\*</tag>
+		<endTag>\*</endTag><characterStyle>Quoted Text</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>true</levelExpected>
+		<defaultAttribute>who</defaultAttribute>
+		<comment>Other attribute: eid; level comes right after qt and before - if present. The -e is optional if \* is present.</comment>
+	</sfm>
+	<sfm kind="milestone">
+		<tag>qt-s\*</tag>
+		<endTag>\*</endTag><characterStyle>Quoted Text</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>true</levelExpected>
+		<defaultAttribute>who</defaultAttribute>
+		<comment>Other attribute: sid</comment>
+	</sfm>
 	<sfm kind="paragraph">
 		<tag>r</tag>
 		<paragraphStyle>Parallel Passage Reference</paragraphStyle>
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
 		<TeXcode>parallelRef</TeXcode>
+	</sfm>
+	<sfm kind="character">
+		<tag>rb</tag>
+		<endTag>rb*</endTag>
+		<characterStyle>Normal Text</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<defaultAttribute>gloss</defaultAttribute>
+		<comment>Ruby gloss.</comment>
 	</sfm>
 	<sfm kind="meta">
 		<tag>rem</tag>
@@ -859,6 +1000,14 @@
 		<nestingAllowed>true</nestingAllowed>
 		<levelExpected>false</levelExpected>
 		<comment>Not recommended</comment>
+	</sfm>
+	<sfm kind="paragraph">
+		<tag>sd</tag>
+		<paragraphStyle>Stanza Break</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+		<TeXcode>blankLine</TeXcode>
+		<comment>Semantic division</comment>
 	</sfm>
 	<sfm kind="character">
 		<tag>sig</tag>
@@ -903,7 +1052,17 @@
 		<levelExpected>false</levelExpected>
 		<comment>superscript</comment>
 	</sfm>
-	<sfm kind="meta"><tag>sts</tag><parameterName>status</parameterName><nestingAllowed>false</nestingAllowed><levelExpected>false</levelExpected><usfx>sts</usfx><usfxAttribute>status</usfxAttribute><milestone>true</milestone><comment>status is a single digit: 1=first draft, 2=team draft, 3=reviewed draft, 4=clean text</comment></sfm><sfm kind="table">
+	<sfm kind="meta">
+		<tag>sts</tag>
+		<parameterName>status</parameterName>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<usfx>sts</usfx>
+		<usfxAttribute>status</usfxAttribute>
+		<milestone>true</milestone>
+		<comment>status is a single digit: 1=first draft, 2=team draft, 3=reviewed draft, 4=clean text</comment>
+	</sfm>
+	<sfm kind="table">
 		<tag>tc</tag>
 		<endTag>tc, tr,p,q,tcr</endTag>
 		<nestingAllowed>true</nestingAllowed>
@@ -935,14 +1094,38 @@
 	</sfm>
 	<sfm kind="meta">
 		<tag>toc</tag>
-		<paragraphStyle>TOC</paragraphStyle>
+		<endTag/><paragraphStyle>TOC</paragraphStyle>
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>true</levelExpected>
-	<usfx>toc</usfx><usfxAttribute>level</usfxAttribute><comment>toc1=long table of contents entry for this book; toc2=short table of contents entry for this book; toc3=vernacular abbreviation for this book</comment></sfm>
+		<usfx>toc</usfx><usfxAttribute>level</usfxAttribute><comment>toc1=long table of contents entry for this book; toc2=short table of contents entry for this book; toc3=vernacular abbreviation for this book</comment>
+	</sfm>
+	<sfm kind="meta">
+		<tag>toca</tag>
+		<paragraphStyle>TOCA</paragraphStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>true</levelExpected>
+		<usfx>toc</usfx><usfxAttribute>level</usfxAttribute><comment>toca1=alternate long table of contents entry for this book; toca2=alternate short table of contents entry for this book; toca3=alternate abbreviation for this book</comment>
+	</sfm>
 	<sfm kind="table">
 		<tag>tr</tag>
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="milestone">
+		<tag>ts-e\*</tag>
+		<endTag>\*</endTag><characterStyle>Translator section</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>true</levelExpected>
+		<defaultAttribute/>
+		<comment>Translator section: ignored except to preserve in USFM.</comment>
+	</sfm>
+	<sfm kind="milestone">
+		<tag>ts-s\*</tag>
+		<endTag>\*</endTag><characterStyle>Translator section</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>true</levelExpected>
+		<defaultAttribute/>
+		<comment>Other attribute: sid; level comes right after ts and before - if present. The -s is optional if \* is present.</comment>
 	</sfm>
 	<sfm kind="meta">
 		<tag>usfm</tag>
@@ -974,11 +1157,19 @@
 		<levelExpected>false</levelExpected>
 		<milestone>false</milestone>
 		<defaultAttribute sequence="1" usfxName="l">lemma</defaultAttribute>
+		<comment>Other attributes are strong and srcloc.</comment>
 	</sfm>
 	<sfm kind="character">
 		<tag>wg</tag>
 		<endTag>wg*</endTag>
 		<characterStyle>Word list Greek</characterStyle>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+	</sfm>
+	<sfm kind="character">
+		<tag>wa</tag>
+		<endTag>wa*</endTag>
+		<characterStyle>Aramaic word list entry</characterStyle>
 		<nestingAllowed>true</nestingAllowed>
 		<levelExpected>false</levelExpected>
 	</sfm>
@@ -1026,13 +1217,36 @@
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
 	</sfm>
-	<sfm kind="meta"><tag>xnt</tag><endTag>xnt*, xo, xk, xq, xot, xdc</endTag><nestingAllowed>true</nestingAllowed><levelExpected>false</levelExpected><usfx>xnt</usfx><comment>Cross references and other text to be published only in volumes containing a New Testament</comment></sfm><sfm kind="character">
+	<sfm kind="meta">
+		<tag>xnt</tag>
+		<endTag>xnt*, xo, xk, xq, xot, xdc</endTag>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<usfx>xnt</usfx>
+		<comment>Cross references and other text to be published only in volumes containing a New Testament</comment>
+	</sfm>
+	<sfm kind="character">
 		<tag>xo</tag>
 		<endTag>xo*</endTag>
-		
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
-	</sfm><sfm kind="meta"><tag>xot</tag><endTag>xot*, xo, xk, xq, xnt, xdc</endTag><nestingAllowed>true</nestingAllowed><levelExpected>false</levelExpected><usfx>xot</usfx><comment>Cross references to be published only in volumes containing an Old Testament.</comment></sfm>
+	</sfm>
+	<sfm kind="meta">
+		<tag>xop</tag>
+		<endTag>xot*, xo, xot, xk, xq, xnt, xdc</endTag>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<usfx>xop</usfx>
+		<comment>Published origin to print instead of contents of xo.</comment>
+	</sfm>
+	<sfm kind="meta">
+		<tag>xot</tag>
+		<endTag>xot*, xo, xk, xq, xnt, xdc</endTag>
+		<nestingAllowed>true</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<usfx>xot</usfx>
+		<comment>Cross references to be published only in volumes containing an Old Testament.</comment>
+	</sfm>
 	<sfm kind="character">
 		<tag>xq</tag>
 		<endTag>xq*, xo, xk, xq, xot, xnt, xdc</endTag>
@@ -1042,11 +1256,20 @@
 	</sfm>
 	<sfm kind="character">
 		<tag>xt</tag>
-		<endTag>xt*, xo, xk, xq, xot, xnt, xdc</endTag>
+		<endTag>xt*, xo, xk, xq, xot, xnt, xta, xdc</endTag>
 		<characterStyle>Crossreference target references</characterStyle>
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
-		<comment>Vernacular format</comment>
+		<defaultAttribute sequence="1" usfxName="link-href">link-href</defaultAttribute>
+		<comment>Vernacular format; may have link-href attribute (default attribute)</comment>
+	</sfm>
+	<sfm kind="character">
+		<tag>xta</tag>
+		<endTag>xt*, xo, xk, xq, xot, xnt, xt, xdc</endTag>
+		<characterStyle>Crossreference target references</characterStyle>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Crossreference note text format, but not part of an actual reference. Something like "See " or "Compare with ".</comment>
 	</sfm>
 	<sfm kind="character">
 		<tag>zc</tag>
@@ -1054,7 +1277,7 @@
 		<characterStyle>zc</characterStyle>
 		<nestingAllowed>false</nestingAllowed>
 		<levelExpected>false</levelExpected>
-		<comment>Custom, non-standard, non-recommended character tag. Use this only if you really need it... and remember to define this style in your seed file if you do.</comment>
+		<comment>Deprecated custom, non-standard, non-recommended character tag. Use this only if you really need it... and remember to define this style in your seed file if you do.</comment>
 	</sfm>
 	<sfm kind="character">
 		<tag>zcr</tag>
@@ -1062,7 +1285,7 @@
 		<characterStyle>zcr</characterStyle>
 		<nestingAllowed>true</nestingAllowed>
 		<levelExpected>false</levelExpected>
-		<comment>Custom, non-standard, non-recommended character color red tag.</comment>
+		<comment>Deprecated custom, non-standard, non-recommended character color red tag.</comment>
 	</sfm>
 	<sfm kind="character">
 		<tag>zcg</tag>
@@ -1177,6 +1400,11 @@
 		<levelExpected>false</levelExpected>
 		<comment>Contains Internet hyperlink target</comment>
 	</sfm>
-	
+	<sfm kind="milestone">
+		<tag>*</tag>
+		<nestingAllowed>false</nestingAllowed>
+		<levelExpected>false</levelExpected>
+		<comment>Always ends milestone tag</comment>
+	</sfm>	
 	
 </SFMInfo>

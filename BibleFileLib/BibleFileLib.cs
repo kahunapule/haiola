@@ -44,7 +44,10 @@ namespace WordSend
 		public bool VirtualSpace;
 		protected int lineLength;
 		protected bool fileIsOpen = false;
-		const int WORDWRAPLENGTH = 32700;
+        protected ArrayList AttributeNames;
+        protected ArrayList AttributeValues;
+        protected string defaultAttribute;
+		const int WORDWRAPLENGTH = 8000;
 
 		public void Open(string fileName)
 		{
@@ -60,6 +63,9 @@ namespace WordSend
 		{
 			lineLength = 0;
 			VirtualSpace = false;
+            AttributeNames = null;
+            AttributeValues = null;
+            defaultAttribute = String.Empty;
 		}
 
 		public SFWriter(string fileName)
@@ -111,9 +117,101 @@ namespace WordSend
         */
 
 
-        
+        public void WriteUSFMAttributes(ArrayList AttrNames, ArrayList AttrValues)
+        {
+            int i;
+            string sep = "";
+            if ((AttrNames != null) && (AttrValues != null))
+            {
+                if ((AttrNames.Count > 0) && (AttrValues.Count == AttrNames.Count))
+                {
+                    OutputFile.Write("|");
+                    for (i = 0; i < AttrNames.Count; i++)
+                    {
+                        OutputFile.Write(sep);
+                        if ((string)AttrNames[i] == "l")    // This ugliness comes from maintaining backward compatibility when USFX was defined before USFM supported this feature.
+                            AttrNames[i] = "lemma";
+                        OutputFile.Write((string)AttrNames[i]);
+                        OutputFile.Write("=\"");
+                        OutputFile.Write((string)AttrValues[i]);
+                        OutputFile.Write("\"");
+                        sep = " ";
+                    }
+                }
+            }
+        }
 
-		public void WriteSFM(string marker, string level, string content, bool firstcol, bool nested = false)
+        public void WriteUSFMDefaultAttribute(string value)
+        {
+            char[] trimChars = { ' ', '"', '\n', '\r', '\t' };
+            OutputFile.Write("|" + value.Trim(trimChars));
+        }
+
+        /// <summary>
+        /// Write a USFM. Since the element contents may follow after this call, the attribute writing is delayed until the next call of this function. Attributes come first in XML, but last in USFM.
+        /// </summary>
+        /// <param name="style"> USFM tag with level </param>
+        /// <param name="parameter"> USFM parameter, like verse number or footnote caller </param>
+        /// <param name="AttrNames"> ArrayList of attribute names </param>
+        /// <param name="AttrValues"> ArrayList of attribute values </param>
+        /// <param name="defaultAttr"> Single default attribute instead of the ArrayLists </param>
+        /// <param name="firstcol"> True iff this should be written starting in column 1, like \id, etc. </param>
+        /// <param name="nested"> True iff this USFM is nested and should use the "+" notation </param>
+        public void WriteUSFM(string style, string parameter, ArrayList AttrNames = null, ArrayList AttrValues = null, string defaultAttr = null, bool firstcol = false, bool nested = false)
+        {   // Note: level is included in style.
+            if (!String.IsNullOrEmpty(defaultAttribute))
+            {
+                WriteUSFMDefaultAttribute(defaultAttribute);
+            }
+            else if ((AttributeNames != null) && (AttributeValues != null))
+            {
+                WriteUSFMAttributes(AttributeNames, AttributeValues);
+            }
+            defaultAttribute = defaultAttr;
+            AttributeNames = AttrNames;
+            AttributeValues = AttrValues;
+            if (style == "*")
+                return;
+            if (!fileIsOpen)
+            {
+                Logit.WriteError("Error: attempt to write to closed file in WriteUSFM.");
+                Logit.WriteLine("\\" + style + " " + parameter);
+                return;
+            }
+            if ((firstcol && (lineLength > 0)) ||(lineLength >= WORDWRAPLENGTH))
+            {
+                OutputFile.WriteLine();
+                lineLength = 0;
+            }
+            else if (VirtualSpace)
+            {
+                OutputFile.Write(" ");
+                VirtualSpace = false;
+                lineLength += 1;
+            }
+            OutputFile.Write("\\");
+            lineLength += 1;
+            if (nested)
+            {
+                OutputFile.Write("+");
+                lineLength += 1;
+            }
+            OutputFile.Write(style);
+            lineLength += style.Length;
+            if (!String.IsNullOrEmpty(parameter))
+            {
+                OutputFile.Write(" " + parameter);
+                lineLength += parameter.Length + 1;
+            }
+            if (!style.EndsWith("*"))
+            {
+                VirtualSpace = true;
+            }
+        }
+
+
+
+        public void WriteSFM(string marker, string level, string content, bool firstcol, bool nested = false)
 		{
             if (marker != "h")
             {
@@ -127,7 +225,7 @@ namespace WordSend
 				Logit.WriteLine("\\"+marker+level+" "+content);
 				return;
 			}
-			if (firstcol && (lineLength > 0)) // ||((lineLength + marker.Length + content.Length) > WORDWRAPLENGTH))
+			if ((firstcol && (lineLength > 0)) || ((lineLength + marker.Length + content.Length) >= WORDWRAPLENGTH))
 			{
 				OutputFile.WriteLine();
 				lineLength = 0;
@@ -172,16 +270,6 @@ namespace WordSend
 			WriteSFM(marker, "", content, firstcol);
 		}
 
-		public void WriteSFM(string marker, string content)
-		{
-			WriteSFM(marker, "", content, true);
-		}
-
-
-		public void WriteSFM(string marker)
-		{
-			WriteSFM(marker, "", "", true);
-		}
 
 		public void WriteString(string s)
 		{	// Writes a string out with loose word wrap that finds the next word break after
@@ -506,7 +594,7 @@ namespace WordSend
 	public class TagRecord
 	{
 		public string tag;
-		public string endTag;
+ 		public string endTag;
 		public string kind;
 		public string paragraphStyle;
 		public string characterStyle;
@@ -516,13 +604,14 @@ namespace WordSend
 		public bool levelExpected;
 		public string usfx;
 		public string usfxAttribute;
+        public string defaultAttribute;
 		public string TeXcode;
 		public string comment;
 
 		public TagRecord()
 		{
 			tag = endTag = paragraphStyle = characterStyle = parameterName =
-				contentName = TeXcode = comment = "";
+				contentName = TeXcode = comment = usfxAttribute = defaultAttribute = "";
 		}
 
 		public bool hasEndTag()
@@ -613,6 +702,11 @@ namespace WordSend
                             case "characterStyle":
                                 xr.Read();
                                 tagRec.characterStyle = xr.Value;
+                                break;
+                            case "defaultAttribute":
+                                xr.Read();
+                                if (String.IsNullOrEmpty(tagRec.defaultAttribute))
+                                    tagRec.defaultAttribute = xr.Value;
                                 break;
                             case "parameterName":
                                 xr.Read();
@@ -797,13 +891,16 @@ namespace WordSend
 
 	public class SfmObject
 	{
-		public string tag;	// Opening sfm tag without the \.
-		public int level;	// Value of number attached to tag without space (i. e. 2 in \q2)
-		public string attribute; // i. e. chapter or verse number, footnote marker
+		public string tag;  // Opening sfm tag without the \ or level number.
+        public string style;    // opening sfm tag without the \ but including the level number.
+        public int level;	// Value of number attached to tag without space (i. e. 2 in \q2)
+		public string parameter; // i. e. chapter or verse number, footnote marker
 		public string text;	// Text up to the next \.
 		public bool isEndTag;	// True for explicit end tags (tag ends in *)
         public bool nested; // True for tags starting with \+
 		public TagRecord info;  // Information about this particular tag
+        public ArrayList sfmAttrNames = new ArrayList();
+        public ArrayList sfmAttrValues = new ArrayList();
         public static string currentParagraph;  // Most recently encountered paragraph (after chapter)
         /******
         private static string delayedTag = String.Empty;
@@ -819,12 +916,12 @@ namespace WordSend
         private static string currentChapter = String.Empty;
         private static string currentVerse = String.Empty;
         private const string columnTags = "th thr tc tcr";
-
+        
+        
 		public SfmObject()
 		{
-			tag = attribute = text = String.Empty;
+			tag = parameter = text = String.Empty;
             tagToTerminate = String.Empty;
-            // currentBook = currentChapter = currentVerse = String.Empty;
 		}
 
         private void validate()
@@ -845,7 +942,7 @@ namespace WordSend
             {
                 if (tag.CompareTo("id") == 0)
                 {
-                    currentBook = attribute;
+                    currentBook = parameter;
                     currentChapter = "0";
                     currentVerse = "0";
                     currentParagraph = string.Empty;
@@ -854,34 +951,34 @@ namespace WordSend
                 else if (tag.CompareTo("c") == 0)
                 {
                     currentParagraph = string.Empty;
-                    for (i = 0; i < attribute.Length; i++)
+                    for (i = 0; i < parameter.Length; i++)
                     {
-                        if (!Char.IsDigit(attribute[i]))
+                        if (!Char.IsDigit(parameter[i]))
                         {
-                            Logit.WriteError("Bad chapter value of " + attribute + " at " + currentBook + " " + currentChapter + ":" + currentVerse);
-                            i = attribute.Length;
+                            Logit.WriteError("Bad chapter value of " + parameter + " at " + currentBook + " " + currentChapter + ":" + currentVerse);
+                            i = parameter.Length;
                         }
                     }
-                    currentChapter = attribute;
+                    currentChapter = parameter;
                     currentVerse = "0";
                 }
                 else if (tag.CompareTo("v") == 0)
                 {
-                    if (attribute.Length < 1)
+                    if (parameter.Length < 1)
                     {
                         Logit.WriteError("ERROR: \\v without attribute  at " + currentBook + " " + currentChapter + ":" + currentVerse);
                     }
                     else
                     {
-                        for (i = 0; i < attribute.Length; i++)
+                        for (i = 0; i < parameter.Length; i++)
                         {
-                            if (!((attribute[i] == '-') || (attribute[i] == '\u200F') || Char.IsLetterOrDigit(attribute[i])))
+                            if (!((parameter[i] == '-') || (parameter[i] == '\u200F') || Char.IsLetterOrDigit(parameter[i])))
                             {
-                                Logit.WriteError("Bad verse value of " + attribute + " at " + currentBook + " " + currentChapter + ":" + attribute);
-                                i = attribute.Length;
+                                Logit.WriteError("Bad verse value of " + parameter + " at " + currentBook + " " + currentChapter + ":" + parameter);
+                                i = parameter.Length;
                             }
                         }
-                        currentVerse = attribute;
+                        currentVerse = parameter;
                     }
                     if (currentParagraph == String.Empty)
                         Logit.WriteError("USFM error: no paragraph started at " + currentBook + " " + currentChapter + ":" + currentVerse);
@@ -893,7 +990,7 @@ namespace WordSend
             {
                 currentParagraph = tag;
                 if ((tag == "b") && (text.Trim().Length > 0))
-                    Logit.WriteError("USFM error: \\b is not empty at " + currentBook + " " + currentChapter + ":" + currentVerse);
+                    Logit.WriteLine("USFM warning: \\b is not empty at " + currentBook + " " + currentChapter + ":" + currentVerse + "; treating like \\m");
             }
             if ((prevTag == "tr") && (!columnTags.Contains(tag)))
             {
@@ -926,9 +1023,109 @@ namespace WordSend
             }
         }
 
+        /// <summary>
+        /// Takes the attributes string and parses it into 0 or more name/value pairs in sfmAttrNames and sfmAttrValues.
+        /// If the attribute has no name in the input string, the name is listed as "default".
+        /// Uses recursion to process more than one attribute in the input string, if present.
+        /// Mulitple part attributes with parts separated by : or , are left as they are.
+        /// Unquoted attributes are allowed if they don't contain any white space.
+        /// Attribute names must not be quoted.
+        /// Multiple attributes are separated by a space.
+        /// </summary>
+        /// <param name="attributes">Unparsed attributes</param>
+        /// <param name="defaultAttr">Default attribute name</param>
+        public void ParseAttributes(string attributes, string defaultAttr)
+        {
+            StringBuilder name = new StringBuilder();
+            StringBuilder attr = new StringBuilder();
+            StringBuilder remainder = new StringBuilder();
+            bool inQuote = false;
+            bool inAttr = false;
+            bool inRemainder = false;
+            int i;
+            char ch;
+
+            attributes = attributes.Trim(); // Ignore leading and trailing white space.
+            if (attributes.Length > 0)
+            {
+                for (i = 0; i < attributes.Length; i++)
+                {
+                    ch = attributes[i];
+                    if (inRemainder)
+                    {
+                        remainder.Append(ch);
+                    }
+                    else if (inQuote)   // In a quoted attribute
+                    {
+                        if (ch == '"')
+                        {
+                            inQuote = false;
+                            inRemainder = true;
+                            inAttr = false;
+                        }
+                        else
+                        {
+                            attr.Append(ch);
+                        }
+                    }
+                    else if (inAttr)    // In an attribute, but quote not yet found
+                    {
+                        if (ch == '"')
+                        {
+                            inQuote = true;
+                        }
+                        else if (fileHelper.IsNormalWhiteSpace(ch) && !inQuote)
+                        {
+                            inAttr = false;
+                            inRemainder = true;
+                        }
+                        else
+                        {
+                            attr.Append(ch);
+                        }
+                    }
+                    else  // At this point, we are either in a name or an unquoted default attribute.
+                    {
+                        if (ch == '"')
+                        {
+                            inQuote = true;
+                            inAttr = true;
+                        }
+                        else if (ch == '=')
+                        {
+                            inAttr = true;
+                        }
+                        else
+                        {
+                            name.Append(ch);
+                        }
+                    }
+
+                }
+                if (attr.Length > 0)
+                {
+                    sfmAttrValues.Add(attr.ToString().Trim());
+                    if (name.ToString() == "lemma")
+                        sfmAttrNames.Add("l");
+                    else
+                        sfmAttrNames.Add(name.ToString().Trim());
+                }
+                else if (name.Length > 0)
+                {   // We have a default attribute. Get name from default parameter & attribute from name.
+                    sfmAttrNames.Add(defaultAttr);
+                    sfmAttrValues.Add(name.ToString().Trim());
+                }
+                if (remainder.Length > 0)
+                    ParseAttributes(remainder.ToString(), defaultAttr);
+            }
+        }
+
+
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Read one SFM & its immediate associated data.
+		/// Read one SFM & its following text using a state machine parser. Everything before the first \ is ignored.
+        /// USFM syntax now can be simple (\it ) have a level (\mt1 ) have an argument (\v 1 ) have one ore more attributes  (\w word|strong="G0001") or be a milestone with or without attributes (\qt1-s\* \qt2-s|who="Moses"\*)
+        /// The pipe/vertical bar symbol starts attributes.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
 		public bool Read(StreamReader sr, string fileName)
@@ -936,13 +1133,20 @@ namespace WordSend
             if (SFConverter.scripture == null)
                 SFConverter.scripture = new Scriptures();
 			StringBuilder sb = new StringBuilder();
+            StringBuilder lvl = new StringBuilder();
+            StringBuilder tagStyle = new StringBuilder();
+            StringBuilder attributes = new StringBuilder();
+            string defaultAttribute= null;
+            bool inAttribute = false;
 			int ch;
 			int lookAhead;
+            int n;
             isEndTag = false;
 			// Skip to \, parse parts up to but not including next \ or EOF.
+            
 			do
 			{
-				ch = sr.Read();
+                 ch = sr.Read();
 			} while (((char)ch != '\\') && (ch != -1));
 			if (ch == -1)	// eof
 				return false;	// Failed to find \.
@@ -954,25 +1158,37 @@ namespace WordSend
                 nested = true;
                 ch = sr.Read(); // Move read pointer past the '+'
             }
-            // Copy characters to tag until white space or anything after * or anything before \ or digit or end of file.
+            // Copy characters to tag until white space or anything after * or anything before \ or end of file.
             if (nested || ((ch != -1) && (!fileHelper.IsNormalWhiteSpace((char)ch)) &&
-                (!isEndTag) && !Char.IsDigit((char)ch) && (char)lookAhead != '\\'))
+                (!isEndTag) &&  (char)lookAhead != '\\'))
 		    do
 			{
 				ch = sr.Read();
                 lookAhead = sr.Peek();
-                if ((ch != -1) && (!fileHelper.IsNormalWhiteSpace((char)ch)) && (!Char.IsDigit((char)ch)))
+                if ((ch != -1) && (fileHelper.IsSfmTagChar((char)ch)))
                 {
-                    sb.Append((char)ch);
-                }
-                if ('*' == (char)ch)
-                {
-                    isEndTag = true;
+                    if (Char.IsDigit((char)ch))
+                    {
+                        lvl.Append((char)ch);
+                        tagStyle.Append((char)ch);
+                    }
+                    else if ('*' == (char)ch)
+                    {
+                        sb.Append((char)ch);
+                        isEndTag = true;
+                    }
+                    else
+                    {
+                        sb.Append((char)ch);
+                        tagStyle.Append((char)ch);
+                    }
                 }
 			} while ((ch != -1) && (!fileHelper.IsNormalWhiteSpace((char)ch)) &&
-				(!isEndTag) && !Char.IsDigit((char)ch) && (char)lookAhead != '\\');
+				(!isEndTag) &&  (char)lookAhead != '\\');
 			tag = sb.ToString();
+            sb.Length = 0;
 			info = SFConverter.scripture.tags.info(tag);
+            defaultAttribute = info.defaultAttribute;
 			// Special logic to disambiguate \k # in helps vs \k...\k* in canon.
 			if ((tag == "k") && !SFConverter.scripture.tags.inCanon)
 				info = SFConverter.scripture.tags.info("keyword");
@@ -982,14 +1198,25 @@ namespace WordSend
                     ": [\\" + tag + "] after " + currentBook + " " + currentChapter +
                     ":" + currentVerse);
 			}
-			sb.Length = 0;
-			level = 0;
+            level = 0;
+            if (info.levelExpected)
+            {
+                level = 1;
+                if (lvl.Length > 0)
+                {
+                    if (Int32.TryParse(lvl.ToString(), out n))
+                        level = n;
+                    else
+                        Logit.WriteError("Level parsing failed " + lvl.ToString());
+                }
+            }
+
 			if (isEndTag)
 			{
 				lookAhead = sr.Peek();
                 if ((lookAhead == -1) || ((char)lookAhead == '\\'))
                 {
-                    text = attribute = "";
+                    text = parameter = "";
                     return true;
                 }
                 else
@@ -1000,45 +1227,19 @@ namespace WordSend
 			}
 			else // Not an end tag (not terminated in *)
 			{
-                level = 1;
-				if (Char.IsDigit((char)ch))
-				{
-					while (Char.IsDigit((char)ch))
-					{
-						sb.Append((char)ch);
-                        if ((char)lookAhead != '\\')
-                        {
-                            ch = sr.Read();
-                            lookAhead = sr.Peek();
-                        }
-                        else
-                        {
-                            // Early termination of tag by starting another tag; pretend it was properly terminated by a space.
-                            ch = (int)' ';
-                        }
-					}
-					level = Convert.ToInt32(sb.ToString());
-				}
+                // At this point, ch should be the white space after the tag and level. Read the parameter, if required.
 
-                // At this point, ch should be the white space or * after the tag and level.
-
-				sb.Length = 0;
 				if (info.parameterName != "")
-				{	// Tag requires an attribute (Chapter, Verse, footnote marker, book code)
-                    if ((char)lookAhead != '\\')
-                    {
-                        ch = sr.Read();	// Read whatever followed the single white space.
-                        lookAhead = sr.Peek();
-                    }
+				{	// Tag requires a parameter (Chapter, Verse, footnote marker, book code)
 					// Allow multiple white spaces before the attribute (like line end between \f and +)
-					while (fileHelper.IsNormalWhiteSpace((char)ch) && (ch != -1) && (lookAhead != '\\'))
+					while ((ch != -1) && fileHelper.IsNormalWhiteSpace((char)ch) && (lookAhead != '\\'))
 					{
 						ch = sr.Read();
 						lookAhead = sr.Peek();
 					}
                     if ((ch == -1) || (fileHelper.IsNormalWhiteSpace((char)ch)))
                     {
-                        Logit.WriteError("Error in USFM syntax: missing attribute after \\" + tag +
+                        Logit.WriteError("Error in USFM syntax: missing parameter after \\" + tag +
                             " in " + fileName +
                             " after " + currentBook + " " + currentChapter +
                             ":" + currentVerse);
@@ -1050,9 +1251,10 @@ namespace WordSend
 						ch = sr.Read();
 						lookAhead = sr.Peek();
 					}
-					attribute = sb.ToString();
+					parameter = sb.ToString();
 					sb.Length = 0;
 				}
+
                 // Eat the space that serves only to terminate a tag. This is very important with some nonroman scripts.
                 if ((!isEndTag) && (fileHelper.IsNormalWhiteSpace((char)ch)) && ((char)lookAhead != '\\'))
                 {
@@ -1067,9 +1269,14 @@ namespace WordSend
                     // No need to bail out here due to lookahead check to make sure we don't kill the only significant space
 				}
 			}   // End of non-end tag case.
+
+            // We are past the tag, level, and parameter.
 			// Read text up to next \, collapsing all contiguous white space to a single space.
 			bool inSpace = false;
 			lookAhead = sr.Peek();
+
+            style = tagStyle.ToString();
+
             // We used to skip over \ characters embedded in filename a \fig ...\fig* sequence, but no longer, since
             // Paratext validation expects a simple file name with no path information here.
 
@@ -1082,12 +1289,17 @@ namespace WordSend
                     sb.Append(' ');
                 }
             }
-            else if (ch != -1)
+            else if (!isEndTag && ((char)ch == '|') && (!String.IsNullOrEmpty(info.defaultAttribute)))
+            {
+                inAttribute = true;
+                inSpace = false;
+            }
+            else if ((ch != '\\') && (ch != -1))
             {   // Nonspaces are appended to the text run as is, up to but not including the next \.
                 sb.Append((char)ch);
                 inSpace = false;
             }
-            while ((ch != -1) && (lookAhead != -1) && (lookAhead != '\\'))
+            while ((ch != '\\') && (ch != -1) && (lookAhead != -1) && (lookAhead != '\\'))
             {
                 ch = sr.Read();
                 lookAhead = sr.Peek();
@@ -1097,19 +1309,31 @@ namespace WordSend
 					if (!inSpace)
 					{
 						inSpace = true;
-						sb.Append(' ');
+                        if (inAttribute)
+                            attributes.Append(' ');
+                        else 
+						    sb.Append(' ');
 					}
 				}
+                else if (!isEndTag && ((char)ch == '|') && (!String.IsNullOrEmpty(info.defaultAttribute)))
+                {
+                    if (inAttribute)
+                        attributes.Append((char)ch);
+                    inAttribute = true;
+                }
 				else
 				{   // Nonspaces are appended to the text run as is, up to but not including the next \.
-					sb.Append((char)ch);
+                    if (inAttribute)
+                        attributes.Append((char)ch);
+                    else
+					    sb.Append((char)ch);
 					inSpace = false;
 				}
             } 
 
             // USFM officially has two markup items that break the \tag and \tag ...\tag* pattern:
             // ~ (non-breaking space) and // (discretional line break). We convert the former here.
-            // The later is left for the publication or conversion process to deal with.
+            // The later is converted to <optionalBreak/> for the publication or conversion process to deal with IF it isn't preceded by s: or p: (i.e. Internet URL).
             // Unofficially, << < > >> convert to “ ‘ ’ ”. That is left to the publication process
             // as well.
 			text = sb.ToString().Replace('~', '\u00A0' /*non-breaking space*/);
@@ -1121,9 +1345,9 @@ namespace WordSend
             text = text.Replace("\u0000", "").Replace("\u0008", "");    // Null and backspace should not be in the source text (but sometimes I have seen them there).
 			if (tag == "id")
 			{
-                if ((attribute.StartsWith("BAK")) || (attribute.StartsWith("OTH")) || (attribute.StartsWith("FRT")) ||
-                    (attribute.StartsWith("bak")) || (attribute.StartsWith("oth")) || (attribute.StartsWith("frt")) ||
-                    (attribute.StartsWith("CNC")) || (attribute.StartsWith("cnc")))
+                if ((parameter.StartsWith("BAK")) || (parameter.StartsWith("OTH")) || (parameter.StartsWith("FRT")) ||
+                    (parameter.StartsWith("bak")) || (parameter.StartsWith("oth")) || (parameter.StartsWith("frt")) ||
+                    (parameter.StartsWith("CNC")) || (parameter.StartsWith("cnc")))
 				{
 					SFConverter.scripture.tags.inCanon = false;
 				}
@@ -1132,7 +1356,14 @@ namespace WordSend
 					SFConverter.scripture.tags.inCanon = true;
 				}
 			}
-
+            if (tag == "fig")
+            {   // Fall back to old figure specification parsing that handles both USFM 2.4 and USFM 3.0.
+                text = text + "|" + attributes.ToString();
+            }
+            else
+            {
+                ParseAttributes(attributes.ToString(), defaultAttribute);
+            }
             validate();
 			return true;
 		}
@@ -1179,7 +1410,7 @@ namespace WordSend
 			{
 				try
 				{
-					chapterIndex = Int32.Parse(sfm.attribute);
+					chapterIndex = Int32.Parse(sfm.parameter);
 				}
 				catch
 				{
@@ -1720,10 +1951,14 @@ namespace WordSend
         public string srcloc;   // srcloc Source Location, like "gnt5:51.1.2.1" for GNT version 5 text, book 51, chapter1, verse 2, word 1
         public string plural;   // x-plural, plural True iff the word is plural (useful for English you)
         public string morph;    // x-morph, m Morphology indicator
+        public string linkhref; // link-href for URLs and project: TLA ch:vs-vs references to a verse
+        public string linktitle;    // link-title for link titles
+        public string linkid;   // link-id for anchor declarations
+        public string deflt;    // Default parameter for the sfm (lemma for \w or link-href for \jmp)
 
         public void clear()
         {
-            content = strong = lemma = srcloc = plural = morph = string.Empty;
+            content = strong = lemma = srcloc = plural = morph = linkhref = linktitle = linkid = string.Empty;
         }
 
         public void ParseFields(string s)
@@ -1743,6 +1978,8 @@ namespace WordSend
                         switch (sfma.tag.ToLowerInvariant())
                         {
                             case "":    // "lemma" is the default attribute
+                                deflt = sfma.value;
+                                break;
                             case "lemma":
                                 lemma = sfma.value;
                                 break;
@@ -1757,6 +1994,15 @@ namespace WordSend
                                 break;
                             case "x-morph":
                                 morph = sfma.value;
+                                break;
+                            case "link-href":
+                                linkhref = sfma.value;
+                                break;
+                            case "linktitle":
+                                linktitle = sfma.value;
+                                break;
+                            case "linkid":
+                                linkid = sfma.value;
                                 break;
                             default:
                                 Logit.WriteError("Unexpected attribute name " + sfma.tag + " in " + s);
@@ -1784,24 +2030,6 @@ namespace WordSend
     }
 
 
-    public class Jump
-    {
-        // \jmp Some text|XXA 1:1\jmp*
-        // \jmp Some text|link-href="link"\jmp* where link can be a URI or prj:ProjectID MAT 1:1-4
-        // Additional parameters possible: link-title, link-id
-        // Default parameter is link-href.
-        // Missing prj:XX assumes the current project.
-        public string linkText;
-        public string src;  // link-id
-        public string tgt;  // link-href (Verse reference)
-        public string web;  // link-href (web address or file)
-
-        public void clear()
-        {
-            linkText = src = tgt = web = String.Empty;
-        }
-
-    }
 
     public class Figure
     {
@@ -2398,10 +2626,12 @@ namespace WordSend
                             book.toc2 = sfm.text;
                         else if (sfm.level == 3)
                             book.toc3 = sfm.text;
+                        else
+                            Logit.WriteError("Unexpected toc level in " + fileName);
                     }
 					if (sfm.info.parameterName != null)
 					{
-						dynVars[sfm.info.parameterName] = sfm.attribute;
+						dynVars[sfm.info.parameterName] = sfm.parameter;
 					}
 				}
 			} while (foundAnSfm);
@@ -2416,38 +2646,38 @@ namespace WordSend
 				{
 					if (sfm.tag == "id")
 					{
-                        sfm.attribute = sfm.attribute.ToUpper();
+                        sfm.parameter = sfm.parameter.ToUpper();
                         bookIndex = 0;
-                        book.bookCode = sfm.attribute;
+                        book.bookCode = sfm.parameter;
                         if (book.bookCode.Length > 3)
                         {
                             book.bookCode = book.bookCode.Remove(book.bookCode.IndexOfAny(".;,:-".ToCharArray()));
                             if (book.bookCode.Length > 3)
                                 book.bookCode = book.bookCode.Substring(0, 3);
-                            Logit.WriteError("Warning: shortened book code from '" + sfm.attribute + "' to '" + book.bookCode + "'");
-                            sfm.attribute = book.bookCode;
+                            Logit.WriteError("Warning: shortened book code from '" + sfm.parameter + "' to '" + book.bookCode + "'");
+                            sfm.parameter = book.bookCode;
                         }
 						bookIndex = ((BibleBookRecord)bkInfo.books[book.bookCode]).sortOrder;
 					}
 					else if (sfm.tag == "c")
 					{
 						//Logit.WriteLine("book #"+bookIndex.ToString()+" chapter "+currentChapter.ToString()+" has "+bkInfo.bookArray[bookIndex].verseCount[currentChapter].ToString()+" verses.");
-						currentChapter = Int32.Parse(sfm.attribute);
+						currentChapter = Int32.Parse(sfm.parameter);
 						vs = 0;
 					}
 					else if (sfm.tag == "v")
 					{
-                        if (sfm.attribute.Length < 1)
+                        if (sfm.parameter.Length < 1)
                         {
                             Logit.WriteError("ERROR: Verse missing attribute after " + book.bookCode +" "+ currentChapter.ToString() + ":" + vs.ToString());
                         }
-                        string highVerse = sfm.attribute.Replace("a", "").Replace("b", "").Replace("A", "").Replace("B", "");
+                        string highVerse = sfm.parameter.Replace("a", "").Replace("b", "").Replace("A", "").Replace("B", "");
                         int dashplace = highVerse.IndexOf('-');
                         if (dashplace > 0)
                         {
                             highVerse = highVerse.Substring(dashplace + 1);
                         }
-                        vs = Math.Max(vs, Int32.Parse(sfm.attribute));
+                        vs = Math.Max(vs, Int32.Parse(sfm.parameter));
 						if ((currentChapter > 0) && (currentChapter <= bkInfo.bookArray[bookIndex].numChapters))
 						{
 							bkInfo.bookArray[bookIndex].verseCount[currentChapter] = vs;
@@ -2458,7 +2688,7 @@ namespace WordSend
 				{
                     if (sfm.tag == "id")
                     {
-                        Logit.WriteError("ERROR in \\id line, invalid book code: '" + sfm.attribute + "'");
+                        Logit.WriteError("ERROR in \\id line, invalid book code: '" + sfm.parameter + "'");
                     }
 					// never mind: ignore non-numeric chapter and verse numbers. May be verse bridge.
 				}
@@ -2574,14 +2804,12 @@ namespace WordSend
 			WriteWordMLTextRun(StripLeadingWhiteSpace(contents), charStyle);
 		}
 
-        public bool includeUsfxLongStyleNames = false;
-
         /// <summary>
         /// Start a USFX Paragraph style
         /// </summary>
         /// <param name="sfm">USFM tag</param>
         /// <param name="level">Level, like main title level 1, 2, or 3, as one digit</param>
-        /// <param name="styleName">Name of optional long style name to write if includeUsfxLongStyleNames is true</param>
+        /// <param name="styleName">USFM tag with level included</param>
         /// <param name="contents">Contents of the tag/element</param>
 		protected void StartUSFXParagraph(string sfm, int level, string styleName, string contents)
 		{
@@ -2606,13 +2834,13 @@ namespace WordSend
                         {
                             xw.WriteStartElement(ns + "p");
                             xw.WriteAttributeString("sfm", sfm);
-                            if (includeUsfxLongStyleNames && (styleName != null) && (styleName != ""))
-                                xw.WriteAttributeString("style", styleName);
                         }
 						if (level > 1)
 							xw.WriteAttributeString("level", level.ToString());
-					}
-				}
+                        if (!String.IsNullOrEmpty(styleName))
+                            xw.WriteAttributeString("style", styleName);
+                    }
+                }
                 if (contents != null)
                 {
                     if (inWJ && !wjOut && !isAllWhiteSpace(contents))
@@ -2702,6 +2930,7 @@ namespace WordSend
 		{
             int lineBreakPlace;
             string s;
+            string ps = "sSpP";
 			if ((contents != null) && (contents != ""))
 			{
                 s = "http://";
@@ -2723,13 +2952,17 @@ namespace WordSend
                 else
                 {
                     lineBreakPlace = contents.IndexOf("//");
-                    if (lineBreakPlace >= 0)
+                    if (lineBreakPlace > 1) // Optional line break at the beginning of a string makes no sense.
                     {
-                        if (lineBreakPlace > 0)
-                        {
-                            xw.WriteString(contents.Substring(0, lineBreakPlace));
+                        xw.WriteString(contents.Substring(0, lineBreakPlace));
+                        if (ps.Contains(contents[lineBreakPlace - 2].ToString()) && (contents[lineBreakPlace - 1] == ':'))
+                        {   // Don't call the // in an Internet URL an optional line break. HTTPS://EBIBLE.ORG or http://eBible.org pass through literally.
+                            xw.WriteString("//");
                         }
-                        xw.WriteElementString("optionalLineBreak", "");
+                        else
+                        {
+                            xw.WriteElementString("optionalLineBreak", "");
+                        }
                         if (contents.Length > (lineBreakPlace + 2))
                         {   // Recursive call in case there is more than one // in contents.
                             WriteUSFXText(contents.Substring(lineBreakPlace + 2));
@@ -3144,7 +3377,25 @@ namespace WordSend
             */
 		}
 
-		protected void StartUSFXNoteStyle(string sfm, string content, bool nested = false)
+        protected void StartUSFXNoteCharacterStyle(SfmObject sf)
+        {
+            int i;
+            if (isUnclosedNoteTag(sfm) || !(sf.nested || assumeAllNested))
+                EndUSFXNoteStyle();
+            inUSFXNoteStyle++;
+            xw.WriteStartElement(sf.tag);
+            if (sf.info.levelExpected && sf.level > 1)
+            {
+                xw.WriteAttributeString("level", sf.level.ToString());
+            }
+            for (i = 0; i < sf.sfmAttrNames.Count; i++)
+            {
+                xw.WriteAttributeString((string)sf.sfmAttrNames[i], (string)sf.sfmAttrValues[i]);
+            }
+            WriteUSFXText(sf.text);
+        }
+
+        protected void StartUSFXNoteStyle(string sfm, string content, bool nested = false)
 		{
             if (isUnclosedNoteTag(sfm) || !(nested || assumeAllNested))
                 EndUSFXNoteStyle();
@@ -3160,6 +3411,8 @@ namespace WordSend
                     {
                         wt = new WordTag(content);
                         content = wt.content;
+                        if (string.IsNullOrEmpty(wt.lemma))
+                            wt.lemma = wt.deflt;
                         if (!string.IsNullOrEmpty(wt.lemma))
                             xw.WriteAttributeString("l", wt.lemma);
                         if (!string.IsNullOrEmpty(wt.strong))
@@ -3182,11 +3435,49 @@ namespace WordSend
 			WriteUSFXText(content);
 		}
 
-		protected static string charStyleTagList = " add bd bdit bk em it k nd no ord pn pro qac qr qs qt rq sc sig sls tl wr wj fk fm fq fr ft fv fw xk xo xq xt ";
+		protected static string charStyleTagList = " add bd bdit bk em ior it k nd no ord pn pro qac qr qs qt rq sc sig sls sup tl wa wg wh wr wj fk fm fq fr ft fv fw xk xo xq xt xta ";
 
 		protected bool UsfxStyleSuspended;
         protected static string[] activeCharacterStyle;
         public bool assumeAllNested = false;
+
+        protected void StartUSFXCharacterStyle(SfmObject sf)
+        {
+            int i;
+
+            if (activeCharacterStyle == null)
+                activeCharacterStyle = new string[32];  // Guessing that this is much higher than the possible character nesting level in real data...
+
+            if (usfxStyleCount > 30)
+            {
+                Logit.WriteLine("Warning: Too many unclosed styles nested at " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                EndUSFXStyle();
+            }
+            if ((!assumeAllNested) && (!sf.nested))
+            {
+                EndUSFXStyle();
+            }
+            usfxStyleCount++;
+            activeCharacterStyle[usfxStyleCount] = sf.tag;
+            if (charStyleTagList.Contains(sf.tag))
+            {
+                xw.WriteStartElement(sf.tag);
+            }
+            else
+            {
+                xw.WriteStartElement("char");
+                xw.WriteAttributeString("style", sf.style);
+            }
+            if (sf.info.levelExpected && sf.level > 1)
+            {
+                xw.WriteAttributeString("level",sf.level.ToString());
+            }
+            for (i = 0; i < sf.sfmAttrNames.Count; i++)
+            {
+                xw.WriteAttributeString((string)sf.sfmAttrNames[i], (string)sf.sfmAttrValues[i]);
+            }
+            WriteUSFXText(sf.text);
+        }
 
         protected void StartUSFXStyle(string sfm, string content, bool nested)
         {
@@ -3210,8 +3501,37 @@ namespace WordSend
                     {
                         wt = new WordTag(content);
                         content = wt.content;
+                        if (string.IsNullOrEmpty(wt.lemma))
+                            wt.lemma = wt.deflt;
                         if (!string.IsNullOrEmpty(wt.lemma))
                             xw.WriteAttributeString("l", wt.lemma);
+                        if (!string.IsNullOrEmpty(wt.strong))
+                            xw.WriteAttributeString("s", wt.strong);
+                        if (!string.IsNullOrEmpty(wt.srcloc))
+                            xw.WriteAttributeString("srcloc", wt.srcloc);
+                        if (!string.IsNullOrEmpty(wt.plural))
+                            xw.WriteAttributeString("plural", wt.plural);
+                        if (!string.IsNullOrEmpty(wt.morph))
+                            xw.WriteAttributeString("m", wt.morph);
+                    }
+                }
+                else if (sfm == "jmp")
+                {
+                    WordTag wt;
+                    xw.WriteStartElement(ns + "ref");
+                    if (!string.IsNullOrEmpty(content))
+                    {
+                        wt = new WordTag(content);
+                        content = wt.content;
+                        if (string.IsNullOrEmpty(wt.linkhref))
+                            wt.linkhref = wt.deflt;
+                        if (!string.IsNullOrEmpty(wt.linkhref))
+                        {
+                            if (wt.linkhref.ToLowerInvariant().StartsWith("http"))
+                                xw.WriteAttributeString("web", wt.linkhref);
+                            else
+                                xw.WriteAttributeString("tgt", wt.linkhref);
+                        }
                         if (!string.IsNullOrEmpty(wt.strong))
                             xw.WriteAttributeString("s", wt.strong);
                         if (!string.IsNullOrEmpty(wt.srcloc))
@@ -3254,6 +3574,8 @@ namespace WordSend
                         {
                             wt = new WordTag(content);
                             content = wt.content;
+                            if (string.IsNullOrEmpty(wt.lemma))
+                                wt.lemma = wt.deflt;
                             if (!string.IsNullOrEmpty(wt.lemma))
                                 xw.WriteAttributeString("l", wt.lemma);
                             if (!string.IsNullOrEmpty(wt.strong))
@@ -3593,7 +3915,7 @@ namespace WordSend
 					}
 					if (sf.info.parameterName != "")
 					{
-						dynVars[sf.info.parameterName] = sf.attribute;
+						dynVars[sf.info.parameterName] = sf.parameter;
 					}
 
 					switch (sf.info.kind)
@@ -3671,9 +3993,9 @@ namespace WordSend
 								if (inPsalms)
 								{
                                     if (psalmPrefix.Length > 0)
-                                        chapterLabel = psalmPrefix + " " + sf.attribute;
+                                        chapterLabel = psalmPrefix + " " + sf.parameter;
                                     else
-                                        chapterLabel = sf.attribute;
+                                        chapterLabel = sf.parameter;
                                     if (psalmSuffix.Length > 0)
                                         chapterLabel = chapterLabel + " " + psalmSuffix;
                                     if (markPsalm1 || (chapterMark != "1"))
@@ -3688,9 +4010,9 @@ namespace WordSend
 								else
 								{
                                     if (chapterPrefix.Length > 0)
-                                        chapterLabel = chapterPrefix + " " + sf.attribute;
+                                        chapterLabel = chapterPrefix + " " + sf.parameter;
                                     else
-                                        chapterLabel = sf.attribute;
+                                        chapterLabel = sf.parameter;
                                     if (chapterSuffix.Length > 0)
                                         chapterLabel = chapterLabel + " " + chapterSuffix;
                                     if (markFirstChapter || (chapterMark != "1"))
@@ -3706,7 +4028,7 @@ namespace WordSend
                                 break;
 							case "c":
 								s = currentParagraphStyle;
-								chapterMark = sf.attribute;
+								chapterMark = sf.parameter;
 								try
 								{
 									currentChapter = Int32.Parse(chapterMark);
@@ -3719,9 +4041,9 @@ namespace WordSend
 								if (inPsalms)
 								{
 									if (psalmPrefix.Length > 0)
-										chapterLabel = psalmPrefix + " " + sf.attribute;
+										chapterLabel = psalmPrefix + " " + sf.parameter;
 									else
-										chapterLabel = sf.attribute;
+										chapterLabel = sf.parameter;
 									if (psalmSuffix.Length > 0)
 										chapterLabel = chapterLabel + " " + psalmSuffix;
 									if (markPsalm1 || (chapterMark != "1"))
@@ -3737,9 +4059,9 @@ namespace WordSend
 								else
 								{
 									if (chapterPrefix.Length > 0)
-										chapterLabel = chapterPrefix + " " + sf.attribute;
+										chapterLabel = chapterPrefix + " " + sf.parameter;
 									else
-										chapterLabel = sf.attribute;
+										chapterLabel = sf.parameter;
 									if (chapterSuffix.Length > 0)
 										chapterLabel = chapterLabel + " " + chapterSuffix;
 									if (markFirstChapter || (chapterMark != "1"))
@@ -3774,7 +4096,7 @@ namespace WordSend
 											currentParagraphStyle += "-ch";
 									}
 								}
-								verseMark = sf.attribute.Replace('-', '\u2011');	// Replace hyphens with non-breaking hyphens in verse markers.
+								verseMark = sf.parameter.Replace('-', '\u2011');	// Replace hyphens with non-breaking hyphens in verse markers.
 								if (bkRec.numChapters == 1)
 								{
 									WriteWordMLTextRun(" ", "cvmarker");
@@ -3815,7 +4137,7 @@ namespace WordSend
 								try
 								{
 									if ((bkRec.numChapters != 1) &&
-										(Int32.Parse(sf.attribute) >=  bkInfo.bookArray[bknum].verseCount[currentChapter]))
+										(Int32.Parse(sf.parameter) >=  bkInfo.bookArray[bknum].verseCount[currentChapter]))
 									{
 										StartUSFXElement("generated");
 										WriteWordMLTextRun(chapterMark, "cvmarker");
@@ -3873,11 +4195,11 @@ namespace WordSend
                                 badsf = "\\" + sf.tag;
                                 if (sf.level > 0)
                                     badsf += sf.level.ToString();
-                                if (sf.attribute != "")
-                                    badsf += " " + sf.attribute;
+                                if (sf.parameter != "")
+                                    badsf += " " + sf.parameter;
                                 Logit.WriteError("ERROR: UNRECOGNIZED TAG " + badsf + " IN " + book.bookCode + " " + chapterMark + ":" + verseMark);
                                 fatalError = true;
-                                WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, null);
+                                WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.parameter, null);
                                 WriteWordMLTextRun(sf.text);
                                 sfmErrorsFound = true;
 								break;
@@ -3888,13 +4210,13 @@ namespace WordSend
 						switch (sf.tag)
 						{
 							case "f":	// Regular footnote
-								StartUSFXNote(sf.tag, sf.attribute, null);
-								if (customFootnoteMark && (sf.attribute == "+"))
+								StartUSFXNote(sf.tag, sf.parameter, null);
+								if (customFootnoteMark && (sf.parameter == "+"))
 									caller = footnoteMark.Marker();
-								else if (sf.attribute == "-")
+								else if (sf.parameter == "-")
 									caller = "";
 								else
-									caller = sf.attribute;
+									caller = sf.parameter;
 								StartFootnote(caller, "Footnote");
 								if (addRefToFootnote)
 								{
@@ -3906,13 +4228,13 @@ namespace WordSend
 								WriteWordMLTextRun(sf.text, "Footnote");
 								break;
 							case "x":	// Cross reference footnote
-								StartUSFXNote(sf.tag, sf.attribute, null);
-								if (customXrefMark && (sf.attribute == "+"))
+								StartUSFXNote(sf.tag, sf.parameter, null);
+								if (customXrefMark && (sf.parameter == "+"))
 									caller = xrefMark.Marker();
-								else if (sf.attribute == "-")
+								else if (sf.parameter == "-")
 									caller = "";
 								else
-									caller = sf.attribute;
+									caller = sf.parameter;
 								StartXref(caller, "Crossreference");
 								if (addRefToXrefNote)
 								{
@@ -3944,8 +4266,8 @@ namespace WordSend
 								}
 								else
 								{
-									StartUSFXNote(sf.tag, sf.attribute, null);
-									StartEndnote(sf.attribute);
+									StartUSFXNote(sf.tag, sf.parameter, null);
+									StartEndnote(sf.parameter);
 								}
 								WriteWordMLTextRun(sf.text);
 								break;
@@ -3962,7 +4284,7 @@ namespace WordSend
 							break;
 						case "character":
 							EndWordMLTextRun();
-                            if (sf.tag == "w")
+                            if (sf.tag == "w" || sf.tag=="jmp")
                             {
                                 int pos;
                                 string actualWord = sf.text;
@@ -3974,7 +4296,7 @@ namespace WordSend
                                     WriteWordMLTextRun(actualWord);
                                 }
                             }
-                            else if (sf.tag == "w*")
+                            else if (sf.tag == "w*"|| sf.tag=="jmp*")
                             {
                                 WriteWordMLTextRun(sf.text);
                             }
@@ -4093,11 +4415,11 @@ namespace WordSend
                             badsf = "\\" + sf.tag;
                             if (sf.level > 0)
                                 badsf += sf.level.ToString();
-                            if (sf.attribute != "")
-                                badsf += " " + sf.attribute;
+                            if (sf.parameter != "")
+                                badsf += " " + sf.parameter;
                             Logit.WriteError("ERROR: UNRECOGNIZED TAG " + badsf + " IN " + book.bookCode + " " + chapterMark + ":" + verseMark);
                             fatalError = true;
-							WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, null);
+							WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.parameter, null);
                             WriteWordMLTextRun(sf.text);
                             sfmErrorsFound = true;
 							break;
@@ -4249,7 +4571,7 @@ namespace WordSend
 
         public bool hasRefTags;
 
-        protected const string EXCLUSIVETAGS = "xo xk xt xdc fr fk fq fqa fl fp ft fdc fw ";
+        protected const string EXCLUSIVETAGS = "xo xk xt xta xdc xq fr fk fq fqa fl fp ft fdc fw fv ";
 
         public bool isUnclosedNoteTag(string sfm)
         {
@@ -4282,6 +4604,7 @@ namespace WordSend
             wjOut = false;
             embedUsfx = true;
             string strongs, lemma, morphology;
+            int i;
             try
             {
                 activeCharacterStyle[0] = String.Empty;
@@ -4310,6 +4633,28 @@ namespace WordSend
 				{
                     switch (sf.info.kind)
 					{
+                        case "milestone":
+                            if (sf.isEndTag)
+                            {
+                                xw.WriteString(sf.text);
+                            }
+                            else
+                            {
+                                xw.WriteStartElement("ms");
+                                xw.WriteAttributeString("style", sf.style);
+                                if (sf.level > 0)
+                                    xw.WriteAttributeString("level", sf.level.ToString());
+                                xw.WriteAttributeString("sfm", sf.tag);
+                                for (i = 0; i < sf.sfmAttrNames.Count; i++)
+                                {
+                                    if ((string)sf.sfmAttrNames[i] == "default")
+                                        sf.sfmAttrNames[i] = sf.info.defaultAttribute;
+                                    xw.WriteAttributeString((string)sf.sfmAttrNames[i], (string)sf.sfmAttrValues[i]);
+                                }
+                                xw.WriteEndElement();
+                                // USFM/USX milestones aren't allowed to contain text.
+                            }
+                            break;
 						case "paragraph":
                             if (inWJ)
                             {
@@ -4339,7 +4684,7 @@ namespace WordSend
 
                             EndUsfxTable();
                             EndUsfxVerse();
-							StartUSFXParagraph(sf.tag, sf.level, sf.info.paragraphStyle, sf.text);
+							StartUSFXParagraph(sf.tag, sf.level, sf.style, sf.text);
 							break;
 						case "meta":
                             if (inWJ)
@@ -4353,7 +4698,7 @@ namespace WordSend
                                     EndUsfxVerse();
                                     EndUSFXParagraph();
                                     EndUsfxTable();
-								    chapterMark = sf.attribute;
+								    chapterMark = sf.parameter;
 								    verseMark = "";
                                     if (inUSFXNote)
                                     {
@@ -4362,7 +4707,7 @@ namespace WordSend
                                             ":" + verseMark + "  (c)");
                                         fatalError = true;
                                     }
-								    StartUSFXElement("c", "id", sf.attribute, null);
+								    StartUSFXElement("c", "id", sf.parameter, null);
 								    EndUSFXElement();	// ns+c
 								    WriteUSFXText(sf.text);
 								    break;
@@ -4372,7 +4717,7 @@ namespace WordSend
                                     break;
 							    case "v":
                                     EndUsfxVerse();
-                                    verseMark = sf.attribute;
+                                    verseMark = sf.parameter;
                                     inVerse = true;
                                     if (inUSFXNote)
                                     {
@@ -4388,7 +4733,7 @@ namespace WordSend
                                         Logit.WriteError("Error: unclosed style " + activeCharacterStyle[usfxStyleCount] + " at " + book.bookCode + " " + chapterMark + ":" + verseMark + " ");
                                         EndUSFXStyle();
                                     }
-								    StartUSFXElement(sf.tag, "id", sf.attribute, null);
+								    StartUSFXElement(sf.tag, "id", sf.parameter, null);
 								    EndUSFXElement();   // ns+v
                                     if (inWJ && !wjOut && !isAllWhiteSpace(sf.text))
                                     {
@@ -4410,12 +4755,12 @@ namespace WordSend
                                     WriteUSFXText(sf.text);
                                     break;
 							    case "nb":
-								    StartUSFXParagraph(sf.tag, sf.level, sf.info.paragraphStyle, sf.text);
+								    StartUSFXParagraph(sf.tag, sf.level, sf.style, sf.text);
 								    break;
 							    case "id":
-                                    if (sf.attribute != book.bookCode)
+                                    if (sf.parameter != book.bookCode)
                                     {
-                                        Logit.WriteError("book id mismatch: " + sf.attribute + " != " + book.bookCode);
+                                        Logit.WriteError("book id mismatch: " + sf.parameter + " != " + book.bookCode);
 
                                     }
                                     else
@@ -4430,7 +4775,7 @@ namespace WordSend
                                         }
                                         EndUsfxVerse();
                                         EndUSFXParagraph();
-                                        StartUSFXElement(sf.tag, "id", sf.attribute, sf.text);
+                                        StartUSFXElement(sf.tag, "id", sf.parameter, sf.text);
                                         EndUSFXElement();
                                     }
 								    break;
@@ -4445,7 +4790,7 @@ namespace WordSend
                                     inToc = true;
                                     break;
                                 case "ide":
-								    StartUSFXElement(sf.tag, "charset", sf.attribute, sf.text.Trim());
+								    StartUSFXElement(sf.tag, "charset", sf.parameter, sf.text.Trim());
 								    EndUSFXElement();
 								    break;
 							    case "rem":
@@ -4459,7 +4804,7 @@ namespace WordSend
                                     EndUSFXElement();
                                     break;
                                 case "cp":
-                                    StartUSFXElement(sf.tag, "id", sf.attribute, null);
+                                    StartUSFXElement(sf.tag, "id", sf.parameter, null);
                                     EndUSFXElement();
                                     break;
 							    case "e":
@@ -4558,7 +4903,7 @@ namespace WordSend
                                     break;
 							    default:
                                     // in WriteUSFXBook
-								    WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, sf.text);
+								    WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.parameter, sf.text);
                                     if (inFootnote)
                                     {
                                         Logit.WriteError("Error: unclosed footnote at " + book.bookCode + " " + chapterMark +
@@ -4612,7 +4957,7 @@ namespace WordSend
                                     wjOut = false;
                                 }
 
-                                    StartUSFXNote(sf.tag, sf.attribute, sf.text);
+                                    StartUSFXNote(sf.tag, sf.parameter, sf.text);
 								break;
 							case "fe":	// End note
                                 if (inUSFXNote)
@@ -4623,7 +4968,7 @@ namespace WordSend
                                 }
                                 else
                                 {	// A real end note
-                                    StartUSFXNote(sf.tag, sf.attribute, sf.text);
+                                    StartUSFXNote(sf.tag, sf.parameter, sf.text);
                                 }
 								break;
 							case "f*":
@@ -4650,7 +4995,7 @@ namespace WordSend
                                 }
                                 break;
                             default:
-                               	WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, sf.text);
+                               	WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.parameter, sf.text);
 								break;
 						}
 							break;
@@ -4681,12 +5026,12 @@ namespace WordSend
                                 }
                                 if (inUSFXNote)
 								{
-									StartUSFXNoteStyle(sf.tag, sf.text, sf.nested);
+									StartUSFXNoteCharacterStyle(sf);
 								}
 								else
 								{
-									StartUSFXStyle(sf.tag, sf.text, sf.nested);
-								}
+                                    StartUSFXCharacterStyle(sf);
+                                }
 							}
 							break;
                         case "figure":
@@ -4740,18 +5085,18 @@ namespace WordSend
                             {
                                 if (inUSFXNote)
                                 {
-                                    StartUSFXNoteStyle(sf.tag, sf.text, sf.nested);
+                                    StartUSFXNoteCharacterStyle(sf);
                                 }
                                 else
                                 {
-                                    StartUSFXStyle(sf.tag, sf.text, sf.nested);
+                                    StartUSFXCharacterStyle(sf);
                                 }
                             }
                             break;
 						case "ignore":
 							break;
 						default:
-							WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.attribute, sf.text);
+							WriteUSFXMilestone("milestone", sf.tag, sf.level, sf.parameter, sf.text);
 							break;
 					}
 					sf = book.NextSfm();
@@ -5598,6 +5943,8 @@ namespace WordSend
                             }
                             if (usfx.IsEmptyElement)
                                 xw.WriteEndElement();
+                            if (String.IsNullOrEmpty(sfm))
+                                sfm = usfx.Name;
                             switch (usfx.Name)
                             {
                                 case "book":
@@ -5661,6 +6008,7 @@ namespace WordSend
                                 case "toc":
                                 case "xo":
                                 case "fr":
+                                case "xta":
                                     parseThis = false;
                                     break;
                                 case "x":
@@ -5687,6 +6035,7 @@ namespace WordSend
                         {
                             case "x":
                             case "xt":
+                            case "xta":
                             case "f":
                             case "r":
                             case "fe":
@@ -6030,25 +6379,38 @@ namespace WordSend
         {
             int i;
 
-            if (String.IsNullOrEmpty(s))
-                return String.Empty;
             StringBuilder sb = new StringBuilder();
-            if ((s[0] == 'H') || (s[0] == 'h'))
-                sb.Append('H');
-            else if ((s[0] == 'G') || (s[0] == 'g'))
-                sb.Append('G');
-            else
-                return String.Empty;
-            for (i = 1; i < s.Length; i++)
+            if (s.Contains(" "))
             {
-                if (Char.IsDigit(s[i]))
-                  sb.Append(s[i]);
+                string[] strongList = s.Split(' ');
+                foreach (string strong in strongList)
+                {
+                    sb.Append(PadStrongs(strong.Trim()));
+                    sb.Append(' ');
+                }
+                return sb.ToString().TrimEnd();
             }
-            if (sb.Length < 2)
-                return String.Empty;
-            while (sb.Length < 5)
-                sb.Insert(1, '0');
-            return (sb.ToString());
+            else
+            {
+                if (String.IsNullOrEmpty(s))
+                    return String.Empty;
+                if ((s[0] == 'H') || (s[0] == 'h'))
+                    sb.Append('H');
+                else if ((s[0] == 'G') || (s[0] == 'g'))
+                    sb.Append('G');
+                else
+                    return String.Empty;
+                for (i = 1; i < s.Length; i++)
+                {
+                    if (Char.IsDigit(s[i]))
+                      sb.Append(s[i]);
+                }
+                if (sb.Length < 2)
+                    return String.Empty;
+                while (sb.Length < 5)
+                    sb.Insert(1, '0');
+                return (sb.ToString());
+            }
         }
 
         public void USFXtoUSFM(string inFileName, string outDir, string outFileName, bool extendUsfm, Options m_options)
@@ -6065,6 +6427,11 @@ namespace WordSend
 			string verse = "0";
             string fnReturnVerse = "1";
 			string id = "";
+            string sid = "";
+            string eid = "";
+            string linkhref = "";
+            string linktitle = "";
+            string linkid = "";
 			string sfm = "";
 			string style = "";
 			string level = "";
@@ -6074,6 +6441,7 @@ namespace WordSend
             string morphology = "";
             string srcloc = "";
             string tgt = "";
+            StringBuilder target = new StringBuilder();
             string src = "";
             string web = "";
             string strongs = "";
@@ -6087,10 +6455,11 @@ namespace WordSend
             bool stackTag = false;
             bool needNoteTextMarker = false;
             bool needXrefTextMarker = false;
-            bool foundXtOutsideOfXref = false;
-			SFWriter usfmFile;
+            SFWriter usfmFile;
             Figure fig = new Figure();
             inFootnote = false;
+            ArrayList attrNam;
+            ArrayList attrVal;
 
             // if (outDir.Length == 0)
             //    outDir = ".";
@@ -6120,7 +6489,9 @@ namespace WordSend
                         // The SFM name is the element name UNLESS sfm attribute overrides it.
                         sfm = usfxFile.Name;
                         id = level = style = who = strongs = plural = lemma = morphology = root = srcloc = "";
-                        tgt = src = web = "";
+                        tgt = src = web = eid = sid = linkhref = linktitle = linkid = "";
+                        attrNam = new ArrayList();
+                        attrVal = new ArrayList();
                         if (usfxFile.HasAttributes)
                         {
                             for (i = 0; i < usfxFile.AttributeCount; i++)
@@ -6132,7 +6503,12 @@ namespace WordSend
                                         id = usfxFile.Value;
                                         break;
                                     case "charset":
-                                        id = usfxFile.Value;
+                                        id = usfxFile.Value.ToUpperInvariant();
+                                        if (!(id.Contains("UTF-8") || id.Contains("UTF8") || id.Contains("65001")))
+                                        {
+                                            Logit.WriteLine("Unexpected charset: " + usfxFile.Value);
+                                            id = "UTF-8";   // Sweep it under the rug. We only support UTF-8. Some source has things like "Unicode" or "UTF<m-dash>8".
+                                        }
                                         break;
                                     case "level":
                                         level = usfxFile.Value;
@@ -6153,21 +6529,61 @@ namespace WordSend
                                     case "who":
                                         // makes sense with <quoteStart>
                                         who = usfxFile.Value;
+                                        attrNam.Add("who");
+                                        attrVal.Add(who);
+                                        break;
+                                    case "eid":
+                                        eid = usfxFile.Value;
+                                        attrNam.Add("eid");
+                                        attrVal.Add(eid);
+                                        break;
+                                    case "sid":
+                                        sid = usfxFile.Value;
+                                        attrNam.Add("sid");
+                                        attrVal.Add(sid);
+                                        break;
+                                    case "link-href":
+                                        linkhref = usfxFile.Value;
+                                        attrNam.Add("link-href");
+                                        attrVal.Add(linkhref);
+                                        break;
+                                    case "link-title":
+                                        linktitle = usfxFile.Value;
+                                        attrNam.Add("link-title");
+                                        attrVal.Add(linktitle);
+                                        break;
+                                    case "link-id":
+                                        linkid = usfxFile.Value;
+                                        attrNam.Add("link-id");
+                                        attrVal.Add(linkid);
+                                        break;
+                                    case "gloss":
+                                        attrNam.Add("gloss");
+                                        attrVal.Add("usfxFile.Value");
                                         break;
                                     case "s":   // Strong's number
+                                    case "strong":
                                         strongs = usfxFile.Value;
+                                        attrNam.Add("strong");
+                                        attrVal.Add(strongs);
                                         break;
                                     case "plural":
                                         plural = usfxFile.Value;
                                         break;
                                     case "l":
+                                    case "lemma":
                                         lemma = usfxFile.Value;
+                                        attrNam.Add("lemma");
+                                        attrVal.Add(lemma);
                                         break;
                                     case "m":
+                                    case "x-morph":
                                         morphology = usfxFile.Value;
                                         break;
                                     case "srcloc":
                                         srcloc = usfxFile.Value;
+                                        attrNam.Add("srcloc");
+                                        attrVal.Add(srcloc);
                                         break;
                                     case "tgt":
                                         tgt = usfxFile.Value;
@@ -6267,7 +6683,6 @@ namespace WordSend
                                  */
                                 if (!inFootnote && !inXref && (noteStyleStackLevel > 0))
                                     Logit.WriteError("noteStyleStackLevel = " + noteStyleStackLevel.ToString() + " outside of note at " + bookId + " " + chapter + ":" + verse);
-
                                 break;
                             case "ve":
                                 // Verse end: there is no equivalent markup in USFM.
@@ -6288,6 +6703,9 @@ namespace WordSend
                             case "optionalLineBreak":
                                 usfmFile.WriteString(" // ");
                                 break;
+                            case "sidebar":
+                                // TODO: handle this.
+                                break;
                             case "fig":
                                 fig.clear();
                                 bool inFig = true;
@@ -6303,26 +6721,38 @@ namespace WordSend
                                     {
                                         switch (elementName)
                                         {
-                                            case "description":
+                                            case "description": // Free form decscription as a comment for the typesetter
                                                 fig.description = usfxFile.Value;
+                                                //attrNam.Add("alt");
+                                                //attrVal.Add(fig.description);
                                                 break;
-                                            case "catalog":
+                                            case "catalog": // Image file name without path
                                                 fig.catalog = usfxFile.Value;
+                                                //attrNam.Add("src");
+                                                //attrVal.Add(fig.catalog);
                                                 break;
-                                            case "size":
+                                            case "size":    // "col" for column width or "span" for page width
                                                 fig.size = usfxFile.Value;
+                                                //attrNam.Add("size");
+                                                //attrVal.Add(fig.size);
                                                 break;
-                                            case "location":
+                                            case "location":    // Range of references where this illustration might be inserted.
                                                 fig.location = usfxFile.Value;
+                                                //attrNam.Add("loc");
+                                                //attrVal.Add(fig.location);
                                                 break;
-                                            case "copyright":
+                                            case "copyright":   // Illustration copyright information
                                                 fig.copyright = usfxFile.Value;
+                                                //attrNam.Add("copy");
+                                                //attrVal.Add(fig.copyright);
                                                 break;
-                                            case "caption":
+                                            case "caption": // In USFM 3.0 this is the "text" portion of the \fig tag, before attributes.
                                                 fig.caption = usfxFile.Value;
                                                 break;
-                                            case "reference":
+                                            case "reference":   // Chapter and verse this picture applies to.
                                                 fig.reference = usfxFile.Value;
+                                                //attrNam.Add("ref");
+                                                //attrVal.Add(fig.reference);
                                                 break;
                                             default:
                                                 Logit.WriteError("Unexpected element in figure specification: " + elementName + " with content " + usfxFile.Value + 
@@ -6372,27 +6802,18 @@ namespace WordSend
                                     usfmFile.WriteString("‘");
                                 */
                                 break;
+                            case "jmp":
+                                charStyleStackLevel++;
+                                if (charStyleStackLevel >= STYLESTACKSIZE - 1)
+                                    charStyleStackLevel = STYLESTACKSIZE - 2;
+                                stackTag = charStyleStackLevel > 1;
+                                usfmFile.WriteUSFM("jmp", null, attrNam, attrVal, null, false, stackTag);
+                                break;
                             case "ref":
-                                if (extendUsfm)
-                                {
-                                    usfmFile.WriteSFM("zref", "", "", false, (charStyleStackLevel > 0) || inFootnote);
-                                    if (!String.IsNullOrEmpty(src))
-                                    {
-                                        usfmFile.WriteSFM("zsrc", "", src, false, true);
-                                        usfmFile.WriteSFM("zsrc*", "", "", false, true);
-                                    }
-                                    if (!String.IsNullOrEmpty(tgt))
-                                    {
-                                        usfmFile.WriteSFM("ztgt", "", tgt, false, true);
-                                        usfmFile.WriteSFM("ztgt*", "", "", false, true);
-                                    }
-                                    if (!String.IsNullOrEmpty(web))
-                                    {
-                                        usfmFile.WriteSFM("zweb", "", web, false, true);
-                                        usfmFile.WriteSFM("zweb*", "", "", false, true);
-                                    }
-                                    usfmFile.WriteSFM("zref*", "", "", false, (charStyleStackLevel > 0) || inFootnote);
-                                }
+                                // For now, we don't attempt to convert <ref> to \jmp or \xt with attributes, mainly because <ref> is autogenerated from text
+                                // and the new USFM 3 attributes for \jmp and \xt could complicate this. This would be uncharted spec territory. So we just
+                                // autogenerate <ref> again from USFM text when we convert from USFM again, next time.
+                                //usfmFile.WriteSFM("jmp", "", "", false);
                                 break;
                             case "quoteRemind":
                                 /* Do nothing. Read the quotation mark from the element contents.
@@ -6533,6 +6954,17 @@ namespace WordSend
                                 usfmFile.WriteSFM(sfm, "", "", false, noteStyleStackLevel > 1);
                                 noteSfm[noteStyleStackLevel] = sfm;
                                 break;
+                            case "xta":
+                                if (inXref || inFootnote)
+                                {
+                                    needNoteTextMarker = false;
+                                    needXrefTextMarker = false;
+                                    noteSfm[noteStyleStackLevel] = sfm;
+                                    noteStyleStackLevel = 1;
+                                    stackTag = false;
+                                    usfmFile.WriteUSFM(sfm, "", null, null, null, false, stackTag);
+                                }
+                                break;
                             case "xt":
                                 if (inXref || inFootnote)
                                 {
@@ -6541,16 +6973,14 @@ namespace WordSend
                                     noteSfm[noteStyleStackLevel] = sfm;
                                     noteStyleStackLevel = 1;
                                     stackTag = false;
-                                    usfmFile.WriteSFM(sfm, level, id, false, stackTag);
+                                    if ((attrNam.Count == 1) && (attrNam[0].ToString() == "link-href"))
+                                        usfmFile.WriteUSFM(sfm, id, null, null, attrVal[0].ToString(), false, stackTag);
+                                    else
+                                        usfmFile.WriteUSFM(sfm, id, attrNam, attrVal, null, false, stackTag);
                                 }
                                 else
                                 {
                                     csSfm[charStyleStackLevel] = sfm;
-                                    if (!foundXtOutsideOfXref)
-                                    {
-                                        //Logit.WriteLine("\\xt outside of cross reference note at " + bookId + " " + chapter + ":" + verse);
-                                        foundXtOutsideOfXref = true;
-                                    }
                                     if (charStyleStackLevel > 5)
                                     {
                                         Logit.WriteError("Unexpected nesting of characters at " + bookId + " " + chapter + ":" + verse);
@@ -6562,7 +6992,10 @@ namespace WordSend
                                     if (charStyleStackLevel >= STYLESTACKSIZE - 1)
                                         charStyleStackLevel = STYLESTACKSIZE - 2;
                                     stackTag = charStyleStackLevel > 1;
-                                    usfmFile.WriteSFM(sfm, level, id, false, stackTag);
+                                    if ((attrNam.Count == 1) && (attrNam[0].ToString() == "link-href"))
+                                        usfmFile.WriteUSFM(sfm, id, null, null, attrVal[0].ToString(), false, stackTag);
+                                    else
+                                        usfmFile.WriteUSFM(sfm, id, attrNam, attrVal, null, false, stackTag);
                                 }
                                 break;
                             case "x":
@@ -6673,7 +7106,7 @@ namespace WordSend
                                         needNoteTextMarker = false;
                                         if (!sfm.StartsWith("f") && !sfm.StartsWith("x"))
                                         {
-                                            usfmFile.WriteSFM("ft", "", false);
+                                            usfmFile.WriteUSFM("ft", "", null, null, null, false, false);
                                             noteSfm[noteStyleStackLevel] = "ft";
                                             noteStyleStackLevel = 1;
                                         }
@@ -6683,7 +7116,7 @@ namespace WordSend
                                         if (!sfm.StartsWith("f") && !sfm.StartsWith("x"))
                                         {
                                             needXrefTextMarker = false;
-                                            usfmFile.WriteSFM("xt", "", false);
+                                            usfmFile.WriteUSFM("xt", "", null, null, null, false, false);
                                             noteSfm[noteStyleStackLevel] = "xt";
                                             noteStyleStackLevel = 1;
                                         }
@@ -6755,35 +7188,47 @@ namespace WordSend
                             case "quoteStart":
                             case "quoteRemind":
                             case "quoteEnd":
+                            case "sidebar":
                                 break;
                             case "ref":
-                                if (extendUsfm)
+                                /*
+                                separator = "";
+                                if (!String.IsNullOrEmpty(web) || !String.IsNullOrEmpty(tgt))
+                                    usfmFile.WriteString("|");
+                                if (!String.IsNullOrEmpty(web))
                                 {
-                                    usfmFile.WriteSFM("zrefend", "", "", false, (charStyleStackLevel > 0) || inFootnote);
-                                    usfmFile.WriteSFM("zrefend*", "", "", false, (charStyleStackLevel > 0) || inFootnote);
+                                    usfmFile.WriteString("link-href=\"" + web + "\"");
+                                    separator = " ";
                                 }
+                                if (!String.IsNullOrEmpty(tgt))
+                                {
+                                    target = new StringBuilder(tgt.Substring(0, 3));
+                                    target.Append(' ');
+                                    target.Append(tgt.Substring(4, tgt.Length - 4).Replace('.',':'));
+                                    usfmFile.WriteString(separator + "link-href=\"" + target.ToString() + "\"");
+                                }
+                                usfmFile.WriteString("\\jmp*");
+                                */
                                 break;
-
+                            case "jmp":
+                                usfmFile.WriteUSFM(sfm + "*", null, null, null, null, false, stackTag);
+                                break;
                             case "ft":
                             case "xt":
+                            case "xta":
                                 if (inXref || inFootnote)
                                 {
                                     noteStyleStackLevel = 0;
-                                    //needNoteTextMarker = true;
+                                    needNoteTextMarker = true;
                                 }
                                 else
                                 {
-                                    if (!foundXtOutsideOfXref)
-                                    {
-                                        Logit.WriteLine(sfm + " outside of cross reference note at " + bookId + " " + chapter + ":" + verse);
-                                        foundXtOutsideOfXref = true;
-                                    }
                                     if (charStyleStackLevel > 0)
                                         charStyleStackLevel--;
                                     if (String.IsNullOrEmpty(sfm))
                                         Logit.WriteError("Unexpected empty sfm on character style stack!");
                                     stackTag = charStyleStackLevel > 0;
-                                    usfmFile.WriteSFM(sfm + "*", "", "", false, stackTag);
+                                    usfmFile.WriteUSFM(sfm + "*", "", null, null, null, false, stackTag);
                                 }
                                 break;
                             case "fr":
@@ -6871,7 +7316,7 @@ namespace WordSend
                                         }
                                     }
                                 }
-                                // else we have a tag with an end element in USFX, but which always explicitly ends in USFM,
+                                // else we have a tag with an end element in USFX, but which always implicitly ends in USFM,
                                 // like any paragraph style or a metadata tag
                                 break;
                         }

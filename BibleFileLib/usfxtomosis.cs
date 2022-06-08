@@ -1184,12 +1184,14 @@ namespace WordSend
             bool inSC = false;
             bool inHi = false;
             bool inTl = false;
+            bool inOsisNote = false;
             OSISRedLetterWords = OSISFootnotes = OSISHeadings = OSISMorph = OSISStrongs = OSISScripref = false;
             SwordVs = new SwordVersifications();
 
             string toc1 = String.Empty;
             string toc2 = String.Empty;
             string lastSfm = String.Empty;
+ //           string tagName;
             inIntroduction = inMajorSection = inSection = inSubSection = inTitledPsalm = false;
             int i;
             try
@@ -1251,7 +1253,15 @@ namespace WordSend
                                     }
                                     mosis.WriteString(usfx.Value);
                                 }
-
+                           /* tagName = usfx.Name;
+                            if ("char para".Contains(tagName))
+                            {
+                                if (!string.IsNullOrEmpty(sfm))
+                                    tagName = sfm;
+                                else if (!string.IsNullOrEmpty(style))
+                                    tagName = style;
+                            }
+                           */
                             switch (usfx.Name)
                             {
                                 case "languageCode":
@@ -1380,6 +1390,7 @@ namespace WordSend
                                     else
                                     {
                                         OSISFootnotes = true;
+                                        inOsisNote = true;
                                         StartElementWithAttribute("note", "type", "translation", "osisRef", osisVerseId, "osisID", NoteId());
                                         mosis.WriteAttributeString("placement", "foot");
                                         inNote = true;
@@ -1394,6 +1405,7 @@ namespace WordSend
                                     else
                                     {
                                         OSISFootnotes = true;
+                                        inOsisNote= true;
                                         StartElementWithAttribute("note", "type", "translation", "osisRef", osisVerseId, "osisID", NoteId());
                                         mosis.WriteAttributeString("placement", "end");
                                         inNote = true;
@@ -1408,6 +1420,7 @@ namespace WordSend
                                     else
                                     {
                                         OSISScripref = true;
+                                        inOsisNote = true;
                                         StartElementWithAttribute("note", "type", "crossReference", "osisRef", osisVerseId, "osisID", NoteId());
                                         inNote = true;
                                     }
@@ -1829,7 +1842,7 @@ namespace WordSend
                                     }
                                     break;
                                 case "ref":
-                                    string tgt = GetNamedAttribute("tgt");
+                                    string tgt = GetNamedAttribute("tgt");  // OSIS supports verse reference targets, but not web href links.
                                     if (!usfx.IsEmptyElement)
                                     {
                                         if ((tgt.Length > 6) && (!tgt.Contains("-")))
@@ -1963,6 +1976,7 @@ namespace WordSend
                                             case "ipi":
                                             case "ipq":
                                             case "ipr":
+                                            case "iot":
                                                 StartIntroduction();
                                                 StartElementWithAttribute("p", "canonical", "false");
                                                 break;
@@ -1993,11 +2007,12 @@ namespace WordSend
                                                 StartIntroduction();
                                                 StartElementWithAttribute("title", "type", "sub", "canonical", "false");
                                                 break;
-                                            case "iot":
-                                            case "ior":
                                             case "io":  // TODO: implement levels with nested list/item/list/item...
                                                 StartIntroduction();
                                                 StartElementWithAttribute("div", "type", "outline", "canonical", "false");
+                                                break;
+                                            case "ior":
+                                                StartElementWithAttribute("hi", "type", "italic");
                                                 break;
                                             case "ili":
                                                 StartIntroduction();
@@ -2046,10 +2061,10 @@ namespace WordSend
                                     break;
                                 case "rq":
                                     if (inLineGroup)
-                                    {   // OSIS can't handle notes in line groups. Strip them out.
+                                    {   // OSIS can't handle notes in line groups or other notes.
                                         SkipElement();
                                     }
-                                    else
+                                    else if (!inOsisNote)
                                     {
                                         OpenContainer("note", false);
                                         mosis.WriteAttributeString("type", "crossReference");
@@ -2064,6 +2079,10 @@ namespace WordSend
                                     break;
                                 case "gw":  // Do nothing. Not sure what to do with glossary words, yet.
                                 case "xt":  // Do nothing. This tag is meaningless in OSIS.
+                                case "xta":
+                                case "wh":
+                                case "wg":
+                                case "wa":
                                     break;
                                 case "wj":
                                     if ((!inHi) && (!inTl))
@@ -2096,6 +2115,14 @@ namespace WordSend
                                 case "fdc":
                                     if (!projectOptions.includeApocrypha)
                                         SkipElement();
+                                    break;
+                                case "ior":
+                                    StartElementWithAttribute("hi", "type", "italic");
+                                    break;
+                                case "iot":
+                                case "io":  // TODO: implement levels with nested list/item/list/item...
+                                    StartIntroduction();
+                                    StartElementWithAttribute("div", "type", "outline", "canonical", "false");
                                     break;
                                 default:
                                     Logit.WriteLine("Unhandled tag: " + usfx.Name + " at " + osisVerseId);
@@ -2189,6 +2216,7 @@ namespace WordSend
                                 case "fe":
                                 case "f":
                                 case "x":
+                                    inOsisNote = false;
                                     if (inNote)
                                     {
                                         inNote = false;
@@ -2214,7 +2242,8 @@ namespace WordSend
                                     CloseContainer("row");
                                     break;
                                 case "rq":
-                                    CloseContainer("note");
+                                    if (!inOsisNote)
+                                        CloseContainer("note");
                                     break;
                                 case "fr":
                                     CloseContainer("reference");
@@ -2254,6 +2283,9 @@ namespace WordSend
                                 case "xo":
                                 case "sup":
                                 case "ord":
+                                case "iot":
+                                case "ior":
+                                case "io":
                                     // case "xq": Not useful for Sword modules.
                                     WriteMosisEndElement();    // note, hi, reference, title, l, transChange, etc.
                                     break;
@@ -2288,6 +2320,7 @@ namespace WordSend
                                 case "zcy":
                                 case "xt":
                                 case "gw":
+                                case "wa":
                                     // not supported.
                                     break;
                                     /* Can't get to this case (caught in "if" above)

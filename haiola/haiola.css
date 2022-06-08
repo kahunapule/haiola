@@ -38,6 +38,7 @@ span.add	{font-style:italic}
 .notemark:hover .crpopup	{display:block}
 .b	{display:block;margin-left:12em;text-indent:-2em}
 .bdit,.bk	{font-weight:bold;font-style:italic}
+.fw {font-weight:bold}
 .ebm,.ebp,.ebq1,.ebq2,.ebq3,.cov,.cd,.conc,.cls	{display:block;margin:.5em 0 .5em 0}
 .cd,.conc,.cls	{text-align:justify}
 .cd,.conc	{color:rgb(0,0,128)}

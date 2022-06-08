@@ -352,37 +352,44 @@ LOCK TABLES {0} WRITE;", concTableName);
 
 
             // Read the verse list
-            while (searchTextXml.Read())
+            try
             {
-                if ((searchTextXml.NodeType == XmlNodeType.Element) && (searchTextXml.Name == "v"))
+                while (searchTextXml.Read())
                 {
-                    currentBook = bookInfo.getShortCode(fileHelper.GetNamedAttribute(searchTextXml, "b"));
-                    currentChapter = fileHelper.GetNamedAttribute(searchTextXml, "c");
-                    startVerse = currentVerse = fileHelper.GetNamedAttribute(searchTextXml, "v");
-                    // Verse numbers might be verse bridges, like "20-22" or simple numbers, like "20".
-                    i = currentVerse.IndexOf('-');
-                    if (i > 0)
+                    if ((searchTextXml.NodeType == XmlNodeType.Element) && (searchTextXml.Name == "v"))
                     {
-                        startVerse = startVerse.Substring(0, i);
-                    }
-                    verseID = currentBook + currentChapter + "_" + startVerse;
-                    if (!Logit.ShowStatus("Creating word index " + verseID))
-                    {
-                        searchTextXml.Close();
-                        return;
-                    }
-                    searchTextXml.Read();
-                    if (searchTextXml.NodeType == XmlNodeType.Text)
-                    {
-                        if (searchTextXml.Value.Trim().Length > 0)
+                        currentBook = bookInfo.getShortCode(fileHelper.GetNamedAttribute(searchTextXml, "b"));
+                        currentChapter = fileHelper.GetNamedAttribute(searchTextXml, "c");
+                        startVerse = currentVerse = fileHelper.GetNamedAttribute(searchTextXml, "v");
+                        // Verse numbers might be verse bridges, like "20-22" or simple numbers, like "20".
+                        i = currentVerse.IndexOf('-');
+                        if (i > 0)
                         {
-                            includedVerses.Add(verseID);
+                            startVerse = startVerse.Substring(0, i);
                         }
-                        IndexWords(searchTextXml.Value);
+                        verseID = currentBook + currentChapter + "_" + startVerse;
+                        if (!Logit.ShowStatus("Creating word index " + verseID))
+                        {
+                            searchTextXml.Close();
+                            return;
+                        }
+                        searchTextXml.Read();
+                        if (searchTextXml.NodeType == XmlNodeType.Text)
+                        {
+                            if (searchTextXml.Value.Trim().Length > 0)
+                            {
+                                includedVerses.Add(verseID);
+                            }
+                            IndexWords(searchTextXml.Value);
+                        }
                     }
                 }
+                searchTextXml.Close();
             }
-            searchTextXml.Close();
+            catch (Exception err)
+            {
+                Logit.WriteError("Error reading "+verseTextFile+" and writing to "+Path.Combine(searchDir, sqlFile)+": "+err.Message);
+            }
 
             // Write search index with fewer files.
             bool[] commaNeeded = new bool[HASHSIZE];

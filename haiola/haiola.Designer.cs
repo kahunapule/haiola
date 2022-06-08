@@ -232,7 +232,6 @@
             this.makeHtmlCheckBox = new System.Windows.Forms.CheckBox();
             this.RunTabPage = new System.Windows.Forms.TabPage();
             this.messagesListBox = new System.Windows.Forms.ListBox();
-            this.resumeButton = new System.Windows.Forms.Button();
             this.markRetryButton = new System.Windows.Forms.Button();
             this.runHighlightedButton = new System.Windows.Forms.Button();
             this.statsLabel = new System.Windows.Forms.Label();
@@ -706,6 +705,7 @@
             this.fontComboBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.fontComboBox.Name = "fontComboBox";
             this.fontComboBox.Size = new System.Drawing.Size(145, 22);
+            this.fontComboBox.Sorted = true;
             this.fontComboBox.TabIndex = 208;
             this.fontComboBox.Text = "Gentium";
             this.fontComboBox.SelectedValueChanged += new System.EventHandler(this.fontComboBox_SelectedValueChanged);
@@ -2040,6 +2040,7 @@
             this.dependsComboBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.dependsComboBox.Name = "dependsComboBox";
             this.dependsComboBox.Size = new System.Drawing.Size(190, 22);
+            this.dependsComboBox.Sorted = true;
             this.dependsComboBox.TabIndex = 103;
             // 
             // label58
@@ -2115,6 +2116,7 @@
             this.textDirectionComboBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.textDirectionComboBox.Name = "textDirectionComboBox";
             this.textDirectionComboBox.Size = new System.Drawing.Size(95, 22);
+            this.textDirectionComboBox.Sorted = true;
             this.textDirectionComboBox.TabIndex = 94;
             // 
             // relaxNestingSyntaxCheckBox
@@ -2143,11 +2145,11 @@
             // 
             this.numberSystemComboBox.FormattingEnabled = true;
             this.numberSystemComboBox.Items.AddRange(new object[] {
-            "Default",
             "Arabic",
             "Bengali",
             "Burmese (Myanmar)",
             "Coptic",
+            "Default",
             "Devangari",
             "Ethiopic (Ge\'ez)",
             "Gujarati",
@@ -2171,6 +2173,7 @@
             this.numberSystemComboBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.numberSystemComboBox.Name = "numberSystemComboBox";
             this.numberSystemComboBox.Size = new System.Drawing.Size(150, 22);
+            this.numberSystemComboBox.Sorted = true;
             this.numberSystemComboBox.TabIndex = 91;
             this.numberSystemComboBox.SelectedValueChanged += new System.EventHandler(this.numberSystemComboBox_SelectedValueChanged);
             // 
@@ -2188,11 +2191,11 @@
             "Majority Text",
             "Original",
             "Original-EST",
-            "Russion Othodox",
             "Russian Protestant",
+            "Russion Othodox",
             "Septuagint",
-            "Spanish: BIA - DHH OA",
             "Spanish Texts - DHH TLA",
+            "Spanish: BIA - DHH OA",
             "Swedish",
             "Syriac",
             "Vulgate"});
@@ -2200,6 +2203,7 @@
             this.versificationComboBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.versificationComboBox.Name = "versificationComboBox";
             this.versificationComboBox.Size = new System.Drawing.Size(125, 22);
+            this.versificationComboBox.Sorted = true;
             this.versificationComboBox.TabIndex = 90;
             this.versificationComboBox.Visible = false;
             // 
@@ -2548,7 +2552,6 @@
             // 
             this.RunTabPage.Controls.Add(this.messagesListBox);
             this.RunTabPage.Controls.Add(this.reloadButton);
-            this.RunTabPage.Controls.Add(this.resumeButton);
             this.RunTabPage.Controls.Add(this.markRetryButton);
             this.RunTabPage.Controls.Add(this.runHighlightedButton);
             this.RunTabPage.Controls.Add(this.unmarkAllButton);
@@ -2574,17 +2577,6 @@
             this.messagesListBox.ScrollAlwaysVisible = true;
             this.messagesListBox.Size = new System.Drawing.Size(588, 438);
             this.messagesListBox.TabIndex = 141;
-            // 
-            // resumeButton
-            // 
-            this.resumeButton.Location = new System.Drawing.Point(358, 7);
-            this.resumeButton.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
-            this.resumeButton.Name = "resumeButton";
-            this.resumeButton.Size = new System.Drawing.Size(84, 24);
-            this.resumeButton.TabIndex = 6;
-            this.resumeButton.Text = "Resume";
-            this.resumeButton.UseVisualStyleBackColor = true;
-            this.resumeButton.Click += new System.EventHandler(this.resumeButton_Click);
             // 
             // markRetryButton
             // 
@@ -2796,7 +2788,6 @@
         private System.Windows.Forms.TextBox JesusFilmLinkTextTextBox;
         private System.Windows.Forms.Label label57;
         private System.Windows.Forms.TextBox audioRecordingCopyrightTextBox;
-        private System.Windows.Forms.Button resumeButton;
         private System.Windows.Forms.ComboBox dependsComboBox;
         private System.Windows.Forms.Label label58;
         private System.Windows.Forms.Label label51;

@@ -36,6 +36,15 @@ namespace WordSend
             return result;
         }
 
+        public static string Startime = null;
+
+        public static Random rnd = new Random();
+
+        public static void Dally()
+        {
+            System.Threading.Thread.Sleep(800 + rnd.Next(800));
+        }
+
 
         static string lockFileName;
 
@@ -48,15 +57,26 @@ namespace WordSend
         {
             bool result = false;
             StreamWriter lockFile;
+            StreamReader checkFile;
+            string s;
+            if (Startime == null)
+            {
+                Startime = DateTime.UtcNow.ToString().Trim();
+            }
             lockFileName = Path.Combine(workDir, "lock");
             try
             {
                 if (!File.Exists(lockFileName))
                 {
                     lockFile = new StreamWriter(lockFileName);
-                    lockFile.WriteLine("locked");
+                    lockFile.Write(Startime);
                     lockFile.Close();
-                    result = true;
+                    System.Threading.Thread.Sleep(1000);
+                    checkFile = new StreamReader(lockFileName);
+                    s = checkFile.ReadToEnd().Trim();
+                    if (s == Startime)
+                        result = true;
+                    checkFile.Close();
                 }
             }
             catch (Exception ex)
@@ -74,6 +94,15 @@ namespace WordSend
             Utils.DeleteFile(lockFileName);
         }
 
+        public static void unlockProject(string workDir)
+        {
+            Utils.DeleteFile(Path.Combine(workDir, "lock"));
+        }
+
+        public static bool isLocked(string workDir)
+        {
+            return (File.Exists(Path.Combine(workDir, "lock")));
+        }
 
         /// <summary>
         /// Returns the Unicode file encoding if there are proper byte order marks;
@@ -241,6 +270,25 @@ namespace WordSend
         public static bool IsNormalWhiteSpace(char ch)
         {
             return (ch == ' ') || (ch == '\r') || (ch == '\n') || (ch == '\t');
+        }
+
+        /// <summary>
+        /// Checks to see if the character is allowed in a USFM tag (including the level number)
+        /// </summary>
+        /// <param name="ch"></param>
+        /// <returns>Returns true iff the input is a lower case letter or dash.</returns>
+        public static bool IsSfmTagChar(char ch)
+        {
+            bool result = false;
+            if (ch >= 'a' && ch <= 'z')
+                result = true;
+            if (ch == '*')
+                result = true;
+            if (ch == '-')
+                result = true;
+            if (Char.IsDigit(ch))
+                result = true;
+            return result;
         }
 
         /// <summary>

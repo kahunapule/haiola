@@ -1805,7 +1805,7 @@ For other uses, please contact the respective copyright owners.</p>
         {
             /*
             string theLink;
-            if (tgt.Length > 0)
+            if (!String.IsNullOrEmpty(tgt))
             {
                 BCVInfo bcvRec = bookInfo.ValidateInternalReference(tgt);
                 if (bcvRec.exists)
@@ -1826,14 +1826,14 @@ For other uses, please contact the respective copyright owners.</p>
                     inLink = true;
                 }
             }
-            else if (web.Length > 0)
+            else if (!String.IsNullOrEmpty(web))
             {
                 inLink = true;
                 theLink = String.Format("<a href=\"{0}\">", web);
                 if (inFootnote)
                     footnotesToWrite.Append(theLink);
                 else
-                    htm.Write(theLink);
+                    WriteHtml(theLink);;
 
             }
              */

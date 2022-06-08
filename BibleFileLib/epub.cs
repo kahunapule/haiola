@@ -731,7 +731,7 @@ namespace WordSend
         protected override void StartLink(string tgt, string web)
         {
             string theLink;
-            if (tgt.Length > 0)
+            if (!String.IsNullOrEmpty(tgt))
             {
                 BCVInfo bcvRec = bookInfo.ValidateInternalReference(tgt);
                 if (bcvRec.exists)
@@ -752,14 +752,14 @@ namespace WordSend
                     inLink = true;
                 }
             }
-            else if (web.Length > 0)
+            else if (!String.IsNullOrEmpty(web))
             {
                 inLink = true;
                 theLink = String.Format("<a href=\"{0}\">", web);
                 if (inFootnote)
                     footnotesToWrite.Append(theLink);
                 else
-                    htm.Write(theLink);
+                    WriteHtml(theLink);;
 
             }
         }

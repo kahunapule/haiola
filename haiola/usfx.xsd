@@ -653,6 +653,9 @@
 									<xs:documentation>Source location, like "gnt5:51.1.2.1" for GNT version 5 text, book 51, chapter 1, verse 2, word 1.</xs:documentation>
 								</xs:annotation>
 							</xs:attribute>
+							<xs:attribute name="lemma" type="xs:string"/>
+							<xs:attribute name="strong" type="xs:string"/>
+							<xs:attribute name="x-morph" type="xs:string"/>
 						</xs:extension>
 					</xs:complexContent>
 				</xs:complexType>
@@ -694,7 +697,7 @@
 					<xs:documentation>This element ends the most recent un-ended quotation started with quoteStart. This is not a USFM equivalent code, but exists to facilitate conversion to/from OSIS. See the comments for quoteStart for usage.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="ior" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="ior" type="pType" minOccurs="0" maxOccurs="unbounded">
 				<xs:annotation>
 					<xs:documentation>Introduction outline references range character style</xs:documentation>
 				</xs:annotation>
@@ -759,7 +762,17 @@
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="em" type="pType"/>
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="periph" type="xs:string"/>
 			<xs:element name="rem" type="xs:string" maxOccurs="unbounded" minOccurs="0"/>
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="xt" type="noteContents"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="xt">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="noteContents">
+							<xs:attribute name="link-href" type="xs:string"/>
+							<xs:attribute name="link-id" type="xs:string"/>
+							<xs:attribute name="link-title" type="xs:string"/>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
 			<xs:element name="gw" maxOccurs="unbounded" minOccurs="0">
 				<xs:complexType>
 					<xs:simpleContent>
@@ -791,10 +804,36 @@
 					<xs:documentation>Color yellow or gold, used to designate a class of speaker in color-coded Bible translations like the RGB Bible.</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="para" type="pType">
+				<xs:annotation>
+					<xs:documentation>Generic paragraph not covered by others, syntax like USX.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="char" type="pType">
+				<xs:annotation>
+					<xs:documentation>Generic character style not covered by more specific elements, mirroring USX usage.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="ms" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Milestone for OSIS-like speaker markers, mirroring USX usage.
+</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="jmp" type="pType">
+				<xs:annotation>
+					<xs:documentation>Jump linking marker to define anchors (landing targets), Scripture reference targets (link-href), Internet URLs (link-href), and/or link titles (link-title).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="sidebar" type="pType"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="wa" type="pType"/>
 		</xs:choice>
 		<xs:attribute name="level" type="xs:unsignedByte" use="optional"/>
 		<xs:attribute name="sfm" type="xs:string" use="optional"/>
 		<xs:attribute name="style" type="xs:string" use="optional"/>
+		<xs:attribute name="link-href" type="xs:string"/>
+		<xs:attribute name="link-title" type="xs:string"/>
+		<xs:attribute name="link-id" type="xs:string"/>
 	</xs:complexType>
 	<xs:complexType name="styledString" mixed="true">
 		<xs:annotation>
@@ -1082,6 +1121,9 @@
 			</xs:simpleType>
 		</xs:attribute>
 		<xs:attribute name="web" type="xs:anyURI"/>
+		<xs:attribute name="link-href" type="xs:string"/>
+		<xs:attribute name="link-id" type="xs:string"/>
+		<xs:attribute name="link-title" type="xs:string"/>
 	</xs:complexType>
 	<xs:complexType mixed="true" name="noteContents">
 		<xs:choice maxOccurs="unbounded">
@@ -1160,6 +1202,9 @@
 									<xs:documentation>Source location, like "gnt5:51.1.2.1" for GNT version 5 text, book 51, chapter 1, verse 2, word 1.</xs:documentation>
 								</xs:annotation>
 							</xs:attribute>
+							<xs:attribute name="strong" type="xs:string"/>
+							<xs:attribute name="x-morph" type="xs:string"/>
+							<xs:attribute name="lemma" type="xs:string"/>
 						</xs:extension>
 					</xs:complexContent>
 				</xs:complexType>
@@ -1169,9 +1214,21 @@
 					<xs:documentation>Witness list (list of manuscript designations containing this reading)</xs:documentation>
 				</xs:annotation>
 			</xs:element>
+			<xs:element name="rq" type="pType"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="xta" type="noteContents"/>
 		</xs:choice>
 		<xs:attribute default="+" name="caller" type="xs:string"/>
 		<xs:attribute ref="sfm"/>
+		<xs:attribute name="tgt">
+			<xs:simpleType>
+				<xs:restriction base="verseID">
+					<xs:pattern
+						value="[\p{Lu}\d][\p{Lu}\d][\p{Lu}\d]\.\d+(\.\d+)?[a-z]?(\-(([\p{Lu}\d]\p{Lu}[\p{Lu}\d]\.)?\d+\.)?\d+[a-z]?)?"
+					/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute ref="style"/>
 	</xs:complexType>
 	<xs:simpleType name="verseID">
 		<xs:restriction base="xs:string">

@@ -936,7 +936,7 @@ namespace WordSend
         /// Write an (X)HTML line break element
         /// </summary>
         protected virtual void WriteHtmlOptionalLineBreak()
-        {
+        {   // We choose to always break at optional line breaks.
             WriteHtml("<br/>");
         }
 
@@ -1705,7 +1705,7 @@ namespace WordSend
         {
             string chapterFormat = "00";
             string theLink;
-            if (tgt.Length > 0)
+            if (!String.IsNullOrEmpty(tgt))
             {
                 BCVInfo bcvRec = bookInfo.ValidateInternalReference(tgt);
                 if (bcvRec.exists)
@@ -1725,14 +1725,14 @@ namespace WordSend
                     inLink = true;
                 }
             }
-            else if (web.Length > 0)
+            else if (!String.IsNullOrEmpty(web))
             {
                 inLink = true;
                 theLink = String.Format("<a href=\"{0}\">", web);
                 if (inFootnote)
                     footnotesToWrite.Append(theLink);
                 else
-                    htm.Write(theLink);
+                    WriteHtml(theLink);;
             }
         }
 
@@ -2032,6 +2032,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                 xrefCall.reset();
                                 newChapterMarkNeeded = newChapterFound = false;
                                 break;
+                            case "para":
                             case "p":
                                 ChapterToc();
                                 if (sfm.CompareTo("mt") == 0)
@@ -2336,6 +2337,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                     case "ndx":
                                     case "wh":
                                     case "wg":
+                                    case "wa":
                                         if (!usfx.IsEmptyElement)
                                             ignore = true;
                                         break;
@@ -2414,6 +2416,11 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                         // Not yet used: string src = GetNamedAttribute("src");
                                         string tgt = GetNamedAttribute("tgt");
                                         string web = GetNamedAttribute("web");
+                                        StartLink(tgt, web);
+                                        break;
+                                    case "jmp":
+                                        tgt = GetNamedAttribute("link-href").Replace(" ", ".").Replace(":", ".");
+                                        web = "";
                                         StartLink(tgt, web);
                                         break;
                                     case "book":
@@ -2499,6 +2506,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                                 currentChapterPublished = fileHelper.LocalizeDigits(usfx.Value.Trim());
                                         }
                                         break;
+                                    case "para":
                                     case "p":
                                         bool beforeVerse = true;
                                         if ((bookRecord.testament.CompareTo("x") == 0) ||
@@ -2590,6 +2598,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                     case "ve":
                                         EndVerse();
                                         break;
+                                    case "char":
                                     case "qt":
                                     case "nd":
                                     case "tl":
@@ -2761,6 +2770,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                             ignore = false;
                                         break;
                                     case "ref":
+                                    case "jmp":
                                         EndLink();
                                         break;
                                     case "ms":
@@ -2786,6 +2796,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                         if (chopChapter)
                                             CloseHtmlFile();
                                         break;
+                                    case "char":
                                     case "qt":
                                     case "nd":
                                     case "tl":

@@ -1007,7 +1007,7 @@ namespace WordSend
                                 else
                                 {
                                     bookRecord.vernacularShortName = bookRecord.vernacularLongName;
-                                    Logit.WriteError("Missing vernacular short name toc2 or h in " + currentBookAbbrev + " in " + usfxName);
+                                    Logit.WriteLine("Missing vernacular short name toc2 or h in " + currentBookAbbrev + " in " + usfxName);
                                 }
                             }
                             if (bookRecord.vernacularAbbreviation == String.Empty)

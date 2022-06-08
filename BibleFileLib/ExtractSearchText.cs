@@ -299,6 +299,8 @@ namespace WordSend
                             case "nd":
                                 //verseText.Append("{");
                                 break;
+                            case "ref": // Ignore
+                                break;
                             case "languageCode":
                             case "f":   //  footnote
                             case "fe":  // End note. Rarely used, fortunately, but in the standards.
@@ -381,6 +383,8 @@ namespace WordSend
                                 break;
                             case "nd":
                                 // verseText.Append("}");
+                                break;
+                            case "ref": // Ignore
                                 break;
                         }
                     }

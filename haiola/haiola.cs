@@ -156,6 +156,7 @@ namespace haiola
         /// <param name="increment">Increment for select all subset (default = 1)</param>
         public void LoadWorkingDirectory(bool all, bool failed = false, bool none = false, int startIndex = 0, int increment = 1)
         {
+            string lockFile;
             loadingDirectory = true;
             bool isReady = false;
             projCount = 0;
@@ -177,6 +178,19 @@ namespace haiola
             EnsureTemplateFile("haiola.css");
             EnsureTemplateFile("prophero.css");
             EnsureTemplateFile("fixquotes.re");
+
+            foreach (object o in m_projectsList.CheckedItems)
+            {
+                globe.SetcurrentProject((string)o);
+                globe.projectXiniPath = Path.Combine(globe.inputProjectDirectory, "options.xini");
+                displayOptions();
+                lockFile = Path.Combine(globe.inputProjectDirectory, "lock");
+                Utils.DeleteFile(lockFile);
+                globe.projectOptions.done = false;
+                globe.projectOptions.Write();
+            }
+
+
 
             foreach (string path in Directory.GetDirectories(globe.inputDirectory))
             {
@@ -236,7 +250,14 @@ namespace haiola
                     globe.projectOptions.selected = isReady && globe.projectOptions.selected;
                 }
                 m_projectsList.SetItemChecked(m_projectsList.Items.Count - 1, globe.projectOptions.selected);
+                if (all || failed)
+                {
+                    lockFile = Path.Combine(globe.inputProjectDirectory, "lock");
+                    globe.projectOptions.done = false;
+                    Utils.DeleteFile(lockFile);
+                }
                 globe.projectOptions.Write();
+                globe.projectOptions.done = false;
                 if (globe.projectOptions.selected)
                     projSelected++;
             }
@@ -1725,6 +1746,11 @@ their generosity, people like you can open up the Bible and hear from God no mat
             globe.SetcurrentProject(projDirName);
         	globe.projectXiniPath = Path.Combine(globe.inputProjectDirectory, "options.xini");
             displayOptions();
+            if (!String.IsNullOrEmpty(globe.projectOptions.dependsOn))
+            {
+                if (fileHelper.isLocked(Path.Combine(globe.inputDirectory, globe.projectOptions.dependsOn)))
+                    return;
+            }
             if (globe.projectOptions.done || !fileHelper.lockProject(globe.inputProjectDirectory))
             {
                 return;
@@ -1955,9 +1981,10 @@ their generosity, people like you can open up the Bible and hear from God no mat
 
 
 
-        ArrayList toDoList = new ArrayList();
-        ArrayList laterList = new ArrayList();
-        private class projectEntry
+        ArrayList toDoList;
+        ArrayList laterList;
+        ArrayList doFirstList;
+        private class ProjectEntry
         {
             public string name;
             public string depends;
@@ -1967,47 +1994,45 @@ their generosity, people like you can open up the Bible and hear from God no mat
             /// </summary>
             /// <param name="n">This project's name</param>
             /// <param name="d">Name of the project this project depends on, if any.</param>
-            public projectEntry(string n, string d)
+            public ProjectEntry(string n, string d)
             {
                 name = n;
                 depends = d;
             }
         }
 
-        private void insertProjectEntry(projectEntry pe)
+        public class toDoSorter : IComparer
         {
-            int i;
+            // Calls CaseInsensitiveComparer.Compare with the parameters reversed.
+            int IComparer.Compare(Object x, Object y)
+            {
+                ProjectEntry a = (ProjectEntry)x;
+                ProjectEntry b = (ProjectEntry)y;
+                return ((new CaseInsensitiveComparer()).Compare(a.name, b.name));
+            }
+        }
+
+
+        private void InsertProjectEntry(ProjectEntry pe)
+        {
             if (string.IsNullOrEmpty(pe.depends))
             {
                 toDoList.Add(pe);
             }
             else
             {
-                bool notFound = true;
-                i = 0;
-                while ((i < toDoList.Count) && notFound)
-                {
-                    if (pe.depends == ((projectEntry)toDoList[i]).name)
-                    {
-                        notFound = false;
-                        toDoList.Insert(i + 1, pe);
-                    }
-                    i++;
-                }
-                if (notFound)
-                {
-                    laterList.Add(pe);
-                }
+                laterList.Add(pe);
             }
         }
 
         public Ethnologue eth;
 
 
-        private void processAllMarked()
+        private void ProcessAllMarked()
         {
             toDoList = new ArrayList();
             laterList = new ArrayList();
+            doFirstList = new ArrayList();
             int i;
             int numdone = 0;
             int nummarked = 0;
@@ -2048,29 +2073,71 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 displayOptions();
                 if (!globe.projectOptions.done)
                 {
-                    insertProjectEntry(new projectEntry((string)o, globe.projectOptions.dependsOn));
+                    InsertProjectEntry(new ProjectEntry((string)o, globe.projectOptions.dependsOn));
                     nummarked++;
                 }
             }
-            i = laterList.Count * 4;
-            while ((laterList.Count > 0) && (i >= 0))
+            foreach (ProjectEntry pe in laterList)
             {
-                projectEntry pe = (projectEntry)laterList[0];
-                laterList.RemoveAt(0);
-                insertProjectEntry(pe);
-                nummarked++;
-                i--;
+                bool notFound = true;
+                ProjectEntry peTemp;
+                i = 0;
+                while ((i < toDoList.Count) && notFound)
+                {
+                    if (pe.depends == ((ProjectEntry)toDoList[i]).name)
+                    {
+                        notFound = false;
+                        peTemp = (ProjectEntry)toDoList[i];
+                        toDoList.RemoveAt(i);
+                        doFirstList.Add(peTemp);
+                    }
+                    i++;
+                }
             }
-            foreach (projectEntry pe in laterList)
-            {   // Dependencies not selected, so do these anyway.
-                toDoList.Add(pe);
-                nummarked++;
-            }
-            foreach (projectEntry pe in toDoList)
+            IComparer myComparer = new toDoSorter();
+            toDoList.Sort(myComparer);
+            laterList.Sort(myComparer);
+            foreach (ProjectEntry pe in doFirstList)
             {
                 ProcessOneProject(pe.name);
                 int j = m_projectsList.Items.IndexOf(pe.name);
-                m_projectsList.SetItemChecked(j, !globe.projectOptions.lastRunResult);
+                m_projectsList.SetItemChecked(j, false);    // The user must explicitly re-select this project to retry.
+                m_projectsList_SelectedIndexChanged(null, null);
+
+                numdone++;
+                ts = DateTime.UtcNow - startTime;
+                double secondsLeft = (nummarked - numdone) * (ts.TotalSeconds / numdone);
+                remainingTime = new TimeSpan(0, 0, 0, (int)secondsLeft);
+                statsLabel.Text = (ts.TotalSeconds / numdone).ToString("N0") + " seconds per project. " + numdone.ToString() + " of " + nummarked.ToString() +
+                    " projects done; " + remainingTime.ToString("c") + " remaining.";
+
+                Application.DoEvents();
+                if (!fileHelper.fAllRunning)
+                    break;
+            }
+            foreach (ProjectEntry pe in toDoList)
+            {
+                ProcessOneProject(pe.name);
+                int j = m_projectsList.Items.IndexOf(pe.name);
+                m_projectsList.SetItemChecked(j, false);    // The user must explicitly re-select this project to retry.
+                m_projectsList_SelectedIndexChanged(null, null);
+
+                numdone++;
+                ts = DateTime.UtcNow - startTime;
+                double secondsLeft = (nummarked - numdone) * (ts.TotalSeconds / numdone);
+                remainingTime = new TimeSpan(0, 0, 0, (int)secondsLeft);
+                statsLabel.Text = (ts.TotalSeconds / numdone).ToString("N0") + " seconds per project. " + numdone.ToString() + " of " + nummarked.ToString() +
+                    " projects done; " + remainingTime.ToString("c") + " remaining.";
+
+                Application.DoEvents();
+                if (!fileHelper.fAllRunning)
+                    break;
+            }
+            foreach (ProjectEntry pe in laterList)
+            {
+                ProcessOneProject(pe.name);
+                int j = m_projectsList.Items.IndexOf(pe.name);
+                m_projectsList.SetItemChecked(j, false);    // The user must explicitly re-select this project to retry.
                 m_projectsList_SelectedIndexChanged(null, null);
 
                 numdone++;
@@ -2129,7 +2196,6 @@ their generosity, people like you can open up the Bible and hear from God no mat
         /// <param name="e">Event Arguments</param>
     	private void WorkOnAllButton_Click(object sender, EventArgs e)
         {
-            string lockFile;
             if (fileHelper.fAllRunning)
             {
                 fileHelper.fAllRunning = false;
@@ -2141,21 +2207,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 SaveOptions();
                 Logit.UpdateStatus = updateConversionProgress;
                 Logit.GUIWriteString = showMessageString;
-
-
-                foreach (object o in m_projectsList.CheckedItems)
-                {
-                    globe.SetcurrentProject((string)o);
-                    globe.projectXiniPath = Path.Combine(globe.inputProjectDirectory, "options.xini");
-                    displayOptions();
-                    lockFile = Path.Combine(globe.inputProjectDirectory, "lock");
-                    Utils.DeleteFile(lockFile);
-                    globe.projectOptions.done = false;
-                    globe.projectOptions.Write();
-                }
-
-
-                processAllMarked();
+                ProcessAllMarked();
             }
         }
 
@@ -3099,6 +3151,7 @@ Peripherals: {12} books",
                 timer1.Enabled = true;
                 WorkOnAllButton.Text = "Stop";
                 globe.projectOptions.done = false;
+                fileHelper.unlockProject(globe.inputProjectDirectory);
                 SaveOptions();
                 ProcessOneProject(SelectedProject);
                 Application.DoEvents();
@@ -3114,7 +3167,7 @@ Peripherals: {12} books",
                 batchLabel.Text = (DateTime.UtcNow - startTime).ToString(@"g") + " " + "Done.";
                 messagesListBox.Items.Add(batchLabel.Text);
                 int j = m_projectsList.Items.IndexOf(SelectedProject);
-                m_projectsList.SetItemChecked(j, !globe.projectOptions.lastRunResult);
+                m_projectsList.SetItemChecked(j, false);
                 m_projectsList_SelectedIndexChanged(null, null);
                 /*
                 string indexhtm = Path.Combine(Path.Combine(globe.outputProjectDirectory, "html"), "index.htm");
@@ -3219,7 +3272,11 @@ Peripherals: {12} books",
                 displayOptions();
                 globe.projectOptions.selected = e.NewValue == CheckState.Checked;
                 if (globe.projectOptions.selected)
+                {
+                    if (!fileHelper.fAllRunning)
+                        globe.projectOptions.done = false;
                     projSelected++;
+                }
                 else
                     projSelected--;
                 statsLabel.Text = projReady.ToString() + " of " + projCount.ToString() + " project directories are ready to run; " + projSelected.ToString() + " selected."; ;
@@ -3250,14 +3307,6 @@ Peripherals: {12} books",
             {
                 MessageBox.Show(ex.Message, "ERROR SETTING FONT");
             }
-        }
-
-        private void resumeButton_Click(object sender, EventArgs e)
-        {
-            resumeButton.Enabled = false;
-            SaveOptions();
-            processAllMarked();
-            resumeButton.Enabled = true;
         }
 
         private void allRightsRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -3348,36 +3397,6 @@ Peripherals: {12} books",
             if (otherRadioButton.Checked)
                 groupBox1.BackColor = Color.LightPink;
 
-        }
-
-        private void privateCheckBox_CheckedChanged_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void set1Button_Click(object sender, EventArgs e)
-        {
-            LoadWorkingDirectory(true, false, false, 0, 5);
-        }
-
-        private void set2Button_Click(object sender, EventArgs e)
-        {
-            LoadWorkingDirectory(true, false, false, 1, 5);
-        }
-
-        private void set3Button_Click(object sender, EventArgs e)
-        {
-            LoadWorkingDirectory(true, false, false, 2, 5);
-        }
-
-        private void set4Button_Click(object sender, EventArgs e)
-        {
-            LoadWorkingDirectory(true, false, false, 3, 5);
-        }
-
-        private void set5Button_Click(object sender, EventArgs e)
-        {
-            LoadWorkingDirectory(true, false, false, 4, 5);
         }
 
         private void relaxNestingSyntaxCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -3497,6 +3516,7 @@ Peripherals: {12} books",
             dlg.SelectedPath = customSourceFolderTextBox.Text;
             dlg.Description =
                 @"Please select the folder where your USFM, USFX, or USX source files are for this project.";
+            
             dlg.ShowNewFolderButton = true;
             if ((dlg.ShowDialog() != System.Windows.Forms.DialogResult.OK) || (dlg.SelectedPath == null))
                 return;

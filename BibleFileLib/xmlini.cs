@@ -68,7 +68,7 @@ namespace WordSend
             }
             catch
             {
-                Logit.WriteError("Bad input format in file " + fName + "; using defaults.");
+                Logit.WriteLine("Error reading " + fName);
             }
             finally
             {
@@ -99,12 +99,15 @@ namespace WordSend
             {
                 if (!ReadIniFile(fileName))
                 {
-                    System.Threading.Thread.Sleep(1000);
+                    fileHelper.Dally();
                     hashTbl = new Hashtable();
                     if (!ReadIniFile(fileName))
                     {
+                        Logit.WriteError("Failed second read attempt on " + fileName + "; trying backup.");
+                        fileHelper.Dally();
                         hashTbl = new Hashtable();
-                        ReadIniFile(bakName);
+                        if (!ReadIniFile(bakName))
+                            Logit.WriteError("Failed reading backup " + bakName);
                     }
                 }
             }
@@ -277,7 +280,7 @@ namespace WordSend
         /// Flush the hash table to an XML file ("save").
         /// </summary>
         /// <returns>true iff success</returns>
-        public bool Write()
+        public bool TryWrite()
         {
             XmlTextWriter xml = null;
             bool result = false;
@@ -314,21 +317,32 @@ namespace WordSend
             }
             catch
             {
-                Logit.WriteError("Can't write to " + fileName);
+                Logit.WriteLine("Failed write to " + fileName);
             }
             return result;
         }
 
+
         /// <summary>
-        /// Flush the hash table to fName as an XML file ("save as").
+        /// Flush the hash table to an XML file ("save").
         /// </summary>
-        /// <param name="fName">File name</param>
-        /// <returns>true iff write suceeded</returns>
-        public bool Write(string fName)
+        /// <returns>true iff success</returns>
+        public bool Write()
         {
-            fileName = fName;
-            return Write();
+            bool result = false;
+            if (!TryWrite())
+            {
+                fileHelper.Dally();
+                if (!TryWrite())
+                    Logit.WriteError("Can't write to " + fileName);
+                else
+                    result = true;
+            }
+            else
+                result = true;
+            return result;
         }
+
 
         /// <summary>
         /// Returns the name of the executable file we are running in.

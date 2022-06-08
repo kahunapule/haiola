@@ -452,6 +452,8 @@ namespace WordSend
         private void PreprocessOneFile(string inputPath, List<string> tablePaths, string outputPath)
         {
             DateTime fileDate;
+            char nbsp = '\u00A0';
+            string nobreakspace = nbsp.ToString();
             fileDate = File.GetLastWriteTimeUtc(inputPath);
             if (fileDate > sourceDate)
             {
@@ -530,6 +532,7 @@ namespace WordSend
                                 string replacement = parts[2];
                                 replacement = replacement.Replace("$r", "\r"); // Allow $r in replacement to become a true cr
                                 replacement = replacement.Replace("$n", "\n"); // Allow (literal) $n in replacement to become a true newline
+                                replacement = replacement.Replace("$s", nobreakspace); // Nonbreaking space
                                 temp = System.Text.RegularExpressions.Regex.Replace(temp, pattern, replacement);
                             }
                         }
@@ -614,7 +617,8 @@ namespace WordSend
                     (fileType != ".LDML") && (fileType != ".JSON") &&
                     (fileType != ".VRS") && (fileType != ".INI") &&
                     (fileType != ".CSV") && (fileType != ".TSV") &&
-                    (fileType != ".CCT") && (!inputFile.EndsWith("~")) &&
+                    (fileType != ".CCT") && (fileType != ".TTF") &&
+                    (!inputFile.EndsWith("~")) &&
                     (!lowerName.StartsWith("regexbackup")) &&
                     (lowerName != "autocorrect.txt") &&
                     (lowerName != "tmp.txt") &&
@@ -1019,7 +1023,10 @@ For other uses, please contact the respective copyright owners.</p>
                     fileHelper.RunCommand("unzip -n \"" + fileName + "\"", dirName);
                     string receivedDir = Path.Combine(inputProjectDirectory, "Received");
                     fileHelper.EnsureDirectory(receivedDir);
-                    File.Move(fileName, Path.Combine(receivedDir, Path.GetFileName(fileName)));
+                    string destName = Path.Combine(receivedDir, Path.GetFileName(fileName));
+                    if (File.Exists(destName))
+                        File.Delete(destName);
+                    File.Move(fileName, destName);
                 }
             }
             fileNames = Directory.GetFiles(dirName);
