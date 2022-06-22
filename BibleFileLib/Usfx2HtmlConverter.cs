@@ -2696,7 +2696,10 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                     case "w":
                                     case "zw":
                                         projectOptions.hasStrongs = true;
-                                        StartStrongs(GetNamedAttribute("s"), GetNamedAttribute("plural"), GetNamedAttribute("m"), GetNamedAttribute("l"));
+                                        string str = GetNamedAttribute("s");
+                                        if (string.IsNullOrEmpty(str))
+                                            str = GetNamedAttribute("strong");
+                                        StartStrongs(str, GetNamedAttribute("plural"), GetNamedAttribute("m"), GetNamedAttribute("l"));
                                         if (usfx.IsEmptyElement)
                                             EndStrongs();
                                         break;

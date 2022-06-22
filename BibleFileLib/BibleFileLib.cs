@@ -131,6 +131,8 @@ namespace WordSend
                         OutputFile.Write(sep);
                         if ((string)AttrNames[i] == "l")    // This ugliness comes from maintaining backward compatibility when USFX was defined before USFM supported this feature.
                             AttrNames[i] = "lemma";
+                        if ((string)AttrNames[i] == "s")    // This ugliness comes from maintaining backward compatibility when USFX was defined before USFM supported this feature.
+                            AttrNames[i] = "strong";
                         OutputFile.Write((string)AttrNames[i]);
                         OutputFile.Write("=\"");
                         OutputFile.Write((string)AttrValues[i]);
@@ -1108,15 +1110,29 @@ namespace WordSend
                     if (name.ToString() == "lemma")
                         sfmAttrNames.Add("l");
                     else
-                        sfmAttrNames.Add(name.ToString().Trim());
+                    {
+                        if (name.ToString() == "strong")
+                            sfmAttrNames.Add("s");
+                        else
+                            sfmAttrNames.Add(name.ToString().Trim());
+                    }
                 }
                 else if (name.Length > 0)
                 {   // We have a default attribute. Get name from default parameter & attribute from name.
-                    sfmAttrNames.Add(defaultAttr);
-                    sfmAttrValues.Add(name.ToString().Trim());
+                    if (String.IsNullOrEmpty(defaultAttr))
+                    {
+                        Logit.WriteError("Missing default attribute name for " + name.ToString());
+                    }
+                    else
+                    {
+                        sfmAttrNames.Add(defaultAttr);
+                        sfmAttrValues.Add(name.ToString().Trim());
+                    }
                 }
                 if (remainder.Length > 0)
+                {
                     ParseAttributes(remainder.ToString(), defaultAttr);
+                }
             }
         }
 
@@ -3474,7 +3490,8 @@ namespace WordSend
             }
             for (i = 0; i < sf.sfmAttrNames.Count; i++)
             {
-                xw.WriteAttributeString((string)sf.sfmAttrNames[i], (string)sf.sfmAttrValues[i]);
+                if (i < sf.sfmAttrValues.Count)
+                    xw.WriteAttributeString((string)sf.sfmAttrNames[i], (string)sf.sfmAttrValues[i]);
             }
             WriteUSFXText(sf.text);
         }

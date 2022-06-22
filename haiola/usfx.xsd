@@ -238,7 +238,7 @@
 												<xs:simpleType>
 												<xs:restriction base="xs:string">
 												<xs:pattern
-												value="[\p{Lu}\d][\p{Lu}\d][\p{Lu}\d]\.\d+(\.\d+)?[a-z]?(\-(([\p{Lu}\d][\p{Lu}][\p{Lu}\d]\.)?\d+\.)?\d+[a-z]?)?"
+												value="[\p{Lu}\d][\p{Lu}\d][\p{Lu}\d]\.\d+(\.\d+)?\p{L}?(\-(([\p{Lu}\d][\p{Lu}][\p{Lu}\d]\.)?\d+\.)?\d+\p{L}?)?"
 												/>
 												</xs:restriction>
 												</xs:simpleType>
@@ -341,7 +341,7 @@
 								<xs:simpleType>
 									<xs:restriction base="xs:string">
 										<xs:pattern
-											value="[\p{Lu}\d][\p{Lu}\d][\p{Lu}\d]\.\d+(\.\d+)?[a-z]?(\-(([\p{Lu}\d]\p{Lu}[\p{Lu}\d]\.)?\d+\.)?\d+[a-z]?)?"
+											value="[\p{Lu}\d][\p{Lu}\d][\p{Lu}\d]\.\d+(\.\d+)?\p{L}?(\-(([\p{Lu}\d]\p{Lu}[\p{Lu}\d]\.)?\d+\.)?\d+\p{L}?)?"
 										/>
 									</xs:restriction>
 								</xs:simpleType>
@@ -1106,7 +1106,7 @@
 			<xs:simpleType>
 				<xs:restriction base="verseID">
 					<xs:pattern
-						value="[\p{Lu}\d][\p{Lu}\d][\p{Lu}\d]\.\d+(\.\d+)?[a-z]?(\-(([\p{Lu}\d]\p{Lu}[\p{Lu}\d]\.)?\d+\.)?\d+[a-z]?)?"
+						value="[\p{Lu}\d][\p{Lu}\d][\p{Lu}\d]\.\d+(\.\d+)?\p{L}?(\-(([\p{Lu}\d]\p{Lu}[\p{Lu}\d]\.)?\d+\.)?\d+\p{L}?)?"
 					/>
 				</xs:restriction>
 			</xs:simpleType>
@@ -1115,7 +1115,7 @@
 			<xs:simpleType>
 				<xs:restriction base="verseID">
 					<xs:pattern
-						value="[\p{Lu}\d][\p{Lu}\d][\p{Lu}\d]\.\d+(\.\d+)?[a-z]?(\-(([\p{Lu}\d]\p{Lu}[\p{Lu}\d]\.)?\d+\.)?\d+[a-z]?)?"
+						value="[\p{Lu}\d][\p{Lu}\d][\p{Lu}\d]\.\d+(\.\d+)?\p{L}?(\-(([\p{Lu}\d]\p{Lu}[\p{Lu}\d]\.)?\d+\.)?\d+\p{L}?)?"
 					/>
 				</xs:restriction>
 			</xs:simpleType>
@@ -1223,7 +1223,7 @@
 			<xs:simpleType>
 				<xs:restriction base="verseID">
 					<xs:pattern
-						value="[\p{Lu}\d][\p{Lu}\d][\p{Lu}\d]\.\d+(\.\d+)?[a-z]?(\-(([\p{Lu}\d]\p{Lu}[\p{Lu}\d]\.)?\d+\.)?\d+[a-z]?)?"
+						value="[\p{Lu}\d][\p{Lu}\d][\p{Lu}\d]\.\d+(\.\d+)?\p{L}?(\-(([\p{Lu}\d]\p{Lu}[\p{Lu}\d]\.)?\d+\.)?\d+\p{L}?)?"
 					/>
 				</xs:restriction>
 			</xs:simpleType>
@@ -1233,7 +1233,7 @@
 	<xs:simpleType name="verseID">
 		<xs:restriction base="xs:string">
 			<xs:pattern
-				value="[\p{Lu}\d][\p{Lu}\d][\p{Lu}\d]\.\d+(\.\d+)?[a-z]?(\-(([\p{Lu}\d]\p{Lu}[\p{Lu}\d]\.)?\d+\.)?\d+[a-z]?)?"
+				value="[\p{Lu}\d][\p{Lu}\d][\p{Lu}\d]\.\d+(\.\d+)?\p{L}?(\-(([\p{Lu}\d]\p{Lu}[\p{Lu}\d]\.)?\d+\.)?\d+\p{L}?)?"
 			/>
 		</xs:restriction>
 	</xs:simpleType>
