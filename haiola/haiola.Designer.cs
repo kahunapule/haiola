@@ -50,6 +50,7 @@
             this.sourceInstructionsLabel = new System.Windows.Forms.Label();
             this.translationIDLabel = new System.Windows.Forms.Label();
             this.idTabPage = new System.Windows.Forms.TabPage();
+            this.headerFontComboBox = new System.Windows.Forms.ComboBox();
             this.rodCodeTextBox = new System.Windows.Forms.TextBox();
             this.label60 = new System.Windows.Forms.Label();
             this.label76 = new System.Windows.Forms.Label();
@@ -237,6 +238,7 @@
             this.statsLabel = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.sourceLabel = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.startTabPage.SuspendLayout();
             this.sourceTabPage.SuspendLayout();
@@ -484,6 +486,8 @@
             // 
             // idTabPage
             // 
+            this.idTabPage.Controls.Add(this.label1);
+            this.idTabPage.Controls.Add(this.headerFontComboBox);
             this.idTabPage.Controls.Add(this.rodCodeTextBox);
             this.idTabPage.Controls.Add(this.label60);
             this.idTabPage.Controls.Add(this.label76);
@@ -531,6 +535,14 @@
             this.idTabPage.TabIndex = 0;
             this.idTabPage.Text = "ID";
             this.idTabPage.UseVisualStyleBackColor = true;
+            // 
+            // headerFontComboBox
+            // 
+            this.headerFontComboBox.FormattingEnabled = true;
+            this.headerFontComboBox.Location = new System.Drawing.Point(384, 69);
+            this.headerFontComboBox.Name = "headerFontComboBox";
+            this.headerFontComboBox.Size = new System.Drawing.Size(144, 22);
+            this.headerFontComboBox.TabIndex = 248;
             // 
             // rodCodeTextBox
             // 
@@ -617,7 +629,7 @@
             // 
             // fcbhIdTextBox
             // 
-            this.fcbhIdTextBox.Location = new System.Drawing.Point(70, 61);
+            this.fcbhIdTextBox.Location = new System.Drawing.Point(73, 26);
             this.fcbhIdTextBox.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.fcbhIdTextBox.Name = "fcbhIdTextBox";
             this.fcbhIdTextBox.Size = new System.Drawing.Size(102, 20);
@@ -626,7 +638,7 @@
             // label67
             // 
             this.label67.AutoSize = true;
-            this.label67.Location = new System.Drawing.Point(4, 64);
+            this.label67.Location = new System.Drawing.Point(7, 29);
             this.label67.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label67.Name = "label67";
             this.label67.Size = new System.Drawing.Size(53, 14);
@@ -690,7 +702,7 @@
             // label54
             // 
             this.label54.AutoSize = true;
-            this.label54.Location = new System.Drawing.Point(299, 64);
+            this.label54.Location = new System.Drawing.Point(302, 29);
             this.label54.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label54.Name = "label54";
             this.label54.Size = new System.Drawing.Size(65, 14);
@@ -701,7 +713,7 @@
             // fontComboBox
             // 
             this.fontComboBox.FormattingEnabled = true;
-            this.fontComboBox.Location = new System.Drawing.Point(381, 61);
+            this.fontComboBox.Location = new System.Drawing.Point(384, 26);
             this.fontComboBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.fontComboBox.Name = "fontComboBox";
             this.fontComboBox.Size = new System.Drawing.Size(145, 22);
@@ -712,7 +724,7 @@
             // 
             // traditionalAbbreviationTextBox
             // 
-            this.traditionalAbbreviationTextBox.Location = new System.Drawing.Point(215, 61);
+            this.traditionalAbbreviationTextBox.Location = new System.Drawing.Point(218, 26);
             this.traditionalAbbreviationTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.traditionalAbbreviationTextBox.Name = "traditionalAbbreviationTextBox";
             this.traditionalAbbreviationTextBox.Size = new System.Drawing.Size(80, 20);
@@ -721,7 +733,7 @@
             // label53
             // 
             this.label53.AutoSize = true;
-            this.label53.Location = new System.Drawing.Point(183, 64);
+            this.label53.Location = new System.Drawing.Point(179, 26);
             this.label53.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label53.Name = "label53";
             this.label53.Size = new System.Drawing.Size(34, 14);
@@ -829,7 +841,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(175, 85);
+            this.label3.Location = new System.Drawing.Point(178, 50);
             this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(126, 14);
@@ -839,7 +851,7 @@
             // 
             // engLangNameTextBox
             // 
-            this.engLangNameTextBox.Location = new System.Drawing.Point(176, 101);
+            this.engLangNameTextBox.Location = new System.Drawing.Point(180, 68);
             this.engLangNameTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.engLangNameTextBox.Name = "engLangNameTextBox";
             this.engLangNameTextBox.Size = new System.Drawing.Size(147, 20);
@@ -866,7 +878,7 @@
             // 
             // languageNameTextBox
             // 
-            this.languageNameTextBox.Location = new System.Drawing.Point(5, 100);
+            this.languageNameTextBox.Location = new System.Drawing.Point(9, 67);
             this.languageNameTextBox.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
             this.languageNameTextBox.Name = "languageNameTextBox";
             this.languageNameTextBox.Size = new System.Drawing.Size(157, 20);
@@ -885,7 +897,7 @@
             // label25
             // 
             this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(4, 85);
+            this.label25.Location = new System.Drawing.Point(7, 50);
             this.label25.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(140, 14);
@@ -2625,6 +2637,15 @@
             this.sourceLabel.TabIndex = 34;
             this.sourceLabel.Text = "NO SOURCE! Please read Help.";
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(381, 52);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(99, 14);
+            this.label1.TabIndex = 249;
+            this.label1.Text = "Header/Footer font:";
+            // 
             // haiolaForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 14F);
@@ -2885,6 +2906,8 @@
         private System.Windows.Forms.Label label26;
         private System.Windows.Forms.TextBox licenseExpirationDateTextBox;
         private System.Windows.Forms.Button WBTUSXimportButton;
+        private System.Windows.Forms.ComboBox headerFontComboBox;
+        private System.Windows.Forms.Label label1;
     }
 }
 

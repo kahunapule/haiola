@@ -202,8 +202,11 @@ namespace WordSend
             lineLength += style.Length;
             if (!String.IsNullOrEmpty(parameter))
             {
-                OutputFile.Write(" " + parameter);
-                lineLength += parameter.Length + 1;
+                if (!style.EndsWith(parameter))
+                {
+                    OutputFile.Write(" " + parameter);
+                    lineLength += parameter.Length + 1;
+                }
             }
             if (!style.EndsWith("*"))
             {
@@ -1109,13 +1112,12 @@ namespace WordSend
                     sfmAttrValues.Add(attr.ToString().Trim());
                     if (name.ToString() == "lemma")
                         sfmAttrNames.Add("l");
+                    else if (name.ToString() == "strong")
+                        sfmAttrNames.Add("s");
+                    else if ((name.ToString() == "morph") || (name.ToString() == "x-morph"))
+                        sfmAttrNames.Add("m");
                     else
-                    {
-                        if (name.ToString() == "strong")
-                            sfmAttrNames.Add("s");
-                        else
-                            sfmAttrNames.Add(name.ToString().Trim());
-                    }
+                        sfmAttrNames.Add(name.ToString().Trim());
                 }
                 else if (name.Length > 0)
                 {   // We have a default attribute. Get name from default parameter & attribute from name.
@@ -1199,7 +1201,7 @@ namespace WordSend
                         tagStyle.Append((char)ch);
                     }
                 }
-			} while ((ch != -1) && (!fileHelper.IsNormalWhiteSpace((char)ch)) &&
+			} while ((ch != -1) && (!fileHelper.IsNormalWhiteSpace((char)ch)) && (ch != '\\') &&
 				(!isEndTag) &&  (char)lookAhead != '\\');
 			tag = sb.ToString();
             sb.Length = 0;
@@ -2008,6 +2010,7 @@ namespace WordSend
                             case "x-plural":
                                 plural = sfma.value;
                                 break;
+                            case "morph":
                             case "x-morph":
                                 morph = sfma.value;
                                 break;
@@ -2352,8 +2355,8 @@ namespace WordSend
             currentCharacterStyle = null;
             headerName = "";
             activeRunStyle = null;
-            addRefToFootnote = SFConverter.jobIni.ReadBool("insertCallingVerseRef", true);
-            addRefToXrefNote = SFConverter.jobIni.ReadBool("insertXrefVerse", true);
+            // addRefToFootnote = SFConverter.jobIni.ReadBool("insertCallingVerseRef", true);
+            // addRefToXrefNote = SFConverter.jobIni.ReadBool("insertXrefVerse", true);
             customFootnoteMark = SFConverter.jobIni.ReadBool("useCustomFootnoteCaller", false);
             customXrefMark = SFConverter.jobIni.ReadBool("useCustomXrefCaller", true);
             footnoteMark = new FootNoteCaller(SFConverter.jobIni.ReadString("customFootnoteCaller", "* † ‡"));
@@ -4235,12 +4238,14 @@ namespace WordSend
 								else
 									caller = sf.parameter;
 								StartFootnote(caller, "Footnote");
-								if (addRefToFootnote)
+								/*
+                                if (addRefToFootnote)
 								{
 									StartUSFXElement("generated");
 									WriteWordMLTextRun(cvMark+" ", "Footnotesource");
 									EndUSFXElement();	// generated
 								}
+                                */
 								StartFootnoteCharStyle("Footnote");
 								WriteWordMLTextRun(sf.text, "Footnote");
 								break;
@@ -4253,12 +4258,14 @@ namespace WordSend
 								else
 									caller = sf.parameter;
 								StartXref(caller, "Crossreference");
+                                /*
 								if (addRefToXrefNote)
 								{
 									StartUSFXElement("generated");
 									WriteWordMLTextRun(cvMark+" ", "Footnotesource");
 									EndUSFXElement();	// generated
 								}
+                                */
 								StartFootnoteCharStyle("Footnote");
 								WriteWordMLTextRun(sf.text, "Crossreference");
 								break;
@@ -6023,10 +6030,12 @@ namespace WordSend
                                 case "cp":
                                 case "ca":
                                 case "toc":
-                                case "xo":
-                                case "fr":
                                 case "xta":
                                     parseThis = false;
+                                    break;
+                                case "xo":
+                                case "fr":
+                                    parseThis=false;
                                     break;
                                 case "x":
                                 case "xt":
@@ -6061,7 +6070,7 @@ namespace WordSend
                                 break;
                             case "xo":
                             case "fr":
-                                parseThis = true;
+                                parseThis = false;
                                 break;
                             case "fig":
                                 parseThis = beforeFig;
@@ -6505,6 +6514,9 @@ namespace WordSend
                     {
                         // The SFM name is the element name UNLESS sfm attribute overrides it.
                         sfm = usfxFile.Name;
+/*                        if (sfm == "char")
+                            Logit.WriteLine("char");
+*/
                         id = level = style = who = strongs = plural = lemma = morphology = root = srcloc = "";
                         tgt = src = web = eid = sid = linkhref = linktitle = linkid = "";
                         attrNam = new ArrayList();
@@ -6521,7 +6533,7 @@ namespace WordSend
                                         break;
                                     case "charset":
                                         id = usfxFile.Value.ToUpperInvariant();
-                                        if (!(id.Contains("UTF-8") || id.Contains("UTF8") || id.Contains("65001")))
+                                        if (!(id.Contains("UTF-8") || id.Contains("UTF8") || id.Contains("65001") || id.Contains("Unicode")))
                                         {
                                             Logit.WriteLine("Unexpected charset: " + usfxFile.Value);
                                             id = "UTF-8";   // Sweep it under the rug. We only support UTF-8. Some source has things like "Unicode" or "UTF<m-dash>8".
@@ -6534,7 +6546,7 @@ namespace WordSend
                                         sfm = usfxFile.Value;
                                         break;
                                     case "style":
-                                        style = usfxFile.Value;
+                                        sfm = style = usfxFile.Value;
                                         break;
                                     case "attribute":
                                         id = usfxFile.Value;
@@ -7073,7 +7085,19 @@ namespace WordSend
                                     sb.Append("\"");
                                 }
                                 usfmAttribute = sb.ToString();
-                                usfmFile.WriteSFM("w", "", "", false, (charStyleStackLevel > 0) || inFootnote);
+                                if (inFootnote || inXref)
+                                {
+                                    noteSfm[noteStyleStackLevel] = sfm;
+                                    noteStyleStackLevel++;
+                                    stackTag = noteStyleStackLevel > 1;
+                                }
+                                else
+                                {
+                                    csSfm[charStyleStackLevel] = sfm;
+                                    charStyleStackLevel++;
+                                    stackTag = charStyleStackLevel > 1;
+                                }
+                                usfmFile.WriteSFM("w", "", "", false, stackTag || inFootnote);
                                 if (usfxFile.IsEmptyElement)
                                 {
                                     if (usfmAttribute.Length > 1)
@@ -7084,6 +7108,23 @@ namespace WordSend
                                     usfmFile.WriteSFM("w*", "", "", false, (charStyleStackLevel > 0) || inFootnote);
                                     Logit.WriteLine("Warning: empty word element " + usfmAttribute + " at " + bookId + " " + chapter + ":" + verse);
                                 }
+                                break;
+                            case "nd":
+                                if (inFootnote || inXref)
+                                {
+                                    noteSfm[noteStyleStackLevel] = sfm;
+                                    noteStyleStackLevel++;
+                                    stackTag = noteStyleStackLevel > 1;
+                                }
+                                else
+                                {
+                                    csSfm[charStyleStackLevel] = sfm;
+                                    charStyleStackLevel++;
+                                    stackTag = charStyleStackLevel > 1;
+                                }
+                                if (noteStyleStackLevel > 8)
+                                    Logit.WriteLine("Unexpected noteStyleStackLevel " + noteStyleStackLevel.ToString());
+                                usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag(), stackTag);
                                 break;
                             case "ztoc":
                             case "toc":
@@ -7115,7 +7156,7 @@ namespace WordSend
                                     }
                                 break;
                             default:    // Includes "gw"
-                                if (tags.info(sfm).kind == "character")
+                                if ((tags.info(sfm).kind == "character") || (sfm == "cs") || (sfm == "char"))
                                 {
 
                                     if (inFootnote && needNoteTextMarker)
@@ -7153,10 +7194,7 @@ namespace WordSend
                                 }
                                 if (noteStyleStackLevel > 8)
                                     Logit.WriteLine("Unexpected noteStyleStackLevel " + noteStyleStackLevel.ToString());
-                                if (extendUsfm || !sfm.StartsWith("z"))
-                                {
-                                    usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag(), stackTag);
-                                }
+                                usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag(), stackTag);
                                 break;
                         }
                     }
@@ -7199,6 +7237,17 @@ namespace WordSend
                                 {
                                     usfmFile.WriteString(usfmAttribute);
                                     usfmAttribute = "";
+                                }
+                                // Handle the "+" nesting rule of USFM
+                                if (inXref || inFootnote)
+                                {
+                                    if (noteStyleStackLevel > 0)
+                                        noteStyleStackLevel--;
+                                }
+                                else
+                                {
+                                    if (charStyleStackLevel > 0)
+                                        charStyleStackLevel--;
                                 }
                                 usfmFile.WriteSFM("w*", "", "", false, (charStyleStackLevel > 0) || inFootnote);
                                 break;
@@ -7280,6 +7329,7 @@ namespace WordSend
                                 noteStyleStackLevel = 0;
                                 break;
                             case "cs":
+                            case "char":
                                 if (charStyleStackLevel > 0)
                                 {
                                     charStyleStackLevel--;

@@ -620,6 +620,7 @@ namespace WordSend
                     (fileType != ".CCT") && (fileType != ".TTF") &&
                     (!inputFile.EndsWith("~")) &&
                     (!lowerName.StartsWith("regexbackup")) &&
+                    (!filename.StartsWith(".")) &&
                     (lowerName != "autocorrect.txt") &&
                     (lowerName != "tmp.txt") &&
                     (lowerName != "changes.txt") &&
@@ -783,7 +784,7 @@ namespace WordSend
             if (projectOptions.ccby)
             {
                 copr.Append(@"<p>This translation is made available to you under the terms of the
-<a href='http://creativecommons.org/licenses/by4.0/'>Creative Commons Attribution license 4.0.</a></p>
+<a href='http://creativecommons.org/licenses/by/4.0/'>Creative Commons Attribution license 4.0.</a></p>
 <p>You may share and redistribute this Bible translation or extracts from it in any format, provided that:</p>
 <ul>
 <li>You include the above copyright and source information.</li>
@@ -907,7 +908,6 @@ For other uses, please contact the respective copyright owners.</p>
             fileHelper.EnsureDirectory(UsfxPath);
             currentConversion = "converting from USFM to USFX; reading USFM";
             Application.DoEvents();
-            Utils.DeleteDirectory(UsfxPath);
             if ((projectOptions.languageId.Length < 3) || (projectOptions.translationId.Length < 3))
             {
                 Logit.WriteError(string.Format(
@@ -1012,60 +1012,70 @@ For other uses, please contact the respective copyright owners.</p>
             string suffix;
             int i;
 
-            if (!Directory.Exists(dirName))
-                return result;
-            string [] fileNames = Directory.GetFiles(dirName);
-            foreach (string fileName in fileNames)
+            try
             {
-                suffix = Path.GetExtension(fileName).ToLowerInvariant();
-                if (suffix == ".zip")
-                {
-                    fileHelper.RunCommand("unzip -n \"" + fileName + "\"", dirName);
-                    string receivedDir = Path.Combine(inputProjectDirectory, "Received");
-                    fileHelper.EnsureDirectory(receivedDir);
-                    string destName = Path.Combine(receivedDir, Path.GetFileName(fileName));
-                    if (File.Exists(destName))
-                        File.Delete(destName);
-                    File.Move(fileName, destName);
-                }
-            }
-            fileNames = Directory.GetFiles(dirName);
-            for (i = 0; (i < fileNames.Length) && (result == String.Empty); i++)
-            {
-                string fileName = fileNames[i];
-                if (File.Exists(fileName))
+                if (!Directory.Exists(dirName))
+                    return result;
+                string[] fileNames = Directory.GetFiles(dirName);
+                foreach (string fileName in fileNames)
                 {
                     suffix = Path.GetExtension(fileName).ToLowerInvariant();
-                    if (!".zip .bak .lds .ssf .dbg .wdl .sty .htm .kb2 . html .css .swp .id .dic .ldml .json .vrs .ini .csv .tsv .cct".Contains(suffix)
-                            && !fileName.EndsWith("~"))
+                    if (suffix == ".zip")
                     {
-                        s = ReadFirstLines(fileName);
-                        if (!String.IsNullOrEmpty(s))
-                        {
-                            if (s.Contains("\\id "))
-                                result = "usfm";
-                            else if (s.Contains("<usfx"))
-                                result = "usfx";
-                            else if (s.Contains("<usx"))
-                                result = "usx";
-                            else if (s.Contains("<osis"))
-                                result = "osis";
-                        }
+                        fileHelper.RunCommand("unzip -n \"" + fileName + "\"", dirName);
+                        string receivedDir = Path.Combine(inputProjectDirectory, "Received");
+                        fileHelper.EnsureDirectory(receivedDir);
+                        string destName = Path.Combine(receivedDir, Path.GetFileName(fileName));
+                        if (File.Exists(destName))
+                            File.Delete(destName);
+                        File.Move(fileName, destName);
                     }
                 }
-                else if (Directory.Exists(fileName))
+                fileNames = Directory.GetFiles(dirName);
+                for (i = 0; (i < fileNames.Length) && (result == String.Empty); i++)
                 {
-                    result = GetSourceKind(fileName);
+                    string fileName = fileNames[i];
+                    if (File.Exists(fileName))
+                    {
+                        suffix = Path.GetExtension(fileName).ToLowerInvariant();
+                        if (!".zip .bak .lds .ssf .dbg .wdl .sty .htm .kb2 . html .css .swp .id .dic .ldml .json .vrs .ini .csv .tsv .cct".Contains(suffix)
+                                && !fileName.EndsWith("~"))
+                        {
+                            s = ReadFirstLines(fileName);
+                            if (!String.IsNullOrEmpty(s))
+                            {
+                                if (s.Contains("\\id "))
+                                    result = "usfm";
+                                else if (s.Contains("<usfx"))
+                                    result = "usfx";
+                                else if (s.Contains("<usx"))
+                                    result = "usx";
+                                else if (s.Contains("<osis"))
+                                    result = "osis";
+                            }
+                        }
+                    }
+                    else if (Directory.Exists(fileName))
+                    {
+                        result = GetSourceKind(fileName);
+                    }
                 }
+                if (String.IsNullOrEmpty(result))
+                {
+                    string[] subdirectoryEntries = Directory.GetDirectories(dirName);
+                    for (i = 0; (i < subdirectoryEntries.Length) && (result == String.Empty); i++)
+                    {
+                        result = GetSourceKind(subdirectoryEntries[i]);
+                    }
+                }
+
             }
-            if (String.IsNullOrEmpty(result))
+            catch (Exception ex)
             {
-                string[] subdirectoryEntries = Directory.GetDirectories(dirName);
-                for (i = 0; (i < subdirectoryEntries.Length) && (result == String.Empty); i++)
-                {
-                    result = GetSourceKind(subdirectoryEntries[i]);
-                }
+                Logit.WriteError(ex.Message);
+                Logit.WriteError(ex.StackTrace);
             }
+
             return result;
         }
 
@@ -1346,9 +1356,18 @@ For other uses, please contact the respective copyright owners.</p>
 
         public bool GetSource()
         {
+            DateTime fileDate;
             bool result = false;
             string source = projectOptions.customSourcePath;
             string sourceKind = GetSourceKind(source);
+            fileDate = File.GetLastWriteTimeUtc(source);
+            sourceDate = projectOptions.SourceFileDate;
+            if (fileDate > projectOptions.SourceFileDate)
+            {
+                sourceDate = fileDate;
+                projectOptions.SourceFileDate = sourceDate;
+            }
+
             switch (sourceKind)
             {
                 case "usfm":
@@ -1370,7 +1389,7 @@ For other uses, please contact the respective copyright owners.</p>
                     string metadataXml = Path.Combine(source, "metadata.xml");
                     if (File.Exists(metadataXml))
                     {
-                        DateTime fileDate = File.GetLastWriteTimeUtc(metadataXml);
+                        fileDate = File.GetLastWriteTimeUtc(metadataXml);
                         if (fileDate > sourceDate)
                         {
                             sourceDate = fileDate;

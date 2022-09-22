@@ -107,6 +107,7 @@ namespace haiola
             for (i = 0; i < fontNames.Count; i++)
             {
                 fontComboBox.Items.Add(fontNames[i]);
+                headerFontComboBox.Items.Add(fontNames[i]);
             }
         }
 
@@ -243,7 +244,17 @@ namespace haiola
                 }
                 else if (failed)
                 {
-                    globe.projectOptions.selected = isReady && !globe.projectOptions.lastRunResult;
+                    if (isReady)
+                    {
+                        globe.projectOptions.selected = !globe.projectOptions.lastRunResult;
+                        string pdflog = Path.Combine(globe.outputProjectDirectory, "pdflog.txt");
+                        if ((!globe.projectOptions.selected) && File.Exists(pdflog))
+                        {
+                            FileInfo fi = new FileInfo(pdflog);
+                            if (fi.Length > 0)
+                                globe.projectOptions.selected = true;
+                        }
+                    }
                 }
                 else
                 {
@@ -1763,14 +1774,6 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 return;
             }
 
-            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "search"));
-            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "usfm1"));
-            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "sfm"));
-            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "extendedusfm"));
-            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "usfm"));
-            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "usfx"));
-            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "readaloud"));
-            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "WordML"));
 
             if (globe.projectOptions.PrepublicationChecks &&
                 (globe.projectOptions.publicDomain || globe.projectOptions.redistributable || File.Exists(Path.Combine(globe.inputProjectDirectory, "certify.txt"))) &&
@@ -1796,6 +1799,11 @@ their generosity, people like you can open up the Bible and hear from God no mat
             globe.projectOptions.allowedBookList = sr.ReadToEnd();
             sr.Close();
 
+            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "usfx"));
+            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "usfm1"));
+            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "sfm"));
+            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "extendedusfm"));
+            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "usfm"));
 
 
             if (!globe.GetSource())
@@ -1804,6 +1812,17 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 fileHelper.unlockProject();
                 return;
             }
+            if ((globe.projectOptions.lastRunDate > globe.projectOptions.SourceFileDate) && !globe.rebuild)
+            {
+                Logit.WriteLine("Skipping up to date project " + projDirName + " "+globe.projectOptions.lastRunDate.ToString()+">"+globe.projectOptions.SourceFileDate.ToString());
+                globe.projectOptions.done = true;
+                globe.projectOptions.Write();
+                fileHelper.unlockProject();
+                return;
+            }
+            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "search"));
+            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "readaloud"));
+            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "WordML"));
             Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "sql"));
 
             Application.DoEvents();
@@ -1815,7 +1834,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
             Application.DoEvents();
             // Create epub file
             string epubDir = Path.Combine(globe.outputProjectDirectory, "epub");
-            if (fileHelper.fAllRunning && globe.projectOptions.makeEub && (globe.rebuild || globe.projectOptions.SourceFileDate > Directory.GetCreationTime(epubDir)))
+            if (fileHelper.fAllRunning && globe.projectOptions.makeEub)
             {
                 Utils.DeleteDirectory(epubDir);
                 ConvertUsfxToEPub();
@@ -1823,14 +1842,14 @@ their generosity, people like you can open up the Bible and hear from God no mat
             Application.DoEvents();
             // Create HTML output for posting on web sites.
             string htmlDir = Path.Combine(globe.outputProjectDirectory, "html");
-            if (fileHelper.fAllRunning && globe.projectOptions.makeHtml && (globe.rebuild || globe.projectOptions.SourceFileDate > Directory.GetCreationTime(htmlDir)))
+            if (fileHelper.fAllRunning && globe.projectOptions.makeHtml)
             {
                 Utils.DeleteDirectory(htmlDir);
                 ConvertUsfxToPortableHtml();
             }
             Application.DoEvents();
             string WordMLDir = Path.Combine(globe.outputProjectDirectory, "WordML");
-            if (fileHelper.fAllRunning && globe.projectOptions.makeWordML && (globe.rebuild || globe.projectOptions.SourceFileDate > Directory.GetCreationTime(WordMLDir)))
+            if (fileHelper.fAllRunning && globe.projectOptions.makeWordML)
             {   // Write out WordML document
                 // Note: this conversion departs from the standard architecture of making the USFX file the hub, because the WordML writer code was already done in WordSend,
                 // and expected USFM input. Therefore, we read the normalized USFM files, which should be present even if the project input is USFX or USX.
@@ -1871,7 +1890,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
             Application.DoEvents();
             // Create sile files for conversion to PDF.
             string sileDir = Path.Combine(globe.outputProjectDirectory, "sile");
-            if (fileHelper.fAllRunning && globe.projectOptions.makeSile && (globe.rebuild || (globe.projectOptions.SourceFileDate > globe.projectOptions.SileVersionDate)))
+            if (fileHelper.fAllRunning && globe.projectOptions.makeSile)
             {
                 Utils.DeleteDirectory(sileDir);
                 ConvertUsfxToSile();
@@ -1879,21 +1898,21 @@ their generosity, people like you can open up the Bible and hear from God no mat
             Application.DoEvents();
             // Create Modified OSIS output for conversion to Sword format.
             string mosisDir = Path.Combine(globe.outputProjectDirectory, "mosis");
-            if (fileHelper.fAllRunning && globe.projectOptions.makeSword && (globe.rebuild || (globe.projectOptions.SourceFileDate > globe.projectOptions.SwordVersionDate)))
+            if (fileHelper.fAllRunning && globe.projectOptions.makeSword)
             {
                 Utils.DeleteDirectory(mosisDir);
                 ConvertUsfxToMosis();
             }
             Application.DoEvents();
             string xetexDir = Path.Combine(globe.outputProjectDirectory, "xetex");
-            if (fileHelper.fAllRunning && globe.projectOptions.makePDF /* && (globe.globe.rebuild || (globe.globe.projectOptions.SourceFileDate > Directory.GetCreationTime(xetexDir)))*/)
+            if (fileHelper.fAllRunning && globe.projectOptions.makePDF)
             {
                 ConvertUsfxToPDF(xetexDir);
             }
             Application.DoEvents();
             string browserBibleDir = Path.Combine(globe.outputProjectDirectory, "browserBible");
             DateTime browserBibleCreated = Directory.GetCreationTime(browserBibleDir);
-            if (fileHelper.fAllRunning && globe.projectOptions.makeBrowserBible && (globe.rebuild || globe.projectOptions.SourceFileDate > browserBibleCreated))
+            if (fileHelper.fAllRunning && globe.projectOptions.makeBrowserBible)
             {
                 Utils.DeleteDirectory(browserBibleDir);
                 globe.currentConversion = "Writing browser Bible module";
@@ -1917,6 +1936,10 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 DoPostprocess();
                 globe.projectOptions.done = true;
                 globe.projectOptions.selected = !globe.projectOptions.lastRunResult;
+                if (globe.projectOptions.lastRunResult)
+                    globe.projectOptions.lastRunDate = DateTime.UtcNow;
+                else
+                    globe.projectOptions.lastRunDate = DateTime.MinValue;
                 globe.projectOptions.Write();
             }
             fileHelper.unlockProject();
@@ -2055,6 +2078,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
             unmarkAllButton.Enabled = false;
             runHighlightedButton.Enabled = false;
             messagesListBox.Items.Clear();
+            messagesListBox.Items.Add("Processing all marked projects. Rebuild=" + globe.rebuild.ToString());
             messagesListBox.BackColor = Color.LightGreen;
             tabControl1.SelectedTab = RunTabPage;
             BackColor = Color.LightGreen;
@@ -2716,6 +2740,7 @@ their generosity, people like you can open up the Bible and hear from God no mat
             homeDomainTextBox.Text = globe.projectOptions.homeDomain;
             relaxNestingSyntaxCheckBox.Checked = globe.projectOptions.relaxUsfmNesting;
             fontComboBox.Text = globe.projectOptions.fontFamily;
+            headerFontComboBox.Text = globe.projectOptions.headerFooterFont;
             JesusFilmLinkTextTextBox.Text = globe.projectOptions.JesusFilmLinkText;
             JesusFilmLinkTargetTextBox.Text = globe.projectOptions.JesusFilmLinkTarget;
             dependsComboBox.Text = globe.projectOptions.dependsOn;
@@ -2906,7 +2931,8 @@ Peripherals: {12} books",
             globe.projectOptions.rechecked = recheckedCheckBox.Checked;
 
             globe.projectOptions.homeDomain = homeDomainTextBox.Text.Trim();
-            globe.projectOptions.fontFamily = fontComboBox.Text;
+            globe.projectOptions.fontFamily = fontComboBox.Text.Trim();
+            globe.projectOptions.headerFooterFont = headerFontComboBox.Text.Trim();
             if (dependsComboBox.SelectedItem != null)
                 globe.projectOptions.dependsOn = dependsComboBox.Text;
 
@@ -3248,6 +3274,7 @@ Peripherals: {12} books",
             licenseTextBox.Text = globe.projectOptions.licenseHtml = templateOptions.licenseHtml;
             customCssTextBox.Text = globe.projectOptions.customCssFileName = templateOptions.customCssFileName;
             fontComboBox.Text = globe.projectOptions.fontFamily = templateOptions.fontFamily;
+            headerFontComboBox.Text = globe.projectOptions.headerFooterFont = templateOptions.headerFooterFont;
             globe.projectOptions.postprocesses = templateOptions.postprocesses;
             postprocessListBox.SuspendLayout();
             postprocessListBox.Items.Clear();

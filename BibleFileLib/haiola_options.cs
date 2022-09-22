@@ -517,6 +517,12 @@ namespace WordSend
             set { ini.WriteString("fontFamily", value.Trim()); }
         }
 
+		public string headerFooterFont
+        {
+			get { return ini.ReadString("headerFooterFont", "DejaVuSans"); }
+			set { ini.WriteString("headerFooterFont", value.Trim()); }
+        }
+
         public bool subsetProject
         {
             get { return ini.ReadBool("subsetProject", false); }
@@ -760,6 +766,12 @@ namespace WordSend
         {
             get { return ini.ReadDateTime("SourceFileDate", contentUpdateDate); }
             set { ini.WriteDateTime("SourceFileDate", value); }
+        }
+
+		public DateTime lastRunDate
+        {
+			get { return ini.ReadDateTime("lastRunDate", DateTime.MinValue); }
+			set { ini.WriteDateTime("lastRunDate", value); }
         }
 
         public int SwordMajorVersion

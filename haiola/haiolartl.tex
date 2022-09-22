@@ -19,13 +19,15 @@
 \newcommand{\IndentD}{5em}
 \newcommand{\IndentE}{6em}
 \newcommand{\ThisFont}{\ScriptureFontFace}
-\newcommand{\GRC}{\renewcommand{\ThisFont}{Gentium Plus}\SetFont}
-\newcommand{\HEB}{\renewcommand{\ThisFont}{Ezra SIL}\SetFont}
+\newcommand{\TempFace}{\OtherFontFace}
+\newcommand{\GRC}{\renewcommand{\TempFace}{Gentium Plus}\SetFace}
+\newcommand{\HEB}{\renewcommand{\TempFace}{Ezra SIL}\SetFace}
+\newcommand{\ARB}{\renewcommand{\TempFace}{Amiri}\SetFace}
 \newcommand{\LatinFont}{\renewcommand{\ThisFont}{FreeSerif}\SetFont}
 \newcommand{\ChineseFont}{\renewcommand{\ThisFont}{Bitstream Cyberbit}\SetFont}
 \newcommand{\ArabicFont}{\renewcommand{\ThisFont}{Amiri}\SetFont}
 \newcommand{\GentiumFont}{\renewcommand{\ThisFont}{Gentium Plus}\SetFont}
-\newcommand{\SymbolFont}{\renewcommand{\ThisFont}{DejaVu Sans}\SetFont}
+\newcommand{\SymbolFont}{\renewcommand{\ThisFont}{FreeSerif}\SetFont}
 \newcommand{\Bold}{}
 \newcommand{\Italicize}{}
 \newcommand{\FontSize}{\TextSize}
@@ -34,6 +36,7 @@
 \newcommand{\SmallCaps}{\renewcommand{\SMCP}{,+smcp}}
 \newcommand{\NormalCaps}{\renewcommand{\SMCP}{,-smcp}}
 \newcommand{\SetFont}{\font\Z="\ThisFont\Bold\Italicize \FontColor\SMCP" at \FontSize \Z }
+\newcommand{\SetFace}{\font\V="\TempFace\Bold\Italicize \FontColor\SMCP" at \FontSize \V }
 \newcommand{\ITB}{\renewcommand{\Italicize}{/I}\SetFont}
 \newcommand{\ITE}{\renewcommand{\Italicize}{}\SetFont}
 \newcommand{\BDB}{\renewcommand{\Bold}{/B}\SetFont}
@@ -46,18 +49,19 @@
 \newcommand{\Yellow}{\renewcommand{\FontColor}{\YellowColor}\SetFont}
 \newcommand{\NormalFont}{\renewcommand{\ThisFont}{\ScriptureFontFace}\renewcommand{\Bold}{}\renewcommand{\Italicize}{}\renewcommand{\FontSize}{\TextSize}\Black}
 \NormalFont
-\renewcommand{\cfttoctitlefont}{\font\Z="\OtherFontFace:color="000000" at \MTBSize \Z }
-\renewcommand{\cftchapfont}{\font\Z="\OtherFontFace:color="000000" at \TextSize \Z }
-\renewcommand{\cftsecfont}{\font\Z="\OtherFontFace:color="000000" at \TextSize \Z }
-\renewcommand{\cftchappagefont}{\font\Z="\OtherFontFace:color="000000" at \TextSize \Z }
-\renewcommand{\cftsecpagefont}{\font\Z="\OtherFontFace:color="000000" at \TextSize \Z }
+\newcommand{\rnghdrfnt}{\renewcommand{\ThisFont}{\HeaderFontFace}\renewcommand{\Bold}{}\renewcommand{\Italicize}{}\renewcommand{\FontSize}{\TinyFontSize}\Blue}
+\renewcommand{\cfttoctitlefont}{\font\Z="\ScriptureFontFace:color="000000" at \MTBSize \Z }
+\renewcommand{\cftchapfont}{\font\Z="\ScriptureFontFace:color="000000" at \TextSize \Z }
+\renewcommand{\cftsecfont}{\font\Z="\ScriptureFontFace:color="000000" at \TextSize \Z }
+\renewcommand{\cftchappagefont}{\font\Z="\ScriptureFontFace:color="000000" at \TextSize \Z }
+\renewcommand{\cftsecpagefont}{\font\Z="\ScriptureFontFace:color="000000" at \TextSize \Z }
 \newcommand{\ShortTitle}[1]{\vfill\eject\clearpage\par\def\webbook{#1}\setcounter{footnote}{0}\def\webchap{}\section[#1]{ }}
 \newcommand{\PeriphTitle}[1]{\vfill\eject\clearpage\par\def\webbook{#1}\setcounter{footnote}{0}\def\webchap{}\markboth{\HeaderFont\webbook}{\HeaderFont\webbook}\NormalFont}
 \newcommand{\PsalmChap}[1]{{\vspace{1.5ex plus 3ex}\centering\renewcommand{\FontSize}{\MTSize}\BDB\parindent=0mm #1\nopagebreak\par}\def\webchap{#1:}}
 \newcommand{\PoetryChap}[1]{{\vspace{1.5ex plus 3ex}\centering\renewcommand{\FontSize}{\MTSize}\BDB\parindent=0mm #1\nopagebreak\par}\def\webchap{#1:}}
-\newcommand{\Chap}[1]{{\vspace{1.5ex plus 3ex}\centering\renewcommand{\FontSize}{\MTSize}\BDB\parindent=0mm #1\nopagebreak\par}\def\webchap{#1 : }\nopagebreak}
+\newcommand{\Chap}[1]{{\vspace{1.5ex plus 3ex}\centering\renewcommand{\FontSize}{\MTSize}\BDB\parindent=0mm #1\nopagebreak\par}\def\webchap{#1:}\nopagebreak}
 \newcommand{\OneChap}{\vspace{1.5ex plus 3ex}\def\webchap{}}
-\newcommand{\ChapOne}[1]{\vspace{1.5ex plus 3ex}\def\webchap{#1 : }}
+\newcommand{\ChapOne}[1]{\vspace{1.5ex plus 3ex}\def\webchap{#1:}}
 \newcommand{\VS}[1]{{\renewcommand{\FontSize}{\VerseFontSize}\Blue{\raisebox{\RaiseVerse}{#1}~}}\markboth{\HeaderFont\webbook\ \webchap #1}{\HeaderFont\webbook\ \webchap #1}\NormalFont}	% Verse number
 \newcommand{\VP}[1]{{\renewcommand{\FontSize}{\VerseFontSize}\Blue{\raisebox{\RaiseVerse}{(#1)}~}}\NormalFont}	% Verse number published
 \newcommand{\VA}[1]{{\renewcommand{\FontSize}{\VerseFontSize}\Blue{\raisebox{\RaiseVerse}{[#1]}~}}\NormalFont}	% Alternate verse number
@@ -109,7 +113,6 @@
 \renewcommand{\thefootnote}{\FNSymbol}
 \newcommand{\FR}{\BDB}
 \newcommand{\XO}{\BDB}
-\newcommand{\WJ}{\Red}
 \newcommand{\ZCR}{\Red}
 \newcommand{\ZCG}{\Green}
 \newcommand{\ZCB}{\LightBlue}
@@ -172,7 +175,7 @@
 \newcommand{\IOD}{\parindent=\IndentC\hangindent=\IndentD\Blue}
 \newcommand{\IOR}{\ITB}
 \newcommand{\IEX}{\parindent=\ParIndent\Blue}
-\newcommand{\CD}{\IEX}
+\newcommand{\CD}{\IEX \HeaderFont \IT }
 \newcommand{\IQT}{\ITB}
 \newcommand{\IMTE}{\IMT}
 \newcommand{\IMTEB}{\IMTB}
@@ -216,3 +219,6 @@
 \newcommand{\WG}{}
 \newcommand{\WH}{}
 \newcommand{\HR}{\par \hrulefill }
+\setTransitionsFor{Hebrew}{\HEB}{\SetFont}
+\setTransitionsFor{Greek}{\GRC}{\SetFont}
+\setTransitionsFor{Arabic}{\ARB}{\SetFont}

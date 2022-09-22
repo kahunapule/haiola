@@ -200,10 +200,8 @@ namespace WordSend
             // TODO: refactor to use htm instead of texFile throughout OR get the htm references out of the core function in Usfx2HtmlConverter.cs
             htm = texFile = new StreamWriter(currentFileName, false, Encoding.UTF8);
             
-            if (projectOptions.textDir == "rtl")
-                texFile.WriteLine(@"\setRTL");
-            else if (texDir == "ltr")
-                texFile.WriteLine(@"\setLTR");
+            if ((projectOptions.textDir == "rtl") && (currentBookAbbrev != "CPR"))
+                texFile.WriteLine("\\begin{0}RTL{1}", LEFTBRACE, RIGHTBRACE);
             if (mainScriptureFile || (currentBookAbbrev == "GLO"))
                 texFile.WriteLine("\\NormalFont\\ShortTitle{0}{1}{2}", LEFTBRACE, runningHeader, RIGHTBRACE);
             else if (currentBookAbbrev != "CPR")
@@ -224,6 +222,8 @@ namespace WordSend
                 EndHtmlParagraph();
                 // RepeatNavButtons();
                 // WriteHtmlFootnotes();
+                if ((projectOptions.textDir == "rtl") && (currentBookAbbrev != "CPR"))
+                    texFile.WriteLine("\\end{0}RTL{1}", LEFTBRACE, RIGHTBRACE);
                 texFile.Close();
                 htm = texFile = null;
                 previousFileName = currentFileName;
@@ -331,6 +331,11 @@ namespace WordSend
                 return "\\MM";
             if (sfm == "b")
                 return "\\BB";
+            if (sfm == "wj")
+            {
+                eatSpace = true;
+                return "\\WJ";
+            }
             return "\\" + sfm.ToUpperInvariant().Replace("1", "").Replace("2", "B").Replace("3", "C").Replace("4", "D");
         }
 
@@ -591,105 +596,7 @@ namespace WordSend
             inChapter = true;
         }
 
-        /// <summary>
-        /// Detect latin text in normal RTL text
-        /// </summary>
-        /// <param name="s">String with mixed direction text</param>
-        /// <returns>String with necessary \setLTR tags inserted</returns>
-        protected string DoBiDi(string s)
-        {
-            if (projectOptions.textDir != "rtl")
-                return s;
-            StringBuilder sb = new StringBuilder();
-            StringBuilder lastTag = new StringBuilder();
-            bool ltr = false;
-            bool inTag = false;
-            bool inTagArgument = false;
-            int inHref = 0;
-            bool tagArgumentSeen = false;
-            char c;
-            int i;
-            for (i = 0; i < s.Length; i++)
-            {
-                c = s[i];
-                if (inTag)
-                {
-                    if (Char.IsWhiteSpace(c) || Char.IsPunctuation(c))
-                    {
-                        inTag = false;
-                        if (lastTag.ToString() == "href")
-                        {
-                            sb.Length = sb.Length - 4;  // temporarily delete "href"
-                            sb.Append(@"setLTR \href"); // insert setLTR \ and put href back.
-                            ltr = true;
-                            lastTag.Clear();    // Only do this once per href tag
-                            inHref = 2;
-                        }
-                    }
-                    else
-                        lastTag.Append(c);
-                }
-                else if (c == '\\')
-                {
-                    inTag = true;
-                    lastTag.Clear();
-                }
-                else if (lastTag.ToString() == "vskip")
-                {
-                    inTagArgument = true;
-                    tagArgumentSeen = false;
-                    lastTag.Clear();
-                }
-                if (inTagArgument)
-                {
-                    if (Char.IsWhiteSpace(c) || c == '}')
-                    {
-                        if (tagArgumentSeen)
-                        {
-                            inTagArgument = false;
-                            tagArgumentSeen = false;
-                        }
-                    }
-                    else if (Char.IsLetterOrDigit(c))
-                    {
-                        tagArgumentSeen = true;
-                    }
-
-                }
-                if (inHref > 0)
-                {
-                    if (c == '}')
-                        inHref--;
-                }
-
-                if ((!inTag) && (!inTagArgument) && (inHref == 0))
-                {
-                    if (ltr)
-                    {
-                        if (Char.IsLetter(c) && (c > 0x1EFF))
-                        {
-                            ltr = false;
-                            sb.Append(@"\setRTL ");
-                        }
-                        else if (c == '}')
-                        {   // XeTeX group ended, so LTR must be reasserted if still needed in the next group.
-                            ltr = false;
-                        }
-                    }
-                    else
-                    {
-                        if (((c >= '0') && (c <= '9')) || ((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')))
-                        {
-                            ltr = true;
-                            sb.Append(@"\setLTR ");
-                        }
-                    }
-                }
-                sb.Append(c);
-            }
-            return sb.ToString();
-        }
-
+ 
         protected ArrayList FindThis = null;
         protected ArrayList ReplaceWith = null;
 
@@ -727,7 +634,7 @@ namespace WordSend
                 {
                     s = Regex.Replace(s, (string)FindThis[i], (string)ReplaceWith[i]);
                 }
-                s = DoBiDi(s);
+                // s = DoBiDi(s); Not needed!
                 s = s.Replace("</p>", "\\PAR ");
                 s = s.Replace("<strong>", @"{\bf ");
                 s = s.Replace("</strong>", @"}");
@@ -820,7 +727,7 @@ For other uses, please contact the respective copyright owners.</p>
             texFile.WriteLine(@"\PeriphTitle{ }");
             texFile.Write(licenseHtml);
             texFile.Write("\n\\par\\vskip 1ex\\hrule\\vskip 0.5ex\\par {0}\\TINY ", LEFTBRACE);
-            texFile.WriteLine(DoBiDi(String.Format("{0} {1}{2}", indexDateStamp, epubIdentifier, RIGHTBRACE)));
+            texFile.WriteLine(String.Format("{0} {1}{2}", indexDateStamp, epubIdentifier, RIGHTBRACE));
             texFile.WriteLine(@"\vfill\eject");
             CloseHtmlFile();
 
@@ -1059,17 +966,17 @@ For other uses, please contact the respective copyright owners.</p>
             try
             {
                 webIndex = new StreamWriter(Path.Combine(texDir, "indextemplate.txt"));
-                webIndex.WriteLine("letter size");
+                webIndex.WriteLine("letter size 12 point color");
                 webIndex.WriteLine(projectOptions.translationId + "_all");
-                webIndex.WriteLine("A4 size");
+                webIndex.WriteLine("A4 size 12 point color");
                 webIndex.WriteLine(projectOptions.translationId + "_a4");
-                webIndex.WriteLine("6 in x 9 in 9 point");
+                webIndex.WriteLine("202 x 135 mm 9 point color");
                 webIndex.WriteLine(projectOptions.translationId + "_prt");
-                webIndex.WriteLine("6 in x 9 in 8 point");
+                webIndex.WriteLine("6 in x 9 in 8 point monochrome");
                 webIndex.WriteLine(projectOptions.translationId + "_book");
-                webIndex.WriteLine("New Testament");
+                webIndex.WriteLine("New Testament 197 x 118 mm 10 point monochrome");
                 webIndex.WriteLine(projectOptions.translationId + "_nt");
-                webIndex.WriteLine("New Testament and Psalms");
+                webIndex.WriteLine("New Testament and Psalms 6 x 9 in 10 point monochrome");
                 webIndex.WriteLine(projectOptions.translationId + "_ntp");
                 foreach (BibleBookRecord br in bookInfo.publishArray)
                 {
@@ -1098,254 +1005,6 @@ For other uses, please contact the respective copyright owners.</p>
 
 
 
-        /// <summary>
-        /// Write HTML indexes of generated PDF files.
-        /// </summary>
-        protected void WritePDFIndex()
-        {
-            string pdfFileName;
-            StreamWriter webIndex;
-            string indexName = Path.Combine(texDir, "index.html");
-            string pngIndexName = Path.Combine(texDir, "png.html");
-            bool isRtl = projectOptions.textDir == "rtl";
-
-            try
-            {
-                // HTML index to organize all of the above
-                webIndex = new StreamWriter(indexName);
-                webIndex.WriteLine("<!DOCTYPE html>");
-                webIndex.WriteLine("<head>");
-                webIndex.WriteLine("<meta http-equiv='CONTENT-TYPE' content='text/html;charset=utf-8'>");
-                webIndex.WriteLine("<title>{0} PDF</title>", projectOptions.vernacularTitle);
-                webIndex.WriteLine("<style>");
-                webIndex.WriteLine("a {text-decoration:none;background-color:#d0efff}");
-                webIndex.WriteLine("a:visited {color:#001122}");
-                webIndex.WriteLine("a:link {color:#000000}");
-                webIndex.WriteLine("a:hover {background-color:#ffff80}");
-                webIndex.WriteLine("ul {list-style-type:none}");
-                webIndex.WriteLine("</style>");
-                webIndex.WriteLine("</head>");
-                webIndex.WriteLine("<body>");
-                webIndex.WriteLine("<h1>{0} PDF</h1>", projectOptions.vernacularTitle);
-                webIndex.WriteLine("<h2>{0}</h2>", projectOptions.languageName);
-                webIndex.WriteLine("<p>{0}</p>", projectOptions.EnglishDescription);
-                if (!String.IsNullOrEmpty(projectOptions.lwcDescription))
-                    webIndex.WriteLine("<p>{0}</p>", projectOptions.lwcDescription);
-                webIndex.WriteLine("<p>{0}</p>", projectOptions.languageId);
-                if (Logit.loggedError)
-                {
-                    webIndex.WriteLine("<p>Coming soon... please check back in a few days.</p>");
-                }
-                else
-                {
-                    webIndex.WriteLine("<ul>");
-                    pdfFileName = projectOptions.translationId + "_all.pdf";
-                    if (File.Exists(Path.Combine(texDir, pdfFileName)))
-                    {
-                        webIndex.WriteLine("<li><a href='{0}'>{0} {1} (letter size) {2} pages</a></li>", pdfFileName, projectOptions.vernacularTitle, (string)pageCounts[pdfFileName]);
-                    }
-                    pdfFileName = projectOptions.translationId + "_a4.pdf";
-                    if (File.Exists(Path.Combine(texDir, pdfFileName)))
-                    {
-                        webIndex.WriteLine("<li><a href='{0}'>{0} {1} (A4 size) {2} pages</a></li>", pdfFileName, projectOptions.vernacularTitle, (string)pageCounts[pdfFileName]);
-                    }
-                    pdfFileName = projectOptions.translationId + "_prt.pdf";
-                    if (File.Exists(Path.Combine(texDir, pdfFileName)))
-                    {
-                        webIndex.WriteLine("<li><a href='{0}'>{0} {1} (6 in x 9 in monochrome) {2} pages</a></li>", pdfFileName, projectOptions.vernacularTitle, (string)pageCounts[pdfFileName]);
-                    }
-                    pdfFileName = projectOptions.translationId + "_book.pdf";
-                    if (File.Exists(Path.Combine(texDir, pdfFileName)))
-                    {
-                        webIndex.WriteLine("<li><a href='{0}'>{0} {1} (135mm x 211 mm) {2} pages</a></li>", pdfFileName, projectOptions.vernacularTitle, (string)pageCounts[pdfFileName]);
-                    }
-                    pdfFileName = projectOptions.translationId + "_nt.pdf";
-                    if (File.Exists(Path.Combine(texDir, pdfFileName)))
-                    {
-                        webIndex.WriteLine("<li><a href='{0}'>{0} {1} (125mm x 200 mm) {2} pages</a></li>", pdfFileName, projectOptions.vernacularTitle, (string)pageCounts[pdfFileName]);
-                    }
-                    if (isRtl)
-                    {
-                        pdfFileName = projectOptions.translationId + "_rtlprt.pdf";
-                        if (File.Exists(Path.Combine(texDir, pdfFileName)))
-                        {
-                            webIndex.WriteLine("<li><a href='{0}'>{0} {1} (6 in x 9 in monochrome, reversed page order) {2} pages</a></li>", pdfFileName, projectOptions.vernacularTitle, (string)pageCounts[pdfFileName]);
-                        }
-                    }
-                    foreach (BibleBookRecord br in bookInfo.publishArray)
-                    {
-                        if ((br != null) && br.IsPresent)
-                        {
-                            pdfFileName = projectOptions.translationId + "_" + br.tla + ".pdf";
-                            if (File.Exists(Path.Combine(texDir, pdfFileName)))
-                            {
-                                webIndex.WriteLine("<li><a href='{0}'>{0} {1} {2} pages</a></li>", pdfFileName, br.vernacularShortName, (string)pageCounts[pdfFileName]);
-                            }
-                        }
-                    }
-                    webIndex.WriteLine("</ul>");
-                    webIndex.WriteLine("<p>{0}</p>", shortCopr);
-                }
-                webIndex.WriteLine("</body>");
-                webIndex.WriteLine("</html>");
-                webIndex.Close();
-
-                // HTML index to organize part of the above
-                webIndex = new StreamWriter(pngIndexName);
-                webIndex.WriteLine("<!DOCTYPE html>");
-                webIndex.WriteLine("<head>");
-                webIndex.WriteLine("<meta http-equiv='CONTENT-TYPE' content='text/html;charset=utf-8'>");
-                webIndex.WriteLine("<title>{0} PDF</title>", projectOptions.vernacularTitle);
-                webIndex.WriteLine("<style>");
-                webIndex.WriteLine("a {text-decoration:none;background-color:#d0efff}");
-                webIndex.WriteLine("a:visited {color:#001122}");
-                webIndex.WriteLine("a:link {color:#000000}");
-                webIndex.WriteLine("a:hover {background-color:#ffff80}");
-                webIndex.WriteLine("ul {list-style-type:none}");
-                webIndex.WriteLine("</style>");
-                webIndex.WriteLine("</head>");
-                webIndex.WriteLine("<body>");
-                webIndex.WriteLine("<h1>{0} PDF</h1>", projectOptions.vernacularTitle);
-                webIndex.WriteLine("<h2>{0}</h2>", projectOptions.languageName);
-                webIndex.WriteLine("<p>{0}</p>", projectOptions.EnglishDescription);
-                if (!String.IsNullOrEmpty(projectOptions.lwcDescription))
-                    webIndex.WriteLine("<p>{0}</p>", projectOptions.lwcDescription);
-                webIndex.WriteLine("<p>{0}</p>", projectOptions.languageId);
-                webIndex.WriteLine("<ul>");
-                pdfFileName = projectOptions.translationId + "_a4.pdf";
-                if (File.Exists(Path.Combine(texDir, pdfFileName)))
-                {
-                    webIndex.WriteLine("<li><a href='{0}'>{0} {1} (A4 size)</a></li>", pdfFileName, projectOptions.vernacularTitle);
-                }
-                pdfFileName = projectOptions.translationId + "_prt.pdf";
-                if (File.Exists(Path.Combine(texDir, pdfFileName)))
-                {
-                    webIndex.WriteLine("<li><a href='{0}'>{0} {1} (6x9)</a></li>", pdfFileName, projectOptions.vernacularTitle);
-                }
-                pdfFileName = projectOptions.translationId + "_rtlprint.pdf";
-                if (isRtl && File.Exists(Path.Combine(texDir, pdfFileName)))
-                {
-                    webIndex.WriteLine("<li><a href='{0}'>{0} {1} (6x9)</a></li>", pdfFileName, projectOptions.vernacularTitle);
-                }
-                foreach (BibleBookRecord br in bookInfo.publishArray)
-                {
-                    if ((br != null) && br.IsPresent)
-                    {
-                        pdfFileName = projectOptions.translationId + "_" + br.tla + ".pdf";
-                        if (File.Exists(Path.Combine(texDir, pdfFileName)))
-                        {
-                            webIndex.WriteLine("<li><a href='{0}'>{0} {1}</a></li>", pdfFileName, br.vernacularShortName);
-                        }
-                    }
-                }
-                webIndex.WriteLine("<p>{0}</p>", shortCopr);
-                webIndex.WriteLine("</ul>");
-                webIndex.WriteLine("</body>");
-                webIndex.WriteLine("</html>");
-                webIndex.Close();
-
-            }
-            catch (Exception ex)
-            {
-                Logit.WriteError("Error writing HTML index of PDF files:");
-                Logit.WriteError(ex.Message);
-            }
-
-        }
-
-        /// <summary>
-        /// Run XeTeX twice on the given input file
-        /// </summary>
-        /// <param name="texFileName"></param>
-        /// <returns>true iff successful</returns>
-        protected bool RunXeTeX(string texFileName)
-        {
-            string command = "xelatex -interaction=batchmode \"" + texFileName + "\"";
-            string pdfName = Path.ChangeExtension(texFileName, ".pdf");
-            string pdfFileName = Path.GetFileName(pdfName);
-            string logName = Path.ChangeExtension(texFileName, "log");
-            string logLine;
-            int i, j, pageCount;
-            bool result = true;
-            StreamReader sr;
-            if (String.IsNullOrEmpty(texFileName))
-                return false;
-            conversionProgress = "Generating " + pdfName;
-            try
-            {
-                if (pageCounts == null)
-                {
-                    pageCounts = new Hashtable();
-                }
-                for (i = 0; i < 2; i++)
-                {
-                    if (!fileHelper.RunCommand(command, texDir))
-                    {
-                        Logit.WriteError("Error running command " + command);
-                        Logit.WriteError(fileHelper.runCommandError);
-                        {
-                            Logit.WriteError("XeTeX failed to run. See " + logName);
-                            return false;
-                        }
-                    }
-                    if (!File.Exists(logName))
-                    {
-                        Logit.WriteError("Failed to run XeLaTeX, missing " + logName);
-                        return false;
-                    }
-                    if (!File.Exists(pdfName))
-                    {
-                        Logit.WriteError("Failed to generate " + pdfName + ". See " + logName);
-                        return false;
-                    }
-                    sr = new StreamReader(logName);
-                    logLine = sr.ReadLine();
-                    while (logLine != null)
-                    {
-                        if (logLine.Contains("\n! "))
-                        {
-                            Logit.WriteLine(logLine + "See " + logName);
-                            result = false;
-                        }
-                        if (logLine.Contains("Missing character:"))
-                        {
-                            Logit.WriteError(logLine + " See " + logName);
-                            result = false;
-                        }
-                        if ((i == 2) && logLine.Contains("Output written on"))
-                        {
-                            // Logit.WriteLine(logLine);
-                            j = logLine.IndexOf('(');
-                            if ((j > 0) && (j < logLine.Length - 1))
-                            {
-                                logLine = logLine.Substring(j + 1);
-                                j = logLine.IndexOf(' ');
-                                logLine = logLine.Substring(0, j);
-                                pageCounts.Add(pdfFileName, logLine);
-                                if (pdfFileName.EndsWith("_prt.pdf"))
-                                {
-                                    pageCount = Int32.Parse(logLine);
-                                    projectOptions.printPdfPageCount = pageCount;
-                                }
-                            }
-                        }
-                        logLine = sr.ReadLine();
-                    }
-                    sr.Close();
-                    System.Windows.Forms.Application.DoEvents();
-                    if (!fileHelper.fAllRunning)
-                        return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                Logit.WriteError("Failed to generate PDF file with XeLaTeX: " + pdfName + ". See " + logName);
-                Logit.WriteError(ex.Message);
-                Logit.WriteError(ex.StackTrace);
-                return false;
-            }
-            return result;
-        }
 
         /// <summary>
         /// This override version calls XeTeX to create PDF files
@@ -1354,27 +1013,26 @@ For other uses, please contact the respective copyright owners.</p>
         {
             // string bookFileName;
             fileHelper.CopyFile(FindInputFile("haiola.tex"), Path.Combine(texDir, "haiola.tex"));
-            fileHelper.CopyFile(FindInputFile("haiolartl.tex"), Path.Combine(texDir, "haiolartl.tex"));
             //TODO: move the following hard-coded dimensions and options to the user interface
             if (projectOptions.textDir == "rtl")
             {
                 WriteXeTeXHeader(Path.Combine(texDir, "12ptrtl.tex"), "11in", "8.5in", "1in", "0.75in", "0.75in", "0.75in", "11.0pt", "12pt", 12.0, 1, true, true);
                 WriteXeTeXHeader(Path.Combine(texDir, "12pta4rtl.tex"), "297mm", "210mm", "30mm", "30mm", "25mm", "25mm", "11.0pt", "12pt", 12.0, 1, true, true);
                 WriteXeTeXHeader(Path.Combine(texDir, "12pta5rtl.tex"), "210mm", "148mm", "25mm", "25mm", "25mm", "25mm", "11.0pt", "12pt", 12.0, 1, true, true);
-                WriteXeTeXHeader(Path.Combine(texDir, "printrtl.tex"), "9in", "6in", "0.75in", "0.75in", "0.75in", "0.75in", "11.0pt", "6pt", 9.0, 1, true, false);
-                WriteXeTeXHeader(Path.Combine(texDir, "bookrtl.tex"), "228.6mm", "152.4mm", "23mm", "8mm", "8mm", "10mm", "11.0pt", "6pt", 8.0, 1, true, false);
-                WriteXeTeXHeader(Path.Combine(texDir, "ntrtl.tex"), "200mm", "120mm", "10mm", "10mm", "7.5mm", "7.5mm", "11.0pt", "6pt", 9.0, 1, false, false);
-                WriteXeTeXHeader(Path.Combine(texDir, "ntprtl.tex"), "200mm", "120mm", "10mm", "10mm", "7.5mm", "7.5mm", "11.0pt", "6pt", 8.0, 1, false, false);
+                WriteXeTeXHeader(Path.Combine(texDir, "printrtl.tex"), "202mm", "135mm", "12mm", "11mm", "10mm", "10mm", "11.0pt", "6pt", 9.0, 1, true, true);
+                WriteXeTeXHeader(Path.Combine(texDir, "bookrtl.tex"), "9in", "6in", "0.85in", "0.5in", "0.5in", "0.5in", "11.0pt", "6pt", 8.0, 1, true, false);
+                WriteXeTeXHeader(Path.Combine(texDir, "ntrtl.tex"), "197mm", "118mm", "9mm", "9mm", "6.5mm", "6.5mm", "11.0pt", "6pt", 10.0, 1, false, false);
+                WriteXeTeXHeader(Path.Combine(texDir, "ntprtl.tex"), "9in", "6in", "0.85in", "0.5in", "0.5in", "0.5in", "11.0pt", "6pt", 8.0, 1, false, false);
             }
             else
             {
                 WriteXeTeXHeader(Path.Combine(texDir, "12pt.tex"), "11in", "8.5in", "1in", "0.75in", "0.75in", "0.75in", "11.0pt", "12pt", 12.0, 2, false, true);
                 WriteXeTeXHeader(Path.Combine(texDir, "12pta4.tex"), "297mm", "210mm", "30mm", "30mm", "25mm", "25mm", "11.0pt", "12pt", 12.0, 2, false, true);
                 WriteXeTeXHeader(Path.Combine(texDir, "12pta5.tex"), "210mm", "148mm", "25mm", "25mm", "25mm", "25mm", "11.0pt", "12pt", 12.0, 1, false, true);
-                WriteXeTeXHeader(Path.Combine(texDir, "print.tex"), "9in", "6in", "0.5in", "0.35in", "0.35in", "0.35in", "11.0pt", "9pt", 9.0, 1, false, false);
-                WriteXeTeXHeader(Path.Combine(texDir, "book.tex"), "228.6mm", "152.4mm", "23mm", "8mm", "8mm", "10mm", "11.0pt", "6pt", 8.0, 2, false, false);
-                WriteXeTeXHeader(Path.Combine(texDir, "nt.tex"), "200mm", "120mm", "10mm", "10mm", "7.5mm", "7.5mm", "11.0pt", "6pt", 9.0, 2, false, false);
-                WriteXeTeXHeader(Path.Combine(texDir, "ntp.tex"), "200mm", "120mm", "10mm", "10mm", "7.5mm", "7.5mm", "11.0pt", "6pt", 8.0, 2, false, false);
+                WriteXeTeXHeader(Path.Combine(texDir, "print.tex"), "202mm", "135mm", "12mm", "11mm", "10mm", "10mm", "11.0pt", "8pt", 9.0, 1, false, true);
+                WriteXeTeXHeader(Path.Combine(texDir, "book.tex"), "9in", "6in", "0.85in", "0.5in", "0.5in", "0.5in", "11.0pt", "6pt", 8.0, 2, false, false);
+                WriteXeTeXHeader(Path.Combine(texDir, "nt.tex"), "197mm", "118mm", "9mm", "9mm", "6.5mm", "6.5mm", "11.0pt", "6pt", 10.0, 2, false, false);
+                WriteXeTeXHeader(Path.Combine(texDir, "ntp.tex"), "9in", "6in", "0.85in", "0.5in", "0.5in", "0.5in", "11.0pt", "6pt", 10.0, 2, false, false);
             }
             fileHelper.CopyFile(FindInputFile("footkmpj.sty"), Path.Combine(texDir, "footkmpj.sty"));
 
@@ -1459,30 +1117,10 @@ For other uses, please contact the respective copyright owners.</p>
                 LEFTBRACE, RIGHTBRACE);
             texFile.WriteLine(@"\usepackage[para]{footkmpj}");
             texFile.WriteLine(@"\usepackage{tocloft}");
+            texFile.WriteLine(@"\usepackage{ucharclasses}");
             if (bidi)
             {
-                texFile.WriteLine(@"\usepackage{fontspec}");
-                texFile.WriteLine("\\newfontfamily{0}\\defaultfont{2}{0}{1}{2}", LEFTBRACE, preferredFont, RIGHTBRACE);
-                texFile.WriteLine("\\setmainfont{0}{1}{2}", LEFTBRACE, preferredFont, RIGHTBRACE);
-                texFile.WriteLine("\\newfontfamily\\{0}font[Script = {1}]{2}{3}{4}", languageName, scriptName, LEFTBRACE, preferredFont, RIGHTBRACE);
-                texFile.WriteLine("\\newfontfamily\\{0}fonttt[Script = {1}]{2}{3}{4}", languageName, scriptName, LEFTBRACE, preferredFont, RIGHTBRACE);
-                //texFile.WriteLine(@"\newfontfamily{\arabicfont}{Amiri}");
-                texFile.WriteLine("\\setsansfont[Script = {0}]{1}{2}{3}", scriptName, LEFTBRACE, preferredFont, RIGHTBRACE);
-                texFile.WriteLine(@"\newfontfamily\englishfont[Script=Latin]{Gentium}");
-                texFile.WriteLine(@"\usepackage{polyglossia}");
                 texFile.WriteLine(@"\usepackage{bidi}");
-                texFile.WriteLine("\\setdefaultlanguage{0}{1}{2}", LEFTBRACE, languageName, RIGHTBRACE);
-                texFile.WriteLine(@"\setotherlanguage{english}");
-                texFile.WriteLine(@"\disablehyphenation");
-                /*
-                texFile.WriteLine(@"\usepackage{bidi}");
-                texFile.WriteLine(@"\usepackage{ucharclasses}");
-                */
-
-            }
-            else
-            {
-                texFile.WriteLine(@"\usepackage{ucharclasses}");
             }
             texFile.WriteLine("\\newcommand{0}\\TocFont{1}{0}\\font\\Y=\"\\OtherFontFace:color=000000\" at {2}pt\\Y {1}", LEFTBRACE, RIGHTBRACE, pointSize.ToString());
             texFile.WriteLine(@"\newcommand{\TextColor}{:color=000000}");
@@ -1496,6 +1134,7 @@ For other uses, please contact the respective copyright owners.</p>
                 texFile.WriteLine(@"\newcommand{\BlueColor}{:color=0000ff}");
                 texFile.WriteLine(@"\newcommand{\GreenColor}{:color=00ff00}");
                 texFile.WriteLine(@"\newcommand{\YellowColor}{:color=808000}");
+                texFile.WriteLine(@"\newcommand{\WJ}{\Red}");
             }
             else
             {
@@ -1503,9 +1142,10 @@ For other uses, please contact the respective copyright owners.</p>
                 texFile.WriteLine("\\newcommand{0}\\FnMarkFont{1}{0}\\font\\Z=\"FreeSerif:color=000000\" at {2}pt \\Z {1}", LEFTBRACE, RIGHTBRACE, pointSize * 0.75);
                 texFile.WriteLine(@"\newcommand{\IntroColor}{:color=000000}");
                 texFile.WriteLine(@"\newcommand{\WJColor}{:color=000000}");
-                texFile.WriteLine(@"\newcommand{\BlueColor}{:color=0000ff}");
+                texFile.WriteLine(@"\newcommand{\BlueColor}{:color=000000}");
                 texFile.WriteLine(@"\newcommand{\GreenColor}{:color=000000}");
                 texFile.WriteLine(@"\newcommand{\YellowColor}{:color=000000}");
+                texFile.WriteLine(@"\newcommand{\WJ}{\BDB}");
             }
             texFile.WriteLine("\\newcommand{0}\\RaiseVerse{1}{0}{2}pt{1}", LEFTBRACE, RIGHTBRACE, pointSize/4.0);
             texFile.WriteLine("\\newcommand{0}\\FnSize{1}{0}{2}pt{1}", LEFTBRACE, RIGHTBRACE, pointSize*0.75);
@@ -1548,18 +1188,15 @@ For other uses, please contact the respective copyright owners.</p>
                 texFile.WriteLine(@"\XeTeXlinebreakskip = 0pt plus 1pt minus 0.1pt");
                 texFile.WriteLine(@"\XeTeXlinebreakpenalty = 10");
                 texFile.WriteLine("\\def\\ScriptureFontFace{0}{1}{2}%", LEFTBRACE, preferredFont, RIGHTBRACE);
-                texFile.WriteLine("\\def\\OtherFontFace{0}{1}{2}%", LEFTBRACE, preferredFont, RIGHTBRACE);
+                texFile.WriteLine("\\def\\OtherFontFace{0}{1}{2}%", LEFTBRACE, projectOptions.headerFooterFont, RIGHTBRACE);
+                if (projectOptions.commonChars)
+                    texFile.WriteLine("\\def\\HeaderFontFace{0}{1}{2}%", LEFTBRACE, projectOptions.headerFooterFont, RIGHTBRACE);
+                else
+                    texFile.WriteLine("\\def\\HeaderFontFace{0}{1}{2}%", LEFTBRACE, preferredFont, RIGHTBRACE);
                 texFile.Write(@"\input{");
                 texFile.Write(formattingFileName);
                 texFile.WriteLine(@"}%");
-                if (isRtl)
-                {
-                    texFile.WriteLine(@"\input{haiolartl}%");
-                }
-                else
-                {
-                    texFile.WriteLine(@"\input{haiola}%");
-                }
+                texFile.WriteLine(@"\input{haiola}%");
                 texFile.WriteLine(@"\begin{document}%");
                 texFile.WriteLine(@"\makeatletter\def\@evenhead{{\HeaderFont{\rightmark\hfil\thepage\hfil\leftmark}}}\def\@oddhead{{\HeaderFont{\rightmark\hfil\thepage\hfil\leftmark}}}\makeatother\frontmatter\pagenumbering{roman}%");
 
@@ -1584,21 +1221,21 @@ For other uses, please contact the respective copyright owners.</p>
                 }
 
                 texFile.WriteLine("\\input{0}CPR{1}", LEFTBRACE, RIGHTBRACE);
-                texFile.WriteLine(@"\tableofcontents\clearpage");
                 if (numColumns > 1)
                     texFile.WriteLine(@"\begin{multicols}{2}%");
+                texFile.WriteLine(@"\tableofcontents\clearpage");
                 texFile.WriteLine(@"\setcounter{page}{1}\pagenumbering{arabic}\mainmatter%");
                 foreach (BibleBookRecord br in bookInfo.publishArray)
                 {
                     if ((br != null) && br.IsPresent)
                     {
-                        if ((bookSet == "*") && (br.tla == "TOB"))
+                        if ((bookSet == "*") && (br.tla == "TOB") && (numColumns > 1))
                         {
-                            texFile.WriteLine(@"\addtocontents{toc}{\protect\thispagestyle{empty}\protect\pagebreak}");
+                            texFile.WriteLine(@"\addtocontents{toc}{\protect\thispagestyle{empty}\protect{\vfill\columnbreak DC\par}}");
                         }
-                        if ((bookSet == "*") && (br.tla == "MAT") && (projectOptions.otBookCount > 20))
+                        if ((bookSet == "*") && (br.tla == "MAT") && (projectOptions.otBookCount > 20) && (numColumns > 1))
                         {
-                            texFile.WriteLine(@"\addtocontents{toc}{\protect\thispagestyle{empty}\protect\pagebreak}");
+                            texFile.WriteLine(@"\addtocontents{toc}{\protect\thispagestyle{empty}\protect{\par NT\par}}");
                         }
                         if (((bookSet == "n") || (bookSet == "p")) && (br.testament == "n"))
                         {
@@ -1672,13 +1309,12 @@ For other uses, please contact the respective copyright owners.</p>
                         if (isRtl)
                         {
                             texFile.WriteLine(@"\input{12pta5rtl}");
-                            texFile.WriteLine(@"\input{haiolartl}");
                         }
                         else
                         {
                             texFile.WriteLine(@"\input{12pta5}");
-                            texFile.WriteLine(@"\input{haiola}");
                         }
+                        texFile.WriteLine(@"\input{haiola}");
                         //texFile.WriteLine("\\newfontfamily\\{0}font[Script={1}]{2}{3}{4}", projectOptions.languageNameInEnglish.ToLowerInvariant(), projectOptions.script, LEFTBRACE, projectOptions.fontFamily, RIGHTBRACE);
                         texFile.WriteLine(@"\begin{document}");
                         texFile.WriteLine(@"\makeatletter\def\@evenhead{{\HeaderFont{\rightmark\hfil\thepage\hfil\leftmark}}}\def\@oddhead{{\HeaderFont{\rightmark\hfil\thepage\hfil\leftmark}}}\makeatother\mainmatter%");
@@ -1741,7 +1377,7 @@ For other uses, please contact the respective copyright owners.</p>
             if (String.IsNullOrEmpty(s))
                 return;
             // Check for latin text within RTL script and change direction of writing if necessary
-            s = DoBiDi(s);
+            // NOT NEEDED: s = DoBiDi(s);
             
             if (!ignore)
             {

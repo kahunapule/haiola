@@ -2104,6 +2104,7 @@ namespace WordSend
                                     break;
                                 case "xk":  // Not supported in OSIS.
                                 case "xq":  // Not useful for Sword modules.
+                                case "char":    // Not supported by Sword.
                                     // StartElementWithAttribute("q", "marker", "");
                                     break;
                                 case "sup":
