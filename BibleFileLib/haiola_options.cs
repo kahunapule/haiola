@@ -714,7 +714,20 @@ namespace WordSend
             set { ini.WriteString("paratext8Project", String.IsNullOrEmpty(value) ? String.Empty : value.Trim()); }
         }
 
-        public string paratextUniqueId
+		public string currentFingerprint
+		{
+			get { return ini.ReadString("currentFingerprint", String.Empty); }
+			set { ini.WriteString("currentFingerprint", value); }
+		}
+
+
+		public string builtFingerprint
+		{
+			get { return ini.ReadString("builtFingerprint", String.Empty); }
+			set { ini.WriteString("builtFingerprint", value); }
+		}
+
+		public string paratextUniqueId
         {
             get { return ini.ReadString("paratextUniqueId", String.Empty); }
             set { ini.WriteString("paratextUniqueId", value.Trim()); }

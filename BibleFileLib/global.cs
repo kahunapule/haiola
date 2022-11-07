@@ -36,6 +36,7 @@ namespace WordSend
         public ethnorecord er;
         public LanguageCodeInfo languageCodes;
         public string currentConversion;   // e.g., "Preprocessing" or "Portable HTML"
+        public Fingerprint thumb;
 
 
         public BoolStringDelegate GUIWriteString;
@@ -454,12 +455,13 @@ namespace WordSend
             DateTime fileDate;
             char nbsp = '\u00A0';
             string nobreakspace = nbsp.ToString();
-            fileDate = File.GetLastWriteTimeUtc(inputPath);
+/*            fileDate = File.GetLastWriteTimeUtc(inputPath);
             if (fileDate > sourceDate)
             {
                 sourceDate = fileDate;
                 projectOptions.SourceFileDate = sourceDate;
             }
+*/
             string input;
             // Read file into input
             // Instead of asking the user what the character encoding is, we guess that it is either
@@ -997,6 +999,49 @@ For other uses, please contact the respective copyright owners.</p>
             return result;
         }
 
+        public string HashMetadata()
+        {
+            thumb.HashString(projectOptions.languageId);
+            thumb.HashString(projectOptions.translationId);
+            thumb.HashString(projectOptions.translationTraditionalAbbreviation);
+            thumb.HashString(projectOptions.languageName);
+            thumb.HashString(projectOptions.languageNameInEnglish);
+            thumb.HashString(projectOptions.dialect);
+            thumb.HashString(projectOptions.vernacularTitle);
+            thumb.HashString(projectOptions.EnglishDescription);
+            thumb.HashString(projectOptions.lwcDescription);
+            thumb.HashString(projectOptions.copyrightOwner);
+            thumb.HashString(projectOptions.copyrightOwnerUrl);
+            thumb.HashString(projectOptions.copyrightYears);
+            thumb.HashString(projectOptions.copyrightOwnerAbbrev);
+            thumb.HashString(projectOptions.rightsStatement);
+            thumb.HashString(projectOptions.AudioCopyrightNotice);
+            thumb.HashString(projectOptions.rodCode);
+            thumb.HashString(projectOptions.ldml);
+            thumb.HashString(projectOptions.script);
+            thumb.HashString(projectOptions.country);
+            thumb.HashString(projectOptions.countryCode);
+            thumb.HashString(projectOptions.SwordName);
+            thumb.HashString(projectOptions.ObsoleteSwordName);
+            thumb.HashString(projectOptions.homeLink);
+            thumb.HashString(projectOptions.goText);
+            thumb.HashString(projectOptions.promoHtml);
+            thumb.HashString(projectOptions.licenseHtml);
+            thumb.HashBool(projectOptions.privateProject);
+            thumb.HashBool(projectOptions.publicDomain);
+            thumb.HashBool(projectOptions.ccbyndnc);
+            thumb.HashBool(projectOptions.wbtverbatim);
+            thumb.HashBool(projectOptions.ccbync);
+            thumb.HashBool(projectOptions.ccbysa);
+            thumb.HashBool(projectOptions.ccby);
+            thumb.HashBool(projectOptions.ccbynd);
+            thumb.HashBool(projectOptions.otherLicense);
+            thumb.HashBool(projectOptions.allRightsReserved);
+            thumb.HashBool(projectOptions.anonymous);
+            thumb.HashBool(projectOptions.silentCopyright);
+            return thumb.Finalize();
+        }
+
         /// <summary>
         /// Examines file(s) in the named directory to determine what sort of input files are there based on their
         /// preambles, and to a lesser extent, on their suffixes. If the input is USX, it is expected to be in a DBL
@@ -1011,6 +1056,9 @@ For other uses, please contact the respective copyright owners.</p>
             string s;
             string suffix;
             int i;
+            DateTime fileDate;
+            sourceDate = DateTime.MinValue;
+            thumb = new Fingerprint();
 
             try
             {
@@ -1032,7 +1080,8 @@ For other uses, please contact the respective copyright owners.</p>
                     }
                 }
                 fileNames = Directory.GetFiles(dirName);
-                for (i = 0; (i < fileNames.Length) && (result == String.Empty); i++)
+                Array.Sort(fileNames);
+                for (i = 0; (i < fileNames.Length) /*&& (result == String.Empty) thumbprint at all files */; i++)
                 {
                     string fileName = fileNames[i];
                     if (File.Exists(fileName))
@@ -1041,6 +1090,12 @@ For other uses, please contact the respective copyright owners.</p>
                         if (!".zip .bak .lds .ssf .dbg .wdl .sty .htm .kb2 . html .css .swp .id .dic .ldml .json .vrs .ini .csv .tsv .cct".Contains(suffix)
                                 && !fileName.EndsWith("~"))
                         {
+                            fileDate = File.GetLastWriteTimeUtc(fileName);
+                            if (fileDate > sourceDate)
+                            {
+                                sourceDate = fileDate;
+                                projectOptions.SourceFileDate = sourceDate;
+                            }
                             s = ReadFirstLines(fileName);
                             if (!String.IsNullOrEmpty(s))
                             {
@@ -1052,6 +1107,7 @@ For other uses, please contact the respective copyright owners.</p>
                                     result = "usx";
                                 else if (s.Contains("<osis"))
                                     result = "osis";
+                                thumb.HashFile(fileName);
                             }
                         }
                     }
@@ -1068,6 +1124,13 @@ For other uses, please contact the respective copyright owners.</p>
                         result = GetSourceKind(subdirectoryEntries[i]);
                     }
                 }
+                projectOptions.currentFingerprint = HashMetadata();
+                if ((projectOptions.currentFingerprint != projectOptions.builtFingerprint) && (sourceDate > projectOptions.lastRunDate))
+                {
+                    projectOptions.contentUpdateDate = sourceDate;
+                }
+
+
 
             }
             catch (Exception ex)
@@ -1361,12 +1424,23 @@ For other uses, please contact the respective copyright owners.</p>
             string source = projectOptions.customSourcePath;
             string sourceKind = GetSourceKind(source);
             fileDate = File.GetLastWriteTimeUtc(source);
-            sourceDate = projectOptions.SourceFileDate;
             if (fileDate > projectOptions.SourceFileDate)
             {
-                sourceDate = fileDate;
-                projectOptions.SourceFileDate = sourceDate;
+                projectOptions.SourceFileDate = fileDate;
             }
+            sourceDate = projectOptions.SourceFileDate;
+
+            if ((projectOptions.currentFingerprint == projectOptions.builtFingerprint) && !rebuild)
+            {
+                Logit.WriteLine("Skipping up-to-date project " + source);
+                return true;
+            }
+
+            Utils.DeleteDirectory(Path.Combine(outputProjectDirectory, "usfx"));
+            Utils.DeleteDirectory(Path.Combine(outputProjectDirectory, "usfm1"));
+            Utils.DeleteDirectory(Path.Combine(outputProjectDirectory, "sfm"));
+            Utils.DeleteDirectory(Path.Combine(outputProjectDirectory, "extendedusfm"));
+            Utils.DeleteDirectory(Path.Combine(outputProjectDirectory, "usfm"));
 
             switch (sourceKind)
             {

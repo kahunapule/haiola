@@ -2614,6 +2614,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                     case "sig":
                                     case "bd":
                                     case "it":
+                                    case "em":
                                     case "bdit":
                                     case "sc":
                                     case "no":
@@ -2815,6 +2816,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                     case "sig":
                                     case "bd":
                                     case "it":
+                                    case "em":
                                     case "bdit":
                                     case "sc":
                                     case "no":

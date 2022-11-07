@@ -1744,6 +1744,112 @@ their generosity, people like you can open up the Bible and hear from God no mat
         private string eBibleCertified = @"/home/kahunapule/sync/doc/Electronic Scripture Publishing/eBible.org_certified.jpg";
         public string certified = null;
 
+ 
+        public string FindSource(string projDirName)
+        {
+            globe.SetcurrentProject(projDirName);
+            string source = string.Empty;
+            if (!String.IsNullOrEmpty(globe.GetSourceKind(globe.projectOptions.customSourcePath)))
+                return globe.projectOptions.customSourcePath;
+            if (!String.IsNullOrEmpty(globe.projectOptions.paratext8Project))
+            {
+                source = Path.Combine(globe.paratext8ProjectsDir, globe.projectOptions.paratext8Project);
+                if (Directory.Exists(source))
+                {
+                    globe.projectOptions.customSourcePath = source;
+                    globe.projectOptions.Write();
+                    return source;
+                }
+            }
+            if (!String.IsNullOrEmpty(globe.projectOptions.paratextProject))
+            {
+                source = Path.Combine(globe.paratextProjectsDir, globe.projectOptions.paratextProject);
+                if (Directory.Exists(source))
+                {
+                    globe.projectOptions.customSourcePath = source;
+                    globe.projectOptions.Write();
+                    return source;
+                }
+            }
+            source = Path.Combine(globe.inputProjectDirectory, "Source");
+            if (Directory.Exists(source))
+            {
+                globe.projectOptions.customSourcePath = source;
+                globe.projectOptions.Write();
+                return source;
+            }
+            else
+            {
+                source = Path.Combine(globe.inputProjectDirectory, "usfx");
+                if (Directory.Exists(source))
+                {
+                    globe.projectOptions.customSourcePath = source;
+                    globe.projectOptions.Write();
+                    return source;
+                }
+                else
+                {
+                    source = Path.Combine(globe.inputProjectDirectory, "usx");
+                    if (Directory.Exists(source))
+                    {
+                        globe.projectOptions.customSourcePath = source;
+                        globe.projectOptions.Write();
+                        return source;
+                    }
+                }
+            }
+            return string.Empty;
+        }
+
+
+
+        ArrayList toDoList;
+        ArrayList laterList;
+        ArrayList doFirstList;
+        private class ProjectEntry
+        {
+            public string name;
+            public string depends;
+
+            /// <summary>
+            /// Initialize this projectEntry Instance with the given name and the name of the project this project depends on.
+            /// </summary>
+            /// <param name="n">This project's name</param>
+            /// <param name="d">Name of the project this project depends on, if any.</param>
+            public ProjectEntry(string n, string d)
+            {
+                name = n;
+                depends = d;
+            }
+        }
+
+        public class toDoSorter : IComparer
+        {
+            // Calls CaseInsensitiveComparer.Compare with the parameters reversed.
+            int IComparer.Compare(Object x, Object y)
+            {
+                ProjectEntry a = (ProjectEntry)x;
+                ProjectEntry b = (ProjectEntry)y;
+                return ((new CaseInsensitiveComparer()).Compare(a.name, b.name));
+            }
+        }
+
+
+        private void InsertProjectEntry(ProjectEntry pe)
+        {
+            if (string.IsNullOrEmpty(pe.depends))
+            {
+                toDoList.Add(pe);
+            }
+            else
+            {
+                laterList.Add(pe);
+            }
+        }
+
+        public Ethnologue eth;
+
+
         /// <summary>
         /// Take the project input (exactly one of USFM, USFX, or USX) and create
         /// the distribution formats we need.
@@ -1755,8 +1861,11 @@ their generosity, people like you can open up the Bible and hear from God no mat
             Logit.UpdateStatus = updateConversionProgress;
 
             globe.SetcurrentProject(projDirName);
-        	globe.projectXiniPath = Path.Combine(globe.inputProjectDirectory, "options.xini");
+            globe.projectXiniPath = Path.Combine(globe.inputProjectDirectory, "options.xini");
             displayOptions();
+
+            Fingerprint thumb = new Fingerprint();
+
             if (!String.IsNullOrEmpty(globe.projectOptions.dependsOn))
             {
                 if (fileHelper.isLocked(Path.Combine(globe.inputDirectory, globe.projectOptions.dependsOn)))
@@ -1799,22 +1908,15 @@ their generosity, people like you can open up the Bible and hear from God no mat
             globe.projectOptions.allowedBookList = sr.ReadToEnd();
             sr.Close();
 
-            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "usfx"));
-            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "usfm1"));
-            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "sfm"));
-            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "extendedusfm"));
-            Utils.DeleteDirectory(Path.Combine(globe.outputProjectDirectory, "usfm"));
-
-
             if (!globe.GetSource())
             {
                 Logit.WriteError("No source directory found for " + projDirName + "!");
                 fileHelper.unlockProject();
                 return;
             }
-            if ((globe.projectOptions.lastRunDate > globe.projectOptions.SourceFileDate) && !globe.rebuild)
+            if ((globe.projectOptions.currentFingerprint == globe.projectOptions.builtFingerprint) && !globe.rebuild)
             {
-                Logit.WriteLine("Skipping up to date project " + projDirName + " "+globe.projectOptions.lastRunDate.ToString()+">"+globe.projectOptions.SourceFileDate.ToString());
+                Logit.WriteLine("Skipping up-to-date project " + projDirName + " built: " + globe.projectOptions.lastRunDate.ToString());
                 globe.projectOptions.done = true;
                 globe.projectOptions.Write();
                 fileHelper.unlockProject();
@@ -1937,7 +2039,10 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 globe.projectOptions.done = true;
                 globe.projectOptions.selected = !globe.projectOptions.lastRunResult;
                 if (globe.projectOptions.lastRunResult)
+                {
                     globe.projectOptions.lastRunDate = DateTime.UtcNow;
+                    globe.projectOptions.builtFingerprint = globe.projectOptions.currentFingerprint;
+                }
                 else
                     globe.projectOptions.lastRunDate = DateTime.MinValue;
                 globe.projectOptions.Write();
@@ -1945,110 +2050,6 @@ their generosity, people like you can open up the Bible and hear from God no mat
             fileHelper.unlockProject();
             Application.DoEvents();
         }
-
-        public string FindSource(string projDirName)
-        {
-            globe.SetcurrentProject(projDirName);
-            string source = string.Empty;
-            if (!String.IsNullOrEmpty(globe.GetSourceKind(globe.projectOptions.customSourcePath)))
-                return globe.projectOptions.customSourcePath;
-            if (!String.IsNullOrEmpty(globe.projectOptions.paratext8Project))
-            {
-                source = Path.Combine(globe.paratext8ProjectsDir, globe.projectOptions.paratext8Project);
-                if (Directory.Exists(source))
-                {
-                    globe.projectOptions.customSourcePath = source;
-                    globe.projectOptions.Write();
-                    return source;
-                }
-            }
-            if (!String.IsNullOrEmpty(globe.projectOptions.paratextProject))
-            {
-                source = Path.Combine(globe.paratextProjectsDir, globe.projectOptions.paratextProject);
-                if (Directory.Exists(source))
-                {
-                    globe.projectOptions.customSourcePath = source;
-                    globe.projectOptions.Write();
-                    return source;
-                }
-            }
-            source = Path.Combine(globe.inputProjectDirectory, "Source");
-            if (Directory.Exists(source))
-            {
-                globe.projectOptions.customSourcePath = source;
-                globe.projectOptions.Write();
-                return source;
-            }
-            else
-            {
-                source = Path.Combine(globe.inputProjectDirectory, "usfx");
-                if (Directory.Exists(source))
-                {
-                    globe.projectOptions.customSourcePath = source;
-                    globe.projectOptions.Write();
-                    return source;
-                }
-                else
-                {
-                    source = Path.Combine(globe.inputProjectDirectory, "usx");
-                    if (Directory.Exists(source))
-                    {
-                        globe.projectOptions.customSourcePath = source;
-                        globe.projectOptions.Write();
-                        return source;
-                    }
-                }
-            }
-            return string.Empty;
-        }
-
-
-
-        ArrayList toDoList;
-        ArrayList laterList;
-        ArrayList doFirstList;
-        private class ProjectEntry
-        {
-            public string name;
-            public string depends;
-
-            /// <summary>
-            /// Initialize this projectEntry Instance with the given name and the name of the project this project depends on.
-            /// </summary>
-            /// <param name="n">This project's name</param>
-            /// <param name="d">Name of the project this project depends on, if any.</param>
-            public ProjectEntry(string n, string d)
-            {
-                name = n;
-                depends = d;
-            }
-        }
-
-        public class toDoSorter : IComparer
-        {
-            // Calls CaseInsensitiveComparer.Compare with the parameters reversed.
-            int IComparer.Compare(Object x, Object y)
-            {
-                ProjectEntry a = (ProjectEntry)x;
-                ProjectEntry b = (ProjectEntry)y;
-                return ((new CaseInsensitiveComparer()).Compare(a.name, b.name));
-            }
-        }
-
-
-        private void InsertProjectEntry(ProjectEntry pe)
-        {
-            if (string.IsNullOrEmpty(pe.depends))
-            {
-                toDoList.Add(pe);
-            }
-            else
-            {
-                laterList.Add(pe);
-            }
-        }
-
-        public Ethnologue eth;
 
 
         private void ProcessAllMarked()

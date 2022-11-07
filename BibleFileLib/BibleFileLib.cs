@@ -250,7 +250,7 @@ namespace WordSend
             }
 			OutputFile.Write(marker);
 			lineLength += marker.Length;
-			if (level != "")
+			if ((level != "") && !(marker.EndsWith(level)))
 			{
 				OutputFile.Write("{0}", level);
 				lineLength += level.Length;
@@ -6477,7 +6477,7 @@ namespace WordSend
 			Stack sfmPairStack = new Stack();
 			bool firstCol = true;
 			bool ignore = false;
-			bool afterBlankLine = false;
+			//bool afterBlankLine = false;
             bool stackTag = false;
             bool needNoteTextMarker = false;
             bool needXrefTextMarker = false;
@@ -6885,13 +6885,14 @@ namespace WordSend
                                     }
                                 }
                                 usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag());
-                                afterBlankLine = true;
+                                //afterBlankLine = true;
                                 break;
                             case "b":
-                                afterBlankLine = true;
+                                //afterBlankLine = true;
                                 usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag());
                                 break;
                             case "q":
+                                /*
                                 if (afterBlankLine)
                                 {
                                     if (quoteLevel > 0)
@@ -6909,6 +6910,7 @@ namespace WordSend
                                 {
                                     afterBlankLine = true;
                                 }
+                                */
                                 usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag());
                                 break;
                             case "languageCode":
@@ -7407,7 +7409,7 @@ namespace WordSend
                         s = usfxFile.Value;
                         if (!ignore)
                         {
-                            afterBlankLine = false;
+                            //afterBlankLine = false;
                             usfmFile.WriteString(usfxFile.Value);
                         }
                     }

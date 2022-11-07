@@ -115,8 +115,11 @@
     <Compile Include="bookmatch.cs" />
     <Compile Include="ChapterInfo.cs" />
     <Compile Include="CreateIndex.cs" />
+    <Compile Include="fingerprint.cs" />
     <Compile Include="global.cs" />
+    <Compile Include="processoneproject.cs" />
     <Compile Include="readssf.cs" />
+    <Compile Include="Sapphire.cs" />
     <Compile Include="usfx2BrowserBible.cs" />
     <Compile Include="usfx2sile.cs" />
     <Compile Include="Versification.cs" />

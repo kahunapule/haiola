@@ -1127,7 +1127,6 @@ For other uses, please contact the respective copyright owners.</p>
             texFile.WriteLine("\\newcommand{0}\\TinyFontSize{1}{0}{2}pt{1}", LEFTBRACE, RIGHTBRACE, Math.Max(6.8, pointSize * 2.0 / 3.0));
             if (useColor)
             {
-                texFile.WriteLine("\\newcommand{0}\\HeaderFont{1}{0}\\font\\Y=\"\\OtherFontFace:color=000080\" at {2}pt \\Y {1}", LEFTBRACE, RIGHTBRACE, headerPointSize);
                 texFile.WriteLine("\\newcommand{0}\\FnMarkFont{1}{0}\\font\\Z=\"FreeSerif:color=000080\" at {2}pt \\Z {1}", LEFTBRACE, RIGHTBRACE, pointSize * 0.75);
                 texFile.WriteLine(@"\newcommand{\IntroColor}{:color=000080}");
                 texFile.WriteLine(@"\newcommand{\WJColor}{:color=ff0000}");
@@ -1138,7 +1137,6 @@ For other uses, please contact the respective copyright owners.</p>
             }
             else
             {
-                texFile.WriteLine("\\newcommand{0}\\HeaderFont{1}{0}\\font\\Y=\"\\OtherFontFace:color=000000\" at {2}pt \\Y {1}", LEFTBRACE, RIGHTBRACE, headerPointSize);
                 texFile.WriteLine("\\newcommand{0}\\FnMarkFont{1}{0}\\font\\Z=\"FreeSerif:color=000000\" at {2}pt \\Z {1}", LEFTBRACE, RIGHTBRACE, pointSize * 0.75);
                 texFile.WriteLine(@"\newcommand{\IntroColor}{:color=000000}");
                 texFile.WriteLine(@"\newcommand{\WJColor}{:color=000000}");
@@ -1187,18 +1185,18 @@ For other uses, please contact the respective copyright owners.</p>
                 texFile.WriteLine("\\XeTeXlinebreaklocale \"{0}\"", shortLangId);
                 texFile.WriteLine(@"\XeTeXlinebreakskip = 0pt plus 1pt minus 0.1pt");
                 texFile.WriteLine(@"\XeTeXlinebreakpenalty = 10");
-                texFile.WriteLine("\\def\\ScriptureFontFace{0}{1}{2}%", LEFTBRACE, preferredFont, RIGHTBRACE);
-                texFile.WriteLine("\\def\\OtherFontFace{0}{1}{2}%", LEFTBRACE, projectOptions.headerFooterFont, RIGHTBRACE);
-                if (projectOptions.commonChars)
-                    texFile.WriteLine("\\def\\HeaderFontFace{0}{1}{2}%", LEFTBRACE, projectOptions.headerFooterFont, RIGHTBRACE);
-                else
-                    texFile.WriteLine("\\def\\HeaderFontFace{0}{1}{2}%", LEFTBRACE, preferredFont, RIGHTBRACE);
+                texFile.WriteLine("\\newcommand\\ScriptureFontFace{0}{1}{2}%", LEFTBRACE, preferredFont, RIGHTBRACE);
+                texFile.WriteLine("\\newcommand\\OtherFontFace{0}{1}{2}%", LEFTBRACE, projectOptions.headerFooterFont, RIGHTBRACE);
+                texFile.WriteLine("\\newcommand\\HeaderFontFace{0}{1}{2}%", LEFTBRACE, projectOptions.headerFooterFont, RIGHTBRACE);
                 texFile.Write(@"\input{");
                 texFile.Write(formattingFileName);
                 texFile.WriteLine(@"}%");
                 texFile.WriteLine(@"\input{haiola}%");
                 texFile.WriteLine(@"\begin{document}%");
-                texFile.WriteLine(@"\makeatletter\def\@evenhead{{\HeaderFont{\rightmark\hfil\thepage\hfil\leftmark}}}\def\@oddhead{{\HeaderFont{\rightmark\hfil\thepage\hfil\leftmark}}}\makeatother\frontmatter\pagenumbering{roman}%");
+                if (isRtl)
+                    texFile.WriteLine(@"\makeatletter\def\@evenhead{{\HDRF\HeaderFont\leftmark\hfil\thepage\hfil\rightmark}}\def\@oddhead{{\HDRF\HeaderFont\leftmark\hfil\thepage\hfil\rightmark}}\makeatother\frontmatter\pagenumbering{roman}%");
+                else
+                    texFile.WriteLine(@"\makeatletter\def\@evenhead{{\HDRF\HeaderFont\rightmark\hfil\thepage\hfil\leftmark}}\def\@oddhead{{\HDRF\HeaderFont\rightmark\hfil\thepage\hfil\leftmark}}\makeatother\frontmatter\pagenumbering{roman}%");
 
                 string coverFile = Path.Combine(projectInputDir, "insidecover.png");
                 string coverDestination = Path.Combine(texDir, "cover.png");
@@ -1304,8 +1302,22 @@ For other uses, please contact the respective copyright owners.</p>
                         texFile.WriteLine("\\XeTeXlinebreaklocale \"{0}\"", shortLangId);
                         texFile.WriteLine(@"\XeTeXlinebreakskip = 0pt plus 1pt minus 0.1pt");
                         texFile.WriteLine(@"\XeTeXlinebreakpenalty = 10");
-                        texFile.WriteLine("\\def\\ScriptureFontFace{0}{1}{2}", LEFTBRACE, preferredFont, RIGHTBRACE);
-                        texFile.WriteLine("\\def\\OtherFontFace{0}{1}{2}", LEFTBRACE, preferredFont, RIGHTBRACE);
+                        /*
+                        if (projectOptions.script == "Latin")
+                        {
+                        */
+                            texFile.WriteLine("\\newcommand\\ScriptureFontFace{0}{1}{2}%", LEFTBRACE, preferredFont, RIGHTBRACE);
+                            texFile.WriteLine("\\newcommand\\OtherFontFace{0}{1}{2}%", LEFTBRACE, projectOptions.headerFooterFont, RIGHTBRACE);
+                            texFile.WriteLine("\\newcommand\\HeaderFontFace{0}{1}{2}%", LEFTBRACE, projectOptions.headerFooterFont, RIGHTBRACE);
+                        /*
+                        }
+                        else
+                        {
+                            texFile.WriteLine("\\newcommand\\HeaderFontFace{0}{1}{2}%", LEFTBRACE, "Noto Sans", RIGHTBRACE);
+                            texFile.WriteLine("\\newcommand\\ScriptureFontFace{0}{1}{2}%", LEFTBRACE, "Noto Serif", RIGHTBRACE);
+                            texFile.WriteLine("\\newcommand\\OtherFontFace{0}{1}{2}%", LEFTBRACE, "Noto Sans", RIGHTBRACE);
+                        }
+                        */
                         if (isRtl)
                         {
                             texFile.WriteLine(@"\input{12pta5rtl}");
@@ -1317,7 +1329,10 @@ For other uses, please contact the respective copyright owners.</p>
                         texFile.WriteLine(@"\input{haiola}");
                         //texFile.WriteLine("\\newfontfamily\\{0}font[Script={1}]{2}{3}{4}", projectOptions.languageNameInEnglish.ToLowerInvariant(), projectOptions.script, LEFTBRACE, projectOptions.fontFamily, RIGHTBRACE);
                         texFile.WriteLine(@"\begin{document}");
-                        texFile.WriteLine(@"\makeatletter\def\@evenhead{{\HeaderFont{\rightmark\hfil\thepage\hfil\leftmark}}}\def\@oddhead{{\HeaderFont{\rightmark\hfil\thepage\hfil\leftmark}}}\makeatother\mainmatter%");
+                        if (isRtl)
+                            texFile.WriteLine(@"\makeatletter\def\@evenhead{{\HDRF\HeaderFont\leftmark\hfil\thepage\hfil\rightmark}}\def\@oddhead{{\HDRF\HeaderFont\leftmark\hfil\thepage\hfil\rightmark}}\makeatother\frontmatter\pagenumbering{roman}%");
+                        else
+                            texFile.WriteLine(@"\makeatletter\def\@evenhead{{\HDRF\HeaderFont\rightmark\hfil\thepage\hfil\leftmark}}\def\@oddhead{{\HDRF\HeaderFont\rightmark\hfil\thepage\hfil\leftmark}}\makeatother\frontmatter\pagenumbering{roman}%");
                         texFile.WriteLine("\\input{0}{1}_src{2}", LEFTBRACE, br.tla, RIGHTBRACE);
                         texFile.WriteLine(@"\vfill\eject");
                         texFile.WriteLine("\\input{0}CPR{1}", LEFTBRACE, RIGHTBRACE);
