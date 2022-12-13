@@ -1,3 +1,12 @@
+\newcommand{\ThisFont}{\ScriptureFontFace}
+\newcommand{\FontSize}{\TextSize}
+\newcommand{\FontColor}{\TextColor}
+\newcommand{\Italicize}{}
+\newcommand{\Bold}{}
+\newcommand{\SMCP}{-smcp}
+\newcommand{\SetFont}{\font\ZZZ="\ThisFont\Bold\Italicize \FontColor\SMCP" at \FontSize \ZZZ}
+\newcommand{\HDRF}{\protect\renewcommand{\ThisFont}{\OtherFontFace}\protect\renewcommand{\Italicize}{}\protect\renewcommand{\Bold}{}\protect\renewcommand{\SMCP}{-smcp}\protect\renewcommand{\FontColor}{\BlueColor}\protect\renewcommand{\FontSize}{\TinyFontSize}}
+\newcommand{\HeaderFont}{\font\ZZZZ="\OtherFontFace\BlueColor" at \TinyFontSize \ZZZZ}
 \HeaderFont
 \pagestyle{myheadings}
 \makeatletter
@@ -7,7 +16,7 @@
 \makeatother
 \linespread{0.75}
 \sloppy\hyphenpenalty=2000
-\renewcommand{\thepage}{\HeaderFont\arabic{page}}
+\renewcommand{\thepage}{\arabic{page}}
 \renewcommand\thesection{}
 \makeatletter
 \renewcommand{\@makefnmark}{\hbox{\raisebox{2pt}{\FnMarkFont{\@thefnmark}}}}
@@ -18,24 +27,18 @@
 \newcommand{\IndentC}{4em}
 \newcommand{\IndentD}{5em}
 \newcommand{\IndentE}{6em}
-\newcommand{\ThisFont}{\ScriptureFontFace}
 \newcommand{\TempFace}{\OtherFontFace}
-\newcommand{\GRC}{\renewcommand{\TempFace}{Gentium Plus}\SetFace}
-\newcommand{\HEB}{\renewcommand{\TempFace}{Ezra SIL}\SetFace}
-\newcommand{\ARB}{\renewcommand{\TempFace}{Amiri}\SetFace}
+\newcommand{\NormalFace}{\renewcommand{\ThisFont}{\ScriptureFontFace}\SetFont}
+\newcommand{\GRC}{\renewcommand{\ThisFont}{Gentium Plus}\SetFont}
+\newcommand{\HEB}{\renewcommand{\ThisFont}{Ezra SIL}\SetFont}
+\newcommand{\ARB}{\renewcommand{\ThisFont}{Amiri}\SetFont}
 \newcommand{\LatinFont}{\renewcommand{\ThisFont}{FreeSerif}\SetFont}
 \newcommand{\ChineseFont}{\renewcommand{\ThisFont}{Bitstream Cyberbit}\SetFont}
 \newcommand{\ArabicFont}{\renewcommand{\ThisFont}{Amiri}\SetFont}
 \newcommand{\GentiumFont}{\renewcommand{\ThisFont}{Gentium Plus}\SetFont}
 \newcommand{\SymbolFont}{\renewcommand{\ThisFont}{FreeSerif}\SetFont}
-\newcommand{\Bold}{}
-\newcommand{\Italicize}{}
-\newcommand{\FontSize}{\TextSize}
-\newcommand{\FontColor}{\TextColor}
-\newcommand{\SMCP}{-smcp}
 \newcommand{\SmallCaps}{\renewcommand{\SMCP}{,+smcp}}
 \newcommand{\NormalCaps}{\renewcommand{\SMCP}{,-smcp}}
-\newcommand{\SetFont}{\font\Z="\ThisFont\Bold\Italicize \FontColor\SMCP" at \FontSize \Z }
 \newcommand{\SetFace}{\font\V="\TempFace\Bold\Italicize \FontColor\SMCP" at \FontSize \V }
 \newcommand{\ITB}{\renewcommand{\Italicize}{/I}\SetFont}
 \newcommand{\ITE}{\renewcommand{\Italicize}{}\SetFont}
@@ -50,19 +53,19 @@
 \newcommand{\NormalFont}{\renewcommand{\ThisFont}{\ScriptureFontFace}\renewcommand{\Bold}{}\renewcommand{\Italicize}{}\renewcommand{\FontSize}{\TextSize}\Black}
 \NormalFont
 \newcommand{\rnghdrfnt}{\renewcommand{\ThisFont}{\HeaderFontFace}\renewcommand{\Bold}{}\renewcommand{\Italicize}{}\renewcommand{\FontSize}{\TinyFontSize}\Blue}
-\renewcommand{\cfttoctitlefont}{\font\Z="\ScriptureFontFace:color="000000" at \MTBSize \Z }
-\renewcommand{\cftchapfont}{\font\Z="\ScriptureFontFace:color="000000" at \TextSize \Z }
-\renewcommand{\cftsecfont}{\font\Z="\ScriptureFontFace:color="000000" at \TextSize \Z }
-\renewcommand{\cftchappagefont}{\font\Z="\ScriptureFontFace:color="000000" at \TextSize \Z }
-\renewcommand{\cftsecpagefont}{\font\Z="\ScriptureFontFace:color="000000" at \TextSize \Z }
+\renewcommand{\cfttoctitlefont}{\font\ZZA="\ScriptureFontFace:color="000000" at \MTBSize \ZZA }
+\renewcommand{\cftchapfont}{\font\ZZB="\ScriptureFontFace:color="000000" at \TextSize \ZZB }
+\renewcommand{\cftsecfont}{\font\ZZC="\ScriptureFontFace:color="000000" at \TextSize \ZZC }
+\renewcommand{\cftchappagefont}{\font\ZZD="\ScriptureFontFace:color="000000" at \TextSize \ZZD }
+\renewcommand{\cftsecpagefont}{\font\ZZE="\ScriptureFontFace:color="000000" at \TextSize \ZZE }
 \newcommand{\ShortTitle}[1]{\vfill\eject\clearpage\par\def\webbook{#1}\setcounter{footnote}{0}\def\webchap{}\section[#1]{ }}
-\newcommand{\PeriphTitle}[1]{\vfill\eject\clearpage\par\def\webbook{#1}\setcounter{footnote}{0}\def\webchap{}\markboth{\HeaderFont\webbook}{\HeaderFont\webbook}\NormalFont}
+\newcommand{\PeriphTitle}[1]{\vfill\eject\clearpage\par\def\webbook{#1}\setcounter{footnote}{0}\def\webchap{}\markboth{\webbook}{\webbook}\NormalFont}
 \newcommand{\PsalmChap}[1]{{\vspace{1.5ex plus 3ex}\centering\renewcommand{\FontSize}{\MTSize}\BDB\parindent=0mm #1\nopagebreak\par}\def\webchap{#1:}}
 \newcommand{\PoetryChap}[1]{{\vspace{1.5ex plus 3ex}\centering\renewcommand{\FontSize}{\MTSize}\BDB\parindent=0mm #1\nopagebreak\par}\def\webchap{#1:}}
 \newcommand{\Chap}[1]{{\vspace{1.5ex plus 3ex}\centering\renewcommand{\FontSize}{\MTSize}\BDB\parindent=0mm #1\nopagebreak\par}\def\webchap{#1:}\nopagebreak}
 \newcommand{\OneChap}{\vspace{1.5ex plus 3ex}\def\webchap{}}
 \newcommand{\ChapOne}[1]{\vspace{1.5ex plus 3ex}\def\webchap{#1:}}
-\newcommand{\VS}[1]{{\renewcommand{\FontSize}{\VerseFontSize}\Blue{\raisebox{\RaiseVerse}{#1}~}}\markboth{\HeaderFont\webbook\ \webchap #1}{\HeaderFont\webbook\ \webchap #1}\NormalFont}	% Verse number
+\newcommand{\VS}[1]{{\renewcommand{\FontSize}{\VerseFontSize}\Blue{\raisebox{\RaiseVerse}{#1}~}}\markboth{\webbook\ \webchap #1}{\webbook\ \webchap #1}\NormalFont}	% Verse number
 \newcommand{\VP}[1]{{\renewcommand{\FontSize}{\VerseFontSize}\Blue{\raisebox{\RaiseVerse}{(#1)}~}}\NormalFont}	% Verse number published
 \newcommand{\VA}[1]{{\renewcommand{\FontSize}{\VerseFontSize}\Blue{\raisebox{\RaiseVerse}{[#1]}~}}\NormalFont}	% Alternate verse number
 \newcommand{\FV}[1]{{\renewcommand{\FontSize}{\VerseFontSize}\Blue{\raisebox{\RaiseVerse}{#1}~}}\NormalFont}	% Verse number in footnote
@@ -140,8 +143,8 @@
 \newcommand{\BB}{\NormalFont\vspace{2ex}}
 \newcommand{\IB}{\Blue}
 \newcommand{\QS}{\hfill }
-\newcommand{\SP}{\parindent=0mm\Blue\ITB\nopagebreak[3] }
-\newcommand{\SH}{\vspace{1ex plus 4ex}\renewcommand{\FontColor}{\IntroColor}\ITB\nopagebreak[4]}
+\newcommand{\SP}{\parindent=0mm\Blue\ITB\nopagebreak[3]}
+\newcommand{\SH}{\vspace{1ex plus 4ex}\renewcommand{\FontColor}{\IntroColor}\ITB\nopagebreak[3]}
 \newcommand{\SHB}{\vspace{1ex plus 4ex}\renewcommand{\FontColor}{\IntroColor}\ITB\nopagebreak[3]}
 \newcommand{\SHC}{\SHB\nopagebreak[3]}
 \newcommand{\SHD}{\SHB\nopagebreak[3]}
@@ -198,13 +201,13 @@
 \newcommand{\ADD}{\ITB}
 \newcommand{\BK}{\ITB}
 \newcommand{\DC}{}
-\newcommand{\K}[1]{\markboth{\HeaderFont\webbook\ #1}{\HeaderFont\webbook\ #1}\NormalFont\BDB #1}
+\newcommand{\K}[1]{\markboth{\webbook\ #1}{\webbook\ #1}\NormalFont\BDB #1}
 \newcommand{\LIT}{\RQ}
 \newcommand{\ND}{\SmallCaps}
 \newcommand{\ORD}[1]{$^#1$}
 \newcommand{\SLS}{\ITB}
 \newcommand{\TL}{\ITB}
-\newcommand{\EM}{\BDB}
+\newcommand{\EM}{\IT}
 \newcommand{\IT}{\ITB}
 \newcommand{\BDIT}{\BDB\IT}
 \newcommand{\NO}{\NormalFont}
@@ -219,6 +222,88 @@
 \newcommand{\WG}{}
 \newcommand{\WH}{}
 \newcommand{\HR}{\par \hrulefill }
-\setTransitionsFor{Hebrew}{\HEB}{\SetFont}
-\setTransitionsFor{Greek}{\GRC}{\SetFont}
-\setTransitionsFor{Arabic}{\ARB}{\SetFont}
+\newcommand{\SUP}{\textsuperscript}
+\setTransitionsFor{Hebrew}{\HEB}{\NormalFace}
+\setTransitionsFor{Greek}{\GRC}{\NormalFace}
+\setTransitionsFor{Arabic}{\ARB}{\NormalFace}
+\setTransitionsFor{ArabicExtendedA}{\ARB}{\NormalFace}
+\setTransitionsFor{ArabicExtendedB}{\ARB}{\NormalFace}
+\setTransitionsFor{ArabicSupplement}{\ARB}{\NormalFace}
+\setTransitionsFor{Latin}{\renewcommand{\ThisFont}{Noto Serif}\SetFont}{\NormalFace}
+\setTransitionsFor{BasicLatin}{\renewcommand{\ThisFont}{Noto Serif}\SetFont}{\NormalFace}
+\setTransitionsFor{LatinExtendedAdditional}{\renewcommand{\ThisFont}{Noto Serif}\SetFont}{\NormalFace}
+\setTransitionsFor{LatinExtendedA}{\renewcommand{\ThisFont}{Noto Serif}\SetFont}{\NormalFace}
+\setTransitionsFor{LatinExtendedB}{\renewcommand{\ThisFont}{Noto Serif}\SetFont}{\NormalFace}
+\setTransitionsFor{LatinExtendedC}{\renewcommand{\ThisFont}{Noto Serif}\SetFont}{\NormalFace}
+\setTransitionsFor{LatinExtendedE}{\renewcommand{\ThisFont}{Noto Serif}\SetFont}{\NormalFace}
+\setTransitionsFor{LatinExtendedF}{\renewcommand{\ThisFont}{Noto Serif}\SetFont}{\NormalFace}
+\setTransitionsFor{LatinExtendedG}{\renewcommand{\ThisFont}{Noto Serif}\SetFont}{\NormalFace}
+\setTransitionsFor{LatinSupplement}{\renewcommand{\ThisFont}{Noto Serif}\SetFont}{\NormalFace}
+\setTransitionsFor{GeneralPunctuation}{\renewcommand{\ThisFont}{DejaVu Serif}\SetFont}{\NormalFace}
+\setTransitionsFor{CJKCompatibility}{\renewcommand{\ThisFont}{Noto Sans CJK SC}\SetFont}{\NormalFace}
+\setTransitionsFor{CJKCompatibilityForms}{\renewcommand{\ThisFont}{Noto Sans CJK SC}\SetFont}{\NormalFace}
+\setTransitionsFor{CJKCombatibilityIdeographsSupplement}{\renewcommand{\ThisFont}{Noto Sans CJK SC}\SetFont}{\NormalFace}
+\setTransitionsFor{CJKRadicalsSupplement}{\renewcommand{\ThisFont}{Noto Sans CJK SC}\SetFont}{\NormalFace}
+\setTransitionsFor{CJKStrokes}{\renewcommand{\ThisFont}{Noto Sans CJK SC}\SetFont}{\NormalFace}
+\setTransitionsFor{CJKSymbolsAndPunctuation}{\renewcommand{\ThisFont}{Noto Sans CJK SC}\SetFont}{\NormalFace}
+\setTransitionsFor{CJKUnifiedIdeographs}{\renewcommand{\ThisFont}{Noto Sans CJK SC}\SetFont}{\NormalFace}
+\setTransitionsFor{CJKUnifiedIdeographsExtensionA}{\renewcommand{\ThisFont}{Noto Sans CJK SC}\SetFont}{\NormalFace}
+\setTransitionsFor{CJKUnifiedIdeographsExtensionB}{\renewcommand{\ThisFont}{Noto Sans CJK SC}\SetFont}{\NormalFace}
+\setTransitionsFor{CJKUnifiedIdeographsExtensionC}{\renewcommand{\ThisFont}{Noto Sans CJK SC}\SetFont}{\NormalFace}
+\setTransitionsFor{CJKUnifiedIdeographsExtensionD}{\renewcommand{\ThisFont}{Noto Sans CJK SC}\SetFont}{\NormalFace}
+\setTransitionsFor{CJKUnifiedIdeographsExtensionE}{\renewcommand{\ThisFont}{Noto Sans CJK SC}\SetFont}{\NormalFace}
+\setTransitionsFor{CJKUnifiedIdeographsExtensionF}{\renewcommand{\ThisFont}{Noto Sans CJK SC}\SetFont}{\NormalFace}
+\setTransitionsFor{CJKUnifiedIdeographsExtensionG}{\renewcommand{\ThisFont}{Noto Sans CJK SC}\SetFont}{\NormalFace}
+\setTransitionsFor{HalfwidthAndFullwidthForms}{\renewcommand{\ThisFont}{Noto Sans CJK SC}\SetFont}{\NormalFace}
+\setTransitionsFor{Syriac}{\renewcommand{\ThisFont}{Noto Serif Syriac}\SetFont}{\NormalFace}
+\setTransitionsFor{Thai}{\renewcommand{\ThisFont}{Noto Serif Thai}\SetFont}{\NormalFace}
+\setTransitionsFor{Chinese}{\renewcommand{\ThisFont}{Noto Serif CJK SC}\SetFont}{\NormalFace}
+\setTransitionsFor{Tamil}{\renewcommand{\ThisFont}{Noto Sans Tamil}\SetFont}{\NormalFace}
+\setTransitionsFor{Kannada}{\renewcommand{\ThisFont}{Noto Serif Kannada}\SetFont}{\NormalFace}
+\setTransitionsFor{Malayalam}{\renewcommand{\ThisFont}{Noto Sans Malayalam}\SetFont}{\NormalFace}
+\setTransitionsFor{Bengali}{\renewcommand{\ThisFont}{Noto Serif Bengali}\SetFont}{\NormalFace}
+\setTransitionsFor{Devanagari}{\renewcommand{\ThisFont}{Noto Sans Devanagari}\SetFont}{\NormalFace}
+\setTransitionsFor{Telugu}{\renewcommand{\ThisFont}{Noto Sans Telugu}\SetFont}{\NormalFace}
+\setTransitionsFor{Gurmukhi}{\renewcommand{\ThisFont}{Noto Sans Gurmukhi}\SetFont}{\NormalFace}
+\setTransitionsFor{Gujarati}{\renewcommand{\ThisFont}{Noto Sans Gujarati}\SetFont}{\NormalFace}
+\setTransitionsFor{Georgian}{\renewcommand{\ThisFont}{Noto Serif Georgian}\SetFont}{\NormalFace}
+\setTransitionsFor{Lao}{\renewcommand{\ThisFont}{Noto Sans Lao}\SetFont}{\NormalFace}
+\setTransitionsFor{Khmer}{\renewcommand{\ThisFont}{Noto Serif Khmer}\SetFont}{\NormalFace}
+\setTransitionsFor{Armenian}{\renewcommand{\ThisFont}{Noto Serif Armenian}\SetFont}{\NormalFace}
+\setTransitionsFor{Telugu}{\renewcommand{\ThisFont}{Noto Serif Telugu}\SetFont}{\NormalFace}
+\setTransitionsFor{Ethiopic}{\renewcommand{\ThisFont}{Noto Serif Ethiopic}\SetFont}{\NormalFace}
+\setTransitionsFor{EthiopicExtended}{\renewcommand{\ThisFont}{Noto Serif Ethiopic}\SetFont}{\NormalFace}
+\setTransitionsFor{Sinhala}{\renewcommand{\ThisFont}{Noto Serif Sinhala}\SetFont}{\NormalFace}
+\setTransitionsFor{Balinese}{\renewcommand{\ThisFont}{Noto Sans Balinese}\SetFont}{\NormalFace}
+\setTransitionsFor{Adlam}{\renewcommand{\ThisFont}{Noto Sans Adlam}\SetFont}{\NormalFace}
+\setTransitionsFor{Avestan}{\renewcommand{\ThisFont}{Noto Sans Avestan}\SetFont}{\NormalFace}
+\setTransitionsFor{Buhid}{\renewcommand{\ThisFont}{Noto Sans Buhid}\SetFont}{\NormalFace}
+\setTransitionsFor{Lisu}{\renewcommand{\ThisFont}{Noto Sans Lisu}\SetFont}{\NormalFace}
+\setTransitionsFor{Batak}{\renewcommand{\ThisFont}{Noto Sans Batak}\SetFont}{\NormalFace}
+\setTransitionsFor{Ahom}{\renewcommand{\ThisFont}{Noto Serif Ahom}\SetFont}{\NormalFace}
+\setTransitionsFor{Emoticons}{\renewcommand{\ThisFont}{Noto Emoji}\SetFont}{\NormalFace}
+\setTransitionsFor{TaiViet}{\renewcommand{\ThisFont}{Noto Sans Tai Viet}\SetFont}{\NormalFace}
+\setTransitionsFor{Oriya}{\renewcommand{\ThisFont}{Noto Sans Oriya}\SetFont}{\NormalFace}
+\setTransitionsFor{Sinhala}{\renewcommand{\ThisFont}{Noto Sans Sinhala}\SetFont}{\NormalFace}
+\setTransitionsFor{Myanmar}{\renewcommand{\ThisFont}{Noto Sans Myanmar}\SetFont}{\NormalFace}
+\setTransitionsFor{TamilSupplement}{\renewcommand{\ThisFont}{Noto Sans Tamil Supplement}\SetFont}{\NormalFace}
+\setTransitionsFor{SymbolsAndPictographsExtendedA}{\renewcommand{\ThisFont}{Noto Sans Symbols}\SetFont}{\NormalFace}
+\setTransitionsFor{Gothic}{\renewcommand{\ThisFont}{Noto Sans Gothic}\SetFont}{\NormalFace}
+\setTransitionsFor{MathematicalAlphanumericSymbols}{\renewcommand{\ThisFont}{Noto Sans Math}\SetFont}{\NormalFace}
+\setTransitionsFor{MathematicalOperators}{\renewcommand{\ThisFont}{Noto Sans Math}\SetFont}{\NormalFace}
+\setTransitionsFor{Samaritan}{\renewcommand{\ThisFont}{Noto Sans Samaritan}\SetFont}{\NormalFace}
+\setTransitionsFor{Cuneiform}{\renewcommand{\ThisFont}{Noto Sans Cuneiform}\SetFont}{\NormalFace}
+\setTransitionsFor{Javanese}{\renewcommand{\ThisFont}{Noto Sans Javanese}\SetFont}{\NormalFace}
+\setTransitionsFor{Carian}{\renewcommand{\ThisFont}{Noto Sans Carian}\SetFont}{\NormalFace}
+\setTransitionsFor{Tibetan}{\renewcommand{\ThisFont}{Noto Sans Tibetan}\SetFont}{\NormalFace}
+\setTransitionsFor{Deseret}{\renewcommand{\ThisFont}{Noto Sans Deseret}\SetFont}{\NormalFace}
+\setTransitionsFor{Cherokee}{\renewcommand{\ThisFont}{Noto Sans Cherokee}\SetFont}{\NormalFace}
+\setTransitionsFor{CherokeeSupplement}{\renewcommand{\ThisFont}{Noto Sans Cherokee}\SetFont}{\NormalFace}
+\setTransitionsFor{Thaana}{\renewcommand{\ThisFont}{Noto Sans Thaana}\SetFont}{\NormalFace}
+\setTransitionsFor{Multani}{\renewcommand{\ThisFont}{Noto Sans Multani}\SetFont}{\NormalFace}
+\setTransitionsFor{SoraSompeng}{\renewcommand{\ThisFont}{Noto Sans Sora Sompeng}\SetFont}{\NormalFace}
+\setTransitionsFor{OldTurkic}{\renewcommand{\ThisFont}{Noto Sans Old Turkic}\SetFont}{\NormalFace}
+\setTransitionsFor{Coptic}{\renewcommand{\ThisFont}{Noto Sans Coptic}\SetFont}{\NormalFace}
+\setTransitionsFor{Bhaiksuki}{\renewcommand{\ThisFont}{Noto Sans Bhaiksuki}\SetFont}{\NormalFace}
+\setTransitionsFor{LetterlikeSymbols}{\renewcommand{\ThisFont}{Noto Serif}\SetFont}{\NormalFace}
+\setTransitionsFor{Arrows}{\renewcommand{\ThisFont}{Noto Sans Symbols}\SetFont}{\NormalFace}

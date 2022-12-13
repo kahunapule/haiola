@@ -1216,6 +1216,12 @@
 			</xs:element>
 			<xs:element name="rq" type="pType"/>
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="xta" type="noteContents"/>
+			<xs:element name="jmp" type="pType">
+				<xs:annotation>
+					<xs:documentation>Jump linking marker to define anchors (landing targets), Scripture reference targets (link-href), Internet URLs (link-href), and/or link titles (link-title).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+
 		</xs:choice>
 		<xs:attribute default="+" name="caller" type="xs:string"/>
 		<xs:attribute ref="sfm"/>

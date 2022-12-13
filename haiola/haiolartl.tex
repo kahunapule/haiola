@@ -1,3 +1,12 @@
+\newcommand{\ThisFont}{\ScriptureFontFace}
+\newcommand{\FontSize}{\TextSize}
+\newcommand{\FontColor}{\TextColor}
+\newcommand{\Italicize}{}
+\newcommand{\Bold}{}
+\newcommand{\SMCP}{-smcp}
+\newcommand{\SetFont}{\font\ZZZ="\ThisFont\Bold\Italicize \FontColor\SMCP" at \FontSize \ZZZ}
+\newcommand{\HDRF}{\protect\renewcommand{\ThisFont}{\OtherFontFace}\protect\renewcommand{\Italicize}{}\protect\renewcommand{\Bold}{}\protect\renewcommand{\SMCP}{-smcp}\protect\renewcommand{\FontColor}{\BlueColor}\protect\renewcommand{\FontSize}{\TinyFontSize}}
+\newcommand{\HeaderFont}{\font\ZZZZ="\OtherFontFace\BlueColor" at \TinyFontSize \ZZZZ}
 \HeaderFont
 \pagestyle{myheadings}
 \makeatletter
@@ -18,7 +27,6 @@
 \newcommand{\IndentC}{4em}
 \newcommand{\IndentD}{5em}
 \newcommand{\IndentE}{6em}
-\newcommand{\ThisFont}{\ScriptureFontFace}
 \newcommand{\TempFace}{\OtherFontFace}
 \newcommand{\GRC}{\renewcommand{\TempFace}{Gentium Plus}\SetFace}
 \newcommand{\HEB}{\renewcommand{\TempFace}{Ezra SIL}\SetFace}
@@ -28,14 +36,8 @@
 \newcommand{\ArabicFont}{\renewcommand{\ThisFont}{Amiri}\SetFont}
 \newcommand{\GentiumFont}{\renewcommand{\ThisFont}{Gentium Plus}\SetFont}
 \newcommand{\SymbolFont}{\renewcommand{\ThisFont}{FreeSerif}\SetFont}
-\newcommand{\Bold}{}
-\newcommand{\Italicize}{}
-\newcommand{\FontSize}{\TextSize}
-\newcommand{\FontColor}{\TextColor}
-\newcommand{\SMCP}{-smcp}
 \newcommand{\SmallCaps}{\renewcommand{\SMCP}{,+smcp}}
 \newcommand{\NormalCaps}{\renewcommand{\SMCP}{,-smcp}}
-\newcommand{\SetFont}{\font\Z="\ThisFont\Bold\Italicize \FontColor\SMCP" at \FontSize \Z }
 \newcommand{\SetFace}{\font\V="\TempFace\Bold\Italicize \FontColor\SMCP" at \FontSize \V }
 \newcommand{\ITB}{\renewcommand{\Italicize}{/I}\SetFont}
 \newcommand{\ITE}{\renewcommand{\Italicize}{}\SetFont}
@@ -50,11 +52,11 @@
 \newcommand{\NormalFont}{\renewcommand{\ThisFont}{\ScriptureFontFace}\renewcommand{\Bold}{}\renewcommand{\Italicize}{}\renewcommand{\FontSize}{\TextSize}\Black}
 \NormalFont
 \newcommand{\rnghdrfnt}{\renewcommand{\ThisFont}{\HeaderFontFace}\renewcommand{\Bold}{}\renewcommand{\Italicize}{}\renewcommand{\FontSize}{\TinyFontSize}\Blue}
-\renewcommand{\cfttoctitlefont}{\font\Z="\ScriptureFontFace:color="000000" at \MTBSize \Z }
-\renewcommand{\cftchapfont}{\font\Z="\ScriptureFontFace:color="000000" at \TextSize \Z }
-\renewcommand{\cftsecfont}{\font\Z="\ScriptureFontFace:color="000000" at \TextSize \Z }
-\renewcommand{\cftchappagefont}{\font\Z="\ScriptureFontFace:color="000000" at \TextSize \Z }
-\renewcommand{\cftsecpagefont}{\font\Z="\ScriptureFontFace:color="000000" at \TextSize \Z }
+\renewcommand{\cfttoctitlefont}{\font\ZZA="\ScriptureFontFace:color="000000" at \MTBSize \ZZA }
+\renewcommand{\cftchapfont}{\font\ZZB="\ScriptureFontFace:color="000000" at \TextSize \ZZB }
+\renewcommand{\cftsecfont}{\font\ZZC="\ScriptureFontFace:color="000000" at \TextSize \ZZC }
+\renewcommand{\cftchappagefont}{\font\ZZD="\ScriptureFontFace:color="000000" at \TextSize \ZZD }
+\renewcommand{\cftsecpagefont}{\font\ZZE="\ScriptureFontFace:color="000000" at \TextSize \ZZE }
 \newcommand{\ShortTitle}[1]{\vfill\eject\clearpage\par\def\webbook{#1}\setcounter{footnote}{0}\def\webchap{}\section[#1]{ }}
 \newcommand{\PeriphTitle}[1]{\vfill\eject\clearpage\par\def\webbook{#1}\setcounter{footnote}{0}\def\webchap{}\markboth{\HeaderFont\webbook}{\HeaderFont\webbook}\NormalFont}
 \newcommand{\PsalmChap}[1]{{\vspace{1.5ex plus 3ex}\centering\renewcommand{\FontSize}{\MTSize}\BDB\parindent=0mm #1\nopagebreak\par}\def\webchap{#1:}}
@@ -140,8 +142,8 @@
 \newcommand{\BB}{\NormalFont\vspace{2ex}}
 \newcommand{\IB}{\Blue}
 \newcommand{\QS}{\hfill }
-\newcommand{\SP}{\parindent=0mm\Blue\ITB\nopagebreak[3] }
-\newcommand{\SH}{\vspace{1ex plus 4ex}\renewcommand{\FontColor}{\IntroColor}\ITB\nopagebreak[4]}
+\newcommand{\SP}{\parindent=0mm\Blue\ITB\nopagebreak[3]}
+\newcommand{\SH}{\vspace{1ex plus 4ex}\renewcommand{\FontColor}{\IntroColor}\ITB\nopagebreak[3]}
 \newcommand{\SHB}{\vspace{1ex plus 4ex}\renewcommand{\FontColor}{\IntroColor}\ITB\nopagebreak[3]}
 \newcommand{\SHC}{\SHB\nopagebreak[3]}
 \newcommand{\SHD}{\SHB\nopagebreak[3]}
@@ -222,3 +224,6 @@
 \setTransitionsFor{Hebrew}{\HEB}{\SetFont}
 \setTransitionsFor{Greek}{\GRC}{\SetFont}
 \setTransitionsFor{Arabic}{\ARB}{\SetFont}
+\setTransitionsFor{Latin}{\renewcommand{\TempFace}{Noto Serif}\SetFace}{\SetFont}
+\setTransitionsFor{Thai}{\renewcommand{\TempFace}{Noto Serif Thai}\SetFace}{\SetFont}
+\setTransitionsFor{Chinese}{\renewcommand{\TempFace}{Noto Serif CJK HK}\SetFont}{\SetFont}
