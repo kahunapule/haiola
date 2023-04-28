@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
 using System.IO;
-using System.Windows.Forms;
 
 
 namespace WordSend
@@ -31,8 +30,6 @@ namespace WordSend
             string UsfxPath = Path.Combine(globe.outputProjectDirectory, "usfx");
             string browserBiblePath = Path.Combine(globe.outputProjectDirectory, "browserBible");
             string browserBibleCssFileName;
-            // Using latin.css for ALL projects marked as having a Latin script, regardless of exclusive use of common characters or not per Ken Bitgood 20 April 2016.
-            // Reversed 15 Dec 2018 due to problems with NASB display.
             if (globe.projectOptions.commonChars)
             {
                 browserBibleCssFileName = "latin.css";
@@ -44,7 +41,7 @@ namespace WordSend
             Utils.EnsureDirectory(browserBiblePath);
             if (String.IsNullOrEmpty(globe.projectOptions.fcbhId))
             {
-                MessageBox.Show("Missing FCBHID for " + globe.projectOptions.translationId);
+                Logit.WriteError("Missing FCBHID for " + globe.projectOptions.translationId);
                 globe.projectOptions.fcbhId = globe.projectOptions.translationId;
             }
 
@@ -52,7 +49,7 @@ namespace WordSend
 
             if (!Directory.Exists(UsfxPath))
             {
-                MessageBox.Show(UsfxPath + " not found!", "ERROR");
+                Logit.WriteError("ERROR: "+UsfxPath + " not found!");
                 return;
             }
             if (Directory.Exists(browserBiblePath))
@@ -102,7 +99,7 @@ namespace WordSend
 
             if (!String.IsNullOrEmpty(certified))
             {
-                StreamReader sr = new StreamReader("/home/kahunapule/sync/doc/Electronic Scripture Publishing/ebible_certified_sm.b64");
+                StreamReader sr = new StreamReader("/share/Documents/Electronic Scripture Publishing/ebible_certified_sm.b64");
                 string cert = sr.ReadToEnd();
                 sr.Close();
                 File.Copy(certified, Path.Combine(browserBiblePath, "eBible.org_certified.jpg"));
@@ -142,7 +139,7 @@ namespace WordSend
             File.Copy(globe.preferredCover, coverPath, true);
             string covertnpng = Path.Combine(browserBiblePath, "covertn.png");
             string covertnb64 = Path.Combine(browserBiblePath, "covertn.b64");
-            fileHelper.RunCommand(String.Format("shrinkcover {0} {1} {2}", coverPath, covertnpng, covertnb64));
+            fileHelper.RunCommand("shrinkcover", String.Format("{0} {1} {2}", coverPath, covertnpng, covertnb64), "");
             toBrowserBible.b64CoverName = covertnb64;
             if ((globe.er != null) && (globe.er.countries != null))
                 toBrowserBible.countries = globe.er.countries;

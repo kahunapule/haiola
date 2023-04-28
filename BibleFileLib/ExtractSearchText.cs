@@ -195,10 +195,13 @@ namespace WordSend
                 verseFile.Formatting = Formatting.Indented;
                 verseFile.WriteStartDocument();
                 verseFile.WriteStartElement("verseFile");
+                fileHelper.DebugWrite("Extracting search text.");
                 while (usfx.Read())
                 {
+                    /*
                     if (!Logit.ShowStatus("extracting search text " + currentPlace))
                         return false;
+                    */
                     if (usfx.NodeType == XmlNodeType.Element)
                     {
                         level = fileHelper.GetNamedAttribute(usfx, "level");

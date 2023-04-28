@@ -11,13 +11,21 @@ namespace WordSend
         {
             bool showBanner = true;
             Logit.useConsole = true;
-
             if (args.Length >= 3)
             {
-                usfxToHtmlConverter conv = new usfxToHtmlConverter();
-                conv.FilterUsfx(args[0], args[1], args[2], (args.Length >= 4) && (args[3] == "-a"));
-                showBanner = false;
-                Console.WriteLine("{0} written.", args[1]);
+                try
+                {
+                    usfxToHtmlConverter conv = new usfxToHtmlConverter();
+                    Console.WriteLine("Calling conv.FilterUsfx({0},{1},{2})", args[0], args[1], args[2]);
+                    conv.FilterUsfx(args[0], args[1], args[2], (args.Length >= 4) && (args[3] == "-a"));
+                    showBanner = false;
+                    Console.WriteLine("{0} written.", args[1]);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("ERROR IN "+ex.Source);
+                    Console.WriteLine(ex.ToString());
+                }
             }
             if (showBanner)
             {

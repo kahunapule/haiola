@@ -5,7 +5,6 @@ using System.Text;
 using System.IO;
 using System.Xml;
 using System.Collections;
-using System.Windows.Forms;
 using WordSend;
 
 namespace WordSend
@@ -193,7 +192,8 @@ namespace WordSend
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                Console.WriteLine(ex.Message);
+                // MessageBox.Show(ex.Message);
             }
         }
 

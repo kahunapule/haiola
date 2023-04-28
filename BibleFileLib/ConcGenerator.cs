@@ -4,8 +4,8 @@ using System.Diagnostics;
 using System.Text;
 using System.Xml;
 using System.IO;
-using System.Windows.Forms;
 using System.Globalization;
+using WordSend;
 
 namespace BibleFileLib
 {
@@ -140,8 +140,7 @@ namespace BibleFileLib
 					}
 					catch (ArgumentException)
 					{
-						MessageBox.Show("Cannot interpret " + value + " as a collation ID. Using default collation.", "Error", MessageBoxButtons.OK,
-							MessageBoxIcon.Warning);
+						Logit.WriteError("Cannot interpret " + value + " as a collation ID. Using default collation.");
 					}				
 				}
 				//Debug.Assert(parts.Length == 2); // Enhance: report somehow
@@ -168,7 +167,7 @@ namespace BibleFileLib
 			internal set
 			{
 				m_progress = value;
-				Application.DoEvents(); // allows timer to fire and update progress report in main window.
+				Logit.UpdateStatus(m_progress);
 			}
 		}
 
@@ -609,7 +608,7 @@ namespace BibleFileLib
                         if (Int32.TryParse(currentChapter, out chNum))
                             m_chapter = chNum;
                         else
-                            MessageBox.Show("Bad chapter number " + currentChapter + " in " + inputFile + " " + currentBookId);
+                            Logit.WriteError("Bad chapter number " + currentChapter + " in " + inputFile + " " + currentBookId);
                         int vnum;
                         // Verse numbers might be verse bridges, like "20-22" or simple numbers, like "20".
                         firstVerse = m_verse;
@@ -627,7 +626,7 @@ namespace BibleFileLib
                             }
                             else
                             {
-                                MessageBox.Show("Bad verse number " + m_verse + " in " + inputFile + " " + currentBookId + ":" + currentChapter);
+                                Logit.WriteError("Bad verse number " + m_verse + " in " + inputFile + " " + currentBookId + ":" + currentChapter);
                             }
                         }
                         else
@@ -653,7 +652,7 @@ namespace BibleFileLib
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message + Environment.NewLine + ex.StackTrace, "Error parsing " + inputFile);
+                Logit.WriteError("Error parsing " + inputFile+ ": " +ex.Message + Environment.NewLine + ex.StackTrace );
             }
 
 		}

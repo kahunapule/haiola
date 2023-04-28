@@ -11,8 +11,10 @@ using System.Xml;
 using BibleFileLib;
 using WordSend;
 using System.Net;
-using System.Windows.Forms; // For Application.ProcessMessages
 using System.Data.Common;
+using static System.Net.Mime.MediaTypeNames;
+using System.Diagnostics;
+using System.Globalization;
 
 namespace WordSend
 {
@@ -37,12 +39,17 @@ namespace WordSend
         public LanguageCodeInfo languageCodes;
         public string currentConversion;   // e.g., "Preprocessing" or "Portable HTML"
         public Fingerprint thumb;
+        public string certified = null;
+        public string orderFile;
+        public bool clKludge = false;
 
 
         public BoolStringDelegate GUIWriteString;
         public BoolStringDelegate UpdateStatus;
         public bool useConsole = false;
         public bool loggedError = false;
+
+        public string eBibleCertified = @"/share/Documents/Electronic Scripture Publishing/eBible.org_certified.jpg";
 
         public global()
         {
@@ -92,6 +99,7 @@ namespace WordSend
             return string.Empty;
         }
 
+
         protected string GuessParatext8ProjectsDir()
         {
             string path;
@@ -135,6 +143,417 @@ namespace WordSend
         }
 
 
+        public string GetEpubID()
+        {
+            if (String.IsNullOrEmpty(projectOptions.epubId))
+            {
+                string hash = Utils.SHA1HashString(projectOptions.translationId + "|" + projectOptions.fcbhId + "|" + DateTime.UtcNow.ToString("dd M yyyy HH:mm:ss.fffffff") + " https://Haiola.org ");
+                StringBuilder uuid = new StringBuilder(hash);
+                uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
+                uuid[14] = '5';
+                switch (uuid[19])
+                {
+                    case '0':
+                    case '1':
+                    case '2':
+                        uuid[19] = '8';
+                        break;
+                    case '3':
+                    case '4':
+                    case '5':
+                        uuid[19] = '9';
+                        break;
+                    case '6':
+                    case '7':
+                    case 'c':
+                        uuid[19] = 'a';
+                        break;
+                    case 'd':
+                    case 'e':
+                    case 'f':
+                        uuid[19] = 'b';
+                        break;
+                }
+                uuid.Length = 36;   // Truncate
+                projectOptions.epubId = uuid.ToString();
+                projectOptions.Write();
+            }
+            return projectOptions.epubId;
+        }
+
+
+        public void DoPostprocess()
+        {
+            if (Logit.loggedError)
+            {
+                Logit.WriteLine("Skipping postprocessing due to prior errors on this project.");
+            }
+            else
+            {
+                List<string> postproclist = projectOptions.postprocesses;
+                string command;
+                foreach (string proc in postproclist)
+                {
+                    command = proc.Replace("%d", currentProject);
+                    command = command.Replace("%t", projectOptions.translationId);
+                    command = command.Replace("%i", projectOptions.fcbhId);
+                    command = command.Replace("%e", projectOptions.languageId);
+                    command = command.Replace("%h", projectOptions.homeDomain);
+                    command = command.Replace("%p", projectOptions.privateProject ? "private" : "public");
+                    command = command.Replace("%r", projectOptions.redistributable ? "redistributable" : "restricted");
+                    command = command.Replace("%o", projectOptions.downloadsAllowed ? "downloadable" : "onlineonly");
+                    Logit.WriteLine("Running " + command);
+                    if (!fileHelper.RunCommand(command))
+                        Logit.WriteError(fileHelper.runCommandError + " Error " + currentConversion);
+                    currentConversion = String.Empty;
+                    if (!fileHelper.fAllRunning)
+                        return;
+                }
+            }
+        }
+
+
+
+
+        /// <summary>
+        /// Convert USFX to PDF
+        /// </summary>
+        public void ConvertUsfxToPDF(string xetexDir)
+        {
+            if ((projectOptions.languageId.Length < 3) || (projectOptions.translationId.Length < 3))
+                return;
+            Usfx2XeTeX toXeTex = new Usfx2XeTeX();
+            toXeTex.texDir = xetexDir;
+            toXeTex.sqlFileName = string.Empty; // Inhibit re-making SQL file.
+            currentConversion = "writing XeTeX";
+            string UsfxPath = Path.Combine(outputProjectDirectory, "usfx");
+            if (!Directory.Exists(UsfxPath))
+            {
+                Logit.WriteError(UsfxPath + " not found!");
+                return;
+            }
+            Utils.DeleteDirectory(xetexDir);
+            Utils.EnsureDirectory(outputDirectory);
+            Utils.EnsureDirectory(outputProjectDirectory);
+            Utils.EnsureDirectory(xetexDir);
+            string logFile = Path.Combine(outputProjectDirectory, "xetexConversionReport.txt");
+            Logit.OpenFile(logFile);
+
+            string fontSource = Path.Combine(dataRootDir, "fonts");
+            string fontName = projectOptions.fontFamily.ToLower().Replace(' ', '_');
+
+
+            toXeTex.projectOptions = projectOptions;
+            toXeTex.projectOutputDir = outputProjectDirectory;
+            toXeTex.redistributable = projectOptions.redistributable;
+            toXeTex.epubIdentifier = GetEpubID();
+            toXeTex.stripPictures = false;
+            toXeTex.indexDate = DateTime.UtcNow;
+            toXeTex.indexDateStamp = "PDF generated using Haiola and XeLaTeX on " + toXeTex.indexDate.ToString("d MMM yyyy") +
+                " from source files dated " + sourceDate.ToString("d MMM yyyy") + @"\par ";
+            toXeTex.GeneratingConcordance = false;
+            toXeTex.CrossRefToFilePrefixMap = projectOptions.CrossRefToFilePrefixMap;
+            toXeTex.contentCreator = projectOptions.contentCreator;
+            toXeTex.contributor = projectOptions.contributor;
+            string usfxFilePath = Path.Combine(UsfxPath, "usfx.xml");
+            toXeTex.bookInfo.ReadPublicationOrder(orderFile);
+            toXeTex.MergeXref(Path.Combine(inputProjectDirectory, "xref.xml"));
+            //TODO: eliminate side effects in expandPercentEscapes
+            // Side effect: expandPercentEscapes sets longCopyrightMessage and shortCopyrightMessage.
+            toXeTex.sourceLink = expandPercentEscapes("<a href=\"https://%h/%t\">%v</a>");
+            toXeTex.longCopr = longCopyrightMessage;
+            toXeTex.shortCopr = shortCopyrightMessage;
+            toXeTex.textDirection = projectOptions.textDir;
+            toXeTex.stripManualNoteOrigins = projectOptions.stripNoteOrigin;
+            toXeTex.noteOriginFormat = projectOptions.xoFormat;
+            toXeTex.englishDescription = projectOptions.EnglishDescription;
+            toXeTex.preferredFont = projectOptions.fontFamily;
+            toXeTex.fcbhId = projectOptions.fcbhId;
+            // toXeTex.callXetex = globe.runXetex;
+            toXeTex.coverName = Path.GetFileName(preferredCover);
+            if (projectOptions.PrepublicationChecks &&
+                (projectOptions.publicDomain || projectOptions.redistributable || File.Exists(Path.Combine(inputProjectDirectory, "certify.txt"))) &&
+                File.Exists(certified))
+            {
+                File.Copy(certified, Path.Combine(xetexDir, "eBible.org_certified.jpg"));
+                // toXeTex.indexDateStamp = toXeTex.indexDateStamp + "<br /><a href='https://eBible.org/certified/' target='_blank'><img src='eBible.org_certified.jpg' alt='eBible.org certified' /></a>";
+            }
+            toXeTex.xrefCall.SetMarkers(projectOptions.xrefCallers);
+            toXeTex.footNoteCall.SetMarkers(projectOptions.footNoteCallers);
+            toXeTex.inputDir = inputDirectory;
+            toXeTex.projectInputDir = inputProjectDirectory;
+            toXeTex.ConvertUsfxToHtml(usfxFilePath, xetexDir,
+                projectOptions.vernacularTitle,
+                projectOptions.languageId,
+                projectOptions.translationId,
+                projectOptions.chapterLabel,
+                projectOptions.psalmLabel,
+                shortCopyrightMessage,
+                expandPercentEscapes(projectOptions.homeLink),
+                expandPercentEscapes(projectOptions.footerHtml),
+                expandPercentEscapes(projectOptions.indexHtml),
+                copyrightPermissionsStatement(),
+                projectOptions.ignoreExtras,
+                projectOptions.goText);
+            toXeTex.bookInfo.RecordStats(projectOptions);
+            projectOptions.commonChars = toXeTex.commonChars;
+            projectOptions.Write();
+            Logit.CloseFile();
+            if (Logit.loggedError)
+            {
+                projectOptions.lastRunResult = false;
+            }
+            if (Logit.loggedWarning)
+            {
+                projectOptions.warningsFound = true;
+            }
+        }
+
+
+
+
+
+        /// <summary>
+        /// Pick a pair of related dark and light colors for this translation's default cover
+        /// based on the epub ID
+        /// </summary>
+        /// <returns>0, 1, 2, or 3</returns>
+        protected int MakeUpColor(out string dark, out string light)
+        {
+            string s = GetEpubID().Substring(0, 6);
+            int color = Convert.ToInt32(s, 16);
+            switch (projectOptions.epubId[7])
+            {
+                case '0':
+                case '7':
+                case 'd':
+                case '2':
+                    color &= 0x00003f;
+                    break;
+                case '9':
+                case '8':
+                case '1':
+                    color &= 0x003f00;
+                    break;
+                case '3':
+                case 'a':
+                case 'e':
+                    color &= 0x003f3f;
+                    break;
+                case '4':
+                case 'b':
+                    color &= 0x3f3f00;
+                    break;
+                case '5':
+                case 'c':
+                    color &= 0x3f003f;
+                    break;
+                default:
+                    color &= 0x3f3f3f;
+                    break;
+            }
+            color &= 0x3f3f3f;
+            if ((color & 0xf0f0f0) == 0)
+            {
+                dark = "#000000";
+                light = "#ffffff";
+            }
+            else
+            {
+                dark = "#" + color.ToString("x6");
+                color += 0xc0c0c0;
+                light = "#" + color.ToString("x6");
+            }
+            return Convert.ToInt32(projectOptions.epubId.Substring(10, 1), 16) & 3;
+        }
+
+
+
+        /// <summary>
+        /// Inserts up to 2 line breaks into a string at points less than or equal to maxWidth characters long
+        /// </summary>
+        /// <param name="s">String to word wrap</param>
+        /// <param name="maxWidth">Maximum line length</param>
+        /// <returns>string with line breaks addded</returns>
+        public string ShortWordWrap(string s, int maxWidth)
+        {
+            int lineLength = 0;
+            int lineCount = 0;
+            string[] words = s.Split(new Char[] { ' ', '\t', '\n' });
+            string result = String.Empty;
+            foreach (string word in words)
+            {
+                if (result.Length == 0)
+                {
+                    result = word;
+                    lineLength = word.Length;
+                }
+                else
+                {
+                    if ((lineLength + word.Length >= maxWidth) && (lineCount < 2))
+                    {
+                        result = result + "\n" + word;
+                        lineLength = word.Length;
+                        lineCount++;
+                    }
+                    else
+                    {
+                        result = result + " " + word;
+                        lineLength += word.Length + 1;
+                    }
+                }
+            }
+            return result.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+        }
+
+
+        /// <summary>
+        /// Create or copy cover file(s), putting the results in the output project cover directory.
+        /// Get .svg from project input directory, or create one, in that order.
+        /// Get .png from project input directory, or create one from svg, in that order.
+        /// Get .jpg from project input directory.
+        /// Return the preferred available file name for a cover.
+        /// </summary>
+        /// <param name="small">true iff the cover is allowed to be small (defaults to false if parameter is missing)</param>
+        /// <returns>The preferred cover name</returns>
+        public string CreateCover(bool small = false)
+        {
+            string dark, light, svgPath, pngPath;
+            StreamWriter sw;
+            string coverOutput = Path.Combine(outputProjectDirectory, "cover");
+            if (!small)
+                Utils.DeleteDirectory(coverOutput);
+            Utils.EnsureDirectory(coverOutput);
+
+            // Get the best cover.svg available.
+            string coverIn = Path.Combine(inputProjectDirectory, "cover.svg");
+            string coverOut = Path.Combine(coverOutput, "cover.svg");
+            svgPath = coverOut;
+            if (File.Exists(coverIn))
+            {   // We have cover.svg in our input directory.
+                fileHelper.CopyFile(coverIn, coverOut);
+            }
+            else
+            {   // Create a default svg cover.
+                string coverTemplate = SFConverter.FindAuxFile("covertemplate.svg");
+                if (File.Exists(coverTemplate))
+                {
+                    StreamReader sr = new StreamReader(coverTemplate);
+                    string svg = sr.ReadToEnd();
+                    sr.Close();
+                    Char[] newLine = new Char[] { '\n' };
+                    string[] mainTitle;
+                    if (projectOptions.vernacularTitle.Length > 50)
+                    {
+                        svg = svg.Replace("font-size=\"100\"", "font-size=\"60\"");
+                        mainTitle = ShortWordWrap(projectOptions.vernacularTitle, 48).Split(newLine);
+                    }
+                    else if (projectOptions.vernacularTitle.Length < 24)
+                    {
+                        svg = svg.Replace("font-size=\"100\"", "font-size=\"140\"");
+                        mainTitle = ShortWordWrap(projectOptions.vernacularTitle, 17).Split(newLine);
+                    }
+                    else
+                    {
+                        mainTitle = ShortWordWrap(projectOptions.vernacularTitle, 20).Split(newLine);
+                    }
+                    string[] description = ShortWordWrap(projectOptions.EnglishDescription, 60).Split(newLine);
+                    sw = new StreamWriter(coverOut);
+                    svg = svg.Replace("^f", projectOptions.fontFamily).Replace("^4", description[0]);
+                    if (mainTitle.Length > 1)
+                    {
+                        svg = svg.Replace("^1", mainTitle[0]);
+                        svg = svg.Replace("^2", mainTitle[1]);
+                        if (mainTitle.Length > 2)
+                        {
+                            svg = svg.Replace("^3", mainTitle[2]);
+                        }
+                        else
+                        {
+                            svg = svg.Replace("^3", "");
+                        }
+                    }
+                    else
+                    {
+                        svg = svg.Replace("^1", "").Replace("^2", mainTitle[0]).Replace("^3", "");
+                    }
+                    if (description.Length > 1)
+                    {
+                        svg = svg.Replace("^5", description[1]);
+                        if (description.Length > 2)
+                        {
+                            svg = svg.Replace("^6", description[2]);
+                        }
+                        else
+                        {
+                            svg = svg.Replace("^6", "");
+                        }
+                    }
+                    else
+                    {
+                        svg = svg.Replace("^5", "").Replace("^6", "");
+                    }
+                    svg = svg.Replace("#000000", "#zback").Replace("#ffffff", "#zfg");
+                    if (MakeUpColor(out dark, out light) > 1)
+                    {
+                        svg = svg.Replace("#zback", dark).Replace("#zfg", light);
+                    }
+                    else
+                    {
+                        svg = svg.Replace("#zfg", dark).Replace("#zback", light);
+                    }
+                    sw.Write(svg);
+                    sw.Close();
+                }
+                else
+                {
+                    Logit.WriteError("The file covertemplate.svg is missing from the auxilliary program files.");
+                }
+            }
+
+            // Look for .png files.
+            pngPath = coverOut = Path.ChangeExtension(coverOut, "png");
+            coverIn = Path.ChangeExtension(coverIn, "png");
+            if (File.Exists(coverIn))
+            {
+                fileHelper.CopyFile(coverIn, coverOut);
+            }
+            // Look for .jpg files.
+            coverOut = Path.ChangeExtension(coverOut, "jpg");
+            coverIn = Path.ChangeExtension(coverIn, "jpg");
+            if (File.Exists(coverIn))
+            {
+                fileHelper.CopyFile(coverIn, coverOut);
+            }
+
+            if (File.Exists(coverOut))
+            {   // We have a jpg cover. Is it big enough?
+                if (small)
+                    return coverOut;
+                /*
+                System.Drawing.Image img = System.Drawing.Image.FromFile(coverOut);
+                if ((img.Width >= 450) && (img.Height >= 700))
+                {
+                    if (!File.Exists(pngPath) && (Path.DirectorySeparatorChar == '/'))
+                    {
+                        fileHelper.RunCommand("convert \"" + coverOut + "\" \"" + pngPath + "\"");
+                    }
+                    return coverOut;
+                }
+                */
+            }
+            if (File.Exists(pngPath))
+                return pngPath;
+            if (Path.DirectorySeparatorChar == '/')
+            {
+                fileHelper.RunCommand("convertgraphics", "\"" + svgPath + "\" \"" + pngPath + "\"", "");
+            }
+            if (File.Exists(pngPath))
+                return pngPath;
+            return svgPath;
+        }
+
+
 
         public bool ShowStatus(string s)
         {
@@ -151,12 +570,10 @@ namespace WordSend
 
         public void WriteLine(string s)
         {
-            if (useConsole)
+            if (useConsole || (GUIWriteString == null))
                 Console.WriteLine(s);
             if (GUIWriteString != null)
                 GUIWriteString(s);
-            if ((!useConsole) && (GUIWriteString == null))
-                System.Windows.Forms.MessageBox.Show(s);
         }
 
 
@@ -547,7 +964,7 @@ namespace WordSend
                 }
                 else
                 {
-                    MessageBox.Show("Can't find preprocessing file " + tp, "Error in preprocessing file list");
+                    Logit.WriteError("Can't find preprocessing file " + tp);
                 }
             }
 
@@ -631,7 +1048,6 @@ namespace WordSend
                     (lowerName != "printdraftchanges.txt"))
                 {
                     ShowStatus("preprocessing " + filename);
-                    Application.DoEvents();
                     if (!fileHelper.fAllRunning)
                         break;
                     string outputFileName = MakeUpUsfmFileName(inputFile, out bookId) + ".usfm";
@@ -908,8 +1324,7 @@ For other uses, please contact the respective copyright owners.</p>
             // Start with an EMPTY USFX directory to avoid problems with old files
             Utils.DeleteDirectory(UsfxPath);
             fileHelper.EnsureDirectory(UsfxPath);
-            currentConversion = "converting from USFM to USFX; reading USFM";
-            Application.DoEvents();
+            UpdateStatus("converting from USFM to USFX; reading USFM");
             if ((projectOptions.languageId.Length < 3) || (projectOptions.translationId.Length < 3))
             {
                 Logit.WriteError(string.Format(
@@ -928,8 +1343,7 @@ For other uses, please contact the respective copyright owners.</p>
             SFConverter.scripture.assumeAllNested = projectOptions.relaxUsfmNesting;
             // Read the input USFM files into internal data structures.
             SFConverter.ProcessFilespec(Path.Combine(UsfmDir, "*.usfm"), Encoding.UTF8);
-            currentConversion = "converting from USFM to USFX; writing USFX";
-            Application.DoEvents();
+            UpdateStatus("converting from USFM to USFX; writing USFX");
 
             // Write out the USFX file.
             SFConverter.scripture.languageCode = projectOptions.languageId;
@@ -979,8 +1393,7 @@ For other uses, please contact the respective copyright owners.</p>
             {
                 projectOptions.warningsFound = true;
             }
-            currentConversion = "converted USFM to USFX.";
-            Application.DoEvents();
+            UpdateStatus("converted USFM to USFX.");
         }
 
 
@@ -1050,7 +1463,7 @@ For other uses, please contact the respective copyright owners.</p>
         /// </summary>
         /// <param name="dirName">The directory containing the source files (or the root level of the source files in the case of a DBL bundle</param>
         /// <returns>A string indicating the kind of source file, one of "usfx", "usx", or "usfm".</returns>
-        public string GetSourceKind(string dirName)
+        public string GetSourceKind(string dirName, bool fingerprintIt = false)
         {
             string result = String.Empty;
             string s;
@@ -1058,7 +1471,8 @@ For other uses, please contact the respective copyright owners.</p>
             int i;
             DateTime fileDate;
             sourceDate = DateTime.MinValue;
-            thumb = new Fingerprint();
+            if (fingerprintIt)
+                thumb = new Fingerprint();
 
             try
             {
@@ -1070,7 +1484,7 @@ For other uses, please contact the respective copyright owners.</p>
                     suffix = Path.GetExtension(fileName).ToLowerInvariant();
                     if (suffix == ".zip")
                     {
-                        fileHelper.RunCommand("unzip -n \"" + fileName + "\"", dirName);
+                        fileHelper.RunCommand("unzip", "-n \"" + fileName + "\"", dirName);
                         string receivedDir = Path.Combine(inputProjectDirectory, "Received");
                         fileHelper.EnsureDirectory(receivedDir);
                         string destName = Path.Combine(receivedDir, Path.GetFileName(fileName));
@@ -1107,13 +1521,14 @@ For other uses, please contact the respective copyright owners.</p>
                                     result = "usx";
                                 else if (s.Contains("<osis"))
                                     result = "osis";
-                                thumb.HashFile(fileName);
+                                if (fingerprintIt)
+                                    thumb.HashFile(fileName);
                             }
                         }
                     }
                     else if (Directory.Exists(fileName))
                     {
-                        result = GetSourceKind(fileName);
+                        result = GetSourceKind(fileName, fingerprintIt);
                     }
                 }
                 if (String.IsNullOrEmpty(result))
@@ -1121,13 +1536,16 @@ For other uses, please contact the respective copyright owners.</p>
                     string[] subdirectoryEntries = Directory.GetDirectories(dirName);
                     for (i = 0; (i < subdirectoryEntries.Length) && (result == String.Empty); i++)
                     {
-                        result = GetSourceKind(subdirectoryEntries[i]);
+                        result = GetSourceKind(subdirectoryEntries[i], fingerprintIt);
                     }
                 }
-                projectOptions.currentFingerprint = HashMetadata();
-                if ((projectOptions.currentFingerprint != projectOptions.builtFingerprint) && (sourceDate > projectOptions.lastRunDate))
+                if (fingerprintIt)
                 {
-                    projectOptions.contentUpdateDate = sourceDate;
+                    projectOptions.currentFingerprint = HashMetadata();
+                    if ((projectOptions.currentFingerprint != projectOptions.builtFingerprint) && (sourceDate > projectOptions.lastRunDate))
+                    {
+                        projectOptions.contentUpdateDate = sourceDate;
+                    }
                 }
 
 
@@ -1162,8 +1580,7 @@ For other uses, please contact the respective copyright owners.</p>
                 // Start with an EMPTY USFM directory to avoid problems with old files 
                 Utils.DeleteDirectory(UsfmDir);
                 fileHelper.EnsureDirectory(UsfmDir);
-                currentConversion = "Normalizing extended USFM from USFX. ";
-                Application.DoEvents();
+                UpdateStatus("Normalizing extended USFM from USFX. ");
                 if (!fileHelper.fAllRunning)
                     return;
                 logFile = Path.Combine(outputProjectDirectory, "usfx2usfm2_log.txt");
@@ -1215,8 +1632,7 @@ For other uses, please contact the respective copyright owners.</p>
                     return;
                 }
 
-                currentConversion = "converting from USX to temporary USFX";
-                Application.DoEvents();
+                UpdateStatus("converting from USX to temporary USFX");
 
                 // Convert from USX to USFX. The first USFX file will be out of order and lack <ve/> tags.
                 // Start with an EMPTY USFM directory to avoid problems with old files 
@@ -1233,12 +1649,11 @@ For other uses, please contact the respective copyright owners.</p>
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "ERROR copying tempusfx.xml");
+                    Logit.WriteError("ERROR copying tempusfx.xml: "+ ex.Message);
                 }
 
                 // Convert from USFX to USFM.
-                currentConversion = "converting from initial USFX to USFM";
-                Application.DoEvents();
+                UpdateStatus("converting from initial USFX to USFM");
                 if (!fileHelper.fAllRunning)
                     return;
                 string usfmDir = Path.Combine(outputProjectDirectory, "usfm");
@@ -1261,8 +1676,7 @@ For other uses, please contact the respective copyright owners.</p>
                 SFConverter.scripture.assumeAllNested = projectOptions.relaxUsfmNesting;
                 // Read the input USFM files into internal data structures.
                 SFConverter.ProcessFilespec(Path.Combine(usfmDir, "*.usfm"), Encoding.UTF8);
-                currentConversion = "converting from USFM to USFX; writing USFX";
-                Application.DoEvents();
+                UpdateStatus("converting from USFM to USFX; writing USFX");
 
                 // Write out the USFX file.
                 SFConverter.scripture.languageCode = projectOptions.languageId;
@@ -1305,8 +1719,7 @@ For other uses, please contact the respective copyright owners.</p>
                     projectOptions.warningsFound = true;
                 }
 
-                currentConversion = "converted USFM to USFX.";
-                Application.DoEvents();
+                UpdateStatus("converted USFM to USFX.");
             }
             catch (Exception ex)
             {
@@ -1351,8 +1764,7 @@ For other uses, please contact the respective copyright owners.</p>
                     string fileType = Path.GetExtension(filename).ToUpper();
                     if ((fileType == ".USFX") || (fileType == ".XML"))
                     {
-                        currentConversion = "processing " + filename;
-                        Application.DoEvents();
+                        UpdateStatus("processing " + filename);
                         if (!fileHelper.fAllRunning)
                             break;
                         XmlTextReader xr = new XmlTextReader(inputFile);
@@ -1374,8 +1786,7 @@ For other uses, please contact the respective copyright owners.</p>
                                 SFConverter.scripture = new Scriptures(this);
                                 Logit.loggedError = false;
                                 Logit.loggedWarning = false;
-                                currentConversion = "converting from USFX to USFM";
-                                Application.DoEvents();
+                                UpdateStatus("converting from USFX to USFM");
                                 SFConverter.scripture.USFXtoUSFM(inputFile, UsfmDir, projectOptions.translationId + ".usfm", true, projectOptions);
                                 UsfmDir = Path.Combine(outputProjectDirectory, "usfm");
                                 // Start with an EMPTY USFM directory to avoid problems with old files 
@@ -1406,13 +1817,1010 @@ For other uses, please contact the respective copyright owners.</p>
                             }
                         }
                         xr.Close();
-                        Application.DoEvents();
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error importing USFX");
+                Logit.WriteError("Error importing USFX: "+ ex.Message);
+            }
+        }
+
+        public void PrepareSearchText()
+        {
+            string logFile = Path.Combine(outputProjectDirectory, "SearchReport.txt");
+            Logit.OpenFile(logFile);
+            try
+            {
+                ExtractSearchText est = new ExtractSearchText();
+                est.projectOptions = projectOptions;
+                string vplPath = Path.Combine(outputProjectDirectory, "vpl");
+                string readAloudPath = Path.Combine(outputProjectDirectory, "readaloud");
+                string UsfxPath = Path.Combine(outputProjectDirectory, "usfx");
+                string auxPath = Path.Combine(outputProjectDirectory, "search");
+                string verseText = Path.Combine(auxPath, "verseText.xml");
+                string sqlFile = Path.Combine(outputProjectDirectory, "sql");
+                Utils.EnsureDirectory(auxPath);
+                Utils.EnsureDirectory(sqlFile);
+                Utils.EnsureDirectory(readAloudPath);
+                est.Filter(Path.Combine(UsfxPath, "usfx.xml"), verseText);
+                est.WriteSearchSql(verseText, currentProject, Path.Combine(sqlFile, currentProject + "_vpl.sql"));
+                est.WriteAudioScriptText(verseText, readAloudPath, currentProject);
+                est.WriteSearchSql(Path.ChangeExtension(verseText, ".lemma"), currentProject, Path.Combine(sqlFile, currentProject + "_lemma.sql"));
+                if (est.LongestWordLength > projectOptions.longestWordLength)
+                    projectOptions.longestWordLength = est.LongestWordLength;
+                // Copy search text files to VPL output.
+                Utils.DeleteDirectory(vplPath);
+                Utils.EnsureDirectory(vplPath);
+                File.Copy(verseText, Path.Combine(vplPath, currentProject + "_vpl.xml"));
+                File.Copy(Path.Combine(auxPath, "verseText.vpltxt"), Path.Combine(vplPath, currentProject + "_vpl.txt"));
+                File.Copy(Path.Combine(inputDirectory, "haiola.css"), Path.Combine(vplPath, "haiola.css"));
+                StreamWriter htm = new StreamWriter(Path.Combine(vplPath, currentProject + "_about.htm"));
+                htm.WriteLine("<!DOCTYPE html>");
+                htm.WriteLine("<html>");
+                htm.WriteLine("<head>");
+                htm.WriteLine("<meta charset=\"UTF-8\" />");
+                htm.WriteLine("<link rel=\"stylesheet\" href=\"haiola.css\" type=\"text/css\" />");
+                htm.WriteLine("<meta name=\"viewport\" content=\"user-scalable=yes, initial-scale=1, minimum-scale=1, width=device-width\"/>");
+                htm.WriteLine("<title>About {0}_vpl</title>", currentProject);
+                htm.WriteLine("</head>");
+                htm.WriteLine("<body class=\"mainDoc\"");
+                htm.WriteLine("<p>This archive contains BIBLE TEXT ONLY. All formatting, paragraph breaks, notes, introductions, noncanonical section titles, etc., have been removed. The file ending \"_vpl.txt\" is designed for import into BibleWorks and similar Bible study programs. The file ending \"_vpl.xml\" contains the same information, but is in XML format and uses standard SIL/UBS book abbreviations.");
+                htm.WriteLine("The file ending \"_vpl.sql\" contains the same information formatted to create a SQL data table.</p>");
+                htm.WriteLine(@"<p>Check for updates and other Bible translations in this format at <a href='https:\\eBible.org\Scriptures\'>http:\\eBible.org\Scriptures\</a></p>");
+                htm.WriteLine("<hr />");
+                htm.WriteLine(copyrightPermissionsStatement());
+                htm.WriteLine("</body></html>");
+                htm.Close();
+                if (Logit.loggedError)
+                {
+                    projectOptions.lastRunResult = false;
+                }
+                if (Logit.loggedWarning)
+                {
+                    projectOptions.warningsFound = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError("Error preparing search text: " + ex.Message);
+            }
+            Logit.CloseFile();
+        }
+
+
+        /// <summary>
+        /// Convert USFX to Modified OSIS
+        /// </summary>
+        public void ConvertUsfxToMosis()
+        {
+            currentConversion = "writing MOSIS";
+            if ((projectOptions.languageId.Length < 3) || (projectOptions.translationId.Length < 3))
+                return;
+            string UsfxPath = Path.Combine(outputProjectDirectory, "usfx");
+            string mosisPath = Path.Combine(outputProjectDirectory, "mosis");
+            if (!Directory.Exists(UsfxPath))
+            {
+                Logit.WriteError(UsfxPath + " not found!");
+                return;
+            }
+            string usfxFilePath = Path.Combine(UsfxPath, "usfx.xml");
+            string mosisFilePath = Path.Combine(mosisPath, projectOptions.translationId + "_osis.xml");
+
+            Utils.EnsureDirectory(outputDirectory);
+            Utils.EnsureDirectory(outputProjectDirectory);
+            Utils.EnsureDirectory(mosisPath);
+
+            usfxToMosisConverter toMosis = new usfxToMosisConverter();
+            toMosis.commandLineKludge = clKludge;
+            if (projectOptions.redistributable && File.Exists(eBibleCertified))
+            {
+                projectOptions.textSourceUrl = "https://eBible.org/Scriptures/";
+            }
+            else
+            {
+                projectOptions.textSourceUrl = "";
+            }
+            toMosis.languageCode = projectOptions.languageId;
+            toMosis.translationId = projectOptions.translationId;
+            toMosis.revisionDateTime = projectOptions.contentUpdateDate;
+            toMosis.vernacularTitle = projectOptions.vernacularTitle;
+            toMosis.contentCreator = projectOptions.contentCreator;
+            toMosis.contentContributor = projectOptions.contributor;
+            toMosis.englishDescription = projectOptions.EnglishDescription;
+            toMosis.lwcDescription = projectOptions.lwcDescription;
+            toMosis.printPublisher = projectOptions.printPublisher;
+            toMosis.ePublisher = projectOptions.electronicPublisher;
+            toMosis.languageName = projectOptions.languageNameInEnglish;
+            toMosis.dialect = projectOptions.dialect;
+            toMosis.vernacularLanguageName = projectOptions.languageName;
+            toMosis.projectOptions = projectOptions;
+            toMosis.swordDir = Path.Combine(dataRootDir, "sword");
+            toMosis.swordRestricted = Path.Combine(dataRootDir, "swordRestricted");
+            toMosis.copyrightNotice = projectOptions.publicDomain ? "public domain" : "Copyright © " + projectOptions.copyrightYears + " " + projectOptions.copyrightOwner;
+            toMosis.rightsNotice = projectOptions.rightsStatement + "<br/> ";
+            if (projectOptions.publicDomain)
+            {
+                toMosis.rightsNotice += @" This work is in the Public Domain. That means that it is not copyrighted.
+ It is still subject to God's Law concerning His Word, including the Great Commission (Matthew 28:18-20).
+";
+            }
+            else if (projectOptions.ccbyndnc)
+            {
+                toMosis.rightsNotice += @" This Bible translation is made available to you under the terms of the
+ Creative Commons Attribution-Noncommercial-No Derivative Works license (http://creativecommons.org/licenses/by-nc-nd/4.0/).";
+            }
+            else if (projectOptions.ccbysa)
+            {
+                toMosis.rightsNotice += @" This Bible translation is made available to you under the terms of the
+ Creative Commons Attribution-Share-Alike license (http://creativecommons.org/licenses/by-sa/4.0/).";
+            }
+            else if (projectOptions.ccbynd)
+            {
+                toMosis.rightsNotice += @" This Bible translation is made available to you under the terms of the
+ Creative Commons Attribution-No Derivatives license (http://creativecommons.org/licenses/by-na/4.0/).";
+            }
+            toMosis.infoPage = copyrightPermissionsStatement();
+            string logFile = Path.Combine(outputProjectDirectory, "MosisConversionReport.txt");
+            Logit.OpenFile(logFile);
+            toMosis.langCodes = languageCodes;
+            toMosis.ConvertUsfxToMosis(usfxFilePath, mosisFilePath);
+            Logit.CloseFile();
+            if (Logit.loggedError)
+            {
+                projectOptions.lastRunResult = false;
+            }
+            if (Logit.loggedWarning)
+            {
+                projectOptions.warningsFound = true;
+            }
+        }
+
+
+
+
+        /// <summary>
+        /// Convert USFX to sile-friendly XML, one file per book
+        /// </summary>
+        public void ConvertUsfxToSile()
+        {
+            currentConversion = "writing sile";
+            if ((projectOptions.languageId.Length < 3) || (projectOptions.translationId.Length < 3))
+                return;
+            string UsfxPath = Path.Combine(outputProjectDirectory, "usfx");
+            string silePath = Path.Combine(outputProjectDirectory, "sile");
+            if (!Directory.Exists(UsfxPath))
+            {
+                Logit.WriteError(UsfxPath + " not found!");
+                return;
+            }
+            string usfxFilePath = Path.Combine(UsfxPath, "usfx.xml");
+
+            Utils.EnsureDirectory(outputDirectory);
+            Utils.EnsureDirectory(outputProjectDirectory);
+            Utils.EnsureDirectory(silePath);
+            Usfx2SILE sileConverter = new Usfx2SILE(this);
+            sileConverter.ConvertUsfxToSile(usfxFilePath, silePath);
+        }
+
+        /// <summary>
+        /// Ensure that a named template file exists in the input directory.
+        /// </summary>
+        /// <param name="fileName">Name of file to find.</param>
+        public void EnsureTemplateFile(string fileName)
+        {
+            EnsureTemplateFile(fileName, inputDirectory);
+        }
+
+        /// <summary>
+        /// Ensure that a named template file exists in the named directory.
+        /// </summary>
+        /// <param name="fileName">File to find in program files</parm>
+        /// <param name="destDirectory">Proper template location.</param>
+        public void EnsureTemplateFile(string fileName, string destDirectory)
+        {
+            try
+            {
+                string sourcePath = WordSend.SFConverter.FindAuxFile(fileName);
+                string destPath = Path.Combine(destDirectory, fileName);
+                if ((!File.Exists(destPath)) && (File.Exists(sourcePath)))
+                {
+                    File.Copy(sourcePath, destPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError(ex.Message + " Error ensuring " + fileName + " is in " + inputDirectory);
+            }
+        }
+
+
+
+
+        public void ConvertUsfxToPortableHtml()
+        {
+            int i;
+            if ((projectOptions.languageId.Length < 3) || (projectOptions.translationId.Length < 3))
+                return;
+            currentConversion = "writing portable HTML";
+            string UsfxPath = Path.Combine(outputProjectDirectory, "usfx");
+            string htmlPath = Path.Combine(outputProjectDirectory, "html");
+            if (!Directory.Exists(UsfxPath))
+            {
+                Logit.WriteError(UsfxPath + " not found!");
+                return;
+            }
+            Utils.EnsureDirectory(outputDirectory);
+            Utils.EnsureDirectory(outputProjectDirectory);
+            Utils.EnsureDirectory(htmlPath);
+            string propherocss = Path.Combine(htmlPath, projectOptions.customCssFileName);
+
+            Utils.DeleteFile(propherocss);
+            // Copy cascading style sheet from project directory, or if not there, BibleConv/input/.
+            string specialCss = Path.Combine(inputProjectDirectory, projectOptions.customCssFileName);
+            if (File.Exists(specialCss))
+                File.Copy(specialCss, propherocss);
+            else
+                File.Copy(Path.Combine(inputDirectory, projectOptions.customCssFileName), propherocss);
+
+            // Copy any extra files from the htmlextras directory in the project directory to the output.
+            // This is for introduction files, pictures, etc.
+            string htmlExtras = Path.Combine(inputProjectDirectory, "htmlextras");
+            if (Directory.Exists(htmlExtras))
+            {
+                WordSend.fileHelper.CopyDirectory(htmlExtras, htmlPath);
+            }
+
+            usfxToHtmlConverter toHtm;
+            if (projectOptions.UseFrames)
+            {
+                var framedConverter = new UsfxToFramedHtmlConverter();
+                framedConverter.HideNavigationButtonText = projectOptions.HideNavigationButtonText;
+                framedConverter.ShowNavigationButtonText = projectOptions.ShowNavigationButtonText;
+                toHtm = framedConverter;
+            }
+            else
+            {
+                if (projectOptions.GenerateMobileHtml)
+                {
+                    toHtm = new usfx2MobileHtml();
+                }
+                else
+                {
+                    toHtm = new usfxToHtmlConverter();
+                }
+            }
+            toHtm.Jesusfilmlink = projectOptions.JesusFilmLinkTarget;
+            toHtm.Jesusfilmtext = projectOptions.JesusFilmLinkText;
+            toHtm.stripPictures = false;
+            toHtm.htmlextrasDir = Path.Combine(inputProjectDirectory, "htmlextras");
+            string logFile = Path.Combine(outputProjectDirectory, "HTMLConversionReport.txt");
+            Logit.OpenFile(logFile);
+            string theIndexDate = toHtm.indexDate.ToString("d MMM yyyy");
+            string thesourceDate = sourceDate.ToString("d MMM yyyy");
+            if (File.Exists(eBibleCertified) && !projectOptions.privateProject)
+            {
+                toHtm.indexDateStamp = "HTML generated with <a href='https://haiola.org'>Haiola</a> by <a href='https://eBible.org'>eBible.org</a> " +
+                    toHtm.indexDate.ToString("d MMM yyyy") +
+                    " from source files dated " + sourceDate.ToString("d MMM yyyy") +
+                    "</a><br/>";
+            }
+            else
+            {
+                toHtm.indexDateStamp = "HTML generated by <a href='https://haiola.org'>Haiola</a> " + toHtm.indexDate.ToString("d MMM yyyy") +
+                    " from source files dated " + sourceDate.ToString("d MMM yyyy");
+            }
+            toHtm.GeneratingConcordance = projectOptions.GenerateConcordance || projectOptions.UseFrames;
+            toHtm.CrossRefToFilePrefixMap = projectOptions.CrossRefToFilePrefixMap;
+            string usfxFilePath = Path.Combine(UsfxPath, "usfx.xml");
+            toHtm.bookInfo.ReadPublicationOrder(orderFile);
+            toHtm.MergeXref(Path.Combine(inputProjectDirectory, "xref.xml"));
+            toHtm.sourceLink = expandPercentEscapes("<a href=\"https://%h/%t\">%v</a>");
+            toHtm.textDirection = projectOptions.textDir;
+            toHtm.customCssName = projectOptions.customCssFileName;
+            toHtm.stripManualNoteOrigins = projectOptions.stripNoteOrigin;
+            toHtm.noteOriginFormat = projectOptions.xoFormat;
+            toHtm.englishDescription = projectOptions.EnglishDescription;
+            toHtm.preferredFont = projectOptions.fontFamily;
+            toHtm.fcbhId = projectOptions.fcbhId;
+            toHtm.redistributable = projectOptions.redistributable;
+            toHtm.coverName = String.Empty;// = Path.GetFileName(preferredCover);
+            toHtm.projectOutputDir = outputProjectDirectory;
+            toHtm.projectOptions = projectOptions;
+
+            //string coverPath = Path.Combine(htmlPath, toHtm.coverName);
+            //File.Copy(preferredCover, coverPath);
+
+            if (!String.IsNullOrEmpty(certified))
+            {
+                try
+                {
+                    File.Copy(certified, Path.Combine(htmlPath, "eBible.org_certified.jpg"));
+                    toHtm.indexDateStamp = toHtm.indexDateStamp + "<br /><a href='https://eBible.org/certified/' target='_blank'><img src='eBible.org_certified.jpg' alt='eBible.org certified' /></a>";
+                }
+                catch (Exception ex)
+                {
+                    Logit.WriteLine(ex.Message);
+                }
+            }
+            toHtm.xrefCall.SetMarkers(projectOptions.xrefCallers);
+            toHtm.projectInputDir = inputProjectDirectory;
+            toHtm.footNoteCall.SetMarkers(projectOptions.footNoteCallers);
+            toHtm.ConvertUsfxToHtml(usfxFilePath, htmlPath,
+                projectOptions.vernacularTitle,
+                projectOptions.languageId,
+                projectOptions.translationId,
+                projectOptions.chapterLabel,
+                projectOptions.psalmLabel,
+                "<a href='copyright.htm'>" + usfxToHtmlConverter.EscapeHtml(shortCopyrightMessage) + "</a>",
+                expandPercentEscapes(projectOptions.homeLink),
+                expandPercentEscapes(projectOptions.footerHtml),
+                expandPercentEscapes(projectOptions.indexHtml),
+                copyrightPermissionsStatement(),
+                projectOptions.ignoreExtras,
+                projectOptions.goText);
+            toHtm.bookInfo.RecordStats(projectOptions);
+            projectOptions.commonChars = toHtm.commonChars;
+            projectOptions.Write();
+            string fontsDir = Path.Combine(htmlPath, "fonts");
+            fileHelper.EnsureDirectory(fontsDir);
+            string fontSource = Path.Combine(dataRootDir, "fonts");
+            string fontName = projectOptions.fontFamily.ToLower().Replace(' ', '_');
+            fileHelper.CopyFile(Path.Combine(fontSource, fontName + ".ttf"), Path.Combine(fontsDir, fontName + ".ttf"));
+            fileHelper.CopyFile(Path.Combine(fontSource, fontName + ".woff"), Path.Combine(fontsDir, fontName + ".woff"));
+            fileHelper.CopyFile(Path.Combine(fontSource, fontName + ".eot"), Path.Combine(fontsDir, fontName + ".eot"));
+            Logit.CloseFile();
+            if (Logit.loggedError)
+            {
+                projectOptions.lastRunResult = false;
+            }
+            if (Logit.loggedWarning)
+            {
+                projectOptions.warningsFound = true;
+            }
+
+            Logit.WriteLine("Writing auxilliary metadata files.");
+            if (!fileHelper.fAllRunning)
+                return;
+
+            // We currently have the information handy to write some auxilliary XML files
+            // that contain metadata. We will put these in the USFX directory.
+
+            XmlTextWriter xml = new XmlTextWriter(Path.Combine(UsfxPath, projectOptions.translationId + "-VernacularParms.xml"), System.Text.Encoding.UTF8);
+            xml.Formatting = System.Xml.Formatting.Indented;
+            xml.WriteStartDocument();
+            xml.WriteStartElement("vernacularParms");
+            // List vernacular full book titles from \toc1 (or \mt)
+            foreach (WordSend.BibleBookRecord br in WordSend.usfxToHtmlConverter.bookList)
+            {
+                xml.WriteStartElement("scriptureBook");
+                xml.WriteAttributeString("ubsAbbreviation", br.tla);
+                xml.WriteAttributeString("parm", "vernacularFullName");
+                xml.WriteString(br.vernacularLongName);
+                xml.WriteEndElement();  // scriptureBook
+            }
+            // List vernacular short names for running headers and links from \toc2 (or \h)
+            foreach (WordSend.BibleBookRecord br in WordSend.usfxToHtmlConverter.bookList)
+            {
+                xml.WriteStartElement("scriptureBook");
+                xml.WriteAttributeString("ubsAbbreviation", br.tla);
+                xml.WriteAttributeString("parm", "vernacularAbbreviatedName");
+                xml.WriteString(br.vernacularShortName);
+                xml.WriteEndElement();  // scriptureBook
+            }
+            // List vernacular abbreviations from \toc3
+            foreach (WordSend.BibleBookRecord br in WordSend.usfxToHtmlConverter.bookList)
+            {
+                if (!String.IsNullOrEmpty(br.vernacularAbbreviation))
+                {
+                    xml.WriteStartElement("scriptureBook");
+                    xml.WriteAttributeString("ubsAbbreviation", br.tla);
+                    xml.WriteAttributeString("parm", "vernacularBookAbbreviation");
+                    xml.WriteString(br.vernacularAbbreviation);
+                    xml.WriteEndElement();  // scriptureBook
+                }
+            }
+            // Dublin Core library card data
+            xml.WriteStartElement("dcMeta");
+            xml.WriteAttributeString("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            xml.WriteAttributeString("xsi:schemaLocation", "http://dublincore.org/schemas/xmls/qdc/2008/02/11/dc.xsd");
+            xml.WriteAttributeString("xmlns:dc", "http://purl.org/dc/elements/1.1/");
+            xml.WriteElementString("dc:creator", projectOptions.contentCreator);
+            xml.WriteElementString("dc:contributor", projectOptions.contributor);
+            string title = projectOptions.vernacularTitle;
+            if (title.Length == 0)
+                title = projectOptions.EnglishDescription;
+            xml.WriteElementString("dc:title", title);
+            xml.WriteElementString("dc:description", projectOptions.EnglishDescription);
+            xml.WriteElementString("dc:date", projectOptions.contentUpdateDate.ToString("yyyy-MM-dd"));
+            xml.WriteElementString("dc:format", "digital");
+            xml.WriteElementString("dc:language", projectOptions.languageId);
+            xml.WriteElementString("dc:publisher", projectOptions.electronicPublisher);
+            string rights = String.Empty;
+            string shortRights = projectOptions.translationId + " Scripture ";
+            string copyright;
+            if (projectOptions.publicDomain)
+            {
+                copyright = rights = "Public Domain";
+                shortRights = shortRights + "is in the Public Domain.";
+            }
+            else if (projectOptions.anonymous)
+            {
+                copyright = "Copyright © " + projectOptions.copyrightYears + ". ";
+            }
+            else
+            {
+                copyright = "Copyright © " + projectOptions.copyrightYears + " " + projectOptions.copyrightOwner;
+            }
+            copyright += Environment.NewLine + projectOptions.rightsStatement + Environment.NewLine;
+            if (projectOptions.ccbyndnc)
+            {
+                rights = copyright + @"
+This work is made available to you under the terms of the Creative Commons Attribution-Noncommercial-No Derivative Works license at https://creativecommons.org/licenses/by-nc-nd/4.0/." +
+                Environment.NewLine;
+                shortRights = shortRights + copyright + " Creative Commons BY-NC-ND license.";
+            }
+            else if (projectOptions.ccbynd)
+            {
+                rights = copyright + @"
+This work is made available to you under the terms of the Creative Commons Attribution-No Derivative Works license at https://creativecommons.org/licenses/by-nd/4.0/." +
+                Environment.NewLine;
+                shortRights = shortRights + copyright + " Creative Commons BY-ND license.";
+            }
+            else if (projectOptions.ccbysa)
+            {
+                rights = copyright + @"
+This work is made available to you under the terms of the Creative Commons Attribution-Share-Alike license at https://creativecommons.org/licenses/by-sa/4.0/." +
+                Environment.NewLine;
+                shortRights = shortRights + copyright + " Creative Commons BY-SA license.";
+            }
+            else if (projectOptions.ccbync)
+            {
+                rights = copyright + @"
+This work is made available to you under the terms of the Creative Commons Attribution-Noncommercial license at https://creativecommons.org/licenses/by-nc/4.0/." +
+                Environment.NewLine;
+                shortRights = shortRights + copyright + " Creative Commons BY-NC license.";
+            }
+            else if (projectOptions.wbtverbatim)
+            {
+                rights = copyright + @"
+All rights reserved." +
+                Environment.NewLine;
+                shortRights = shortRights + copyright + " All rights reserved.";
+            }
+            else if (projectOptions.otherLicense)
+            {
+                rights = copyright + Environment.NewLine + projectOptions.rightsStatement;
+                shortRights = shortRights + copyright;
+            }
+            else if (projectOptions.allRightsReserved)
+            {
+                rights = copyright + " All rights reserved.";
+                shortRights = shortRights + rights;
+            }
+            rights = rights + projectOptions.rightsStatement;
+            xml.WriteElementString("dc:rights", rights);
+            xml.WriteElementString("dc:identifier", String.Empty);
+            xml.WriteElementString("dc:type", String.Empty);
+            xml.WriteEndElement();  // dcMeta
+            xml.WriteElementString("numberSystem", projectOptions.numberSystem);
+            xml.WriteElementString("chapterAndVerseSeparator", projectOptions.CVSeparator);
+            xml.WriteElementString("rangeSeparator", projectOptions.rangeSeparator);
+            xml.WriteElementString("multiRefSameChapterSeparator", projectOptions.multiRefSameChapterSeparator);
+            xml.WriteElementString("multiRefDifferentChapterSeparator", projectOptions.multiRefDifferentChapterSeparator);
+            xml.WriteElementString("verseNumberLocation", projectOptions.verseNumberLocation);
+            xml.WriteElementString("footnoteMarkerStyle", projectOptions.footnoteMarkerStyle);
+            xml.WriteElementString("footnoteMarkerResetAt", projectOptions.footnoteMarkerResetAt);
+            xml.WriteElementString("footnoteMarkers", projectOptions.footNoteCallers);
+            xml.WriteElementString("BookSourceForMarkerXt", projectOptions.BookSourceForMarkerXt);
+            xml.WriteElementString("BookSourceForMarkerR", projectOptions.BookSourceForMarkerR);
+            xml.WriteElementString("iso", projectOptions.languageId);
+            xml.WriteElementString("isoVariant", projectOptions.dialect);
+            xml.WriteElementString("langName", projectOptions.languageName);
+            xml.WriteElementString("textDir", projectOptions.textDir);
+            xml.WriteElementString("hasNotes", (!projectOptions.ignoreExtras).ToString()); //TODO: check to see if translation has notes or not.
+            xml.WriteElementString("coverTitle", projectOptions.vernacularTitle);
+            xml.WriteEndElement();	// vernacularParms
+            xml.WriteEndDocument();
+            xml.Close();
+
+            xml = new XmlTextWriter(Path.Combine(UsfxPath, projectOptions.translationId + "-VernacularAdditional.xml"), System.Text.Encoding.UTF8);
+            xml.Formatting = System.Xml.Formatting.Indented;
+            xml.WriteStartDocument();
+            xml.WriteStartElement("vernacularParmsMiscellaneous");
+            xml.WriteElementString("translationId", projectOptions.translationId);
+            // xml.WriteElementString("otmlId", " ");
+            xml.WriteElementString("versificationScheme", projectOptions.versificationScheme);
+            xml.WriteElementString("checkVersification", "No");
+            // xml.WriteElementString("osis2SwordOptions", globe.globe.projectOptions.osis2SwordOptions);
+            // xml.WriteElementString("otmlRenderChapterNumber", globe.globe.projectOptions.otmlRenderChapterNumber);
+            xml.WriteElementString("copyright", shortRights);
+            xml.WriteEndElement();	// vernacularParmsMiscellaneous
+            xml.WriteEndDocument();
+            xml.Close();
+
+            // Write the ETEN DBL MetaData.xml file in the usfx directory.
+            string metaXmlName = Path.Combine(UsfxPath, projectOptions.translationId + "metadata.xml");
+            xml = new XmlTextWriter(metaXmlName, System.Text.Encoding.UTF8);
+            xml.Formatting = System.Xml.Formatting.Indented;
+            xml.WriteStartDocument();
+            // xml.WriteProcessingInstruction("xml-model", "href=\"metadataWbt-1.3.rnc\" type=\"application/relax-ng-compact-syntax\"");
+            xml.WriteStartElement("DBLMetadata");
+            string etendblid = projectOptions.paratextGuid;
+            if (etendblid.Length > 16)
+                etendblid = etendblid.Substring(0, 16);
+            xml.WriteAttributeString("id", etendblid);
+            // xml.WriteAttributeString("revision", "4");
+            xml.WriteAttributeString("type", "text");
+            xml.WriteAttributeString("typeVersion", "1.5");
+            xml.WriteStartElement("identification");
+            xml.WriteElementString("name", projectOptions.shortTitle);
+            xml.WriteElementString("nameLocal", projectOptions.vernacularTitle);
+            xml.WriteElementString("abbreviation", projectOptions.translationId);
+            string abbreviationLocal = projectOptions.translationTraditionalAbbreviation;
+            if (abbreviationLocal.Length < 2)
+            {
+                abbreviationLocal = projectOptions.translationId.ToUpperInvariant();
+            }
+            xml.WriteElementString("abbreviationLocal", abbreviationLocal);
+            string scope = "Portion only";
+            if (projectOptions.ntBookCount == 27)
+            {
+                if (projectOptions.otBookCount == 39)
+                {
+                    if (projectOptions.adBookCount > 0)
+                    {
+                        scope = "Bible with Deuterocanon";
+                    }
+                    else
+                    {
+                        scope = "Bible without Deuterocanon";
+                    }
+                }
+                else if (projectOptions.otBookCount > 0)
+                {
+                    if ((projectOptions.otBookCount == 1) && (projectOptions.otChapCount == 150))
+                        scope = "New Testament and Psalms";
+                    else
+                        scope = "New Testament and Shorter Old Testament";
+                }
+                else
+                {
+                    scope = "NT";   // "New Testament only" is also allowed here.
+                }
+            }
+            else if (projectOptions.otBookCount == 39)
+            {
+                if (projectOptions.ntBookCount == 0)
+                {
+                    if (projectOptions.adBookCount > 0)
+                        scope = "Old Testament with Deuterocanon";
+                    else
+                        scope = "Old Testament only";
+                }
+            }
+            xml.WriteElementString("scope", scope);
+            xml.WriteElementString("description", projectOptions.EnglishDescription);
+            string yearCompleted = projectOptions.copyrightYears.Trim();
+            if (yearCompleted.Length > 4)
+                yearCompleted = yearCompleted.Substring(yearCompleted.Length - 4);
+            xml.WriteElementString("dateCompleted", yearCompleted);
+            xml.WriteStartElement("systemId");
+            xml.WriteAttributeString("fullname", projectOptions.shortTitle);
+            xml.WriteAttributeString("name", projectOptions.paratextProject);
+            xml.WriteAttributeString("type", "paratext");
+
+            xml.WriteEndElement();
+            xml.WriteElementString("bundleProducer", "");
+            xml.WriteEndElement();  // identification
+            xml.WriteElementString("confidential", "false");
+            /*
+            xml.WriteStartElement("agencies");
+            string etenPartner = "WBT";
+            if ((globe.globe.projectOptions.publicDomain == true) || globe.globe.projectOptions.copyrightOwner.ToUpperInvariant().Contains("EBIBLE"))
+                etenPartner = "eBible.org";
+            else if (globe.globe.projectOptions.copyrightOwner.ToUpperInvariant().Contains("SOCIETY"))
+                etenPartner = "UBS";
+            else if (globe.globe.projectOptions.copyrightOwner.ToUpperInvariant().Contains("BIBLICA"))
+                etenPartner = "Biblica";
+            else if (globe.globe.projectOptions.copyrightOwnerAbbrev.ToUpperInvariant().Contains("PBT"))
+                etenPartner = "PBT";
+            else if (globe.globe.projectOptions.copyrightOwnerAbbrev.ToUpperInvariant().Contains("SIM"))
+                etenPartner = "SIM";
+            xml.WriteElementString("etenPartner", etenPartner);
+            xml.WriteElementString("creator", globe.globe.projectOptions.contentCreator);
+            xml.WriteElementString("publisher", globe.globe.projectOptions.electronicPublisher);
+            xml.WriteElementString("contributor", globe.globe.projectOptions.contributor);
+            xml.WriteEndElement();  // agencies
+            */
+            xml.WriteStartElement("language");
+            xml.WriteElementString("iso", projectOptions.languageId);
+            xml.WriteElementString("name", projectOptions.languageNameInEnglish);
+            xml.WriteElementString("nameLocal", projectOptions.languageName);
+            xml.WriteElementString("ldml", projectOptions.ldml);
+            xml.WriteElementString("rod", projectOptions.rodCode);
+            xml.WriteElementString("script", projectOptions.script);
+            xml.WriteElementString("scriptDirection", projectOptions.textDir.ToUpperInvariant());
+            string numerals = projectOptions.numberSystem;
+            if (numerals == "Arabic")
+            {
+                numerals = "Hindi";
+            }
+            else if ((numerals == "Default") || (numerals == "Hindu-Arabic"))
+            {
+                numerals = "Arabic";
+            }
+            xml.WriteElementString("numerals", numerals);
+            xml.WriteEndElement();  // language
+            xml.WriteStartElement("country");
+            xml.WriteElementString("iso", projectOptions.countryCode);
+            xml.WriteElementString("name", projectOptions.country);
+            xml.WriteEndElement();  // country
+            xml.WriteStartElement("type");
+            if (projectOptions.copyrightYears.Length > 4)
+                xml.WriteElementString("translationType", "Revision");
+            else
+                xml.WriteElementString("translationType", "New");
+            xml.WriteElementString("audience", "Common");
+            xml.WriteEndElement();  // type
+            xml.WriteStartElement("bookNames");
+            foreach (WordSend.BibleBookRecord br in WordSend.usfxToHtmlConverter.bookList)
+            {
+                if (!String.IsNullOrEmpty(br.vernacularAbbreviation))
+                {
+                    xml.WriteStartElement("book");
+                    xml.WriteAttributeString("code", br.tla);
+                    xml.WriteElementString("long", br.vernacularLongName);
+                    xml.WriteElementString("short", br.vernacularShortName);
+                    xml.WriteElementString("abbr", br.vernacularAbbreviation);
+                    xml.WriteEndElement();  // book
+                }
+            }
+            xml.WriteEndElement();  // bookNames
+            xml.WriteStartElement("contents");
+            xml.WriteStartElement("bookList");
+            xml.WriteAttributeString("default", "true");
+            xml.WriteAttributeString("id", "1");
+            xml.WriteElementString("name", projectOptions.shortTitle);
+            xml.WriteElementString("nameLocal", projectOptions.vernacularTitle);
+            xml.WriteElementString("abbreviation", projectOptions.translationId);
+            xml.WriteElementString("abbreviationLocal", abbreviationLocal);
+            xml.WriteElementString("description", projectOptions.canonTypeEnglish);    // Book list description, like common, Protestant, or Catholic
+            xml.WriteElementString("descriptionLocal", projectOptions.canonTypeLocal);
+            xml.WriteStartElement("books");
+            foreach (WordSend.BibleBookRecord br in WordSend.usfxToHtmlConverter.bookList)
+            {
+                if (!String.IsNullOrEmpty(br.vernacularAbbreviation))
+                {
+                    xml.WriteStartElement("book");
+                    xml.WriteAttributeString("code", br.tla);
+                    xml.WriteEndElement();  // book
+                }
+            }
+            xml.WriteEndElement();  // books
+            xml.WriteEndElement();  // bookList
+            xml.WriteEndElement();  // contents
+            /*
+            xml.WriteStartElement("progress");
+            foreach (WordSend.BibleBookRecord br in WordSend.usfxToHtmlConverter.bookList)
+            {
+                if (!String.IsNullOrEmpty(br.vernacularAbbreviation))
+                {
+                    xml.WriteStartElement("book");
+                    xml.WriteAttributeString("code", br.tla);
+                    xml.WriteAttributeString("stage", "4");
+                    xml.WriteEndElement();  // book
+                }
+            }
+            xml.WriteEndElement();  // progress
+            */
+            if (!projectOptions.publicDomain)
+            {
+                xml.WriteStartElement("contact");
+                xml.WriteElementString("rightsHolder", projectOptions.copyrightOwner);
+                string localRights = projectOptions.localRightsHolder.Trim();
+                if (localRights.Length == 0)
+                    localRights = projectOptions.copyrightOwner;
+                xml.WriteElementString("rightsHolderLocal", localRights);
+                string rightsHolderAbbreviation = projectOptions.copyrightOwnerAbbrev.Trim();
+                if (rightsHolderAbbreviation.Length < 1)
+                {
+                    string s = projectOptions.copyrightOwner.Trim().ToUpperInvariant().Replace(" OF ", " ");
+                    if (s.StartsWith("THE "))
+                        s = s.Substring(4);
+                    if (s.EndsWith("."))
+                        s = s.Substring(0, s.Length - 1);
+                    if (s.EndsWith("INC"))
+                        s = s.Substring(0, s.Length - 4);
+                    bool afterSpace = true;
+                    for (i = 0; i < s.Length; i++)
+                    {
+                        if (s[i] == ' ')
+                        {
+                            afterSpace = true;
+                        }
+                        else
+                        {
+                            if (afterSpace && Char.IsLetter(s[i]))
+                            {
+                                rightsHolderAbbreviation = rightsHolderAbbreviation + s[i];
+                                afterSpace = false;
+                            }
+                        }
+                    }
+                }
+                xml.WriteElementString("rightsHolderAbbreviation", rightsHolderAbbreviation);
+                string ownerUrl = projectOptions.copyrightOwnerUrl;
+                if (ownerUrl.ToUpperInvariant().StartsWith("HTTPS://"))
+                    ownerUrl = ownerUrl.Substring(8);
+                if (ownerUrl.ToUpperInvariant().StartsWith("HTTP://"))
+                    ownerUrl = ownerUrl.Substring(7);
+                xml.WriteElementString("rightsHolderURL", ownerUrl);
+                xml.WriteElementString("rightsHolderFacebook", projectOptions.facebook);
+                xml.WriteEndElement();  // contact
+            }
+            xml.WriteStartElement("copyright");
+            xml.WriteStartElement("statement");
+            xml.WriteAttributeString("contentType", "xhtml");
+            xml.WriteElementString("p", copyright);
+            xml.WriteEndElement();  // statement
+            xml.WriteEndElement();  // copyright
+            xml.WriteStartElement("promotion");
+            xml.WriteStartElement("promoVersionInfo");
+            xml.WriteAttributeString("contentType", "xhtml");
+            if (projectOptions.promoHtml.Trim().Length > 3)
+                xml.WriteString(projectOptions.promoHtml);
+            else
+                xml.WriteElementString("p", rights);
+            xml.WriteEndElement();  // promoVersionInfo
+            xml.WriteStartElement("promoEmail");
+            xml.WriteAttributeString("contentType", "xhtml");
+            xml.WriteString(@"Thank you for downloading ");
+            xml.WriteString(projectOptions.vernacularTitle);
+            xml.WriteString(@"! Now you'll have anytime, anywhere access to God's Word on your mobile device—even if 
+you're outside of service coverage or not connected to the Internet. It also means faster service whenever you read that version since it's 
+stored on your device. Enjoy! This download was made possible by ");
+            xml.WriteString(projectOptions.copyrightOwner.Trim(new char[] { ' ', '.' }));
+            xml.WriteString(@". We really appreciate their passion for making the Bible available to millions of people around the world. Because of 
+their generosity, people like you can open up the Bible and hear from God no matter where you are. You can learn more about them at ");
+            xml.WriteString(projectOptions.copyrightOwnerUrl);
+            xml.WriteString(@".");
+            xml.WriteEndElement();  // promoEmail
+            xml.WriteEndElement();  // promotion
+            xml.WriteStartElement("archiveStatus");
+            xml.WriteElementString("archivistName", "");
+            xml.WriteElementString("dateArchived", "");
+            xml.WriteElementString("dateUpdated", "");
+            xml.WriteElementString("comments", "");
+            xml.WriteEndElement();  // archiveStatus
+            xml.WriteElementString("format", "text/xml");
+            xml.WriteEndElement();  // DBLMetadata
+            xml.Close();
+
+
+            if (projectOptions.UseFrames)
+            {
+                // Look for Introduction files in the output. (They were copied htmlextras earlier.)
+                // Do this before making the chapter index, since we tell it to look for them there.
+                foreach (var path in Directory.GetFiles(htmlPath, "*" + UsfxToChapterIndex.IntroductionSuffix))
+                {
+                    string destFileName = Path.Combine(htmlPath, Path.GetFileName(path));
+                    toHtm.MakeFramesFor(destFileName);
+                }
+                // Generate the ChapterIndex file
+                var ciMaker = new UsfxToChapterIndex();
+                ciMaker.IntroductionDirectory = htmlPath;
+                ciMaker.IntroductionLinkText = projectOptions.IntroductionLinkText;
+                ciMaker.ConcordanceLinkText = projectOptions.ConcordanceLinkText;
+                string chapIndexPath = Path.Combine(htmlPath, UsfxToChapterIndex.ChapIndexFileName);
+                ciMaker.Generate(usfxFilePath, chapIndexPath);
+                EnsureTemplateFile("chapIndex.css", htmlPath);
+                EnsureTemplateFile("frameFuncs.js", htmlPath);
+                EnsureTemplateFile("Navigation.js", htmlPath);
+            }
+
+            // Todo JohnT: move this to a new method, and the condition to the method that calls this.
+            if (projectOptions.GenerateConcordance || projectOptions.UseFrames)
+            {
+                currentConversion = "Concordance";
+                string concordanceDirectory = Path.Combine(htmlPath, "conc");
+                Logit.WriteLine("Deleting " + concordanceDirectory);
+                Utils.DeleteDirectory(concordanceDirectory); // Blow away any previous results
+                Logit.WriteLine("Creating " + concordanceDirectory);
+                Utils.EnsureDirectory(concordanceDirectory);
+                string excludedClasses =
+                    "toc toc1 toc2 navButtons pageFooter chapterlabel r verse"; // from old prophero: "verse chapter notemark crmark crossRefNote parallel parallelSub noteBackRef popup crpopup overlap";
+                string headingClasses = "mt mt2 s"; // old prophero: "sectionheading maintitle2 footnote sectionsubheading";
+                var concGenerator = new ConcGenerator(inputProjectDirectory, concordanceDirectory)
+                {
+                    // Currently configurable options
+                    MergeCase = projectOptions.MergeCase,
+                    MaxContextLength = projectOptions.MaxContextLength,
+                    MinContextLength = projectOptions.MinContextLength,
+                    WordformingChars = projectOptions.WordformingChars,
+                    MaxFrequency = projectOptions.MaxFrequency,
+                    Phrases = projectOptions.Phrases,
+                    ExcludeWords = new HashSet<string>(projectOptions.ExcludeWords.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)),
+                    ReferenceAbbeviationsMap = projectOptions.ReferenceAbbeviationsMap,
+                    BookChapText = projectOptions.BooksAndChaptersLinkText,
+                    ConcordanceLinkText = projectOptions.ConcordanceLinkText,
+
+                    // Options we may want to make configurable for localization.
+                    // Todo: configure comparison function
+                    IndexType = ConcGenerator.IndexTypes.alphaTreeMf,
+                    NotesRef = "note",
+                    HeadingRef = "head",
+
+
+                    // Options we need to configure correctly based on the HTML we generate
+                    ExcludeClasses = new HashSet<string>(excludedClasses.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)),
+                    NotesClass = "footnotes", // todo: fix if Haiola generates HTML with footnotes that should be concorded
+                    NonCanonicalClasses = new HashSet<string>(headingClasses.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+                };
+                // concGenerator.Run(new List<string>(Directory.GetFiles(xhtmlPath)));
+                Logit.WriteLine("Generating concordance.");
+
+                concGenerator.Run(Path.Combine(Path.Combine(outputProjectDirectory, "search"), "verseText.xml"));
+
+                var concFrameGenerator = new ConcFrameGenerator()
+                { ConcDirectory = concordanceDirectory, LangName = projectOptions.vernacularTitle };
+                concFrameGenerator.customCssName = projectOptions.customCssFileName;
+                concFrameGenerator.Run();
+                EnsureTemplateFile("mktree.css", concordanceDirectory);
+                EnsureTemplateFile("plus.gif", concordanceDirectory);
+                EnsureTemplateFile("minus.gif", concordanceDirectory);
+                EnsureTemplateFile("display.css", concordanceDirectory);
+                EnsureTemplateFile("TextFuncs.js", htmlPath);
+            }
+        }
+
+
+        public void ConvertUsfxToEPub()
+        {
+            if ((projectOptions.languageId.Length < 3) || (projectOptions.translationId.Length < 3))
+                return;
+            currentConversion = "writing ePub";
+            string UsfxPath = Path.Combine(outputProjectDirectory, "usfx");
+            string epubPath = Path.Combine(outputProjectDirectory, "epub");
+            string htmlPath = Path.Combine(epubPath, "OEBPS");
+            if (!Directory.Exists(UsfxPath))
+            {
+                Logit.WriteError(UsfxPath + " not found!");
+                return;
+            }
+            Utils.EnsureDirectory(outputDirectory);
+            Utils.EnsureDirectory(outputProjectDirectory);
+            Utils.EnsureDirectory(epubPath);
+            Utils.EnsureDirectory(htmlPath);
+            string epubCss = Path.Combine(htmlPath, "epub.css");
+            string logFile = Path.Combine(outputProjectDirectory, "epubConversionReport.txt");
+            Logit.OpenFile(logFile);
+
+            string fontSource = Path.Combine(dataRootDir, "fonts");
+            string fontName = projectOptions.fontFamily.ToLower().Replace(' ', '_');
+            // Copy cascading style sheet from project directory, or if not there, create a font specification section and append it to BibleConv/input/epub.
+            string specialCss = Path.Combine(inputProjectDirectory, "epub.css");
+            if (File.Exists(specialCss))
+            {
+                File.Copy(specialCss, epubCss);
+            }
+            else
+            {
+                StreamReader sr;
+                specialCss = Path.Combine(inputDirectory, "epub.css");
+                if (File.Exists(specialCss))
+                    sr = new StreamReader(specialCss);
+                else
+                    sr = new StreamReader(SFConverter.FindAuxFile("epub.css"));
+                string epubStyleSheet = sr.ReadToEnd();
+                sr.Close();
+                StreamWriter sw = new StreamWriter(epubCss);
+                sw.WriteLine("@font-face {{font-family:'{0}';src: url('{0}.ttf') format('truetype');src: url('{0}.woff') format('woff');font-weight:normal;font-style:normal}}",
+                    fontName);
+                sw.WriteLine("html,body,div.main,div.footnote,div,ol.nav,h1,ul.tnav {{font-family:'{0}','{1}','Liberation Sans','liberationsans_regular','sans-serif'}}", fontName, projectOptions.fontFamily);
+                if (projectOptions.commonChars)
+                {
+                    sw.WriteLine(".chapterlabel,.mt,.tnav,h1.title,a.xx,a.oo,a.nn {{'Liberation Sans','liberationsans_regular','sans-serif'}}");
+                }
+                sw.WriteLine("* {margin:0;padding:0}");
+                sw.WriteLine("html,body	{0}height:100%;font-size:1.0em;line-height:{1}em{2}", "{", (projectOptions.script.ToLowerInvariant() == "latin") ? "1.2" : "2.5", "}");
+                sw.Write(epubStyleSheet);
+                sw.Close();
+            }
+            fileHelper.DebugWrite("copying files");
+            fileHelper.CopyFile(Path.Combine(fontSource, fontName + ".woff"), Path.Combine(htmlPath, fontName + ".woff"));
+            fileHelper.CopyFile(Path.Combine(fontSource, fontName + ".ttf"), Path.Combine(htmlPath, fontName + ".ttf"));
+            fileHelper.CopyFile(Path.Combine(fontSource, "liberationsans_regular.woff"), Path.Combine(htmlPath, "liberationsans_regular.woff"));
+            fileHelper.CopyFile(Path.Combine(fontSource, "liberationsans_regular.ttf"), Path.Combine(htmlPath, "liberationsans_regular.ttf"));
+            fileHelper.DebugWrite("fonts copied");
+
+            ePubWriter toEpub = new ePubWriter();
+            toEpub.projectOptions = projectOptions;
+            toEpub.projectOutputDir = outputProjectDirectory;
+            toEpub.epubDirectory = epubPath;
+            toEpub.redistributable = projectOptions.redistributable;
+            toEpub.epubIdentifier = GetEpubID();
+            toEpub.stripPictures = false;
+            toEpub.indexDate = DateTime.UtcNow;
+            fileHelper.DebugWrite("Checking eBible.org unique status");
+
+            if (projectOptions.eBibledotorgunique && !projectOptions.privateProject)
+            {
+                toEpub.indexDateStamp = "ePub generated by <a href='https://eBible.org'>eBible.org</a> using <a href='https://haiola.org'>Haiola</a> on " + toEpub.indexDate.ToString("d MMM yyyy") +
+                        " from source files dated " + sourceDate.ToString("d MMM yyyy") +
+                        "<br/>";
+            }
+            else
+            {
+                toEpub.indexDateStamp = "ePub generated by <a href='https://haiola.org'>Haiola</a> " + toEpub.indexDate.ToString("d MMM yyyy") +
+                    " from source files dated " + sourceDate.ToString("d MMM yyyy");
+            }
+            fileHelper.DebugWrite("Index date stamp created.");
+
+            toEpub.GeneratingConcordance = projectOptions.GenerateConcordance || projectOptions.UseFrames;
+            toEpub.CrossRefToFilePrefixMap = projectOptions.CrossRefToFilePrefixMap;
+            toEpub.contentCreator = projectOptions.contentCreator;
+            toEpub.contributor = projectOptions.contributor;
+            fileHelper.DebugWrite("UsfxPath = "+UsfxPath);
+
+            string usfxFilePath = Path.Combine(UsfxPath, "usfx.xml");
+            toEpub.bookInfo.ReadPublicationOrder(orderFile);
+            fileHelper.DebugWrite("Merge path assignment");
+
+            toEpub.MergeXref(Path.Combine(inputProjectDirectory, "xref.xml"));
+            //TODO: eliminate side effects in expandPercentEscapes
+            // Side effect: expandPercentEscapes sets longCopyrightMessage and shortCopyrightMessage.
+            toEpub.sourceLink = expandPercentEscapes("<a href=\"https://%h/%t\">%v</a>");
+            fileHelper.DebugWrite("Escapes expanded.");
+
+            toEpub.longCopr = longCopyrightMessage;
+            toEpub.shortCopr = shortCopyrightMessage;
+            toEpub.textDirection = projectOptions.textDir;
+            toEpub.customCssName = "epub.css";
+            toEpub.stripManualNoteOrigins = projectOptions.stripNoteOrigin;
+            toEpub.noteOriginFormat = projectOptions.xoFormat;
+            toEpub.englishDescription = projectOptions.EnglishDescription;
+            toEpub.preferredFont = projectOptions.fontFamily;
+            toEpub.fcbhId = projectOptions.fcbhId;
+            toEpub.coverName = Path.GetFileName(preferredCover);
+            string coverPath = Path.Combine(htmlPath, toEpub.coverName);
+            fileHelper.DebugWrite("copying cover");
+            File.Copy(preferredCover, coverPath);
+            if (projectOptions.PrepublicationChecks &&
+                (projectOptions.publicDomain || projectOptions.redistributable || File.Exists(Path.Combine(inputProjectDirectory, "certify.txt"))) &&
+                File.Exists(certified))
+            {
+                File.Copy(certified, Path.Combine(htmlPath, "eBible.org_certified.jpg"));
+                toEpub.indexDateStamp = toEpub.indexDateStamp + "<br /><a href='https://eBible.org/certified/' target='_blank'><img src='eBible.org_certified.jpg' alt='eBible.org certified' /></a>";
+            }
+            toEpub.xrefCall.SetMarkers(projectOptions.xrefCallers);
+            toEpub.footNoteCall.SetMarkers(projectOptions.footNoteCallers);
+            toEpub.projectInputDir = inputProjectDirectory;
+            fileHelper.DebugWrite("Writing epub to "+htmlPath);
+            toEpub.ConvertUsfxToHtml(usfxFilePath, htmlPath,
+                projectOptions.vernacularTitle,
+                projectOptions.languageId,
+                projectOptions.translationId,
+                projectOptions.chapterLabel,
+                projectOptions.psalmLabel,
+                "<a class='xx' href='copyright.xhtml'>" + usfxToHtmlConverter.EscapeHtml(shortCopyrightMessage) + "</a>",
+                expandPercentEscapes(projectOptions.homeLink),
+                expandPercentEscapes(projectOptions.footerHtml),
+                expandPercentEscapes(projectOptions.indexHtml),
+                copyrightPermissionsStatement(),
+                projectOptions.ignoreExtras,
+                projectOptions.goText);
+            toEpub.bookInfo.RecordStats(projectOptions);
+            projectOptions.commonChars = toEpub.commonChars;
+            projectOptions.Write();
+            Logit.CloseFile();
+            if (Logit.loggedError)
+            {
+                projectOptions.lastRunResult = false;
+            }
+            if (Logit.loggedWarning)
+            {
+                projectOptions.warningsFound = true;
             }
         }
 
@@ -1422,7 +2830,9 @@ For other uses, please contact the respective copyright owners.</p>
             DateTime fileDate;
             bool result = false;
             string source = projectOptions.customSourcePath;
-            string sourceKind = GetSourceKind(source);
+            if (String.IsNullOrEmpty(source))
+                return result;
+            string sourceKind = GetSourceKind(source, !XMLini.readOnly);
             fileDate = File.GetLastWriteTimeUtc(source);
             if (fileDate > projectOptions.SourceFileDate)
             {

@@ -186,6 +186,10 @@ namespace WordSend
         protected override void OpenHtmlFile(string fileName, bool mainScriptureFile, bool skipNav = false)
         {
             string s;
+            if (langCodes == null)
+            {
+                langCodes = new LanguageCodeInfo();
+            }
             string shortLang = langCodes.ShortCode(languageIdentifier);
 
             if ((shortLang == "en") && (countryCode.Length == 2))

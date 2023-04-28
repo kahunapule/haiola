@@ -32,7 +32,7 @@ namespace WordSend
         {
             if (appHomeDir == null)
             {
-                appHomeDir = Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
+                appHomeDir = Path.GetDirectoryName(System.IO.Path.GetFullPath(Environment.GetCommandLineArgs()[0]));
             }
             return (Path.Combine(appHomeDir, fName));
         }
@@ -56,6 +56,7 @@ namespace WordSend
             result = Path.Combine(Path.Combine(Path.Combine(appHomeDir, @".."), @".."), fName);
             if (File.Exists(result))
                 return result;
+            fileHelper.DebugWrite("Couldn't find " + fName);
             return fName;
         }
 

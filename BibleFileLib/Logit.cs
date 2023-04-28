@@ -71,12 +71,10 @@ namespace WordSend
 
         public static void WriteLine(string s)
         {
-            if (useConsole)
+            if (useConsole || ((GUIWriteString == null) && (sw == null)))
                 Console.WriteLine(s);
             if (GUIWriteString != null)
                 GUIWriteString(s);
-            if ((!useConsole) && (GUIWriteString == null) && (sw == null))
-                System.Windows.Forms.MessageBox.Show(s);
             if (sw != null)
             {
                 if (!loggedVersion)

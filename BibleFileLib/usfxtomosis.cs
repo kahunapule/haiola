@@ -801,7 +801,7 @@ namespace WordSend
 
         public void DeleteSwordModule(string swordName)
         {
-            string command;
+            string command, parameters;
             swordZipDir = Path.Combine(swordDir, "zip");
             try 
 	        {
@@ -809,8 +809,9 @@ namespace WordSend
                 Utils.DeleteFile(Path.Combine(swordZipDir, swordName + ".zip"));
                 Utils.DeleteFile(Path.Combine(Path.Combine(swordDir, "mods.d"), swordName + ".conf"));
                 Utils.DeleteDirectory(Path.Combine(Path.Combine(Path.Combine(Path.Combine(swordDir, "modules"), "texts"), "ztext"), swordName));
-                command = "tar czvf mods.d.tar.gz mods.d/";
-                fileHelper.RunCommand(command, swordDir);
+                command = "tar";
+                parameters = "czvf mods.d.tar.gz mods.d/";
+                fileHelper.RunCommand(command, parameters, swordDir);
 	        }
 	        catch (Exception ex)
 	        {
@@ -838,6 +839,8 @@ namespace WordSend
             swordModuleDir = Path.Combine(baseDir, "modules");
             swordOsisName = OsisFileName; // Path.ChangeExtension(OsisFileName, ".sosis");
             string oldSwordModuleDir = Path.Combine(Path.Combine(swordModuleDir, "texts"), "ztext");
+            string command;
+            string parameters;
             long result = 0;
             // StreamWriter swordOsis;
             // StreamReader mosis;
@@ -859,15 +862,14 @@ namespace WordSend
                 swordModuleDir = Path.Combine(swordModuleDir, swordName);
                 Utils.EnsureDirectory(swordModuleDir);
                 // Here is where we actually make the module.
-                string command = "osis2mod \"" + swordModuleDir + "\" \"" + swordOsisName + "\" -z -b 4 -v " + projectOptions.swordVersification;
+                command = "osis2mod";
+                parameters = "\"" + swordModuleDir + "\" \"" + swordOsisName + "\" -z -b 4 -v " + projectOptions.swordVersification;
                 if ((projectOptions.languageId == "hbo") || (projectOptions.languageId == "heb"))
-                    command = command + " -N";
+                    parameters = parameters + " -N";
+                fileHelper.RunCommand(command, parameters, baseDir);
+
                 // Logit.WriteLine("cd " + baseDir);
                 // Logit.WriteLine(command);
-                fileHelper.RunCommand(command, baseDir);
-                command = "chmod -R a+r *";
-                fileHelper.RunCommand(command, baseDir);
-
                 string[] fileList = Directory.GetFiles(swordModuleDir, "*.*");
                 foreach (string fileName in fileList)
                 {
@@ -897,6 +899,7 @@ namespace WordSend
             Utils.EnsureDirectory(modsd);
             string yr = LastCopyrightYear(projectOptions.copyrightYears);
             string swordName = projectOptions.SwordName;
+            string command, parameters;
             long installSize = 0;
             char[] separators = new char[] { ' ', ',' };
             string[] oldNames = new string[] { String.Empty };
@@ -962,7 +965,9 @@ namespace WordSend
                 }
                 config.WriteLine();
                 config.WriteLine("# Short description of the module");
-                if (!String.IsNullOrEmpty(projectOptions.shortTitle))
+                if (!String.IsNullOrEmpty(projectOptions.vernacularTitle))
+                    config.WriteLine("Description={0}", projectOptions.vernacularTitle);
+                else if (!String.IsNullOrEmpty(projectOptions.shortTitle))
                     config.WriteLine("Description={0}", projectOptions.shortTitle);
                 else if (!String.IsNullOrEmpty(projectOptions.EnglishDescription))
                     config.WriteLine("Description={0}", projectOptions.EnglishDescription);
@@ -1135,14 +1140,16 @@ namespace WordSend
                 projectOptions.Write();
 
                 // Zip the module and recompress the index.
-                string command = "rm zip/" + swordName + ".zip";
-                fileHelper.RunCommand(command, baseDir);
-                command = "zip -r -D zip/" + swordName + ".zip mods.d/" + swordName + ".conf modules/texts/ztext/" + swordName;
-                fileHelper.RunCommand(command, baseDir);
-                command = "tar czvf mods.d.tar.gz mods.d/";
-                fileHelper.RunCommand(command, baseDir);
-
-
+                Utils.DeleteFile(Path.Combine(Path.Combine(baseDir,"zip"),swordName+".zip"));
+                //command = "rm";
+                //parameters = "zip/" + swordName + ".zip";
+                //fileHelper.RunCommand(command, parameters, baseDir);
+                command = "zip";
+                parameters = "-r -D zip/" + swordName + ".zip mods.d/" + swordName + ".conf modules/texts/ztext/" + swordName;
+                fileHelper.RunCommand(command, parameters, baseDir);
+                command = "tar";
+                parameters = "czvf mods.d.tar.gz mods.d/";
+                fileHelper.RunCommand(command, parameters, baseDir);
             }
             catch (Exception ex)
             {
@@ -1161,6 +1168,61 @@ namespace WordSend
         protected bool OSISRedLetterWords;
         protected string shortLang;
         protected SwordVersifications SwordVs;
+        public bool commandLineKludge = false;
+
+
+
+        static void ValidationCallback(object sender, ValidationEventArgs e)
+        {
+            Logit.WriteError("OSIS validation error: " + e.Message);
+        }
+
+
+        public bool ValidateMosisFile(string xmlFilePath, string xsdFilePath)
+        {
+            bool result = false;
+            XmlReader reader;
+
+            try
+            {
+                XmlReaderSettings settings = new XmlReaderSettings();
+                settings.ValidationType = ValidationType.Schema;
+
+                XmlSchemaSet schemas = new XmlSchemaSet();
+                if (commandLineKludge)
+                {
+                    schemas.Add("http://www.bibletechnologies.net/2003/OSIS/namespace", xsdFilePath);
+                    schemas.Add("http://www.w3.org/XML/1998/namespace", "xml.xsd");
+                }
+
+                settings.Schemas = schemas;
+                settings.ValidationEventHandler += ValidationCallback;
+
+                using (reader = XmlReader.Create(xmlFilePath, settings))
+                {
+                    try
+                    {
+                        while (reader.Read()) { }
+                        return true;
+                    }
+                    catch (XmlException ex)
+                    {
+                        Logit.WriteError("Invalid OSIS XML: " + ex.Message);
+                        return false;
+                    }
+                    catch (XmlSchemaValidationException ex)
+                    {
+                        Console.WriteLine("Invalid MOSIS XML: " + ex.Message);
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError("OSIS validation of " + xmlFilePath + " failed: " + ex.Message);
+            }
+            return result;
+        }
 
         /// <summary>
         /// Convert USFX file to Modified OSIS for Sword Project import
@@ -2360,49 +2422,40 @@ namespace WordSend
                 WriteLocaleFile(Path.Combine(mosisDirectory, "locale-" + languageCode + ".conf"));
 
                 // Validate this file against the Schema
+                fileHelper.DebugWrite("reading OSIS Schema and " + mosisFileName);
+                string schemaFullPath = SFConverter.FindAuxFile(localOsisSchema);
+                
+                string schemaDir = Path.GetDirectoryName(schemaFullPath);
+                if (schemaDir.Trim().Length > 0)
+                    Directory.SetCurrentDirectory(schemaDir);
+                string localSchemaName = Path.Combine(mosisDirectory, localOsisSchema);
+                fileHelper.DebugWrite("Copying " + schemaFullPath + " to " + localSchemaName);
+                File.Copy(schemaFullPath, localSchemaName);
+                string xmlxsdPath = SFConverter.FindAuxFile("xml.xsd");
+                string localXmlXsdPath = Path.Combine(mosisDirectory, "xml.xsd");
+                fileHelper.DebugWrite("Copying "+ xmlxsdPath + " to " + localXmlXsdPath);
+                File.Copy(xmlxsdPath, localXmlXsdPath);
+                
+                ValidateMosisFile(mosisFileName, Path.GetFileName(schemaFullPath));
+                /*
 
                 osisVerseId = "header";
-                Logit.ShowStatus("reading OSIS Schema and " + mosisFileName);
                 lastElementWritten = "validating MOSIS file";
                 currentElement = "";
                 string schemaFullPath = SFConverter.FindAuxFile(localOsisSchema);
                 string schemaDir = Path.GetDirectoryName(schemaFullPath);
-                if (schemaDir.Trim().Length > 0)
-                    Directory.SetCurrentDirectory(schemaDir);
-                // The Microsoft .NET library doesn't need the following 2 lines, but Mono requires a copy of the schema in the same directory.
                 string localSchemaName = Path.Combine(mosisDirectory, localOsisSchema);
+                fileHelper.DebugWrite("Copying " + schemaFullPath + " to " + localSchemaName);
                 File.Copy(schemaFullPath, localSchemaName);
-
-
-
-                /*********** Old code made obsolete by Microsoft. For a while, I stuck with it until Mono caught up.
-                XmlTextReader txtreader = new XmlTextReader(mosisFileName);
-                XmlValidatingReader reader = new XmlValidatingReader(txtreader);
-                reader.ValidationEventHandler += new ValidationEventHandler(ValidationCallBack);
-                while (reader.Read())
-                {
-                    if (reader.NodeType == XmlNodeType.Element)
-                    {
-                        currentElement = reader.Name;
-                        string verseId = reader.GetAttribute("osisID");
-                        if (verseId != null)
-                        {
-                            osisVerseId = verseId;
-                            Logit.ShowStatus("validating mosis " + osisVerseId);
-                        }
-                    }
-                }
-                reader.Close();
-                **************/
-
-//  Replacement code for XmlValidatingReader follows:
 
                 XmlReaderSettings settings = new XmlReaderSettings();
                 settings.Schemas.Add(osisNamespace, osisSchema);
                 settings.ValidationType = ValidationType.Schema;
                 settings.ValidationFlags = XmlSchemaValidationFlags.ReportValidationWarnings;
                 settings.ValidationEventHandler += new ValidationEventHandler(ValidationCallBack);
+                fileHelper.DebugWrite("Creating validating reader for " + mosisFileName);
                 XmlReader mr = XmlTextReader.Create(mosisFileName, settings);
+                fileHelper.DebugWrite("Reading " + mosisFileName);
 
                 while (mr.Read())
                 {
@@ -2418,7 +2471,10 @@ namespace WordSend
                     }
                 }
                 mr.Close();
+                */
+                fileHelper.DebugWrite("Deleting " + localSchemaName + " and "+localXmlXsdPath);
                 Utils.DeleteFile(localSchemaName);
+                Utils.DeleteFile(localXmlXsdPath);
                 if (projectOptions != null)
                 {
                     WriteSwordConfig();

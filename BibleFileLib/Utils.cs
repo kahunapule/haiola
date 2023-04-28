@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using System.Windows.Forms;
 using System.Xml;
 using System.Security.Cryptography;
 
@@ -127,7 +126,7 @@ namespace WordSend
             }
             catch (Exception ex)
             {
-                MessageBox.Show(String.Format("Unable to delete directory {0}. Details: {1}", destinationPath, ex.Message), "Error");
+                Logit.WriteError(String.Format("Unable to delete directory {0}. Details: {1}", destinationPath, ex.Message));
             }
         }
 
@@ -147,7 +146,7 @@ namespace WordSend
             }
             catch (Exception ex)
             {
-                MessageBox.Show(String.Format("Unable to delete file {0}. Details: {1}", destinationPath, ex.Message), "Error");
+                Logit.WriteError(String.Format("Unable to delete file {0}. Details: {1}", destinationPath, ex.Message));
             }
         }
 
@@ -165,7 +164,7 @@ namespace WordSend
 				}
 				catch (Exception ex)
 				{
-					MessageBox.Show(String.Format("Unable to create directory {0}. Details: {1}", destinationPath, ex.Message), "Error");
+					Logit.WriteError(String.Format("Unable to create directory {0}. Details: {1}", destinationPath, ex.Message));
 					return true;
 				}
 			}

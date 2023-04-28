@@ -641,6 +641,8 @@ namespace WordSend
             int i = 0;
             BibleBookRecord br;
 
+            fileHelper.DebugWrite("Reading publication order from "+fileName);
+
             string line;
             try
             {

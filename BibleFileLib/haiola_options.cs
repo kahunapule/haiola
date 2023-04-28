@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using System.Windows.Forms;
 using System.Xml;
 
 namespace WordSend
@@ -72,7 +71,7 @@ namespace WordSend
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error loading ini file " + iniName);
+                Logit.WriteError(ex.Message + " Error loading ini file " + iniName);
             }
 		}
 
@@ -726,6 +725,11 @@ namespace WordSend
 			get { return ini.ReadString("builtFingerprint", String.Empty); }
 			set { ini.WriteString("builtFingerprint", value); }
 		}
+
+		public bool sourceChanged
+        {
+			get { return builtFingerprint != currentFingerprint; }
+        }
 
 		public string paratextUniqueId
         {

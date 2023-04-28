@@ -195,9 +195,11 @@ namespace WordSend
             return actualName;
         }
 
-        public FootNoteCaller footNoteCall = new FootNoteCaller(SFConverter.jobIni.ReadString("customFootnoteCaller", "* † ‡"));
+        public FootNoteCaller footNoteCall = new FootNoteCaller(SFConverter.jobIni != null ?  SFConverter.jobIni.ReadString("customFootnoteCaller", "* † ‡") : "* † ‡");
 
-        public FootNoteCaller xrefCall = new FootNoteCaller(SFConverter.jobIni.ReadString("xrefCallers", "a b c d e f g h i j k l m n o p q r s t u v w x y z"));
+        public FootNoteCaller xrefCall = new FootNoteCaller(SFConverter.jobIni != null ?
+            SFConverter.jobIni.ReadString("xrefCallers", "a b c d e f g h i j k l m n o p q r s t u v w x y z") :
+            "a b c d e f g h i j k l m n o p q r s t u v w x y z");
 
         /// <summary>
         /// Start a new HTML paragraph
@@ -857,6 +859,8 @@ namespace WordSend
         /// <returns>String with greater than, less than, and ampersand encoded as HTML entities. Also inserts narrow nonbreaking spaces between consecutive curly quote marks.</returns>
         public static string EscapeHtml(string s)
         {
+            if (String.IsNullOrEmpty(s))
+                return "";
             s = s.Replace("<", "&lt;");
             s = s.Replace(">", "&gt;");
             s = s.Replace("&", "&amp;");
@@ -1364,6 +1368,7 @@ namespace WordSend
             inTextStyle = 0;
             inParagraph = chopChapter = false;
             bookRecord = (BibleBookRecord)bookInfo.books["FRT"];
+            Console.WriteLine("Reading {0}; Writing {1}; Substitutions {2}; Include Apocrypha {3}", inFile, outFile, localSubstFile, includeApocrypha.ToString());
             try
             {
                 if ((localSubstFile != null) && (File.Exists(localSubstFile)))
@@ -1846,6 +1851,7 @@ namespace WordSend
             string figCopyright = String.Empty;
             string figCaption = String.Empty;
             string figReference = String.Empty; // Figure parameters
+            fileHelper.DebugWrite("In ConvertUsfxToHtml.");
             if (projectOptions.commonChars)
                 fontClass = "latin";
             else
@@ -1862,6 +1868,10 @@ namespace WordSend
             homeLinkHTML = homeLink;
             htmDir = htmlDir;
             langId = languageId;
+            if (langCodes == null)
+            {
+                langCodes = new LanguageCodeInfo();
+            }
             shortLangId = langCodes.ShortCode(langId);
             translationName = vernacularTitle;
             chapterLabel = chapterLabelName;
@@ -2309,7 +2319,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                 while (usfx.Read())
                 {
                     conversionProgress = "Generating file " + currentBookAbbrev + " " + currentChapter + ":" + currentVerse;
-                    System.Windows.Forms.Application.DoEvents();
+                    Logit.UpdateStatus(conversionProgress);
 
                     switch (usfx.NodeType)
                     {

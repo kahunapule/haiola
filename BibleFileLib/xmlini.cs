@@ -19,6 +19,7 @@ namespace WordSend
 	{
 		private string fileName;
 		private Hashtable hashTbl;
+        public static bool readOnly = false;
 
         private bool ReadIniFile(string fName)
         {
@@ -329,6 +330,7 @@ namespace WordSend
         /// <returns>true iff success</returns>
         public bool Write()
         {
+            if (readOnly) return true;
             bool result = false;
             if (!TryWrite())
             {
@@ -350,7 +352,17 @@ namespace WordSend
         /// <returns>The name of this executable file.</returns>
         public static string ExecutableName()
         {
-            return (System.IO.Path.GetFullPath(Environment.GetCommandLineArgs()[0]));
+            string result;
+            try
+            {
+                result = System.IO.Path.GetFullPath(Environment.GetCommandLineArgs()[0]);
+            }
+            catch (Exception)
+            {
+                Logit.WriteError("Can't find complete executable name!");
+                result = "haiola.exe";
+            }
+            return (result);
         }
 
         /// <summary>

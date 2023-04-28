@@ -133,12 +133,14 @@ namespace WordSend
                                 }
                                 break;
                             case "note":
-                                scrp.xw.WriteStartElement(style);
-                                scrp.xw.WriteAttributeString("caller", caller);
-                                scrp.xw.WriteAttributeString("sfm", style);
-                                //badNoteCharSyntaxUsed = false;
-                                inNote = true;
-                                CloseEmptyElement();
+                                if (!usx.IsEmptyElement) // There are actually texts in the DBL with empty footnotes. Ignore the empty footnotes.
+                                {
+                                    scrp.xw.WriteStartElement(style);
+                                    scrp.xw.WriteAttributeString("caller", caller);
+                                    scrp.xw.WriteAttributeString("sfm", style);
+                                    //badNoteCharSyntaxUsed = false;
+                                    inNote = true;
+                                }
                                 break;
                             case "char":
                                 scrp.xw.WriteStartElement(style);
@@ -226,7 +228,7 @@ namespace WordSend
                                 break;
                             case "figure":
                                 scrp.xw.WriteStartElement(style);
-                                string s = GetAnAttribute("desc");
+                                string s = GetAnAttribute("alt");
                                 scrp.xw.WriteElementString("description", s);
                                 s = GetAnAttribute("file");
                                 scrp.xw.WriteElementString("catalog", s);
@@ -244,8 +246,9 @@ namespace WordSend
                                     if (usx.NodeType == XmlNodeType.Text)
                                     {
                                         scrp.xw.WriteElementString("caption", usx.Value);
+                                        usx.Read();
                                     }
-                                    else if (usx.NodeType == XmlNodeType.EndElement)
+                                    if (usx.NodeType == XmlNodeType.EndElement)
                                     {
                                         scrp.xw.WriteEndElement();
                                         if (usx.Name != "figure")
@@ -255,7 +258,7 @@ namespace WordSend
                                     }
                                     else
                                     {
-                                        Logit.WriteError("Unexpected node type reading caption of figure!");
+                                        Logit.WriteError("Unexpected node type reading caption of figure");
                                     }
                                 }
                                 CloseEmptyElement();
@@ -295,28 +298,35 @@ namespace WordSend
                         {
                             // Do nothing.
                         }
-                        else
+                        else if (usx.Name == "note")
                         {
-                            if (usx.Name == "char")
+                            inNote = false;
+                            scrp.xw.WriteEndElement();
+                        }
+                        else if (usx.Name == "char")
+                        {
+                            if (inNote)
                             {
-                                if (inNote)
-                                    noteCharNesting--;
-                                else
-                                    charNesting--;
-                            }
-                            if ((noteCharNesting < 0) || (charNesting < 0))
-                                Logit.WriteError(String.Format("Unexpected char nesting value: {0} normal {1} in notes", charNesting, noteCharNesting));
-                            /***
-                            if ((usx.Name == "note") && badNoteCharSyntaxUsed)
-                            {
-                                inNote = false;
-                                if (badNoteCharSyntaxUsed)
+                                if (noteCharNesting > 0)
                                 {
-                                    scrp.xw.WriteEndElement();  // Close the character style started with a milestone. Yukky syntax.
-                                    badNoteCharSyntaxUsed = false;
+                                    noteCharNesting--;
+                                }
+                                else
+                                {
+                                    Logit.WriteError(String.Format("Unexpected note char nesting value: -1 in {0} {1}:{2}", thisBook, thisChapter, thisVerse));
                                 }
                             }
-                            ***/
+                            else
+                            {
+                                if (charNesting > 0)
+                                {
+                                    charNesting--;
+                                }
+                                else
+                                {
+                                    Logit.WriteError(String.Format("Unexpected char nesting value: -1 in {0} {1}:{2}", thisBook, thisChapter, thisVerse));
+                                }
+                            }
                             scrp.xw.WriteEndElement();
                         }
                     }

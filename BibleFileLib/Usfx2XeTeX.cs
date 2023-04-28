@@ -1184,6 +1184,10 @@ For other uses, please contact the respective copyright owners.</p>
         protected void WriteMasterTexFile(string texFileName, string formattingFileName, int numColumns, string bookSet)
         {
             StreamWriter texFile;
+            if (langCodes == null)
+            {
+                langCodes = new LanguageCodeInfo();
+            }
             shortLangId = langCodes.ShortCode(langId);
             bool isRtl = projectOptions.textDir == "rtl";
             if (isRtl)
@@ -1300,6 +1304,10 @@ For other uses, please contact the respective copyright owners.</p>
             string bookFileName;
             StreamWriter texFile;
             bool isRtl = projectOptions.textDir == "rtl";
+            if (langCodes == null)
+            {
+                langCodes = new LanguageCodeInfo();
+            }
             shortLangId = langCodes.ShortCode(langId);
 
             WriteMasterTexFile(Path.Combine(texDir, projectOptions.translationId + "_all.tex"), "12pt", 2, "*");
@@ -1398,6 +1406,7 @@ For other uses, please contact the respective copyright owners.</p>
         /// <returns>Text with backslant before ^$%&#_</returns>
         public string EscapeTex(string s)
         {
+            if (s == null) { return ""; }
             return s.Replace("^", "\\^").Replace("$", "\\$").Replace("%", "\\%").Replace("&", "\\&").Replace("#", "\\#").Replace("_", "\\_");
         }
 

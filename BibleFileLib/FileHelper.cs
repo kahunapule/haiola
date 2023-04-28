@@ -291,6 +291,12 @@ namespace WordSend
             return result;
         }
 
+        public static void DebugWrite(string msg)
+        {
+            Console.WriteLine(msg);
+        }
+
+
         /// <summary>
         /// Escapes \ ' " CR and LF as \\ \' \" \r and \n, respectively.
         /// </summary>
@@ -321,6 +327,36 @@ namespace WordSend
         public static bool fAllRunning;
         public static string runCommandError;
 
+        public static bool RunCommand(string programName, string programArgs, string defaultDirectory)
+        {
+            if (String.IsNullOrEmpty(defaultDirectory))
+                DebugWrite("Running " + programName + " " + programArgs);
+            else
+                DebugWrite("Running " + programName + " " + programArgs + " in " + defaultDirectory);
+
+            // Create a new process start info object
+            ProcessStartInfo startInfo = new ProcessStartInfo(programName, programArgs);
+
+            // Set the process start info properties for cross-platform compatibility
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardOutput = true;
+            if (!String.IsNullOrEmpty(defaultDirectory))
+                startInfo.WorkingDirectory = defaultDirectory;
+
+            // Start the process
+            Process process = Process.Start(startInfo);
+
+            // Read the output of the process
+            string output = process.StandardOutput.ReadToEnd();
+
+            // Display the output
+            Console.WriteLine(output);
+
+            // Wait for the process to exit
+            process.WaitForExit();
+            return process.ExitCode == 0;
+        }
+
         /// <summary>
         /// Runs a command like it was typed on the command line.
         /// Uses bash as the command interpretor on Linux & Mac OSX; cmd.exe on Windows.
@@ -328,6 +364,62 @@ namespace WordSend
         /// <param name="command">Command to run, with or without full path.</param>
         public static bool RunCommand(string command, string defaultDirectory = "")
         {
+            StringBuilder sb = new StringBuilder();
+            string cmd = command;
+            string parms = "";
+            bool inQuote = false;
+            bool commandFound = false;
+            int i;
+            char ch;
+            char quoteChar = '\'';
+            command = command.TrimStart();
+            for (i = 0; i < command.Length; i++)
+            {
+                ch = command[i];
+                if (commandFound)
+                {
+                    sb.Append(ch);
+                }
+                else
+                {
+                    if (inQuote)
+                    {
+                        if (ch == quoteChar)
+                        {
+                            inQuote = false;
+                        }
+                        sb.Append(ch);
+                    }
+                    else
+                    {
+                        if ((ch == '"') || (ch == '\''))
+                        {
+                            quoteChar = ch;
+                            inQuote = true;
+                            sb.Append(ch);
+                        }
+                        else if ((ch == ' ') || (ch == '\t'))
+                        {
+                            cmd = sb.ToString();
+                            sb.Clear();
+                            commandFound = true;
+                        }
+                        else
+                        {
+                            sb.Append(ch);
+                        }
+                    }
+                }
+            }
+            if (commandFound)
+                parms = sb.ToString();
+            else
+                cmd = sb.ToString();
+            return RunCommand(cmd, parms, defaultDirectory);
+
+            /*
+            DebugWrite("Running " + command);
+
             runCommandError = String.Empty;
             System.Diagnostics.Process runningCommand = null;
             try
@@ -338,7 +430,7 @@ namespace WordSend
                 }
                 if (Path.DirectorySeparatorChar == '/')
                 {
-                    // Logit.WriteLine("Posix detected. Running bash -c " + command);
+                    DebugWrite("Posix detected. Running bash -c " + command);
                     runningCommand = System.Diagnostics.Process.Start("bash", " -c '" + command + "'");
                 }
                 else
@@ -351,20 +443,23 @@ namespace WordSend
                 }
                 if (runningCommand != null)
                 {
-                    // Logit.WriteLine("Waiting for command to complete.");
+                    Logit.WriteLine("Waiting for command to complete.");
                     while (fileHelper.fAllRunning && !runningCommand.HasExited)
                     {
                         System.Windows.Forms.Application.DoEvents();
                         System.Threading.Thread.Sleep(200);
                     }
-                    /*
                     if ((!runningCommand.HasExited) && (!fileHelper.fAllRunning))
                     {
                         Logit.WriteLine("Killing command " + command);
                         runningCommand.Kill();
                     }
-                    */
                 }
+                else
+                {
+                    DebugWrite("runnningCommand is null!");
+                }
+                DebugWrite("Command completed.");
             }
             catch (Exception ex)
             {
@@ -372,7 +467,9 @@ namespace WordSend
                 Logit.WriteError(runCommandError);
                 return false;
             }
+            DebugWrite("RunCommand done.");
             return true;
+            */
         }
 
 
