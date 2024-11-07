@@ -32,3 +32,4 @@
 |<hr\s*/>|\\hrule |
 |<hr>|\\hrule |
 |<><>No promoVersionInfo<><>||
+|\u200E||

@@ -32,6 +32,9 @@ using System.Xml.Schema;
 using System.Diagnostics;
 using ICSharpCode.SharpZipLib.Zip;
 using System.Collections.Specialized;
+using Newtonsoft.Json.Linq;
+using System.Runtime;
+using System.ComponentModel;
 
 namespace WordSend
 {
@@ -1116,8 +1119,8 @@ namespace WordSend
                         sfmAttrNames.Add("s");
                     else if ((name.ToString() == "morph") || (name.ToString() == "x-morph"))
                         sfmAttrNames.Add("m");
-                    else
-                        sfmAttrNames.Add(name.ToString().Trim());
+                    /*else if (!name.ToString().StartsWith("x-"))
+                        sfmAttrNames.Add(name.ToString().Trim());*/
                 }
                 else if (name.Length > 0)
                 {   // We have a default attribute. Get name from default parameter & attribute from name.
@@ -1274,13 +1277,20 @@ namespace WordSend
 				}
 
                 // Eat the space that serves only to terminate a tag. This is very important with some nonroman scripts.
-                if ((!isEndTag) && (fileHelper.IsNormalWhiteSpace((char)ch)) && ((char)lookAhead != '\\'))
-                {
-                    ch = sr.Read();
-                    lookAhead = sr.Peek();
+                if (lookAhead == '\\')
+                {   // This case is for something like \wj \+w 
+                    ch = 0;
                 }
-				// Collapse all contiguous white space characters after a tag to one space (i.e. space CR LF to space)
-				while ((ch != -1) && fileHelper.IsNormalWhiteSpace((char)ch) && fileHelper.IsNormalWhiteSpace((char)lookAhead))
+                else
+                {
+                    if ((!isEndTag) && (fileHelper.IsNormalWhiteSpace((char)ch)))
+                    {
+                        ch = sr.Read();
+                        lookAhead = sr.Peek();
+                    }
+                }
+                // Collapse all contiguous white space characters after a tag to one space (i.e. space CR LF to space)
+                while ((ch != -1) && fileHelper.IsNormalWhiteSpace((char)ch) && fileHelper.IsNormalWhiteSpace((char)lookAhead))
 				{
 					ch = sr.Read();
 					lookAhead = sr.Peek();
@@ -1312,7 +1322,7 @@ namespace WordSend
                 inAttribute = true;
                 inSpace = false;
             }
-            else if ((ch != '\\') && (ch != -1))
+            else if ((ch != '\\') && (ch != -1) && (ch != 0))
             {   // Nonspaces are appended to the text run as is, up to but not including the next \.
                 sb.Append((char)ch);
                 inSpace = false;
@@ -2302,6 +2312,7 @@ namespace WordSend
 		protected bool inUSFXNote;
         protected bool inWJ;
         protected bool wjOut;
+        protected bool inW;
 
 		protected int inUSFXNoteStyle;
 		protected string currentFootnoteCaller;
@@ -2451,22 +2462,22 @@ namespace WordSend
 			// toY.Millimeters.ToString()+") mm"); // DEBUG
 			zindex++;
 			EndWordMLTextRun();
-			xw.WriteStartElement("w:r");
-			xw.WriteStartElement("w:rPr");
-			xw.WriteElementString("w:noProof", "");
+			SplitAndWriteStartElement("w:r");
+			SplitAndWriteStartElement("w:rPr");
+			xw.WriteElementString("w","noProof",null, "");
 			xw.WriteEndElement();	// w:rPr
-			xw.WriteStartElement("w:pict");
-			xw.WriteStartElement("v:line");
+			SplitAndWriteStartElement("w:pict");
+			SplitAndWriteStartElement("v:line");
 			xw.WriteAttributeString("id", "unique"+zindex.ToString());
 			xw.WriteAttributeString("style", "position:absolute;left:0;text-align:left;z-index:"+zindex+";mso-position-horizontal-relative:page;mso-position-vertical-relative:page");
 			xw.WriteAttributeString("from", fromX.PointString+","+fromY.PointString);
 			xw.WriteAttributeString("to", toX.PointString+","+toY.PointString);
-			xw.WriteAttributeString("o:allowincell", "f");
-			xw.WriteStartElement("w10:wrap");
+			xw.WriteAttributeString("o","allowincell", null, "f");
+			SplitAndWriteStartElement("w10:wrap");
 			xw.WriteAttributeString("anchorx", "page");
 			xw.WriteAttributeString("anchory", "page");
 			xw.WriteEndElement();	// w10:wrap
-			xw.WriteElementString("w10:anchorlock", "");
+			xw.WriteElementString("w10","anchorlock",null, "");
 			xw.WriteEndElement();	// v:line
 			xw.WriteEndElement();	// w:pict
 			xw.WriteEndElement();	// w:r
@@ -2539,12 +2550,12 @@ namespace WordSend
 
 		protected void InsertCropMarkedFooter(string whichFooter)
 		{	// whichFooter should be "even", "odd", or "first" (in that order)
-			xw.WriteStartElement("w:ftr");
-			xw.WriteAttributeString("w:type", whichFooter);
-			xw.WriteStartElement("w:p");
-			xw.WriteStartElement("w:pPr");
-			xw.WriteStartElement("w:pStyle");
-			xw.WriteAttributeString("w:val", "Footer");
+			SplitAndWriteStartElement("w:ftr");
+			xw.WriteAttributeString("w","type", null, whichFooter);
+			SplitAndWriteStartElement("w:p");
+			SplitAndWriteStartElement("w:pPr");
+		    SplitAndWriteStartElement("w:pStyle");
+			xw.WriteAttributeString("w","val",null, "Footer");
 			xw.WriteEndElement();	//	w:pStyle
 			xw.WriteEndElement();	// w:pPr
 			DrawCropMarks(seedPaperWidth, seedPaperHeight, croppedPageWidth, croppedPageLength);
@@ -2595,7 +2606,7 @@ namespace WordSend
 		public SortedList holyBible;	// List of BibleBooks
 
 		protected StreamReader sr;
-		public XmlTextWriter xw;
+		public XmlWriter xw;
 
         public void ReadUSFM(string fileName)
         {
@@ -2759,13 +2770,13 @@ namespace WordSend
 			{
 				StartUSFXParagraph(sfm, level, paraStyle, null);
 			}
-			xw.WriteStartElement("w:p");
+			xw.WriteStartElement("w","p", null);
 			inPara = true;
 			if (paraStyle != "Normal")
 			{
-				xw.WriteStartElement("w:pPr");
-				xw.WriteStartElement("w:pStyle");
-				xw.WriteAttributeString("w:val", paraStyle);
+				xw.WriteStartElement("w","pPr", null);
+				xw.WriteStartElement("w","pStyle", null);
+				xw.WriteAttributeString("w","val", null, paraStyle);
 				xw.WriteEndElement();	// w:pStyle
 				xw.WriteEndElement();	// w:pPr
 			}
@@ -2788,15 +2799,15 @@ namespace WordSend
 			currentParagraphStyle = paraStyle;
 			StartUSFXParagraph(sfm, level, styleName, null);
 	
-			xw.WriteStartElement("w:p");
+			xw.WriteStartElement("w","p", null);
 			inPara = true;
 			if (paraStyle == "Normal")
 			{
 				if (suppressIndent)
 				{
-					xw.WriteStartElement("w:pPr");
-					xw.WriteStartElement("w:ind");
-					xw.WriteAttributeString("w:first-line", "0");
+					xw.WriteStartElement("w","pPr", null);
+					xw.WriteStartElement("w","ind", null);
+					xw.WriteAttributeString("w","first-line", null, "0");
 					xw.WriteEndElement();	// w:ind
 					xw.WriteEndElement();	// w:pPr
 					suppressIndent = false;
@@ -2804,21 +2815,21 @@ namespace WordSend
 			}
 			else
 			{
-				xw.WriteStartElement("w:pPr");
-				xw.WriteStartElement("w:pStyle");
-				xw.WriteAttributeString("w:val", paraStyle);
+				xw.WriteStartElement("w","pPr", null);
+				xw.WriteStartElement("w","pStyle", null);
+				xw.WriteAttributeString("w","val", null, paraStyle);
 				xw.WriteEndElement();	// w:pStyle
 				if (suppressIndent)
 				{
-					xw.WriteStartElement("w:ind");
-					xw.WriteAttributeString("w:first-line", "0");
+					xw.WriteStartElement("w","ind", null);
+					xw.WriteAttributeString("w","first-line",null, "0");
 					xw.WriteEndElement();	// w:ind
 					suppressIndent = false;
 				}
 				xw.WriteEndElement();	// w:pPr
 			}
 			ResumeUSFXStyle();
-			xw.WriteStartElement("w:r");
+			xw.WriteStartElement("w","r", null);
 			inRun = true;
 			WriteWordMLTextRun(StripLeadingWhiteSpace(contents), charStyle);
 		}
@@ -2843,28 +2854,29 @@ namespace WordSend
 						inUsfxParagraph = true;
                         if ((sfm == "d") || (sfm == "s") || (sfm == "qd"))
                         {
-                            xw.WriteStartElement(ns + sfm);
+                            SplitAndWriteStartElement(ns + sfm);
                         }
                         else if ((sfm == "p") || (sfm == "b") || (sfm == "q") || (sfm == "generated"))
                         {
-                            xw.WriteStartElement(ns + sfm);
+                            SplitAndWriteStartElement(ns + sfm);
                         }
                         else
                         {
-                            xw.WriteStartElement(ns + "p");
+                            SplitAndWriteStartElement(ns + "p");
                             xw.WriteAttributeString("sfm", sfm);
                         }
 						if (level > 1)
 							xw.WriteAttributeString("level", level.ToString());
                         if (!String.IsNullOrEmpty(styleName))
                             xw.WriteAttributeString("style", styleName);
+                        // xw.WriteAttributeString("xml:space", "preserve");
                     }
                 }
                 if (contents != null)
                 {
                     if (inWJ && !wjOut && !isAllWhiteSpace(contents))
                     {
-                        StartUSFXStyle("wj", "", false);
+                        StartUSFXStyle("wj","",sf.nested);
                         wjOut = true;
                     }
                     WriteUSFXText(StripLeadingWhiteSpace(contents));
@@ -2887,20 +2899,20 @@ namespace WordSend
 		{
 			EndWordMLParagraph();
 			inPara = true;
-			xw.WriteStartElement("w:p");
-			xw.WriteStartElement("w:pPr");
+			xw.WriteStartElement("w","p", null);
+			xw.WriteStartElement("w","pPr", null);
 			if (currentParagraphStyle != "Normal")
 			{
-				xw.WriteStartElement("w:pStyle");
-				xw.WriteAttributeString("w:val", currentParagraphStyle);
+				xw.WriteStartElement("w","pStyle", null);
+				xw.WriteAttributeString("w","val",null, currentParagraphStyle);
 				xw.WriteEndElement();	// w:pStyle
 			}
-			xw.WriteStartElement("w:ind");
-			xw.WriteAttributeString("w:first-line", "0");
+			xw.WriteStartElement("w","ind",null);
+			xw.WriteAttributeString("w","first-line",null, "0");
 			xw.WriteEndElement();	// w:ind
 			xw.WriteEndElement();	// w:pPr
 			ResumeUSFXStyle();
-			xw.WriteStartElement("w:r");
+			xw.WriteStartElement("w","r", null);
 			inRun = true;
 			WriteWordMLTextRun(contents, styleName);
 		}
@@ -2915,19 +2927,19 @@ namespace WordSend
 					{
 						if (inRun)
 							xw.WriteEndElement();
-						xw.WriteStartElement("w:r");
+						xw.WriteStartElement("w","r");
 						inRun = true;
 						if ((styleName != null) && (styleName != ""))
 						{
-							xw.WriteStartElement("w:rPr");
-							xw.WriteStartElement("w:rStyle");
-							xw.WriteAttributeString("w:val", styleName);
+							xw.WriteStartElement("w","rPr",null);
+							xw.WriteStartElement("w","rStyle",null);
+							xw.WriteAttributeString("w","val",null, styleName);
 							xw.WriteEndElement();	// w:rStyle
 							xw.WriteEndElement();	// w:rPr
 						}
 						activeRunStyle = styleName;
 					}
-					xw.WriteElementString("w:t", contents);
+					xw.WriteElementString("w","t",null, contents);
 				}
 				else
 				{
@@ -2950,6 +2962,7 @@ namespace WordSend
             int lineBreakPlace;
             string s;
             string ps = "sSpP";
+            
 			if ((contents != null) && (contents != ""))
 			{
                 s = "http://";
@@ -3013,33 +3026,33 @@ namespace WordSend
 			{
                 EndWordMLTextRun();
 				// Write field begin indicator
-				xw.WriteStartElement("w:r");
-				xw.WriteStartElement("w:rPr");
-				xw.WriteElementString("w:i", "");
-				xw.WriteElementString("w:i-cs", "");
+				xw.WriteStartElement("w","r", null);
+				xw.WriteStartElement("w","rPr",null);
+				xw.WriteElementString("w","i",null, "");
+				xw.WriteElementString("w","i-cs",null, "");
 				xw.WriteEndElement();	// w:rPr
-				xw.WriteStartElement("w:fldChar");
-				xw.WriteAttributeString("w:fldCharType", "begin");
+				xw.WriteStartElement("w","fldChar",null);
+				xw.WriteAttributeString("w","fldCharType",null, "begin");
 				xw.WriteEndElement();	// w:fldChar
 				xw.WriteEndElement();	// w:r
 
 				// Write text run containing field instruction
-				xw.WriteStartElement("w:r");
-				xw.WriteStartElement("w:rPr");
-				xw.WriteElementString("w:i", "");
-				xw.WriteElementString("w:i-cs", "");
+				xw.WriteStartElement("w","r",null);
+				xw.WriteStartElement("w","rPr",null);
+				xw.WriteElementString("w","i",null, "");
+				xw.WriteElementString("w","i-cs",null, "");
 				xw.WriteEndElement();	// w:rPr
-				xw.WriteElementString("w:instrText", contents);
+				xw.WriteElementString("w","instrText", contents);
 				xw.WriteEndElement();	// w:r
 
 				// Write field end indicator
-				xw.WriteStartElement("w:r");
-				xw.WriteStartElement("w:rPr");
-				xw.WriteElementString("w:i", "");
-				xw.WriteElementString("w:i-cs", "");
+				xw.WriteStartElement("w","r",null);
+				xw.WriteStartElement("w","rPr",null);
+				xw.WriteElementString("w","i", null, "");
+				xw.WriteElementString("w","i-cs",null, "");
 				xw.WriteEndElement();	// w:rPr
-				xw.WriteStartElement("w:fldChar");
-				xw.WriteAttributeString("w:fldCharType", "end");
+				xw.WriteStartElement("w","fldChar",null);
+				xw.WriteAttributeString("w","fldCharType",null, "end");
 				xw.WriteEndElement();	// w:fldChar
 				xw.WriteEndElement();	// w:r
 			}
@@ -3094,6 +3107,7 @@ namespace WordSend
                 {
                     xw.WriteStartElement("ve");
                     xw.WriteEndElement();   // ve
+                    xw.WriteWhitespace("\n");
                     inVerse = false;
                 }
             }
@@ -3122,8 +3136,9 @@ namespace WordSend
 					usfxNestLevel--;
 				}
 				// Logit.WriteLine("Ending paragraph");
-				xw.WriteEndElement();	// ns+p
-				inUsfxParagraph = false;
+				xw.WriteEndElement();   // ns+p
+                xw.WriteWhitespace("\n");
+                inUsfxParagraph = false;
 			}
 		}
 
@@ -3156,7 +3171,7 @@ namespace WordSend
                     xw.WriteEndElement();
                     inRun = false;
                 }
-                xw.WriteStartElement(ns + elementname);
+                SplitAndWriteStartElement(ns + elementname);
                 xw.WriteAttributeString("sfm", sfm);
                 if (level > 1)
                     xw.WriteAttributeString("level", level.ToString());
@@ -3174,7 +3189,7 @@ namespace WordSend
 			{
 				EndWordMLTextRun();	// Observer proper mixed WordML & custom XML mixing rules.
 				// Logit.WriteLine("Starting element "+elementName);
-				xw.WriteStartElement(ns+elementName);
+				SplitAndWriteStartElement(ns+elementName);
 				usfxNestLevel++;
 				if (!String.IsNullOrEmpty(attributeName) && !String.IsNullOrEmpty(attribute))
 				{
@@ -3215,26 +3230,26 @@ namespace WordSend
 
 		protected void WriteParaStyle(string styleName)
 		{
-			xw.WriteStartElement("w:pPr");
-			xw.WriteStartElement("w:pStyle");
-			xw.WriteAttributeString("w:val", styleName);
+			xw.WriteStartElement("w","pPr",null);
+			xw.WriteStartElement("w","pStyle",null);
+			xw.WriteAttributeString("w","val",null, styleName);
 			xw.WriteEndElement();	// w:pStyle
 			xw.WriteEndElement();	// w:pPr
 		}
 
 		protected void WriteFieldChar(string type, string style)
 		{
-			xw.WriteStartElement("w:r");
+			xw.WriteStartElement("w","r",null);
 			if (style != null)
 			{
-				xw.WriteStartElement("w:rPr");
-				xw.WriteStartElement("w:rStyle");
-				xw.WriteAttributeString("w:val", style);
+				xw.WriteStartElement("w","rPr",null);
+				xw.WriteStartElement("w","rStyle",null);
+				xw.WriteAttributeString("w","val",null, style);
 				xw.WriteEndElement();	// w:rStyle
 				xw.WriteEndElement();	// w:rPr
 			}
-			xw.WriteStartElement("w:fldChar");
-			xw.WriteAttributeString("w:fldCharType", type);
+			xw.WriteStartElement("w","fldChar",null);
+			xw.WriteAttributeString("w","fldCharType",null, type);
 			xw.WriteEndElement();	// w:fldChar
 			xw.WriteEndElement();	// w:r
 		}
@@ -3257,66 +3272,66 @@ namespace WordSend
 				SuspendUSFXStyle();
 				EndWordMLParagraph();
 
-				xw.WriteStartElement("wx:pBdrGroup");
-				   xw.WriteStartElement("wx:apo");
-				      xw.WriteStartElement("wx:jc");
-				         xw.WriteAttributeString("wx:val", "left");
+				xw.WriteStartElement("wx","pBdrGroup",null);
+				   xw.WriteStartElement("wx","apo",null);
+				      xw.WriteStartElement("wx","jc",null);
+				         xw.WriteAttributeString("wx","val",null, "left");
 				      xw.WriteEndElement();	// wx:jc
-				      xw.WriteStartElement("wx:horizFromText");
-				         xw.WriteAttributeString("wx:val", horizFromText.Twips.ToString());
+				      xw.WriteStartElement("wx","horizFromText",null);
+				         xw.WriteAttributeString("wx","val",null, horizFromText.Twips.ToString());
 				      xw.WriteEndElement();	// wx:horizFromText
 				   xw.WriteEndElement();	// wx:apo
-				   xw.WriteStartElement("w:p");
-				      xw.WriteStartElement("w:pPr");
-				         xw.WriteStartElement("w:keepNext");
+				   xw.WriteStartElement("w","p",null);
+				      xw.WriteStartElement("w","pPr",null);
+				         xw.WriteStartElement("w","keepNext",null);
 				         xw.WriteEndElement();	// w:keepNext
-				         xw.WriteStartElement("w:framePr");
-				            xw.WriteAttributeString("w:drop-cap", "drop");
-				            xw.WriteAttributeString("w:lines", dropCapLines.ToString());
-				            xw.WriteAttributeString("w:hspace", horizFromText.Twips.ToString());
-				            xw.WriteAttributeString("w:wrap", "around");
-				            xw.WriteAttributeString("w:vanchor", "text");
-				            xw.WriteAttributeString("w:hanchor", "text");
+				         xw.WriteStartElement("w","framePr",null);
+				            xw.WriteAttributeString("w","drop-cap",null, "drop");
+				            xw.WriteAttributeString("w","lines",null, dropCapLines.ToString());
+				            xw.WriteAttributeString("w","hspace",null, horizFromText.Twips.ToString());
+				            xw.WriteAttributeString("w","wrap",null, "around");
+				            xw.WriteAttributeString("w","vanchor",null, "text");
+				            xw.WriteAttributeString("w","hanchor",null, "text");
 				         xw.WriteEndElement();	// w:framePr
-				         xw.WriteStartElement("w:spacing");
+				         xw.WriteStartElement("w","spacing",null);
 				            if (dropCapBefore.Twips > 0)
-									xw.WriteAttributeString("w:before", dropCapBefore.Twips.ToString());
-				            xw.WriteAttributeString("w:line", dropCapSpacing.Twips.ToString());
-				            xw.WriteAttributeString("w:line-rule", "exact");
+									xw.WriteAttributeString("w","before",null, dropCapBefore.Twips.ToString());
+				            xw.WriteAttributeString("w","line",null, dropCapSpacing.Twips.ToString());
+				            xw.WriteAttributeString("w","line-rule",null, "exact");
 				         xw.WriteEndElement();	// w:spacing
-				         xw.WriteStartElement("w:ind");
-				             xw.WriteAttributeString("w:first-line", "0");
+				         xw.WriteStartElement("w","ind",null);
+				             xw.WriteAttributeString("w","first-line",null, "0");
 				         xw.WriteEndElement();	// w:ind
-				         xw.WriteStartElement("w:textAlignment");
-				            xw.WriteAttributeString("w:val", "baseline");
+				         xw.WriteStartElement("w","textAlignment",null);
+				            xw.WriteAttributeString("w","val",null, "baseline");
 				         xw.WriteEndElement();	// w:textAlignment
-				         xw.WriteStartElement("w:rPr");
-				            xw.WriteStartElement("w:position");
-				               xw.WriteAttributeString("w:val", dropCapPosition.HalfPoints.ToString());
+				         xw.WriteStartElement("w","rPr",null);
+				            xw.WriteStartElement("w","position",null);
+				               xw.WriteAttributeString("w","val", null, dropCapPosition.HalfPoints.ToString());
 				            xw.WriteEndElement();
-				            xw.WriteStartElement("w:sz");
-				               xw.WriteAttributeString("w:val", dropCapSize.HalfPoints.ToString());
+				            xw.WriteStartElement("w","sz",null);
+				               xw.WriteAttributeString("w","val",null, dropCapSize.HalfPoints.ToString());
 				            xw.WriteEndElement();	// w:sz
-				            xw.WriteStartElement("w:sz-cs");
-				               xw.WriteAttributeString("w:val", dropCapSize.HalfPoints.ToString());
+				            xw.WriteStartElement("w","sz-cs",null);
+				               xw.WriteAttributeString("w","val",null, dropCapSize.HalfPoints.ToString());
 				            xw.WriteEndElement();	// w:sz-cs
 				         xw.WriteEndElement();	// w:rPr
 				     xw.WriteEndElement();	// w:pPr
 					if (embedUsfx)
-						xw.WriteStartElement(ns+"generated");
-				    xw.WriteStartElement("w:r");
-				       xw.WriteStartElement("w:rPr");
-				          xw.WriteStartElement("w:position");
-				             xw.WriteAttributeString("w:val", dropCapPosition.HalfPoints.ToString());
+						SplitAndWriteStartElement(ns+"generated");
+				    xw.WriteStartElement("w","r",null);
+				       xw.WriteStartElement("w","rPr",null);
+				          xw.WriteStartElement("w","position",null);
+				             xw.WriteAttributeString("w","val",null, dropCapPosition.HalfPoints.ToString());
 				          xw.WriteEndElement();	// w:position
-				          xw.WriteStartElement("w:sz");
-				             xw.WriteAttributeString("w:val", dropCapSize.HalfPoints.ToString());
+				          xw.WriteStartElement("w","sz",null);
+				             xw.WriteAttributeString("w","val",null, dropCapSize.HalfPoints.ToString());
 				          xw.WriteEndElement();	// w:sz
-				          xw.WriteStartElement("w:sz-cs");
-				             xw.WriteAttributeString("w:val", dropCapSize.HalfPoints.ToString());
+				          xw.WriteStartElement("w","sz-cs",null);
+				             xw.WriteAttributeString("w","val",null, dropCapSize.HalfPoints.ToString());
 				          xw.WriteEndElement();	// w:sz-cs
 				       xw.WriteEndElement();	// w:rPr
-				       xw.WriteElementString("w:t", chap);
+				       xw.WriteElementString("w","t",null, chap);
 				    xw.WriteEndElement();	// w:r
 					if (embedUsfx)
 						xw.WriteEndElement();	// generated
@@ -3346,12 +3361,12 @@ namespace WordSend
 				// Logit.WriteLine(" Starting note "+sfm);
 				if (sfm == "fe")
 				{
-					xw.WriteStartElement(ns+"f");
+					SplitAndWriteStartElement(ns+"f");
 					xw.WriteAttributeString("sfm", sfm);
 				}
 				else
 				{
-					xw.WriteStartElement(ns+sfm);
+					SplitAndWriteStartElement(ns+sfm);
 				}
 				xw.WriteAttributeString("caller", caller);
 			}
@@ -3399,7 +3414,7 @@ namespace WordSend
         protected void StartUSFXNoteCharacterStyle(SfmObject sf)
         {
             int i;
-            if (isUnclosedNoteTag(sfm) || !(sf.nested || assumeAllNested))
+            if (isUnclosedNoteTag(sf.tag) || !(sf.nested || assumeAllNested))
                 EndUSFXNoteStyle();
             inUSFXNoteStyle++;
             xw.WriteStartElement(sf.tag);
@@ -3425,7 +3440,7 @@ namespace WordSend
                 if (sfm == "w")
                 {
                     WordTag wt;
-                    xw.WriteStartElement(ns + "w");
+                    SplitAndWriteStartElement(ns + "w");
                     if (!string.IsNullOrEmpty(content))
                     {
                         wt = new WordTag(content);
@@ -3447,7 +3462,7 @@ namespace WordSend
                 else
                 {
                     // Logit.WriteLine("  Starting note style "+sfm);
-                    xw.WriteStartElement(ns + sfm);
+                    SplitAndWriteStartElement(ns + sfm);
                 }
 
             }
@@ -3493,11 +3508,43 @@ namespace WordSend
             }
             for (i = 0; i < sf.sfmAttrNames.Count; i++)
             {
-                if (i < sf.sfmAttrValues.Count)
                     xw.WriteAttributeString((string)sf.sfmAttrNames[i], (string)sf.sfmAttrValues[i]);
             }
             WriteUSFXText(sf.text);
         }
+
+        /* Deprecated
+        protected void StartRawCharacterStyle(SfmObject sf)
+        {
+            int i;
+            StringBuilder sb = new StringBuilder();
+
+            if (charStyleTagList.Contains(sf.tag))
+            {
+                sb.Append("<");
+                sb.Append(sf.tag);
+            }
+            else
+            {
+                sb.Append("<char style=\"");
+                sb.Append(sf.tag);
+                sb.Append("\"");
+            }
+            if (sf.info.levelExpected && sf.level > 1)
+            {
+                sb.Append(" level=\"");
+                sb.Append(sf.level.ToString());
+                sb.Append("\"");
+            }
+            for (i = 0; i < sf.sfmAttrNames.Count; i++)
+            {
+                sb.Append(FormatParameter((string)sf.sfmAttrNames[i], (string)sf.sfmAttrValues[i]));
+            }
+            sb.Append(">");
+            xw.WriteRaw(sb.ToString());
+            WriteUSFXText(sf.text);
+        }
+        */
 
         protected void StartUSFXStyle(string sfm, string content, bool nested)
         {
@@ -3516,7 +3563,7 @@ namespace WordSend
                 if (sfm == "w")
                 {
                     WordTag wt;
-                    xw.WriteStartElement(ns + "w");
+                    SplitAndWriteStartElement(ns + "w");
                     if (!string.IsNullOrEmpty(content))
                     {
                         wt = new WordTag(content);
@@ -3538,7 +3585,7 @@ namespace WordSend
                 else if (sfm == "jmp")
                 {
                     WordTag wt;
-                    xw.WriteStartElement(ns + "ref");
+                    SplitAndWriteStartElement(ns + "ref");
                     if (!string.IsNullOrEmpty(content))
                     {
                         wt = new WordTag(content);
@@ -3564,18 +3611,18 @@ namespace WordSend
                 }
                 else if (charStyleTagList.IndexOf(" " + sfm + " ") >= 0)
                 {
-                    xw.WriteStartElement(ns + sfm);
+                    xw.WriteStartElement(/*ns + */sfm);
                 }
                 else
                 {
-                    xw.WriteStartElement(ns + "cs");
+                    xw.WriteStartElement(/*ns + */"cs");
                     xw.WriteAttributeString("sfm", sfm);
                 }
                 activeCharacterStyle[usfxStyleCount] = sfm;
             }
             else
             {
-                if ((!nested) && (!inUSFXNote) && (usfxStyleCount > 1))
+                if ((!globe.projectOptions.relaxUsfmNesting) && (!nested) && (!inUSFXNote) && (usfxStyleCount > 1))
                 {
                     Logit.WriteLine("Warning: Started new character style " + sfm + " without terminating " +
                         activeCharacterStyle[usfxStyleCount] +
@@ -3589,7 +3636,7 @@ namespace WordSend
                     if (sfm == "w")
                     {
                         WordTag wt;
-                        xw.WriteStartElement(ns + "w");
+                        SplitAndWriteStartElement(ns + "w");
                         if (!string.IsNullOrEmpty(content))
                         {
                             wt = new WordTag(content);
@@ -3610,11 +3657,11 @@ namespace WordSend
                     }
                     else if (charStyleTagList.IndexOf(" " + sfm + " ") >= 0)
                     {
-                        xw.WriteStartElement(ns + sfm);
+                        SplitAndWriteStartElement(ns + sfm);
                     }
                     else
                     {
-                        xw.WriteStartElement(ns + "cs");
+                        SplitAndWriteStartElement(ns + "cs");
                         xw.WriteAttributeString("sfm", sfm);
                     }
                     activeCharacterStyle[usfxStyleCount] = sfm;
@@ -3651,7 +3698,7 @@ namespace WordSend
                 if (UsfxStyleSuspended && (activeCharacterStyle[usfxStyleCount + 1] != null))
 				{
 					UsfxStyleSuspended = false;
-					StartUSFXStyle(activeCharacterStyle[usfxStyleCount+1], null, true);
+					StartUSFXStyle(activeCharacterStyle[usfxStyleCount+1], null, false);
 				}
 			}
 		}
@@ -3672,45 +3719,45 @@ namespace WordSend
 				activeRunStyle = null;
 				inRun = false;
 			}
-			xw.WriteStartElement("w:r");	// 1
-			xw.WriteStartElement("w:rPr");	// 2
-			xw.WriteStartElement("w:rStyle");	// 3
-			xw.WriteAttributeString("w:val", "FootnoteReference");
+			xw.WriteStartElement("w","r",null);	// 1
+			xw.WriteStartElement("w","rPr",null);	// 2
+			xw.WriteStartElement("w","rStyle",null);	// 3
+			xw.WriteAttributeString("w","val",null, "FootnoteReference");
 			xw.WriteEndElement();	// w:rStyle 2
 			xw.WriteEndElement();	// w:rPr 1
 			if ((caller == "+") && (!customFootnoteMark))
 			{
-				xw.WriteStartElement("w:footnote"); // 2
+				xw.WriteStartElement("w","footnote",null); // 2
 			}
 			else
 			{
-				xw.WriteStartElement("w:footnote");	// 2
-				xw.WriteAttributeString("w:suppressRef", "on");
+				xw.WriteStartElement("w","footnote",null);	// 2
+				xw.WriteAttributeString("w","suppressRef",null, "on");
 			}
-			xw.WriteStartElement("w:p");	// 3
-			xw.WriteStartElement("w:pPr");	// 4
-			xw.WriteStartElement("w:pStyle");	// 5
-			xw.WriteAttributeString("w:val", "FootnoteText");
+			xw.WriteStartElement("w","p",null);	// 3
+			xw.WriteStartElement("w","pPr",null);	// 4
+			xw.WriteStartElement("w","pStyle",null);	// 5
+			xw.WriteAttributeString("w","val",null, "FootnoteText");
 			xw.WriteEndElement();	// w:pStyle 4
 			xw.WriteEndElement();	// w:pPr 3
-			xw.WriteStartElement("w:r");	// 4
-			xw.WriteStartElement("w:rPr");	// 5
-			xw.WriteStartElement("w:rStyle");	// 6
-			xw.WriteAttributeString("w:val", "FootnoteReference");
+			xw.WriteStartElement("w","r",null);	// 4
+			xw.WriteStartElement("w","rPr",null);	// 5
+			xw.WriteStartElement("w","rStyle",null);	// 6
+			xw.WriteAttributeString("w","val",null, "FootnoteReference");
 			xw.WriteEndElement();	// w:rStyle 5
 			xw.WriteEndElement();	// w:rPr 4
 			if ((caller == "+") && (!customFootnoteMark))
 			{
-				xw.WriteStartElement("w:footnoteRef");	// 5
+				xw.WriteStartElement("w","footnoteRef",null);	// 5
 				xw.WriteEndElement();	// w:footnoteRef 4
 			}
 			else if (caller == "-")
 			{
-				xw.WriteElementString("w:t", "\u200b");	// Zero width space for marker
+				xw.WriteElementString("w","t",null, "\u200b");	// Zero width space for marker
 			}
 			else
 			{
-				xw.WriteElementString("w:t", caller);
+				xw.WriteElementString("w","t",null, caller);
 			}
 			xw.WriteEndElement();	// w:r 3
 			inFootnote = true;
@@ -3732,7 +3779,7 @@ namespace WordSend
 				xw.WriteEndElement();	// w:p 2
 				xw.WriteEndElement();	// w:footnote 1
 				if (!((currentFootnoteCaller == "+") && (!customFootnoteMark)))
-					xw.WriteElementString("w:t", currentFootnoteCaller);
+					xw.WriteElementString("w","t",null, currentFootnoteCaller);
 				xw.WriteEndElement();	// r 0
 				PopCharStyle();
 			}
@@ -3756,45 +3803,45 @@ namespace WordSend
 				activeRunStyle = null;
 				inRun = false;
 			}
-			xw.WriteStartElement("w:r");	// 1
-			xw.WriteStartElement("w:rPr");	// 2
-			xw.WriteStartElement("w:rStyle");	// 3
-			xw.WriteAttributeString("w:val", "FootnoteReference");
+			xw.WriteStartElement("w","r",null);	// 1
+			xw.WriteStartElement("w","rPr",null);	// 2
+			xw.WriteStartElement("w","rStyle",null);	// 3
+			xw.WriteAttributeString("w","val",null, "FootnoteReference");
 			xw.WriteEndElement();	// w:rStyle 2
 			xw.WriteEndElement();	// w:rPr 1
 			if ((caller == "+") && (!customXrefMark))
 			{
-				xw.WriteStartElement("w:footnote"); // 2
+				xw.WriteStartElement("w","footnote",null); // 2
 			}
 			else
 			{
-				xw.WriteStartElement("w:footnote");	// 2
-				xw.WriteAttributeString("w:suppressRef", "on");
+				xw.WriteStartElement("w","footnote",null);	// 2
+				xw.WriteAttributeString("w","suppressRef",null, "on");
 			}
-			xw.WriteStartElement("w:p");	// 3
-			xw.WriteStartElement("w:pPr");	// 4
-			xw.WriteStartElement("w:pStyle");	// 5
-			xw.WriteAttributeString("w:val", "FootnoteText");
+			xw.WriteStartElement("w","p",null);	// 3
+			xw.WriteStartElement("w","pPr",null);	// 4
+			xw.WriteStartElement("w","pStyle",null);	// 5
+			xw.WriteAttributeString("w","val",null, "FootnoteText");
 			xw.WriteEndElement();	// w:pStyle 4
 			xw.WriteEndElement();	// w:pPr 3
-			xw.WriteStartElement("w:r");	// 4
-			xw.WriteStartElement("w:rPr");	// 5
-			xw.WriteStartElement("w:rStyle");	// 6
-			xw.WriteAttributeString("w:val", "FootnoteReference");
+			xw.WriteStartElement("w","r",null);	// 4
+			xw.WriteStartElement("w","rPr",null);	// 5
+			xw.WriteStartElement("w","rStyle",null);	// 6
+			xw.WriteAttributeString("w","val",null, "FootnoteReference");
 			xw.WriteEndElement();	// w:rStyle 5
 			xw.WriteEndElement();	// w:rPr 4
 			if ((caller == "+") && (!customXrefMark))
 			{
-				xw.WriteStartElement("w:footnoteRef");	// 5
+				xw.WriteStartElement("w","footnoteRef",null);	// 5
 				xw.WriteEndElement();	// w:footnoteRef 4
 			}
 			else if (caller == "-")
 			{
-				xw.WriteElementString("w:t", "\u200b"); // Zero width space for marker
+				xw.WriteElementString("w","t",null, "\u200b"); // Zero width space for marker
 			}
 			else
 			{
-				xw.WriteElementString("w:t", caller);
+				xw.WriteElementString("w","t",null, caller);
 			}
 			xw.WriteEndElement();	// w:r 3
 			inXref = true;
@@ -3816,7 +3863,7 @@ namespace WordSend
 				xw.WriteEndElement();	// w:p 2
 				xw.WriteEndElement();	// w:footnote 1
 				if (!((currentFootnoteCaller == "+") && (!customXrefMark)))
-					xw.WriteElementString("w:t", currentXrefCaller);
+					xw.WriteElementString("w","t",null, currentXrefCaller);
 				xw.WriteEndElement();	// r 0
 				PopCharStyle();
 			}
@@ -3838,41 +3885,41 @@ namespace WordSend
 				activeRunStyle = null;
 				inRun = false;
 			}
-			xw.WriteStartElement("w:r");	// 1
-			xw.WriteStartElement("w:rPr");	// 2
-			xw.WriteStartElement("w:rStyle");	// 3
-			xw.WriteAttributeString("w:val", "EndnoteReference");
+			xw.WriteStartElement("w","r",null);	// 1
+			xw.WriteStartElement("w","rPr",null);	// 2
+			xw.WriteStartElement("w","rStyle",null);	// 3
+			xw.WriteAttributeString("w","val",null, "EndnoteReference");
 			xw.WriteEndElement();	// w:rStyle 2
 			xw.WriteEndElement();	// w:rPr 1
 			if (caller == "+")
 			{
-				xw.WriteStartElement("w:endnote"); // 2
+				xw.WriteStartElement("w","endnote",null); // 2
 			}
 			else
 			{
-				xw.WriteStartElement("w:endnote");	// 2
-				xw.WriteAttributeString("w:suppressRef", "on");
+				xw.WriteStartElement("w","endnote", null);	// 2
+				xw.WriteAttributeString("w","suppressRef",null, "on");
 			}
-			xw.WriteStartElement("w:p");	// 3
-			xw.WriteStartElement("w:pPr");	// 4
-			xw.WriteStartElement("w:pStyle");	// 5
-			xw.WriteAttributeString("w:val", "Endnotenormal");
+			xw.WriteStartElement("w","p",null);	// 3
+			xw.WriteStartElement("w","pPr",null);	// 4
+			xw.WriteStartElement("w","pStyle",null);	// 5
+			xw.WriteAttributeString("w","val", null, "Endnotenormal");
 			xw.WriteEndElement();	// w:pStyle 4
 			xw.WriteEndElement();	// w:pPr 3
-			xw.WriteStartElement("w:r");	// 4
-			xw.WriteStartElement("w:rPr");	// 5
-			xw.WriteStartElement("w:rStyle");	// 6
-			xw.WriteAttributeString("w:val", "EndnoteReference");
+			xw.WriteStartElement("w","r", null);	// 4
+			xw.WriteStartElement("w","rPr", null);	// 5
+			xw.WriteStartElement("w","rStyle", null);	// 6
+			xw.WriteAttributeString("w","val", null, "EndnoteReference");
 			xw.WriteEndElement();	// w:rStyle 5
 			xw.WriteEndElement();	// w:rPr 4
 			if (caller == "+")
 			{
-				xw.WriteStartElement("w:footnoteRef");	// 5
+				xw.WriteStartElement("w","footnoteRef", null);	// 5
 				xw.WriteEndElement();	// w:footnoteRef 4
 			}
 			else
 			{
-				xw.WriteElementString("w:t", caller);
+				xw.WriteElementString("w","t", null, caller);
 			}
 			xw.WriteEndElement();	// w:r 3
 			inEndnote = true;
@@ -4615,6 +4662,11 @@ namespace WordSend
             return true;
         }
 
+        public string FormatParameter(string name, string value)
+        {
+            return " "+name+"=\""+value.Replace("\"","").Replace("'","")+"\"";
+        }
+
 		protected void WriteUSFXBook(int bknum)
 		{
             Figure fig = new Figure();
@@ -4626,6 +4678,7 @@ namespace WordSend
             inUSFXNote = false;
             inWJ = false;
             wjOut = false;
+            inW = false;
             embedUsfx = true;
             string strongs, lemma, morphology;
             int i;
@@ -4648,7 +4701,8 @@ namespace WordSend
 					xw.WriteAttributeString("sortOrder", bknum.ToString());
 				}
 				sf = book.FirstSfm();
-				xw.WriteStartElement(ns+"book");
+                xw.WriteWhitespace("\n");
+                SplitAndWriteStartElement(ns+"book");
 				xw.WriteAttributeString("id", book.bookCode);
 
 				// Logit.WriteLine("Starting book: "+book.vernacularName+" ("+book.bookCode+").");
@@ -4731,6 +4785,7 @@ namespace WordSend
                                             ":" + verseMark + "  (c)");
                                         fatalError = true;
                                     }
+                                    xw.WriteWhitespace("\n");
 								    StartUSFXElement("c", "id", sf.parameter, null);
 								    EndUSFXElement();	// ns+c
 								    WriteUSFXText(sf.text);
@@ -4761,7 +4816,7 @@ namespace WordSend
 								    EndUSFXElement();   // ns+v
                                     if (inWJ && !wjOut && !isAllWhiteSpace(sf.text))
                                     {
-                                        StartUSFXStyle("wj", "", false);
+                                        StartUSFXStyle("wj", "", sf.nested);
                                         wjOut = true;
                                     }
 
@@ -5001,7 +5056,7 @@ namespace WordSend
 								EndUSFXNote();
                                     if (inWJ && !wjOut && !isAllWhiteSpace(sf.text))
                                     {
-                                        StartUSFXStyle("wj", "", false);
+                                        StartUSFXStyle("wj", "", sf.nested);
                                         wjOut = true;
                                     }
                                     WriteUSFXText(sf.text);
@@ -5024,36 +5079,59 @@ namespace WordSend
 						}
 							break;
 						case "character":
-							if (sf.tag.EndsWith("*"))
+        					if (sf.tag.EndsWith("*"))
 							{
-                                if (sf.tag == "wj*")
+                                if (sf.tag == "w*")
+                                {
+                                    if (inW)
+                                    {
+                                        inW = false;
+                                    }
+                                    else
+                                    {
+                                        Logit.WriteError("ERROR: \\w* without corresponding \\w in " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                                    }
+                                }
+                                else if (sf.tag == "wj*")
                                 {
                                     inWJ = false;
                                     wjOut = false;
                                 }
-								if (inUSFXNote)
-								{
-									EndUSFXNoteStyle();
-								}
-								else
-								{
-									EndUSFXStyle();
-								}
-								WriteUSFXText(sf.text);
+                                if (inUSFXNote)
+                                {
+                                    EndUSFXNoteStyle();
+                                }
+                                else
+                                {
+                                    EndUSFXStyle();
+                                }
+                                WriteUSFXText(sf.text);
 							}
 							else
 							{
-                                if (sf.tag == "wj")
+                                if (sf.tag == "w")
                                 {
+                                    if (inW)
+                                        Logit.WriteError("ERROR: started \\w without closing previous \\w in " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                                    inW = true;
+                                }
+                                else if (sf.tag == "wj")
+                                {
+                                    if (inWJ)
+                                    {
+                                        Logit.WriteError("ERROR: started \\wj without closing previous \\wj in " + book.bookCode + " " + chapterMark + ":" + verseMark);
+                                    }
                                     inWJ = true;
                                     wjOut = true;
+
+                                    // sf.text = StripLeadingWhiteSpace(sf.text);                                  
                                 }
                                 if (inUSFXNote)
-								{
-									StartUSFXNoteCharacterStyle(sf);
-								}
-								else
-								{
+                                {
+                                    StartUSFXNoteCharacterStyle(sf);
+                                }
+                                else
+                                {
                                     StartUSFXCharacterStyle(sf);
                                 }
 							}
@@ -5170,7 +5248,45 @@ namespace WordSend
 
         public Options projectOptions;
 
-		public void WriteToWordML(string fileName)
+        private void SplitNameAndWriteAttribute(string name, string value)
+        {
+            int j = name.IndexOf(':');
+            if (j == -1)
+            {
+                xw.WriteAttributeString(name, value);
+            }
+            else
+            {
+                string prefix = name.Substring(0, j);
+                string localname = name.Substring(j + 1);
+                xw.WriteAttributeString(prefix, localname, null, value);
+            }
+        }
+
+        private void SplitAndWriteStartElement(string name)
+        {
+            try
+            {
+                name = name.TrimStart(':');
+                int j = name.IndexOf(':');
+                if (j < 1)
+                {
+                    xw.WriteStartElement(name);
+                }
+                else
+                {
+                    string prefix = name.Substring(0, j);
+                    string localname = name.Substring(j + 1);
+                    xw.WriteStartElement(prefix, localname, null);
+                }
+            }
+            catch (Exception e)
+            {
+                Logit.WriteError(e.Message);
+            }
+        }
+
+        public void WriteToWordML(string fileName)
 		{
 			inserted = false;
             fatalError = false;
@@ -5355,10 +5471,18 @@ namespace WordSend
 			{
 				bool needsFooter = true;
 				bool oneshot = true;
-				xw = new XmlTextWriter(fileName, System.Text.Encoding.UTF8);
-				xw.Formatting = System.Xml.Formatting.None;
-				xw.Indentation = 1;
-				xw.IndentChar = ' ';
+
+                XWSettings = new XmlWriterSettings();
+                XWSettings.CheckCharacters = false;
+                XWSettings.Encoding = Encoding.UTF8;
+                XWSettings.Indent = false;
+                XWSettings.OmitXmlDeclaration = false;
+                XWSettings.IndentChars = "";
+                XWSettings.NewLineChars = "";
+                XWSettings.NewLineHandling = NewLineHandling.None;
+                XWSettings.NewLineOnAttributes = false;
+
+                xw = XmlWriter.Create(fileName, XWSettings);
 				xr.Read();
 				while (!xr.EOF)
 				{
@@ -5366,25 +5490,25 @@ namespace WordSend
 					{
 						if (xr.Name == "w:wordDocument")
 						{
-							xw.WriteStartElement(xr.Name);
+							xw.WriteStartElement("w","wordDocument");
 							for (int i = 0; i < xr.AttributeCount; i++)
 							{
 								xr.MoveToAttribute(i);
 								if (xr.Name != "xmlns:ns0")
-									xw.WriteAttributeString(xr.Name, xr.Value);
+									SplitNameAndWriteAttribute(xr.Name, xr.Value);
 							}
-							xw.WriteAttributeString("xmlns:ns0", "https://ebible.org/" + UsfxSchema);
+							xw.WriteAttributeString("xmlns","ns0",null, "https://ebible.org/" + UsfxSchema);
 							xr.MoveToElement();
 						}
 						else if (xr.Name == "w:ftr")
 						{
 							oneshot = true;
-							xw.WriteStartElement(xr.Name);
+							xw.WriteStartElement("w","ftr");
 							xw.WriteAttributes(xr, true);
 						}
 						else if (xr.Name == "w:p")
 						{
-							xw.WriteStartElement(xr.Name);
+							xw.WriteStartElement("w","p");
 							xw.WriteAttributes(xr, true);
 						}
 						else if (xr.Name == "w:sectPr")
@@ -5402,7 +5526,7 @@ namespace WordSend
 								EndWordMLParagraph();
 								if (embedUsfx)
 								{
-									xw.WriteStartElement(ns+"usfx");
+									SplitAndWriteStartElement(ns+"usfx");
 								}
 								if (isNTPP)
 								{
@@ -5419,7 +5543,7 @@ namespace WordSend
 									}
 								}
 							}
-							xw.WriteStartElement(xr.Name);
+							xw.WriteStartElement("w","sectPr");
 							xw.WriteAttributes(xr, true);
 							needsFooter = true;
 						}
@@ -5441,12 +5565,12 @@ namespace WordSend
 								InsertCropMarkedFooter("first");
 								needsFooter = false;
 							}
-							xw.WriteStartElement(xr.Name);
+							SplitAndWriteStartElement(xr.Name);
 							xw.WriteAttributes(xr, false);
 						}
 						else
 						{
-							xw.WriteStartElement(xr.Name);
+							SplitAndWriteStartElement(xr.Name);
 							xw.WriteAttributes(xr, false);
 						}
 						if (xr.IsEmptyElement)
@@ -6200,12 +6324,21 @@ namespace WordSend
 
         protected const string UsfxSchema = "usfx.xsd";  // File name only for speed; expected to be on the aux file path
         protected const string UsfxNamespace = "https://eBible.org/usfx.xsd";    // This alias will point to the latest USFX schema.
+        protected XmlWriterSettings XWSettings;
 
         public void OpenUsfx(string fileName)
         {
-            xw = new XmlTextWriter(fileName, System.Text.Encoding.UTF8);
-            xw.Namespaces = true;
-            xw.Formatting = Formatting.None;
+            XWSettings = new XmlWriterSettings();
+            XWSettings.CheckCharacters = false;
+            XWSettings.Encoding = Encoding.UTF8;
+            XWSettings.Indent = false;
+            XWSettings.OmitXmlDeclaration = false;
+            XWSettings.IndentChars = "";
+            XWSettings.NewLineChars = "";
+            XWSettings.NewLineHandling = NewLineHandling.None;
+            XWSettings.NewLineOnAttributes = false;
+
+            xw = XmlWriter.Create(fileName, XWSettings);
 
             xw.WriteStartDocument();
             usfxNestLevel = 0;
@@ -6213,9 +6346,9 @@ namespace WordSend
             usfxStyleCount = 0;
             activeCharacterStyle = new string[32];  // Guessing that this is much higher than the possible character nesting level in real data...
             activeCharacterStyle[0] = String.Empty;
-            xw.WriteStartElement(ns + "usfx");
-            xw.WriteAttributeString("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", UsfxNamespace);
+            SplitAndWriteStartElement(ns + "usfx");
+            xw.WriteAttributeString("xmlns", "xsi",null, "http://www.w3.org/2001/XMLSchema-instance");
+            xw.WriteAttributeString("xsi","noNamespaceSchemaLocation",null, UsfxNamespace);
             if (languageCode.Length == 3)
                 xw.WriteElementString("languageCode", languageCode);
         }
@@ -6284,10 +6417,18 @@ namespace WordSend
 			{
 				XmlFileReader xr = new XmlFileReader(inFileName);
 				Logit.WriteLine("Reading "+inFileName);
-				XmlTextWriter xw = new XmlTextWriter(outFileName, System.Text.Encoding.UTF8);
+                XWSettings = new XmlWriterSettings();
+                XWSettings.CheckCharacters = false;
+                XWSettings.Encoding = Encoding.UTF8;
+                XWSettings.Indent = false;
+                XWSettings.OmitXmlDeclaration = false;
+                XWSettings.IndentChars = "";
+                XWSettings.NewLineChars = "";
+                XWSettings.NewLineHandling = NewLineHandling.None;
+                XWSettings.NewLineOnAttributes = false;
+
+                XmlWriter xw = XmlWriter.Create(outFileName, XWSettings);
 				Logit.WriteLine("Writing "+outFileName);
-				xw.Namespaces = true;
-				xw.Formatting = Formatting.None;
 
 				xw.WriteStartDocument();
 				Logit.WriteLine("Writing USFX data only to "+inFileName);
@@ -6305,8 +6446,8 @@ namespace WordSend
 						if (xr.Name.StartsWith(ns) && xr.Name.EndsWith(":usfx"))
 						{
 							xw.WriteStartElement("usfx");
-							xw.WriteAttributeString("xmlns:xsi", @"http://www.w3.org/2001/XMLSchema-instance");
-							xw.WriteAttributeString("xsi:noNamespaceSchemaLocation", UsfxNamespace);
+							//xw.WriteAttributeString("ns","xsi",null, @"http://www.w3.org/2001/XMLSchema-instance");
+							//xw.WriteAttributeString("xsi","noNamespaceSchemaLocation", null, UsfxNamespace);
 							inBody = true;
 						}
 						else if (xr.Name.StartsWith(ns))
@@ -6378,8 +6519,9 @@ namespace WordSend
 					{
 						if (xr.NodeType == XmlNodeType.Text)
                             xw.WriteString(xr.Value);
-						else if (xr.NodeType == XmlNodeType.SignificantWhitespace)
-							xw.WriteWhitespace(xr.Value);
+						else if ((xr.NodeType == XmlNodeType.SignificantWhitespace) || (xr.NodeType == XmlNodeType.Whitespace))
+
+                            xw.WriteWhitespace(xr.Value);
 					}
 				}
 				xr.Close();
@@ -6406,15 +6548,18 @@ namespace WordSend
             int i;
 
             StringBuilder sb = new StringBuilder();
-            if (s.Contains(" "))
+            if (s.Contains(" ") || s.Contains(","))
             {
-                string[] strongList = s.Split(' ');
+                string[] strongList = s.Split(' ',',');
                 foreach (string strong in strongList)
                 {
-                    sb.Append(PadStrongs(strong.Trim()));
-                    sb.Append(' ');
+                    if (!String.IsNullOrEmpty(strong))
+                    {
+                        sb.Append(PadStrongs(strong.Trim()));
+                        sb.Append(' ');
+                    }
                 }
-                return sb.ToString().TrimEnd();
+                return sb.ToString().TrimEnd().Replace(' ',',');
             }
             else
             {
@@ -6602,8 +6747,15 @@ namespace WordSend
                                     case "l":
                                     case "lemma":
                                         lemma = usfxFile.Value;
-                                        attrNam.Add("lemma");
-                                        attrVal.Add(lemma);
+                                        if (lemma.StartsWith("\u2019"))
+                                        {
+                                            lemma = "";
+                                        }
+                                        else
+                                        {
+                                            attrNam.Add("lemma");
+                                            attrVal.Add(lemma);
+                                        }
                                         break;
                                     case "m":
                                     case "x-morph":
@@ -6921,15 +7073,18 @@ namespace WordSend
                             case "f":
                             case "fe":
                             case "ef":
-                                noteStyleStackLevel = 0;
-                                if (id == String.Empty)
-                                    id = "+";
-                                usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag(), false);
-                                inFootnote = true;
-                                needNoteTextMarker = true;
-                                if (m_options.RegenerateNoteOrigins)
+                                if (!usfxFile.IsEmptyElement)
                                 {
-                                    usfmFile.WriteSFM("fr", "", chapter + m_options.CVSeparator + fnReturnVerse, false, false);
+                                    noteStyleStackLevel = 0;
+                                    if (id == String.Empty)
+                                        id = "+";
+                                    usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag(), false);
+                                    inFootnote = true;
+                                    needNoteTextMarker = true;
+                                    if (m_options.RegenerateNoteOrigins)
+                                    {
+                                        usfmFile.WriteSFM("fr", "", chapter + m_options.CVSeparator + fnReturnVerse, false, false);
+                                    }
                                 }
                                 break;
                             case "fr":
@@ -6943,7 +7098,7 @@ namespace WordSend
                                 }
                                 else
                                 {
-                                    //needNoteTextMarker = needXrefTextMarker = false;
+                                    needNoteTextMarker = needXrefTextMarker = false;
                                     if (inFootnote || inXref)
                                     {
                                         noteSfm[noteStyleStackLevel] = sfm;
@@ -7030,14 +7185,17 @@ namespace WordSend
                                 }
                                 break;
                             case "x":
-                                if (id == String.Empty)
-                                    id = "+";
-                                usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag(), false);
-                                inXref = true;
-                                needXrefTextMarker = true;
-                                if (m_options.RegenerateNoteOrigins)
+                                if (!usfxFile.IsEmptyElement)
                                 {
-                                    usfmFile.WriteSFM("xo", "", chapter + m_options.CVSeparator + verse, false, false);
+                                    if (id == String.Empty)
+                                        id = "+";
+                                    usfmFile.WriteSFM(sfm, level, id, !tags.info(sfm).hasEndTag(), false);
+                                    inXref = true;
+                                    needXrefTextMarker = true;
+                                    if (m_options.RegenerateNoteOrigins)
+                                    {
+                                        usfmFile.WriteSFM("xo", "", chapter + m_options.CVSeparator + verse, false, false);
+                                    }
                                 }
                                 break;
                             case "zw":
@@ -7046,15 +7204,19 @@ namespace WordSend
                                 StringBuilder sb = new StringBuilder("|");
                                 if (!string.IsNullOrEmpty(lemma))
                                 {
-                                    sb.Append("lemma=\"");
-                                    sb.Append(lemma);
-                                    sb.Append("\"");
+                                    lemma = lemma.Replace((char)0x2019, ' ').Trim();
+                                    if (!string.IsNullOrEmpty(lemma))
+                                    {
+                                        sb.Append("lemma=\"");
+                                        sb.Append(lemma);
+                                        sb.Append("\"");
+                                    }
                                 }
                                 if (!string.IsNullOrEmpty(strongs))
                                 {
-                                    strngs = PadStrongs(strongs);
-                                    if (!string.IsNullOrEmpty(strngs))
+                                    if (!string.IsNullOrEmpty(strongs))
                                     {
+                                        strngs = PadStrongs(strongs);
                                         if (sb.Length > 1)
                                             sb.Append(" ");
                                         sb.Append("strong=\"");
@@ -7235,7 +7397,7 @@ namespace WordSend
                                 break;
                             case "zw":
                             case "w":
-                                if (usfmAttribute.Length > 1)
+                                if ((usfmAttribute.Length > 1) && (! usfmAttribute.StartsWith("x-")))
                                 {
                                     usfmFile.WriteString(usfmAttribute);
                                     usfmAttribute = "";
@@ -7325,10 +7487,13 @@ namespace WordSend
                             case "x":
                             case "fe":
                             case "ef":
-                                usfmFile.WriteSFM(sfm+"*", "", "", false, false);
-                                inFootnote = false;
-                                inXref = false;
-                                noteStyleStackLevel = 0;
+                                if (!usfxFile.IsEmptyElement)
+                                {
+                                    usfmFile.WriteSFM(sfm + "*", "", "", false, false);
+                                    inFootnote = false;
+                                    inXref = false;
+                                    noteStyleStackLevel = 0;
+                                }
                                 break;
                             case "cs":
                             case "char":
@@ -7799,7 +7964,7 @@ namespace WordSend
 							}
 						}
 					}
-					else if (usfxFile.NodeType == XmlNodeType.SignificantWhitespace)
+					else if ((usfxFile.NodeType == XmlNodeType.SignificantWhitespace) || (usfxFile.NodeType == XmlNodeType.Whitespace))
 					{
 						bblFile.Write(" ");
 					}

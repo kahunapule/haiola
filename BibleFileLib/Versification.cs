@@ -74,8 +74,19 @@ namespace WordSend
             VersificationBook vbook = (VersificationBook)books[book];
             if (vbook == null)
             {
-                booksMissing++;
-                return false;
+                if (book == "ESG")
+                {
+                    vbook = (VersificationBook)books["EST"];
+                }
+                else if (book == "DAG")
+                {
+                    vbook = (VersificationBook)books["DAN"];
+                }
+                if (vbook == null)
+                { 
+                    booksMissing++;
+                    return false;
+                }
             }
             vbook.versesChecked++;
             if (chapter > vbook.versesPerChapter.Length)

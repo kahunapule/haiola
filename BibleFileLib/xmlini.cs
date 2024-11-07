@@ -3,6 +3,8 @@ using System.Collections;
 using System.Xml;
 using System.Xml.Schema;
 using System.IO;
+using System.Runtime;
+using System.Text;
 
 namespace WordSend
 {
@@ -20,6 +22,7 @@ namespace WordSend
 		private string fileName;
 		private Hashtable hashTbl;
         public static bool readOnly = false;
+        private XmlWriterSettings xmlWriterSettings;
 
         private bool ReadIniFile(string fName)
         {
@@ -86,7 +89,17 @@ namespace WordSend
         /// -----------------------------------------------------------------------------------
         public XMLini(string iniName)
 		{
-			hashTbl = new Hashtable();
+            xmlWriterSettings = new XmlWriterSettings();
+            xmlWriterSettings.CheckCharacters = false;
+            xmlWriterSettings.Encoding = Encoding.UTF8;
+            xmlWriterSettings.Indent = false;
+            xmlWriterSettings.OmitXmlDeclaration = false;
+            xmlWriterSettings.IndentChars = "";
+            xmlWriterSettings.NewLineChars = "";
+            xmlWriterSettings.NewLineHandling = NewLineHandling.None;
+            xmlWriterSettings.NewLineOnAttributes = false;
+
+            hashTbl = new Hashtable();
             string bakName = Path.ChangeExtension(iniName, ".bak");
 			string dirName = Path.GetDirectoryName(iniName);
             if ((!String.IsNullOrEmpty(dirName)) && (!Directory.Exists(dirName)))
@@ -277,13 +290,15 @@ namespace WordSend
             return result;
         }
 
+
+
         /// <summary>
         /// Flush the hash table to an XML file ("save").
         /// </summary>
         /// <returns>true iff success</returns>
         public bool TryWrite()
         {
-            XmlTextWriter xml = null;
+            XmlWriter xml = null;
             bool result = false;
             string bakFileName = Path.ChangeExtension(fileName, "bak");
             try
@@ -293,9 +308,8 @@ namespace WordSend
                     File.Move(fileName, bakFileName);
                 try
                 {
-                    xml = new XmlTextWriter(fileName, System.Text.Encoding.UTF8);
+                    xml = XmlWriter.Create(fileName, xmlWriterSettings);
                     xml.WriteStartDocument();
-                    xml.Formatting = Formatting.Indented;
                     xml.WriteStartElement("ini");
 
                     IDictionaryEnumerator enu = hashTbl.GetEnumerator();

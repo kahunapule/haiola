@@ -218,6 +218,7 @@ namespace haiola
                     if (isReady)
                     {
                         globe.projectOptions.selected = !globe.projectOptions.lastRunResult;
+                        /*
                         string pdflog = Path.Combine(globe.outputProjectDirectory, "pdflog.txt");
                         if ((!globe.projectOptions.selected) && File.Exists(pdflog))
                         {
@@ -225,6 +226,7 @@ namespace haiola
                             if (fi.Length > 0)
                                 globe.projectOptions.selected = true;
                         }
+                        */
                     }
                 }
                 else
@@ -308,6 +310,7 @@ namespace haiola
             loggedLineCount = 0;
             messagesListBox.Items.Add(DateTime.Now.ToString() + " " + s);
             messagesListBox.SelectedIndex = messagesListBox.Items.Count - 1;
+            Logit.loggedError = false;
             globe.projectOptions.lastRunResult = true;
             globe.projectOptions.warningsFound = false;
         }
@@ -928,7 +931,8 @@ namespace haiola
                                             traditionalAbbreviationTextBox.Text = MetadataText();
                                         break;
                                     case "identification/abbreviationLocal":
-                                        traditionalAbbreviationTextBox.Text = MetadataText();
+                                        if (Utils.IsEmpty(traditionalAbbreviationTextBox.Text))
+                                            traditionalAbbreviationTextBox.Text = MetadataText();
                                         break;
                                     case "identification/description":
                                         if (Utils.IsEmpty(descriptionTextBox.Text))
@@ -959,17 +963,20 @@ namespace haiola
                                             globe.projectOptions.canonTypeLocal = MetadataText();
                                         break;
                                     case "agencies/creator":
-                                        creatorTextBox.Text = MetadataText();
+                                        if (Utils.IsEmpty(creatorTextBox.Text))
+                                            creatorTextBox.Text = MetadataText();
                                         break;
                                     case "agencies/rightsHolder/name":
                                         if (Utils.IsEmpty(copyrightOwnerTextBox.Text))
                                             copyrightOwnerTextBox.Text = MetadataText();
                                         break;
                                     case "agencies/rightsHolder/url":
-                                        copyrightOwnerUrlTextBox.Text = MetadataText();
+                                        if (Utils.IsEmpty(copyrightOwnerUrlTextBox.Text))
+                                            copyrightOwnerUrlTextBox.Text = MetadataText();
                                         break;
                                     case "agencies/rightsHolder/abbr":
-                                        coprAbbrevTextBox.Text = MetadataText();
+                                        if (Utils.IsEmpty(coprAbbrevTextBox.Text))
+                                            coprAbbrevTextBox.Text = MetadataText();
                                         break;
                                     /*
                                     case "agencies/rightsHolder":
@@ -981,10 +988,12 @@ namespace haiola
                                         break;
                                     */
                                     case "agencies/publisher/name":
-                                        printPublisherTextBox.Text = MetadataText();
+                                        if (Utils.IsEmpty(printPublisherTextBox.Text))
+                                            printPublisherTextBox.Text = MetadataText();
                                         break;
                                     case "agencies/contributor/name":
-                                        contributorTextBox.Text = MetadataText();
+                                        if (Utils.IsEmpty(contributorTextBox.Text))
+                                            contributorTextBox.Text = MetadataText();
                                         break;
                                     case "language/iso":
                                         ethnologueCodeTextBox.Text = MetadataText();
@@ -1029,16 +1038,20 @@ namespace haiola
                                             copyrightOwnerTextBox.Text = MetadataText();
                                         break;
                                     case "contact/rightsHolderLocal":
-                                        localRightsHolderTextBox.Text = MetadataText();
+                                        if (Utils.IsEmpty(localRightsHolderTextBox.Text))
+                                            localRightsHolderTextBox.Text = MetadataText();
                                         break;
                                     case "contact/rightsHolderAbbreviation":
-                                        coprAbbrevTextBox.Text = MetadataText();
+                                        if (Utils.IsEmpty(coprAbbrevTextBox.Text))
+                                            coprAbbrevTextBox.Text = MetadataText();
                                         break;
                                     case "contact/rightsHolderURL":
-                                        copyrightOwnerUrlTextBox.Text = MetadataText();
+                                        if (Utils.IsEmpty(copyrightOwnerUrlTextBox.Text))
+                                            copyrightOwnerUrlTextBox.Text = MetadataText();
                                         break;
                                     case "contact/rightsHolderFacebook":
-                                        facebookTextBox.Text = MetadataText();
+                                        if (Utils.IsEmpty(facebookTextBox.Text))
+                                            facebookTextBox.Text = MetadataText();
                                         break;
                                     case "copyright/statement":
                                         if (Utils.IsEmpty(rightsStatementTextBox.Text))
@@ -1303,6 +1316,11 @@ namespace haiola
             shortTitleTextBox.Text = globe.projectOptions.shortTitle;
             if (shortTitleTextBox.Text.Length < 1)
                 shortTitleTextBox.Text = globe.projectOptions.EnglishDescription;
+            if (shortTitleTextBox.Text.Length > 254)
+            {
+                MessageBox.Show("Short title must be < 255 characters long.");
+                shortTitleTextBox.Text = shortTitleTextBox.Text.Substring(0, 254);
+            }
                         
             templateLabel.Text = "Current template: " + globe.currentTemplate;
             copyFromTemplateButton.Enabled = (globe.currentTemplate.Length > 0) && (globe.currentTemplate != globe.currentProject);
@@ -1674,6 +1692,9 @@ Peripherals: {12} books",
             if (triggerautorun)
             {
                 triggerautorun = false;
+                XMLini.readOnly = false;
+                reloadButton_Click(sender, e);
+                Application.DoEvents();
                 WorkOnAllButton_Click(sender, e);
             }
         }

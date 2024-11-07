@@ -15,7 +15,7 @@ namespace WordSend
     public class Usfx2SILE
     {
         protected string sileFileName = String.Empty;
-        protected XmlTextWriter sileFile = null;
+        protected XmlWriter sileFile = null;
         private XmlTextReader usfx;
         public string sileDir;
         public bool callSile = true;
@@ -70,7 +70,7 @@ namespace WordSend
         {
             CloseSileFile();    // Close it if it is open (i.e. for the last book).
             sileFileName = Path.Combine(sileDir, currentBookAbbrev + "_src.sil");
-            sileFile = new XmlTextWriter(sileFileName, Encoding.UTF8);
+            sileFile = XmlTextWriter.Create(sileFileName, globe.XWSettings);
             sileFile.WriteStartDocument();
             sileFile.WriteStartElement("book");
             sileFile.WriteAttributeString("id", currentBookAbbrev);
@@ -460,7 +460,8 @@ namespace WordSend
                                 break;
                         }
                     }
-                    else if (((usfx.NodeType == XmlNodeType.Text) || (usfx.NodeType == XmlNodeType.SignificantWhitespace) || (usfx.NodeType == XmlNodeType.Whitespace)))
+                    else if (((usfx.NodeType == XmlNodeType.Text) || (usfx.NodeType == XmlNodeType.SignificantWhitespace) ||
+                        (usfx.NodeType == XmlNodeType.Whitespace)))
                     {
                         if (sileFile != null)
                             sileFile.WriteString(usfx.Value);

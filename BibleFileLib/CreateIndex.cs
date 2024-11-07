@@ -233,6 +233,7 @@ namespace WordSend
                 }
                 sqlConcordance.WriteLine("UNLOCK TABLES;");
                 sqlConcordance.Close();
+                Logit.ShowStatus("Wrote SQL Concordance.");
             }
             catch (Exception ex)
             {

@@ -1,0 +1,632 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "Z:\\sync\\source\\haiola\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|z:\\sync\\source\\haiola\\biblefilelib\\global.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\global.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\epub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\epub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\usfx2htmlconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\usfx2htmlconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\concgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\concgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D520CCD6-B7A4-4D7E-BDFE-1DF89111383A}|haiola\\haiola.csproj|Z:\\sync\\source\\haiola\\haiola\\haiola.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D520CCD6-B7A4-4D7E-BDFE-1DF89111383A}|haiola\\haiola.csproj|solutionrelative:haiola\\haiola.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\usfxtomosis.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\usfxtomosis.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\logit.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\logit.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\haiola_options.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\haiola_options.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{651B0A94-FD8B-4057-BF37-B5C1AC98742D}|imua\\imua.csproj|z:\\sync\\source\\haiola\\imua\\clrun.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{651B0A94-FD8B-4057-BF37-B5C1AC98742D}|imua\\imua.csproj|solutionrelative:imua\\clrun.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\biblebookinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\biblebookinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{651B0A94-FD8B-4057-BF37-B5C1AC98742D}|imua\\imua.csproj|z:\\sync\\source\\haiola\\imua\\imua.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}",
+      "RelativeMoniker": "D:0:0:{651B0A94-FD8B-4057-BF37-B5C1AC98742D}|imua\\imua.csproj|solutionrelative:imua\\imua.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D520CCD6-B7A4-4D7E-BDFE-1DF89111383A}|haiola\\haiola.csproj|Z:\\sync\\source\\haiola\\haiola\\properties\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D520CCD6-B7A4-4D7E-BDFE-1DF89111383A}|haiola\\haiola.csproj|solutionrelative:haiola\\properties\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D520CCD6-B7A4-4D7E-BDFE-1DF89111383A}|haiola\\haiola.csproj|Z:\\sync\\source\\haiola\\haiola\\properties\\resources.resx||{FF4D6ACA-9352-4A5F-821E-F4D6EBDCAB11}",
+      "RelativeMoniker": "D:0:0:{D520CCD6-B7A4-4D7E-BDFE-1DF89111383A}|haiola\\haiola.csproj|solutionrelative:haiola\\properties\\resources.resx||{FF4D6ACA-9352-4A5F-821E-F4D6EBDCAB11}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\biblefilelib.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\biblefilelib.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\osis2usfx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\osis2usfx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\usx2usfx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\usx2usfx.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\extractsearchtext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\extractsearchtext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\usfx2sile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\usfx2sile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\xmltextreader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\xmltextreader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\usfx2xetex.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\usfx2xetex.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\filehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\filehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D520CCD6-B7A4-4D7E-BDFE-1DF89111383A}|haiola\\haiola.csproj|Z:\\sync\\source\\haiola\\haiola\\haiola.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{D520CCD6-B7A4-4D7E-BDFE-1DF89111383A}|haiola\\haiola.csproj|solutionrelative:haiola\\haiola.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\usfxtoframedhtmlconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\usfxtoframedhtmlconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\usfxtochapterindex.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\usfxtochapterindex.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\concframegenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\concframegenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D520CCD6-B7A4-4D7E-BDFE-1DF89111383A}|haiola\\haiola.csproj|Z:\\sync\\source\\haiola\\haiola\\haiola.resx||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{D520CCD6-B7A4-4D7E-BDFE-1DF89111383A}|haiola\\haiola.csproj|solutionrelative:haiola\\haiola.resx||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{363C2778-6DDA-45C1-9DAE-D862B52DB636}|CountChars\\CountChars.csproj|Z:\\sync\\source\\haiola\\countchars\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{363C2778-6DDA-45C1-9DAE-D862B52DB636}|CountChars\\CountChars.csproj|solutionrelative:countchars\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\fingerprint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\fingerprint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\writebrowserbiblemodule.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\writebrowserbiblemodule.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\createindex.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\createindex.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\usfx2browserbible.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\usfx2browserbible.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\usfx2mobilehtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\usfx2mobilehtml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{651B0A94-FD8B-4057-BF37-B5C1AC98742D}|imua\\imua.csproj|z:\\sync\\source\\haiola\\imua\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{651B0A94-FD8B-4057-BF37-B5C1AC98742D}|imua\\imua.csproj|solutionrelative:imua\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\versification.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\versification.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|Z:\\sync\\source\\haiola\\biblefilelib\\base32string.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F8AAB011-442B-46E6-91D4-B130C74F081B}|BibleFileLib\\BibleFileLib.csproj|solutionrelative:biblefilelib\\base32string.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{705FEBE4-212B-4CD5-81B5-33C2E72F3EDC}|phrasetrans\\phrasetrans.csproj|Z:\\sync\\source\\haiola\\phrasetrans\\phrasetrans.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{705FEBE4-212B-4CD5-81B5-33C2E72F3EDC}|phrasetrans\\phrasetrans.csproj|solutionrelative:phrasetrans\\phrasetrans.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4BA51917-F2CB-46D7-BE6B-0B6CDE0949B4}|mergesbl\\mergesbl.csproj|z:\\sync\\source\\haiola\\mergesbl\\mergenotes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4BA51917-F2CB-46D7-BE6B-0B6CDE0949B4}|mergesbl\\mergesbl.csproj|solutionrelative:mergesbl\\mergenotes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4BA51917-F2CB-46D7-BE6B-0B6CDE0949B4}|mergesbl\\mergesbl.csproj|z:\\sync\\source\\haiola\\mergesbl\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4BA51917-F2CB-46D7-BE6B-0B6CDE0949B4}|mergesbl\\mergesbl.csproj|solutionrelative:mergesbl\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 7,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "BibleBookInfo.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\BibleBookInfo.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\BibleBookInfo.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\BibleBookInfo.cs",
+              "RelativeToolTip": "BibleFileLib\\BibleBookInfo.cs",
+              "ViewState": "AQIAAC0AAAAAAAAAAABRwDAAAAAbAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2023-03-16T02:44:31.357Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "imua",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\imua\\imua.csproj",
+              "RelativeDocumentMoniker": "imua\\imua.csproj",
+              "ToolTip": "Z:\\sync\\source\\haiola\\imua\\imua.csproj",
+              "RelativeToolTip": "imua\\imua.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2023-04-23T03:09:17.137Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "Program.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\imua\\Program.cs",
+              "RelativeDocumentMoniker": "imua\\Program.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\imua\\Program.cs",
+              "RelativeToolTip": "imua\\Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACsAAAAUAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2023-11-18T03:19:32.743Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "mergenotes.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\mergesbl\\mergenotes.cs",
+              "RelativeDocumentMoniker": "mergesbl\\mergenotes.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\mergesbl\\mergenotes.cs",
+              "RelativeToolTip": "mergesbl\\mergenotes.cs",
+              "ViewState": "AQIAAEEBAAAAAAAAAAAewFUBAAAjAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2023-12-12T01:44:21.25Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "clrun.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\imua\\clrun.cs",
+              "RelativeDocumentMoniker": "imua\\clrun.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\imua\\clrun.cs",
+              "RelativeToolTip": "imua\\clrun.cs",
+              "ViewState": "AQIAABkAAAAAAAAAAAAqwFUAAABUAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-27T01:23:37.548Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "Program.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\mergesbl\\Program.cs",
+              "RelativeDocumentMoniker": "mergesbl\\Program.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\mergesbl\\Program.cs",
+              "RelativeToolTip": "mergesbl\\Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2023-12-12T01:41:45.587Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "global.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\global.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\global.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\global.cs",
+              "RelativeToolTip": "BibleFileLib\\global.cs",
+              "ViewState": "AQIAALcKAAAAAAAAAAAcwLoKAAAPAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2022-12-17T04:06:06.12Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "epub.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\epub.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\epub.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\epub.cs",
+              "RelativeToolTip": "BibleFileLib\\epub.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-27T04:11:59.493Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Usfx2HtmlConverter.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\Usfx2HtmlConverter.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\Usfx2HtmlConverter.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\Usfx2HtmlConverter.cs",
+              "RelativeToolTip": "BibleFileLib\\Usfx2HtmlConverter.cs",
+              "ViewState": "AQIAACgCAAAAAAAAAAAkwEkCAAAgAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-02-14T23:33:41.405Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "usfxtomosis.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\usfxtomosis.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\usfxtomosis.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\usfxtomosis.cs",
+              "RelativeToolTip": "BibleFileLib\\usfxtomosis.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-02-11T00:43:06.434Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "haiola_options.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\haiola_options.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\haiola_options.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\haiola_options.cs",
+              "RelativeToolTip": "BibleFileLib\\haiola_options.cs",
+              "ViewState": "AQIAALMEAAAAAAAAAAAxwLMEAAAUAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-04T00:31:44.448Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "AssemblyInfo.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\haiola\\Properties\\AssemblyInfo.cs",
+              "RelativeDocumentMoniker": "haiola\\Properties\\AssemblyInfo.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\haiola\\Properties\\AssemblyInfo.cs",
+              "RelativeToolTip": "haiola\\Properties\\AssemblyInfo.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-10T03:10:04.63Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Resources.resx",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\haiola\\Properties\\Resources.resx",
+              "RelativeDocumentMoniker": "haiola\\Properties\\Resources.resx",
+              "ToolTip": "Z:\\sync\\source\\haiola\\haiola\\Properties\\Resources.resx",
+              "RelativeToolTip": "haiola\\Properties\\Resources.resx",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001005|",
+              "WhenOpened": "2024-08-10T03:10:03.122Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "haiola.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\haiola\\haiola.cs",
+              "RelativeDocumentMoniker": "haiola\\haiola.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\haiola\\haiola.cs",
+              "RelativeToolTip": "haiola\\haiola.cs",
+              "ViewState": "AQIAAEwIAAAAAAAAAAAkwGsIAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-02-11T21:08:36.613Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Logit.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\Logit.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\Logit.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\Logit.cs",
+              "RelativeToolTip": "BibleFileLib\\Logit.cs",
+              "ViewState": "AQIAAFcAAAAAAAAAAEBUwFoAAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2023-02-22T00:41:24.263Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ConcGenerator.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\ConcGenerator.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\ConcGenerator.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\ConcGenerator.cs",
+              "RelativeToolTip": "BibleFileLib\\ConcGenerator.cs",
+              "ViewState": "AQIAABACAAAAAAAAAABRwBMCAAAgAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-08T00:08:20.973Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "BibleFileLib.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\BibleFileLib.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\BibleFileLib.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\BibleFileLib.cs",
+              "RelativeToolTip": "BibleFileLib\\BibleFileLib.cs",
+              "ViewState": "AQIAAHcZAAAAAAAAAABRwHoZAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-02-11T01:07:30.745Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "usfx2sile.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\usfx2sile.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\usfx2sile.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\usfx2sile.cs",
+              "RelativeToolTip": "BibleFileLib\\usfx2sile.cs",
+              "ViewState": "AQIAAKkBAAAAAAAAAAAwwM4BAABjAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-12T23:58:40.49Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "osis2usfx.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\osis2usfx.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\osis2usfx.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\osis2usfx.cs",
+              "RelativeToolTip": "BibleFileLib\\osis2usfx.cs",
+              "ViewState": "AQIAAOoCAAAAAAAAAAAwwA8DAABkAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-19T23:47:17.282Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "ExtractSearchText.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\ExtractSearchText.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\ExtractSearchText.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\ExtractSearchText.cs",
+              "RelativeToolTip": "BibleFileLib\\ExtractSearchText.cs",
+              "ViewState": "AQIAAH4BAAAAAAAAAAAwwKMBAAA7AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-07T23:58:31.45Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "XmlTextReader.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\XmlTextReader.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\XmlTextReader.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\XmlTextReader.cs",
+              "RelativeToolTip": "BibleFileLib\\XmlTextReader.cs",
+              "ViewState": "AQIAAJIAAAAAAAAAAABRwJUAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-12T23:56:33.651Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Usx2Usfx.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\Usx2Usfx.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\Usx2Usfx.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\Usx2Usfx.cs",
+              "RelativeToolTip": "BibleFileLib\\Usx2Usfx.cs",
+              "ViewState": "AQIAACoBAAAAAAAAAAAwwE8BAAA6AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-07T23:58:20.453Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "UsfxToFramedHtmlConverter.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\UsfxToFramedHtmlConverter.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\UsfxToFramedHtmlConverter.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\UsfxToFramedHtmlConverter.cs",
+              "RelativeToolTip": "BibleFileLib\\UsfxToFramedHtmlConverter.cs",
+              "ViewState": "AQIAAGcAAAAAAAAAAAAMwIoAAAAgAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-27T04:12:58.69Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "Usfx2XeTeX.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\Usfx2XeTeX.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\Usfx2XeTeX.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\Usfx2XeTeX.cs",
+              "RelativeToolTip": "BibleFileLib\\Usfx2XeTeX.cs",
+              "ViewState": "AQIAAC4BAAAAAAAAAAAqwE0BAAAbAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-02-22T02:12:14.804Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "FileHelper.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\FileHelper.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\FileHelper.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\FileHelper.cs",
+              "RelativeToolTip": "BibleFileLib\\FileHelper.cs",
+              "ViewState": "AQIAADoBAAAAAAAAAAAIwH0BAAAnAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-02-11T21:07:51.28Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "haiola.cs [Design]",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\haiola\\haiola.cs",
+              "RelativeDocumentMoniker": "haiola\\haiola.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\haiola\\haiola.cs [Design]",
+              "RelativeToolTip": "haiola\\haiola.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-27T19:21:35.408Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "UsfxToChapterIndex.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\UsfxToChapterIndex.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\UsfxToChapterIndex.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\UsfxToChapterIndex.cs",
+              "RelativeToolTip": "BibleFileLib\\UsfxToChapterIndex.cs",
+              "ViewState": "AQIAAMgAAAAAAAAAAIAwwOsAAABMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-27T04:12:48.253Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "haiola.resx",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\haiola\\haiola.resx",
+              "RelativeDocumentMoniker": "haiola\\haiola.resx",
+              "ToolTip": "Z:\\sync\\source\\haiola\\haiola\\haiola.resx",
+              "RelativeToolTip": "haiola\\haiola.resx",
+              "ViewState": "AQIAABgAAAAAAAAAAAAtwD0AAABTAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001005|",
+              "WhenOpened": "2024-07-25T19:37:55.128Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "Program.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\CountChars\\Program.cs",
+              "RelativeDocumentMoniker": "CountChars\\Program.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\CountChars\\Program.cs",
+              "RelativeToolTip": "CountChars\\Program.cs",
+              "ViewState": "AQIAACYAAAAAAAAAAAAMwEkAAABVAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-23T23:30:27.247Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "ConcFrameGenerator.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\ConcFrameGenerator.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\ConcFrameGenerator.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\ConcFrameGenerator.cs",
+              "RelativeToolTip": "BibleFileLib\\ConcFrameGenerator.cs",
+              "ViewState": "AQIAABoAAAAAAAAAAIAwwD0AAABMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-23T23:30:08.604Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "WriteBrowserBibleModule.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\WriteBrowserBibleModule.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\WriteBrowserBibleModule.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\WriteBrowserBibleModule.cs",
+              "RelativeToolTip": "BibleFileLib\\WriteBrowserBibleModule.cs",
+              "ViewState": "AQIAAJAAAAAAAAAAAAAwwLUAAAAVAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-02-17T00:52:34.799Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "fingerprint.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\fingerprint.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\fingerprint.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\fingerprint.cs",
+              "RelativeToolTip": "BibleFileLib\\fingerprint.cs",
+              "ViewState": "AQIAACwAAAAAAAAAAAAiwFYAAAAgAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-25T20:45:09.622Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "CreateIndex.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\CreateIndex.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\CreateIndex.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\CreateIndex.cs",
+              "RelativeToolTip": "BibleFileLib\\CreateIndex.cs",
+              "ViewState": "AQIAAEAAAAAAAAAAAAAMwGMAAAAiAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-25T02:33:31.292Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "usfx2BrowserBible.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\usfx2BrowserBible.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\usfx2BrowserBible.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\usfx2BrowserBible.cs",
+              "RelativeToolTip": "BibleFileLib\\usfx2BrowserBible.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAABpAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-02-14T01:58:28.637Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "Usfx2MobileHtml.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\Usfx2MobileHtml.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\Usfx2MobileHtml.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\Usfx2MobileHtml.cs",
+              "RelativeToolTip": "BibleFileLib\\Usfx2MobileHtml.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAABpAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-02-11T00:42:18.773Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "phrasetrans.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\phrasetrans\\phrasetrans.cs",
+              "RelativeDocumentMoniker": "phrasetrans\\phrasetrans.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\phrasetrans\\phrasetrans.cs",
+              "RelativeToolTip": "phrasetrans\\phrasetrans.cs",
+              "ViewState": "AQIAAM4AAAAAAAAAAIiRwDkBAAA6AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2023-12-15T23:01:02.648Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "Versification.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\Versification.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\Versification.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\Versification.cs",
+              "RelativeToolTip": "BibleFileLib\\Versification.cs",
+              "ViewState": "AQIAAD0AAAAAAAAAAAAMwEIAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-02-20T23:10:56.494Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "base32string.cs",
+              "DocumentMoniker": "Z:\\sync\\source\\haiola\\BibleFileLib\\base32string.cs",
+              "RelativeDocumentMoniker": "BibleFileLib\\base32string.cs",
+              "ToolTip": "Z:\\sync\\source\\haiola\\BibleFileLib\\base32string.cs",
+              "RelativeToolTip": "BibleFileLib\\base32string.cs",
+              "ViewState": "AQIAAHEAAAAAAAAAAAAqwH0AAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-02-11T21:07:34.07Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

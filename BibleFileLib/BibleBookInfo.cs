@@ -486,13 +486,22 @@ namespace WordSend
         /// <param name="bookNamesFile">Full path and name of XML file to write</param>
         public void WriteDefaultBookNames(string bookNamesFile)
         {
-            XmlTextWriter xw;
+            XmlWriter xw;
             bookMatchList = new List<bookMatch>();
             try
             {
                 Utils.EnsureDirectory(Path.GetDirectoryName(bookNamesFile));
-                xw = new XmlTextWriter(bookNamesFile, Encoding.UTF8);
-                xw.Formatting = Formatting.Indented;
+                XmlWriterSettings XWSettings = new XmlWriterSettings();
+                XWSettings.CheckCharacters = false;
+                XWSettings.Encoding = Encoding.UTF8;
+                XWSettings.Indent = false;
+                XWSettings.OmitXmlDeclaration = false;
+                XWSettings.IndentChars = "";
+                XWSettings.NewLineChars = "";
+                XWSettings.NewLineHandling = NewLineHandling.None;
+                XWSettings.NewLineOnAttributes = false;
+
+                xw = XmlWriter.Create(bookNamesFile, XWSettings);
                 xw.WriteStartDocument();
                 xw.WriteStartElement("BookNames");
                 foreach (BibleBookRecord br in bookArray)
@@ -764,6 +773,7 @@ namespace WordSend
                                     currentBookAbbrev = PrepareToCompare(id);
                                     bookRecord = (BibleBookRecord)books[currentBookAbbrev];
                                     bookRecord.chaptersFound = new ArrayList(151);
+                                    bookRecord.isOnDisk = true;
                                     bookOsisId = bookRecord.osisName;
                                     currentBookCode = bookRecord.shortCode;
                                     if (bookRecord == null)
@@ -1113,6 +1123,7 @@ namespace WordSend
                 return result;
             BibleBookRecord foundBr;
             ChapterInfo foundCi;
+
             VerseInfo foundVi;
             // Is the book in publishArray?
             bool found = false;
@@ -1145,6 +1156,7 @@ namespace WordSend
                                     {
                                         return result;  // No such verse in this translation.
                                     }
+                                    foundVi.startVerse = vnum;
                                     result.vsInfo = foundVi;
                                     result.exists = true;
                                     found = true;

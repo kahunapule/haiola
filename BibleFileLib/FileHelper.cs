@@ -344,17 +344,24 @@ namespace WordSend
                 startInfo.WorkingDirectory = defaultDirectory;
 
             // Start the process
-            Process process = Process.Start(startInfo);
+            try
+            {
+                Process process = Process.Start(startInfo);
+                // Read the output of the process
+                string output = process.StandardOutput.ReadToEnd();
 
-            // Read the output of the process
-            string output = process.StandardOutput.ReadToEnd();
+                // Display the output
+                Console.WriteLine(output);
 
-            // Display the output
-            Console.WriteLine(output);
-
-            // Wait for the process to exit
-            process.WaitForExit();
-            return process.ExitCode == 0;
+                // Wait for the process to exit
+                process.WaitForExit();
+                return process.ExitCode == 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }
         }
 
         /// <summary>
@@ -1027,8 +1034,15 @@ namespace WordSend
         /// <param name="dst">Full path and name of destination file</param>
         public static void CopyFile(string src, string dst)
         {
-            if (File.Exists(src) && !File.Exists(dst))
-               File.Copy(src, dst, false);
+            if (File.Exists(src))
+            { 
+                if (!File.Exists(dst))
+                    File.Copy(src, dst, false);
+            }
+            else
+            {
+                Logit.WriteError("File not found: " + src);
+            }
         }
 
         /// Create the directory if it does not exist already. Return true if a problem occurs.

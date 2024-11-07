@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Schema;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace WordSend
 {
@@ -32,8 +33,8 @@ namespace WordSend
         protected string osisBook;
         protected string osisVerse;
         protected XmlTextReader usfx;
-        protected XmlTextWriter verseFile;
-        protected XmlTextWriter lemmaFile;
+        protected XmlWriter verseFile;
+        protected XmlWriter lemmaFile;
         protected StreamWriter vplFile;
         bool inVerse;
         bool inPsalmTitle;
@@ -57,6 +58,15 @@ namespace WordSend
             verseEndedWithSpace = false;
             bookInfo = new BibleBookInfo();
             LongestWordLength = 0;
+            XmlWriterSettings XWSettings = new XmlWriterSettings();
+            XWSettings.CheckCharacters = false;
+            XWSettings.Encoding = Encoding.UTF8;
+            XWSettings.Indent = false;
+            XWSettings.OmitXmlDeclaration = false;
+            XWSettings.IndentChars = "";
+            XWSettings.NewLineChars = "";
+            XWSettings.NewLineHandling = NewLineHandling.None;
+            XWSettings.NewLineOnAttributes = false;
         }
 
         /// <summary>
@@ -144,6 +154,7 @@ namespace WordSend
                 verseFile.WriteString(s.Replace("[", "").Replace("]", ""));
                 verseEndedWithSpace = s.EndsWith(" ");
                 verseFile.WriteEndElement();    // v
+                verseFile.WriteWhitespace(Environment.NewLine);
                 inVerse = false;
                 verseText.Length = 0;
                 lemmaFile.WriteStartElement("v");
@@ -152,6 +163,7 @@ namespace WordSend
                 lemmaFile.WriteAttributeString("v", currentVerse);
                 lemmaFile.WriteString(lemmaText.ToString().Replace(',',' ').Trim());
                 lemmaFile.WriteEndElement();    // v
+                lemmaFile.WriteWhitespace(Environment.NewLine);
                 lemmaText.Length = 0;
             }
         }
@@ -180,21 +192,30 @@ namespace WordSend
             verseText = new StringBuilder();
             lemmaText = new StringBuilder();
             bool result = false;
+            
 
             try
             {
                 utf8encoding = new UTF8Encoding(false);
-                vplFile = new StreamWriter(Path.ChangeExtension(verseFileName, ".vpltxt"), false, utf8encoding);   
-                lemmaFile = new XmlTextWriter(Path.ChangeExtension(verseFileName, ".lemma"), utf8encoding);
-                lemmaFile.Formatting = Formatting.Indented;
+                vplFile = new StreamWriter(Path.ChangeExtension(verseFileName, ".vpltxt"), false, utf8encoding);
+                XmlWriterSettings XWSettings = new XmlWriterSettings();
+                XWSettings.CheckCharacters = false;
+                XWSettings.Encoding = Encoding.UTF8;
+                XWSettings.Indent = false;
+                XWSettings.OmitXmlDeclaration = false;
+                XWSettings.IndentChars = "";
+                XWSettings.NewLineChars = "";
+                XWSettings.NewLineHandling = NewLineHandling.None;
+                XWSettings.NewLineOnAttributes = false;
+                lemmaFile = XmlWriter.Create(Path.ChangeExtension(verseFileName, ".lemma"), XWSettings);
                 lemmaFile.WriteStartDocument();
                 lemmaFile.WriteStartElement("lemmaFile");
                 usfx = new XmlTextReader(usfxFileName);
                 usfx.WhitespaceHandling = WhitespaceHandling.All;
-                verseFile = new XmlTextWriter(verseFileName, utf8encoding);
-                verseFile.Formatting = Formatting.Indented;
+                verseFile = XmlWriter.Create(verseFileName, XWSettings);
                 verseFile.WriteStartDocument();
                 verseFile.WriteStartElement("verseFile");
+                verseFile.WriteWhitespace(Environment.NewLine);
                 fileHelper.DebugWrite("Extracting search text.");
                 while (usfx.Read())
                 {

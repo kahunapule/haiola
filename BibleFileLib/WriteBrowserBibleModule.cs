@@ -139,7 +139,7 @@ namespace WordSend
             File.Copy(globe.preferredCover, coverPath, true);
             string covertnpng = Path.Combine(browserBiblePath, "covertn.png");
             string covertnb64 = Path.Combine(browserBiblePath, "covertn.b64");
-            fileHelper.RunCommand("shrinkcover", String.Format("{0} {1} {2}", coverPath, covertnpng, covertnb64), "");
+            fileHelper.RunCommand("shrinkcover", String.Format("\"{0}\" \"{1}\" \"{2}\"", coverPath, covertnpng, covertnb64), "");
             toBrowserBible.b64CoverName = covertnb64;
             if ((globe.er != null) && (globe.er.countries != null))
                 toBrowserBible.countries = globe.er.countries;
@@ -183,10 +183,17 @@ namespace WordSend
             string fontsDir = Path.Combine(browserBiblePath, "fonts");
             fileHelper.EnsureDirectory(fontsDir);
             string fontSource = Path.Combine(globe.dataRootDir, "fonts");
-            string fontName = globe.projectOptions.fontFamily.ToLower().Replace(' ', '_');
-            fileHelper.CopyFile(Path.Combine(fontSource, fontName + ".ttf"), Path.Combine(fontsDir, fontName + ".ttf"));
-            fileHelper.CopyFile(Path.Combine(fontSource, fontName + ".woff"), Path.Combine(fontsDir, fontName + ".woff"));
-            fileHelper.CopyFile(Path.Combine(fontSource, fontName + ".eot"), Path.Combine(fontsDir, fontName + ".eot"));
+            string fontName = globe.projectOptions.fontFamily.ToLower().Replace(" ", "");
+            string ttfName = globe.FindFontFile(fontSource, globe.projectOptions.fontFamily, ".ttf");
+            string woffName = globe.FindFontFile(fontSource, globe.projectOptions.fontFamily, ".woff");
+
+            fileHelper.CopyFile(ttfName, Path.Combine(fontsDir, fontName + ".ttf"));
+            fileHelper.CopyFile(woffName, Path.Combine(fontsDir, fontName + ".woff"));
+            string eotname = Path.Combine(fontSource, fontName + ".eot");
+            if (File.Exists(eotname))
+            {
+                fileHelper.CopyFile(eotname, Path.Combine(fontsDir, fontName + ".eot"));
+            }
             Utils.DeleteFile(covertnpng);
             Utils.DeleteFile(covertnb64);
             Logit.CloseFile();

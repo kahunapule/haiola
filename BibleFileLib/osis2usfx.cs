@@ -423,6 +423,7 @@ namespace WordSend
             holyBooks.xw.WriteAttributeString("id", tla);
             holyBooks.xw.WriteStartElement("id");
             holyBooks.xw.WriteAttributeString("id", tla);
+            // holyBooks.xw.WriteAttributeString("XML:space", "\"preserve\"");
             BibleBookRecord bkrecord = holyBooks.bkInfo.BkRec(tla);
             if (bkrecord != null)
             {
@@ -780,11 +781,11 @@ namespace WordSend
                     {
                         holyBooks.xw.WriteString(xr.Value);
                     }
-                    else if (xr.NodeType == XmlNodeType.Whitespace)
+                    else if ((xr.NodeType == XmlNodeType.Whitespace) || (xr.NodeType == XmlNodeType.SignificantWhitespace))
                     {
                         holyBooks.xw.WriteWhitespace(xr.Value);
                     }
-
+                    
 
 
                 }

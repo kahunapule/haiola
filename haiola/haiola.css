@@ -93,7 +93,8 @@ h1,h2,h3,.mt,.mt1,.mte,
 .mte1,.mt2,.mte2,.mt3,.mte3	{font-weight:bold;font-size:1.2em;text-align:center}
 .mt,.mt1,.mte,.mte1	{font-size:1.4em}
 .mt2,mte2	{font-size:1.2em}
-.qac,.k1,.nd,.sc,.xk,.k,.ior,.bd	{font-weight:bold}
+.qac,.k1,.nd,.xk,.k,.ior,.bd	{font-weight:bold}
+.sc {font-variant: small-caps}
 .qs	{text-align:right}
 .ndx,.no,.ft	{font-weight:normal}
 .rr,.rq,.rq,.fq,.fqa,.it,.em,.sls,.sp	{font-style:italic}

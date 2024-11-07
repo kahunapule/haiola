@@ -120,7 +120,8 @@ namespace WordSend
         protected bool newChapterFound;
         protected bool newChapterMarkNeeded;
         protected bool inFirstTableRow = false;
-        protected StringBuilder tableFirstRow, tableDeclaration;
+        protected StringBuilder tableFirstRow, tableDeclaration, tableBody;
+        protected string tableTrialDeclaration;
 
         public BibleBookInfo bookInfo = new BibleBookInfo();
         protected BibleBookRecord bookRecord;
@@ -1360,7 +1361,7 @@ namespace WordSend
             string phrase;
             StreamReader dasr = null;
             string daList = String.Empty;
-            XmlTextWriter usfxOut;
+            XmlWriter usfxOut;
             chapterNumber = verseNumber = 0;
             currentBookAbbrev = currentBookTitle = currentChapterPublished = String.Empty;
             currentChapter = currentFileName = currentVerse = languageCode = String.Empty;
@@ -1368,6 +1369,16 @@ namespace WordSend
             inTextStyle = 0;
             inParagraph = chopChapter = false;
             bookRecord = (BibleBookRecord)bookInfo.books["FRT"];
+            XmlWriterSettings XWSettings = new XmlWriterSettings();
+            XWSettings.Encoding = Encoding.UTF8;
+            XWSettings.Indent = false;
+            XWSettings.CheckCharacters = false;
+            XWSettings.OmitXmlDeclaration = false;
+            XWSettings.IndentChars = "";
+            XWSettings.NewLineChars = "";
+            XWSettings.NewLineHandling = NewLineHandling.None;
+            XWSettings.NewLineOnAttributes = false;
+
             Console.WriteLine("Reading {0}; Writing {1}; Substitutions {2}; Include Apocrypha {3}", inFile, outFile, localSubstFile, includeApocrypha.ToString());
             try
             {
@@ -1381,7 +1392,7 @@ namespace WordSend
                 }
                 usfx = new XmlTextReader(inFile);
                 usfx.WhitespaceHandling = WhitespaceHandling.All;
-                usfxOut = new XmlTextWriter(outFile, Encoding.UTF8);
+                usfxOut = XmlWriter.Create(outFile, XWSettings);
 
                 Console.WriteLine("Reading {0}", inFile);
 
@@ -1819,6 +1830,8 @@ namespace WordSend
         protected bool inToc = false;
         public string inputDir;
         public string projectInputDir;
+        public bool mkSword;
+        public bool hasMp3;
 
         /// <summary>
         /// Converts the USFX file usfxName to a set of HTML files, one file per chapter, in the
@@ -1838,7 +1851,7 @@ namespace WordSend
         /// <returns>true iff the conversion succeeded</returns>
         public virtual bool ConvertUsfxToHtml(string usfxName, string htmlDir, string vernacularTitle, string languageId, string translationId,
             string chapterLabelName, string psalmLabelName, string copyrightLink, string homeLink, string footerHtml,
-            string indexHtml, string licenseHtml, bool skipHelps, string goText)
+            string indexHtml, string licenseHtml, bool skipHelps, string goText, bool makeSword = false)
         {
             bool result = false;
             bool inUsfx = false;
@@ -2304,6 +2317,7 @@ LOCK TABLES {0} WRITE;", sqlTableName);
 
 
                 // Index page
+                
                 GenerateIndexFile(translationId, indexHtml, goText);
 
                 WriteCopyrightPage(chapFormat, licenseHtml, goText);
@@ -2345,11 +2359,12 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                     case "rem":
                                     case "periph":
                                     case "ndx":
-                                    case "wh":
-                                    case "wg":
-                                    case "wa":
                                         if (!usfx.IsEmptyElement)
                                             ignore = true;
+                                        break;
+                                    case "wa":
+                                    case "wg":
+                                    case "wh":
                                         break;
                                     case "fig": // Illustrations
                                         figDescription = figFileName = figSize = figLocation =
@@ -2608,6 +2623,12 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                     case "ve":
                                         EndVerse();
                                         break;
+                                    case "wj":
+                                        if (sfm.Length == 0)
+                                            sfm = usfx.Name;
+                                        StartHtmlTextStyle(sfm);
+                                        eatSpace = true;
+                                        break;
                                     case "char":
                                     case "qt":
                                     case "nd":
@@ -2629,7 +2650,6 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                     case "sc":
                                     case "no":
                                     case "ior":
-                                    case "wj":
                                     case "cs":
                                     case "rq":
                                     case "zcr":
@@ -2724,6 +2744,12 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                             break;
                         case XmlNodeType.Whitespace:
                         case XmlNodeType.SignificantWhitespace:
+                            if (!eatSpace)
+                            {
+                                WriteHtmlText(usfx.Value);
+                            }
+                            eatSpace = false;
+                            break;
                         case XmlNodeType.Text:
                             WriteHtmlText(usfx.Value);
                             break;
@@ -2742,9 +2768,10 @@ LOCK TABLES {0} WRITE;", sqlTableName);
                                     case "rem":
                                     case "periph":
                                     case "ndx":
+                                    case "id":
+                                    case "wa":
                                     case "wh":
                                     case "wg":
-                                    case "id":
                                         ignore = false;
                                         break;
                                     case "fig":

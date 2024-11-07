@@ -38,6 +38,7 @@ namespace WordSend
         public string infoPage;
         public string swordDir;
         public string swordRestricted;
+        public bool catholicSubset = false;
         public Options projectOptions = null;
 
         // Internal variables:
@@ -46,7 +47,7 @@ namespace WordSend
         protected string usfxFileName;
         protected XmlTextReader usfx;
         protected string mosisFileName;
-        protected XmlTextWriter mosis;
+        protected XmlWriter mosis;
 
         protected string element;
         protected string sfm;
@@ -203,7 +204,7 @@ namespace WordSend
             }
         }
 
-        
+
         protected int bookListIndex = 0;
         protected StringBuilder footnotesToWrite;
         protected StreamWriter htm;
@@ -353,21 +354,29 @@ namespace WordSend
         protected void OpenMosisFile(string mosisFileName)
         {
             string schemaPath = Path.Combine(Path.GetDirectoryName(mosisFileName), localOsisSchema);
-            
-            mosis = new XmlTextWriter(mosisFileName, Encoding.UTF8);
-            mosis.Formatting = Formatting.Indented;
+            XmlWriterSettings XWSettings = new XmlWriterSettings();
+            XWSettings.Encoding = Encoding.UTF8;
+            XWSettings.CheckCharacters = false;
+            XWSettings.Indent = false;
+            XWSettings.OmitXmlDeclaration = false;
+            XWSettings.IndentChars = "";
+            XWSettings.NewLineChars = "";
+            XWSettings.NewLineHandling = NewLineHandling.None;
+            XWSettings.NewLineOnAttributes = false;
+
+            mosis = XmlWriter.Create(mosisFileName, XWSettings);
             mosis.WriteStartDocument();
             OpenContainer("osis", false);
-            mosis.WriteAttributeString("xmlns", osisNamespace);
-            mosis.WriteAttributeString("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            mosis.WriteAttributeString("xsi:schemaLocation", osisNamespace + " " + osisSchema);
+            mosis.WriteAttributeString("ns", osisNamespace);
+            //mosis.WriteAttributeString("ns","xsi",null, "http://www.w3.org/2001/XMLSchema-instance");
+            //mosis.WriteAttributeString("xsi","schemaLocation",null, osisNamespace + " " + osisSchema);
             OpenContainer("osisText", false);
             mosis.WriteAttributeString("osisIDWork", osisWorkId);
             mosis.WriteAttributeString("osisRefWork", "bible");
             string osisLang = langCodes.ShortCode(languageCode);
             if (osisLang.Length > 2)
                 osisLang = "x-" + osisLang;
-            mosis.WriteAttributeString("xml:lang", osisLang);
+            mosis.WriteAttributeString("xml", "lang", null, osisLang);
             mosis.WriteAttributeString("canonical", "true");
 
             OpenContainer("header", false);
@@ -401,7 +410,7 @@ namespace WordSend
             {
                 WriteElementAndAttributeStringsIfNotEmpty("language", languageName, "type", "x-in-english");
             }
-            WriteElementAndAttributeStringsIfNotEmpty("language",vernacularLanguageName, "type", "x-vernacular");
+            WriteElementAndAttributeStringsIfNotEmpty("language", vernacularLanguageName, "type", "x-vernacular");
             WriteElementAndAttributeStringsIfNotEmpty("rights", copyrightNotice, "type", "x-copyright");
             WriteElementAndAttributeStringsIfNotEmpty("rights", rightsNotice, "type", "x-license");
             StartMosisElement("refSystem");
@@ -409,7 +418,7 @@ namespace WordSend
             WriteMosisEndElement();    // refSystem
             WriteMosisEndElement();    // work
             StartMosisElement("work");
-            mosis.WriteAttributeString("osisWork","bible");
+            mosis.WriteAttributeString("osisWork", "bible");
             StartMosisElement("type");
             mosis.WriteAttributeString("type", "OSIS");
             mosis.WriteString("Bible");
@@ -482,7 +491,7 @@ namespace WordSend
         }
 
 
-       protected void EndLineGroup()
+        protected void EndLineGroup()
         {
             if (inLineGroup)
             {
@@ -499,7 +508,8 @@ namespace WordSend
         }
 
         protected void StartElementWithAttribute(string elementName, string attributeName = null, string attributeValue = null,
-            string attribute2Name = null, string attribute2Value = null, string attribute3Name = null, string attribute3Value = null)
+            string attribute2Name = null, string attribute2Value = null, string attribute3Name = null, string attribute3Value = null,
+            string attribute4Name = null, string attribute4Value = null)
         {
             StartMosisElement(elementName);
             if ((attributeName != null) && (attributeName.Length > 0) && (attributeValue != null))
@@ -513,6 +523,10 @@ namespace WordSend
             if ((attribute3Name != null) && (attribute3Name.Length > 0) && (attribute3Value != null))
             {
                 mosis.WriteAttributeString(attribute3Name, attribute3Value);
+            }
+            if ((attribute4Name != null) && (attribute4Name.Length > 0) && (attribute4Value != null))
+            {
+                mosis.WriteAttributeString(attribute4Name, attribute4Value);
             }
             if (usfx.IsEmptyElement)
             {
@@ -788,7 +802,7 @@ namespace WordSend
         public string HTMLtoContinuation(string s)
         {
             char[] charsToTrim = { '\\', '\n', '\r', '\t' };
-            string result = s.Replace("\r","").Replace("\n", " \\\n");
+            string result = s.Replace("\r", "").Replace("\n", " \\\n");
             result = System.Text.RegularExpressions.Regex.Replace(result, @"<[pP] *>\?", " \\\n");
             result = System.Text.RegularExpressions.Regex.Replace(result, @"<[bB][rR] *\?>", " \\\n");
             result = System.Text.RegularExpressions.Regex.Replace(result, @"<li>", " * ");
@@ -801,22 +815,24 @@ namespace WordSend
 
         public void DeleteSwordModule(string swordName)
         {
-            string command, parameters;
+            // string command, parameters;
             swordZipDir = Path.Combine(swordDir, "zip");
-            try 
-	        {
+            try
+            {
                 Utils.EnsureDirectory(swordZipDir);
                 Utils.DeleteFile(Path.Combine(swordZipDir, swordName + ".zip"));
                 Utils.DeleteFile(Path.Combine(Path.Combine(swordDir, "mods.d"), swordName + ".conf"));
                 Utils.DeleteDirectory(Path.Combine(Path.Combine(Path.Combine(Path.Combine(swordDir, "modules"), "texts"), "ztext"), swordName));
-                command = "tar";
-                parameters = "czvf mods.d.tar.gz mods.d/";
-                fileHelper.RunCommand(command, parameters, swordDir);
-	        }
-	        catch (Exception ex)
-	        {
-                Logit.WriteError("Error deleting sword module "+swordName+": " + ex.Message);
-	        }
+                /* Moved to hulihuli for better compatibility and thread safety.
+                 * command = "tar";
+                 * parameters = "czvf mods.d.tar.gz mods.d/";
+                 * fileHelper.RunCommand(command, parameters, swordDir);
+                 */
+            }
+            catch (Exception ex)
+            {
+                Logit.WriteError("Error deleting sword module " + swordName + ": " + ex.Message);
+            }
         }
 
 
@@ -903,11 +919,11 @@ namespace WordSend
             long installSize = 0;
             char[] separators = new char[] { ' ', ',' };
             string[] oldNames = new string[] { String.Empty };
-                
+
             if (String.IsNullOrEmpty(swordName))
             {
                 swordName = projectOptions.translationId.Replace("-", "").Replace("_", "");
-                if ((yr.Length == 4) && !Char.IsDigit(swordName[swordName.Length-1]))
+                if ((yr.Length == 4) && !Char.IsDigit(swordName[swordName.Length - 1]))
                     swordName = swordName + yr;
                 projectOptions.SwordName = swordName;
             }
@@ -935,7 +951,7 @@ namespace WordSend
             // Don't create a Sword module if there were errors in the build so far.
             if (Logit.loggedError)
             {
-                Logit.WriteLine("Skipping Sword module creation due to prior errors.");
+                Logit.WriteError("Skipping Sword module creation due to prior errors.");
                 return;
             }
 
@@ -943,7 +959,7 @@ namespace WordSend
             string swordConfName = Path.Combine(modsd, swordName + ".conf");
 
             installSize = WriteSwordModule(swordName, false);
-            
+
             try
             {
                 Utils.EnsureDirectory(modsd);
@@ -1140,16 +1156,23 @@ namespace WordSend
                 projectOptions.Write();
 
                 // Zip the module and recompress the index.
-                Utils.DeleteFile(Path.Combine(Path.Combine(baseDir,"zip"),swordName+".zip"));
+                string swordZipName = Path.Combine(Path.Combine(baseDir, "zip"), swordName + ".zip");
+                Utils.DeleteFile(swordZipName);
                 //command = "rm";
                 //parameters = "zip/" + swordName + ".zip";
                 //fileHelper.RunCommand(command, parameters, baseDir);
                 command = "zip";
                 parameters = "-r -D zip/" + swordName + ".zip mods.d/" + swordName + ".conf modules/texts/ztext/" + swordName;
                 fileHelper.RunCommand(command, parameters, baseDir);
-                command = "tar";
-                parameters = "czvf mods.d.tar.gz mods.d/";
-                fileHelper.RunCommand(command, parameters, baseDir);
+                if (!File.Exists(swordZipName))
+                {
+                    Logit.WriteError("ERROR: " + swordZipName + " NOT CREATED!");
+                }
+                /* moved to hulihuli script for thread safety:
+                 * command = "tar";
+                 * parameters = "czvf mods.d.tar.gz mods.d/";
+                 * fileHelper.RunCommand(command, parameters, baseDir);
+                 */
             }
             catch (Exception ex)
             {
@@ -1224,6 +1247,7 @@ namespace WordSend
             return result;
         }
 
+ 
         /// <summary>
         /// Convert USFX file to Modified OSIS for Sword Project import
         /// </summary>
@@ -1236,7 +1260,7 @@ namespace WordSend
             mosisNestLevel = 0;
             indentLevel = 0;
             inNote = false;
-           // bool inNoteDiv = false;
+            // bool inNoteDiv = false;
             bool inToc1 = false;
             bool inToc2 = false;
             bool titleWritten = false;
@@ -1246,6 +1270,8 @@ namespace WordSend
             bool inSC = false;
             bool inHi = false;
             bool inTl = false;
+            bool swapEsther = false;
+            bool swapDaniel = false;
             bool inOsisNote = false;
             OSISRedLetterWords = OSISFootnotes = OSISHeadings = OSISMorph = OSISStrongs = OSISScripref = false;
             SwordVs = new SwordVersifications();
@@ -1253,12 +1279,31 @@ namespace WordSend
             string toc1 = String.Empty;
             string toc2 = String.Empty;
             string lastSfm = String.Empty;
- //           string tagName;
+            string skipId = String.Empty;
+            //           string tagName;
             inIntroduction = inMajorSection = inSection = inSubSection = inTitledPsalm = false;
+
+
+            int wjCount = 0;
             int i;
             try
             {
                 bookInfo.ReadUsfxVernacularNames(usfxFileName);
+                string orderFile = Path.Combine(projectOptions.globe.inputProjectDirectory, "bookorder.txt");
+                if (!File.Exists(orderFile))
+                    orderFile = SFConverter.FindAuxFile("bookorder.txt");
+                StreamReader sr = new StreamReader(orderFile);
+                projectOptions.globe.projectOptions.allowedBookList = sr.ReadToEnd();
+                sr.Close();
+
+                if (projectOptions.globe.projectOptions.allowedBookList.Contains("ESG") && !projectOptions.globe.projectOptions.allowedBookList.Contains("EST"))
+                {
+                    swapEsther = true;
+                }
+                if (projectOptions.globe.projectOptions.allowedBookList.Contains("DAG") && !projectOptions.globe.projectOptions.allowedBookList.Contains("DAN"))
+                {
+                    swapDaniel = true;
+                }
                 osisFileName = mosisFileName;
                 lastNoteVerse = String.Empty;
                 noteNumber = serialNumber = 0;
@@ -1315,15 +1360,15 @@ namespace WordSend
                                     }
                                     mosis.WriteString(usfx.Value);
                                 }
-                           /* tagName = usfx.Name;
-                            if ("char para".Contains(tagName))
-                            {
-                                if (!string.IsNullOrEmpty(sfm))
-                                    tagName = sfm;
-                                else if (!string.IsNullOrEmpty(style))
-                                    tagName = style;
-                            }
-                           */
+                            /* tagName = usfx.Name;
+                             if ("char para".Contains(tagName))
+                             {
+                                 if (!string.IsNullOrEmpty(sfm))
+                                     tagName = sfm;
+                                 else if (!string.IsNullOrEmpty(style))
+                                     tagName = style;
+                             }
+                            */
                             switch (usfx.Name)
                             {
                                 case "languageCode":
@@ -1355,6 +1400,11 @@ namespace WordSend
                                     titleWritten = false;
                                     if (id.Length > 2)
                                     {
+                                        skipId = id;
+                                        if (swapEsther && (id == "ESG"))
+                                            id = "EST";
+                                        else if (swapDaniel && (id == "DAG"))
+                                            id = "DAN";
                                         currentBookAbbrev = id;
                                         bookRecord = (BibleBookRecord)bookInfo.books[currentBookAbbrev];
                                     }
@@ -1371,7 +1421,7 @@ namespace WordSend
                                     {
                                         SkipElement();
                                     }
-                                    else if (!projectOptions.allowedBookList.Contains(bookRecord.tla))// Check for presence of book in bookorder.txt
+                                    else if (!projectOptions.allowedBookList.Contains(skipId))// Check for presence of book in bookorder.txt
                                     {
                                         SkipElement();
                                     }
@@ -1387,7 +1437,9 @@ namespace WordSend
                                     break;
                                 case "add":
                                     if (!(inNote || inSC))
+                                    {
                                         StartElementWithAttribute("transChange", "type", "added");
+                                    }
                                     break;
                                 case "bd":
                                 case "qac":
@@ -1439,7 +1491,7 @@ namespace WordSend
                                     break;
                                 case "bk":
                                     // if (inNote)
-                                        StartElementWithAttribute("hi", "type", "italic");
+                                    StartElementWithAttribute("hi", "type", "italic");
                                     // else NOTE: <reference> tag not used here because embedded reference within this element fails OSIS validation. Real case: pma.
                                     //    StartElementWithAttribute("reference", "type", "x-bookName");
                                     break;
@@ -1453,8 +1505,8 @@ namespace WordSend
                                     {
                                         OSISFootnotes = true;
                                         inOsisNote = true;
-                                        StartElementWithAttribute("note", "type", "translation", "osisRef", osisVerseId, "osisID", NoteId());
-                                        mosis.WriteAttributeString("placement", "foot");
+                                        StartElementWithAttribute("note", "type", "translation", "osisRef", osisVerseId, "osisID", NoteId(),
+                                           "placement", "foot");
                                         inNote = true;
                                     }
                                     break;
@@ -1467,9 +1519,9 @@ namespace WordSend
                                     else
                                     {
                                         OSISFootnotes = true;
-                                        inOsisNote= true;
-                                        StartElementWithAttribute("note", "type", "translation", "osisRef", osisVerseId, "osisID", NoteId());
-                                        mosis.WriteAttributeString("placement", "end");
+                                        inOsisNote = true;
+                                        StartElementWithAttribute("note", "type", "translation", "osisRef", osisVerseId, "osisID", NoteId(),
+                                            "placement", "end");
                                         inNote = true;
                                     }
                                     break;
@@ -1534,6 +1586,10 @@ namespace WordSend
                                     StartElementWithAttribute("seg", "type", "keyword");
                                     break;
                                 case "id":
+                                    if (swapEsther && (id == "ESG"))
+                                        id = "EST";
+                                    else if (swapDaniel && (id == "DAG"))
+                                        id = "DAN";
                                     if (id != currentBookAbbrev)
                                     {
                                         Logit.WriteError("Book ID in <id> and <book> do not match: " + currentBookAbbrev + " is not " + id);
@@ -2147,12 +2203,17 @@ namespace WordSend
                                 case "wa":
                                     break;
                                 case "wj":
-                                    if ((!inHi) && (!inTl))
+                                    if ((!inHi) && (!inTl) && (!usfx.IsEmptyElement))
                                     {
+                                        if (wjCount != 0)
+                                            Logit.WriteWarning("Mismatched wj starting count at " + osisVerseId);
+
+                                        wjCount++;
                                         StartMosisElement("q");
                                         mosis.WriteAttributeString("who", "Jesus");
                                         mosis.WriteAttributeString("marker", String.Empty);
                                         OSISRedLetterWords = true;
+
                                     }
                                     break;
                                 case "ft":
@@ -2228,6 +2289,9 @@ namespace WordSend
                                 case "wj":
                                     if ((!inHi) && (!inTl))
                                     {
+                                        wjCount--;
+                                        if (wjCount != 0)
+                                            Logit.WriteWarning("Mismatched wj Count at " + osisVerseId);
                                         WriteMosisEndElement();    // q
                                     }
                                     break;
@@ -2393,7 +2457,8 @@ namespace WordSend
                             }
                         }
                     }
-                    else if (((usfx.NodeType == XmlNodeType.Text) || (usfx.NodeType == XmlNodeType.SignificantWhitespace) || (usfx.NodeType == XmlNodeType.Whitespace)) && !ignore)
+                    else if (((usfx.NodeType == XmlNodeType.Text) || (usfx.NodeType == XmlNodeType.SignificantWhitespace) ||
+                        (usfx.NodeType == XmlNodeType.Whitespace)) && !ignore)
                     {
                         if (inToc1)
                             toc1 = toc1 + usfx.Value;
@@ -2424,7 +2489,7 @@ namespace WordSend
                 // Validate this file against the Schema
                 fileHelper.DebugWrite("reading OSIS Schema and " + mosisFileName);
                 string schemaFullPath = SFConverter.FindAuxFile(localOsisSchema);
-                
+
                 string schemaDir = Path.GetDirectoryName(schemaFullPath);
                 if (schemaDir.Trim().Length > 0)
                     Directory.SetCurrentDirectory(schemaDir);
@@ -2433,9 +2498,9 @@ namespace WordSend
                 File.Copy(schemaFullPath, localSchemaName);
                 string xmlxsdPath = SFConverter.FindAuxFile("xml.xsd");
                 string localXmlXsdPath = Path.Combine(mosisDirectory, "xml.xsd");
-                fileHelper.DebugWrite("Copying "+ xmlxsdPath + " to " + localXmlXsdPath);
+                fileHelper.DebugWrite("Copying " + xmlxsdPath + " to " + localXmlXsdPath);
                 File.Copy(xmlxsdPath, localXmlXsdPath);
-                
+
                 ValidateMosisFile(mosisFileName, Path.GetFileName(schemaFullPath));
                 /*
 
@@ -2472,7 +2537,7 @@ namespace WordSend
                 }
                 mr.Close();
                 */
-                fileHelper.DebugWrite("Deleting " + localSchemaName + " and "+localXmlXsdPath);
+                fileHelper.DebugWrite("Deleting " + localSchemaName + " and " + localXmlXsdPath);
                 Utils.DeleteFile(localSchemaName);
                 Utils.DeleteFile(localXmlXsdPath);
                 if (projectOptions != null)

@@ -1,6 +1,6 @@
 .main	{min-height:100%;margin-bottom:-4em;padding:0.5em}
 .main:after	{content:"";display:block}
-li	{list-style:disc inside}
+.li	{list-style:disc inside}
 a.xx	{color:#303030;text-decoration:none}
 a.nn	{color:#000080;text-decoration:none}
 a.oo	{color:#008000;text-decoration:none}

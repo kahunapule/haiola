@@ -42,7 +42,7 @@ namespace WordSend
         public string certified = null;
         public string orderFile;
         public bool clKludge = false;
-
+        public XmlWriterSettings XWSettings;
 
         public BoolStringDelegate GUIWriteString;
         public BoolStringDelegate UpdateStatus;
@@ -54,6 +54,15 @@ namespace WordSend
         public global()
         {
             languageCodes = new LanguageCodeInfo();
+            XWSettings = new XmlWriterSettings();
+            XWSettings.CheckCharacters = false;
+            XWSettings.Encoding = Encoding.UTF8;
+            XWSettings.Indent = false;
+            XWSettings.OmitXmlDeclaration = false;
+            XWSettings.IndentChars = "";
+            XWSettings.NewLineChars = "";
+            XWSettings.NewLineHandling = NewLineHandling.None;
+            XWSettings.NewLineOnAttributes = false;
         }
 
         public string m_swordSuffix
@@ -202,6 +211,7 @@ namespace WordSend
                     command = command.Replace("%p", projectOptions.privateProject ? "private" : "public");
                     command = command.Replace("%r", projectOptions.redistributable ? "redistributable" : "restricted");
                     command = command.Replace("%o", projectOptions.downloadsAllowed ? "downloadable" : "onlineonly");
+                    Logit.ShowStatus("Running " + command);
                     Logit.WriteLine("Running " + command);
                     if (!fileHelper.RunCommand(command))
                         Logit.WriteError(fileHelper.runCommandError + " Error " + currentConversion);
@@ -690,7 +700,7 @@ namespace WordSend
         /// \ft second footnote body
         /// \x
         /// 
-        /// It should handle even more then two.
+        /// It should handle even more than two.
         /// 
         /// This works because OW input always has all the \ft's for a \vt, each on a line by itself, right after
         /// the \vt field (after an earlier process stripped out the associated \btvt and \btft). Also, adjacent \vt blocks just get merged...
@@ -949,6 +959,7 @@ namespace WordSend
                                 string[] parts = source.Split(new char[] { delim });
                                 string pattern = parts[1]; // parts[0] is the empty string before the first delimiter
                                 string replacement = parts[2];
+                                pattern = pattern.Replace("$s", nobreakspace);
                                 replacement = replacement.Replace("$r", "\r"); // Allow $r in replacement to become a true cr
                                 replacement = replacement.Replace("$n", "\n"); // Allow (literal) $n in replacement to become a true newline
                                 replacement = replacement.Replace("$s", nobreakspace); // Nonbreaking space
@@ -1332,7 +1343,6 @@ For other uses, please contact the respective copyright owners.</p>
                                     projectOptions.languageId, projectOptions.translationId));
                 return;
             }
-            Utils.EnsureDirectory(UsfxPath);
             string logFile = Path.Combine(outputProjectDirectory, "ConversionReports.txt");
             Logit.OpenFile(logFile);
             SFConverter.scripture = new Scriptures(this);
@@ -1348,11 +1358,13 @@ For other uses, please contact the respective copyright owners.</p>
             // Write out the USFX file.
             SFConverter.scripture.languageCode = projectOptions.languageId;
             SFConverter.scripture.WriteUSFX(usfxName);
+            //File.Delete("BaCkUp.xml");
+            //File.Copy(usfxName, "BaCkUp.xml");
             SFConverter.scripture.bkInfo.ReadUsfxVernacularNames(Path.Combine(Path.Combine(outputProjectDirectory, "usfx"), "usfx.xml"));
             string bookNames = Path.Combine(outputProjectDirectory, "BookNames.xml");
             SFConverter.scripture.bkInfo.WriteDefaultBookNames(bookNames);
             File.Copy(bookNames, Path.Combine(Path.Combine(outputProjectDirectory, "usfx"), "BookNames.xml"), true);
-            bool runResult = projectOptions.lastRunResult;
+            //bool runResult = projectOptions.lastRunResult;
             bool errorState = Logit.loggedError;
             fileHelper.revisePua(usfxName);
             if (!SFConverter.scripture.hasRefTags)
@@ -1370,7 +1382,7 @@ For other uses, please contact the respective copyright owners.</p>
                     if (SFConverter.scripture.ValidateUsfx(usfxName))
                     {
                         Logit.loggedError = errorState;
-                        projectOptions.lastRunResult = runResult;
+                        //projectOptions.lastRunResult = runResult;
                         Logit.WriteLine("Validation passed without expanded references.");
                         projectOptions.makeHotLinks = false;
                     }
@@ -1684,7 +1696,7 @@ For other uses, please contact the respective copyright owners.</p>
                 string bookNames = Path.Combine(Path.Combine(outputProjectDirectory, "usfx"), "BookNames.xml");
                 SFConverter.scripture.bkInfo.WriteDefaultBookNames(bookNames);
                 bool errorState = Logit.loggedError;
-                bool runResult = projectOptions.lastRunResult;
+                //bool runResult = projectOptions.lastRunResult;
                 fileHelper.revisePua(usfxName);
                 SFConverter.scripture.ReadRefTags(usfxName);
                 if (!SFConverter.scripture.ValidateUsfx(usfxName))
@@ -1694,7 +1706,7 @@ For other uses, please contact the respective copyright owners.</p>
                     Logit.WriteLine("Retrying validation on usfx.xml without expanded references.");
                     if (SFConverter.scripture.ValidateUsfx(usfxName))
                     {
-                        projectOptions.lastRunResult = runResult;
+                        //projectOptions.lastRunResult = runResult;
                         Logit.loggedError = errorState;
                         Logit.WriteLine("Validation passed without expanded references.");
                         projectOptions.makeHotLinks = false;
@@ -2146,6 +2158,8 @@ For other uses, please contact the respective copyright owners.</p>
             toHtm.xrefCall.SetMarkers(projectOptions.xrefCallers);
             toHtm.projectInputDir = inputProjectDirectory;
             toHtm.footNoteCall.SetMarkers(projectOptions.footNoteCallers);
+            toHtm.mkSword = projectOptions.makeSword;
+            toHtm.hasMp3 = projectOptions.hasAudio;
             toHtm.ConvertUsfxToHtml(usfxFilePath, htmlPath,
                 projectOptions.vernacularTitle,
                 projectOptions.languageId,
@@ -2165,10 +2179,16 @@ For other uses, please contact the respective copyright owners.</p>
             string fontsDir = Path.Combine(htmlPath, "fonts");
             fileHelper.EnsureDirectory(fontsDir);
             string fontSource = Path.Combine(dataRootDir, "fonts");
-            string fontName = projectOptions.fontFamily.ToLower().Replace(' ', '_');
-            fileHelper.CopyFile(Path.Combine(fontSource, fontName + ".ttf"), Path.Combine(fontsDir, fontName + ".ttf"));
-            fileHelper.CopyFile(Path.Combine(fontSource, fontName + ".woff"), Path.Combine(fontsDir, fontName + ".woff"));
-            fileHelper.CopyFile(Path.Combine(fontSource, fontName + ".eot"), Path.Combine(fontsDir, fontName + ".eot"));
+            string fontName = projectOptions.fontFamily.ToLower().Replace(" ", String.Empty);
+            string ttfName = FindFontFile(fontSource, projectOptions.fontFamily, ".ttf");
+            string woffName = FindFontFile(fontSource, projectOptions.fontFamily, ".woff");
+            fileHelper.CopyFile(ttfName, Path.Combine(fontsDir, fontName + ".ttf"));
+            fileHelper.CopyFile(woffName, Path.Combine(fontsDir, fontName + ".woff"));
+            string eotname = Path.Combine(fontSource, fontName + ".eot");
+            if (File.Exists(eotname))
+            {
+                fileHelper.CopyFile(eotname, Path.Combine(fontsDir, fontName + ".eot"));
+            }
             Logit.CloseFile();
             if (Logit.loggedError)
             {
@@ -2186,8 +2206,7 @@ For other uses, please contact the respective copyright owners.</p>
             // We currently have the information handy to write some auxilliary XML files
             // that contain metadata. We will put these in the USFX directory.
 
-            XmlTextWriter xml = new XmlTextWriter(Path.Combine(UsfxPath, projectOptions.translationId + "-VernacularParms.xml"), System.Text.Encoding.UTF8);
-            xml.Formatting = System.Xml.Formatting.Indented;
+            XmlWriter xml = XmlWriter.Create(Path.Combine(UsfxPath, projectOptions.translationId + "-VernacularParms.xml"), XWSettings);
             xml.WriteStartDocument();
             xml.WriteStartElement("vernacularParms");
             // List vernacular full book titles from \toc1 (or \mt)
@@ -2222,20 +2241,20 @@ For other uses, please contact the respective copyright owners.</p>
             }
             // Dublin Core library card data
             xml.WriteStartElement("dcMeta");
-            xml.WriteAttributeString("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            xml.WriteAttributeString("xsi:schemaLocation", "http://dublincore.org/schemas/xmls/qdc/2008/02/11/dc.xsd");
-            xml.WriteAttributeString("xmlns:dc", "http://purl.org/dc/elements/1.1/");
-            xml.WriteElementString("dc:creator", projectOptions.contentCreator);
-            xml.WriteElementString("dc:contributor", projectOptions.contributor);
+            // xml.WriteAttributeString("ns","xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            // xml.WriteAttributeString("xsi","schemaLocation", "http://dublincore.org/schemas/xmls/qdc/2008/02/11/dc.xsd");
+            xml.WriteAttributeString("ns","dc", "http://purl.org/dc/elements/1.1/");
+            xml.WriteElementString("dc","creator", projectOptions.contentCreator);
+            xml.WriteElementString("dc","contributor", projectOptions.contributor);
             string title = projectOptions.vernacularTitle;
             if (title.Length == 0)
                 title = projectOptions.EnglishDescription;
-            xml.WriteElementString("dc:title", title);
-            xml.WriteElementString("dc:description", projectOptions.EnglishDescription);
-            xml.WriteElementString("dc:date", projectOptions.contentUpdateDate.ToString("yyyy-MM-dd"));
-            xml.WriteElementString("dc:format", "digital");
-            xml.WriteElementString("dc:language", projectOptions.languageId);
-            xml.WriteElementString("dc:publisher", projectOptions.electronicPublisher);
+            xml.WriteElementString("dc","title", title);
+            xml.WriteElementString("dc","description", projectOptions.EnglishDescription);
+            xml.WriteElementString("dc","date", projectOptions.contentUpdateDate.ToString("yyyy-MM-dd"));
+            xml.WriteElementString("dc","format", "digital");
+            xml.WriteElementString("dc","language", projectOptions.languageId);
+            xml.WriteElementString("dc","publisher", projectOptions.electronicPublisher);
             string rights = String.Empty;
             string shortRights = projectOptions.translationId + " Scripture ";
             string copyright;
@@ -2299,9 +2318,9 @@ All rights reserved." +
                 shortRights = shortRights + rights;
             }
             rights = rights + projectOptions.rightsStatement;
-            xml.WriteElementString("dc:rights", rights);
-            xml.WriteElementString("dc:identifier", String.Empty);
-            xml.WriteElementString("dc:type", String.Empty);
+            xml.WriteElementString("dc","rights", rights);
+            xml.WriteElementString("dc","identifier", String.Empty);
+            xml.WriteElementString("dc","type", String.Empty);
             xml.WriteEndElement();  // dcMeta
             xml.WriteElementString("numberSystem", projectOptions.numberSystem);
             xml.WriteElementString("chapterAndVerseSeparator", projectOptions.CVSeparator);
@@ -2324,8 +2343,8 @@ All rights reserved." +
             xml.WriteEndDocument();
             xml.Close();
 
-            xml = new XmlTextWriter(Path.Combine(UsfxPath, projectOptions.translationId + "-VernacularAdditional.xml"), System.Text.Encoding.UTF8);
-            xml.Formatting = System.Xml.Formatting.Indented;
+            xml = XmlWriter.Create(Path.Combine(UsfxPath, projectOptions.translationId + "-VernacularAdditional.xml"), XWSettings);
+            // xml.Formatting = System.Xml.Formatting.None;
             xml.WriteStartDocument();
             xml.WriteStartElement("vernacularParmsMiscellaneous");
             xml.WriteElementString("translationId", projectOptions.translationId);
@@ -2341,8 +2360,7 @@ All rights reserved." +
 
             // Write the ETEN DBL MetaData.xml file in the usfx directory.
             string metaXmlName = Path.Combine(UsfxPath, projectOptions.translationId + "metadata.xml");
-            xml = new XmlTextWriter(metaXmlName, System.Text.Encoding.UTF8);
-            xml.Formatting = System.Xml.Formatting.Indented;
+            xml = XmlWriter.Create(metaXmlName, XWSettings);
             xml.WriteStartDocument();
             // xml.WriteProcessingInstruction("xml-model", "href=\"metadataWbt-1.3.rnc\" type=\"application/relax-ng-compact-syntax\"");
             xml.WriteStartElement("DBLMetadata");
@@ -2675,6 +2693,33 @@ their generosity, people like you can open up the Bible and hear from God no mat
         }
 
 
+        public string FindFontFile(string fontSource, string fontFamily, string fontKind)
+        {
+            string lowerFontName = fontFamily.ToLower();
+            string result = Path.Combine(fontSource, lowerFontName + fontKind);
+            if (File.Exists(result))
+                return result;
+            result = Path.Combine(fontSource, lowerFontName + "-regular" + fontKind);
+            if (File.Exists(result))
+                return result;
+            lowerFontName = lowerFontName.Replace(" ", string.Empty);
+            result = Path.Combine(fontSource, lowerFontName + fontKind);
+            if (File.Exists(result))
+                return result;
+            result = Path.Combine(fontSource, lowerFontName + "-regular" + fontKind);
+            if (File.Exists(result))
+                return result;
+            lowerFontName = fontFamily.ToLower().Replace(" ", "_");
+            result = Path.Combine(fontSource, lowerFontName + fontKind);
+            if (File.Exists(result))
+                return result;
+            result = Path.Combine(fontSource, lowerFontName + "-regular" + fontKind);
+            if (File.Exists(result))
+                return result;
+            Logit.WriteWarning("Font file not found for " + fontFamily);
+            return String.Empty;
+        }
+
         public void ConvertUsfxToEPub()
         {
             if ((projectOptions.languageId.Length < 3) || (projectOptions.translationId.Length < 3))
@@ -2697,7 +2742,10 @@ their generosity, people like you can open up the Bible and hear from God no mat
             Logit.OpenFile(logFile);
 
             string fontSource = Path.Combine(dataRootDir, "fonts");
-            string fontName = projectOptions.fontFamily.ToLower().Replace(' ', '_');
+            string fontName = projectOptions.fontFamily.ToLower().Replace(" ", String.Empty);
+            string ttfName = FindFontFile(fontSource, projectOptions.fontFamily, ".ttf");
+            // string woff2Name = FindFontFile(fontSource, projectOptions.fontFamily, ".woff2");
+            string woffName = FindFontFile(fontSource, projectOptions.fontFamily, ".woff");
             // Copy cascading style sheet from project directory, or if not there, create a font specification section and append it to BibleConv/input/epub.
             string specialCss = Path.Combine(inputProjectDirectory, "epub.css");
             if (File.Exists(specialCss))
@@ -2715,8 +2763,8 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 string epubStyleSheet = sr.ReadToEnd();
                 sr.Close();
                 StreamWriter sw = new StreamWriter(epubCss);
-                sw.WriteLine("@font-face {{font-family:'{0}';src: url('{0}.ttf') format('truetype');src: url('{0}.woff') format('woff');font-weight:normal;font-style:normal}}",
-                    fontName);
+                sw.WriteLine("@font-face {{font-family:'{0}';src: url('{0}.ttf') format('truetype');src: url('{1}.woff') format('woff');font-weight:normal;font-style:normal}}",
+                    Path.GetFileNameWithoutExtension(ttfName), Path.GetFileNameWithoutExtension(woffName));
                 sw.WriteLine("html,body,div.main,div.footnote,div,ol.nav,h1,ul.tnav {{font-family:'{0}','{1}','Liberation Sans','liberationsans_regular','sans-serif'}}", fontName, projectOptions.fontFamily);
                 if (projectOptions.commonChars)
                 {
@@ -2728,8 +2776,14 @@ their generosity, people like you can open up the Bible and hear from God no mat
                 sw.Close();
             }
             fileHelper.DebugWrite("copying files");
-            fileHelper.CopyFile(Path.Combine(fontSource, fontName + ".woff"), Path.Combine(htmlPath, fontName + ".woff"));
-            fileHelper.CopyFile(Path.Combine(fontSource, fontName + ".ttf"), Path.Combine(htmlPath, fontName + ".ttf"));
+            if (!String.IsNullOrEmpty(woffName))
+            {
+                fileHelper.CopyFile(woffName, Path.Combine(htmlPath, Path.GetFileName(woffName)));
+            }
+            if (!String.IsNullOrEmpty(ttfName))
+            {
+                fileHelper.CopyFile(ttfName, Path.Combine(htmlPath, Path.GetFileName(ttfName)));
+            }
             fileHelper.CopyFile(Path.Combine(fontSource, "liberationsans_regular.woff"), Path.Combine(htmlPath, "liberationsans_regular.woff"));
             fileHelper.CopyFile(Path.Combine(fontSource, "liberationsans_regular.ttf"), Path.Combine(htmlPath, "liberationsans_regular.ttf"));
             fileHelper.DebugWrite("fonts copied");

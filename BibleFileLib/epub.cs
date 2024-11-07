@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
@@ -12,7 +11,8 @@ using System.Diagnostics;
 using ICSharpCode.SharpZipLib;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
-
+using System.Globalization;
+using System.Runtime;
 
 namespace WordSend
 {
@@ -892,7 +892,7 @@ namespace WordSend
         }
 
         protected int playOrder;
-        protected XmlTextWriter ncx;
+        protected XmlWriter ncx;
 
         protected void beginNavPoint(string text, string src)
         {
@@ -974,11 +974,20 @@ namespace WordSend
                 sw.WriteLine("</display_options>");
                 sw.Close();
 
-                ncx = new XmlTextWriter(Path.Combine(OEBPS, "toc.ncx"), Encoding.UTF8);
-                ncx.Formatting = Formatting.Indented;
-                ncx.WriteStartDocument(false);
-                ncx.WriteStartElement("ncx");
-                ncx.WriteAttributeString("xmlns", "http://www.daisy.org/z3986/2005/ncx/");
+                XmlWriterSettings XWSettings = new XmlWriterSettings();
+                XWSettings.CheckCharacters = false;
+                XWSettings.Encoding = Encoding.UTF8;
+                XWSettings.Indent = true;
+                XWSettings.OmitXmlDeclaration = false;
+                XWSettings.IndentChars = " ";
+                XWSettings.NewLineChars = "\n";
+                XWSettings.NewLineHandling = NewLineHandling.Entitize;
+                XWSettings.NewLineOnAttributes = false;
+                XWSettings.NamespaceHandling = NamespaceHandling.OmitDuplicates;
+
+                ncx = XmlWriter.Create(Path.Combine(OEBPS, "toc.ncx"), XWSettings);
+                ncx.WriteStartDocument();
+                ncx.WriteStartElement("ncx", "http://www.daisy.org/z3986/2005/ncx/");
                 ncx.WriteAttributeString("version", "2005-1");
                 ncx.WriteStartElement("head");
                 ncx.WriteStartElement("meta");
@@ -1035,30 +1044,30 @@ namespace WordSend
 
                 DirectoryInfo di = new DirectoryInfo(OEBPS);
                 FileInfo []filesFound = di.GetFiles();
-                XmlTextWriter xw = new XmlTextWriter(Path.Combine(OEBPS, "content.opf"), Encoding.UTF8);
-                xw.Formatting = Formatting.Indented;
+                XmlWriter xw = XmlWriter.Create(Path.Combine(OEBPS, "content.opf"), XWSettings);
                 xw.WriteStartDocument();
-                xw.WriteStartElement("package");
-                xw.WriteAttributeString("xmlns", "http://www.idpf.org/2007/opf");
+                xw.WriteStartElement("package", "http://www.idpf.org/2007/opf");
                 xw.WriteAttributeString("prefix", "ibooks: http://vocabulary.itunes.apple.com/rdf/ibooks/vocabulary-extensions-1.0/");
                 xw.WriteAttributeString("version", "3.0");
                 xw.WriteAttributeString("unique-identifier", "uid");
-                xw.WriteStartElement("metadata");
-                xw.WriteAttributeString("xmlns:dc", "http://purl.org/dc/elements/1.1/");
-                xw.WriteStartElement("dc:identifier");
-                xw.WriteAttributeString("id", "uid");
-                xw.WriteString("urn:uuid:" + epubIdentifier);
-                xw.WriteEndElement();   // dc:identifier
-                xw.WriteElementString("dc:title", EscapeHtml(translationName));
+                xw.WriteRaw("\n<metadata xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n");
+                xw.WriteRaw(" <dc:title id=\"title\">" + EscapeHtml(translationName) + "</dc:title>\n");
+                if (!String.IsNullOrEmpty(contentCreator))
+                    xw.WriteRaw(" <dc:creator id=\"creator\">" + EscapeHtml(contentCreator) + "</dc:creator>\n");
+                if (!String.IsNullOrEmpty(contributor))
+                    xw.WriteRaw(" <dc:contributor id=\"contributor\">" + EscapeHtml(contributor) + "</dc:contributor>\n");
                 string fakeLang = shortLangId;
                 if (fakeLang.Length > 2)
                     fakeLang = "en";
-                xw.WriteElementString("dc:language", fakeLang);
-                xw.WriteElementString("dc:rights", longCopr);
-                if (!String.IsNullOrEmpty(contentCreator))
-                    xw.WriteElementString("dc:creator", contentCreator);
-                if (!String.IsNullOrEmpty(contributor))
-                    xw.WriteElementString("dc:contributor", contributor);
+                //xw.WriteElementString("dc", "language", "dc", fakeLang);
+                xw.WriteRaw(" <dc:language>" + fakeLang + "</dc:language>\n");
+                //xw.WriteStartElement("dc","identifier", "ns");
+                xw.WriteRaw(" <dc:identifier id=\"uid\">urn:uuid:" + epubIdentifier + "</dc:identifier>\n");
+                //xw.WriteAttributeString("id", "uid");
+                //xw.WriteString("urn:uuid:" + epubIdentifier);
+                //xw.WriteEndElement();   // dc:identifier
+                //xw.WriteElementString("dc","rights","dc", longCopr);
+                xw.WriteRaw("<dc:rights>" + longCopr + "</dc:rights>\n");
                 xw.WriteStartElement("meta");
                 xw.WriteAttributeString("property", "dcterms:modified");
                 xw.WriteString(DateTime.UtcNow.ToString("s")+"Z");
@@ -1071,7 +1080,7 @@ namespace WordSend
                 xw.WriteAttributeString("property", "ibooks:specified-fonts");
                 xw.WriteString("true");
                 xw.WriteEndElement();   // meta
-                xw.WriteEndElement();   // metadata
+                xw.WriteRaw("</metadata>\n");   // metadata
                 xw.WriteStartElement("manifest");
 
                 foreach (FileInfo f in filesFound)

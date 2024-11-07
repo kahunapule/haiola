@@ -37,6 +37,8 @@ namespace phrasetrans
         {
             int result = 1;
             int i, j;
+            try
+            { 
             if (s != null)
             {
                 for (i = 0; i < s.Length; i++)
@@ -73,6 +75,13 @@ namespace phrasetrans
                     }
                 }
             }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in CountTokensInString:");
+                Console.WriteLine(ex.ToString());
+            }
+
             return result;
         }
 
@@ -98,77 +107,86 @@ namespace phrasetrans
         protected string readToken(StreamReader sr)
         {
             StringBuilder sb = new StringBuilder();
-            string s;
+            string s = String.Empty;
             int ch;
-            if (!sr.EndOfStream)
+            try
             {
-                ch = sr.Read();
-                if (ch == (int)'<')
-                {
-                    sb.Append((char)ch);
-                    do
-                    {
-                        ch = sr.Read();
-                        if (ch > 0)
-                            sb.Append((char)ch);
-                    } while ((ch > 0) && (ch != (int)'>'));
-                    s = sb.ToString();
-                    if (s.StartsWith("<book id="))
-                    {
-                        currentBook = s.Substring(10, 3);
-                        currentChapter = "0";
-                        currentVerse = "0";
-                    }
-                    else if (s.StartsWith("<c id="))
-                    {
-                        currentChapter = s.Substring(7);
-                        currentChapter = currentChapter.Substring(0, currentChapter.IndexOf('\"'));
-                        currentVerse = "0";
-                    }
-                    else if (s.StartsWith("<v id="))
-                    {
-                        s = s.Substring(7);
-                        currentVerse = s.Substring(0, s.IndexOf('\"'));
-                    }
 
-                }
-                else if (ch == (int)'&')
+                if (!sr.EndOfStream)
                 {
-                    sb.Append((char)ch);
-                    do
+                    ch = sr.Read();
+                    if (ch == (int)'<')
                     {
-                        ch = sr.Read();
-                        if (ch > 0)
-                            sb.Append((char)ch);
-                    } while ((ch > 0) && (ch != (int)';'));
-                }
-                else if (IsNormalWhiteSpace((char)ch))
-                {
-                    sb.Append(' '); // Normalize any normal white space to simple space.
-                    while (IsNormalWhiteSpace((char)sr.Peek()))
-                        sr.Read();  // Discard redundant white space.
-                }
-                else if (Char.IsLetter((char)ch))
-                {
-                    sb.Append((char)ch);
-                    while (Char.IsLetter((char)sr.Peek()))
+                        sb.Append((char)ch);
+                        do
+                        {
+                            ch = sr.Read();
+                            if (ch > 0)
+                                sb.Append((char)ch);
+                        } while ((ch > 0) && (ch != (int)'>'));
+                        s = sb.ToString();
+                        if (s.StartsWith("<book id="))
+                        {
+                            currentBook = s.Substring(10, 3);
+                            currentChapter = "0";
+                            currentVerse = "0";
+                        }
+                        else if (s.StartsWith("<c id="))
+                        {
+                            currentChapter = s.Substring(7);
+                            currentChapter = currentChapter.Substring(0, currentChapter.IndexOf('\"'));
+                            currentVerse = "0";
+                        }
+                        else if (s.StartsWith("<v id="))
+                        {
+                            s = s.Substring(7);
+                            currentVerse = s.Substring(0, s.IndexOf('\"'));
+                        }
+
+                    }
+                    else if (ch == (int)'&')
                     {
-                        sb.Append((char)sr.Read());
+                        sb.Append((char)ch);
+                        do
+                        {
+                            ch = sr.Read();
+                            if (ch > 0)
+                                sb.Append((char)ch);
+                        } while ((ch > 0) && (ch != (int)';'));
+                    }
+                    else if (IsNormalWhiteSpace((char)ch))
+                    {
+                        sb.Append(' '); // Normalize any normal white space to simple space.
+                        while (IsNormalWhiteSpace((char)sr.Peek()))
+                            sr.Read();  // Discard redundant white space.
+                    }
+                    else if (Char.IsLetter((char)ch))
+                    {
+                        sb.Append((char)ch);
+                        while (Char.IsLetter((char)sr.Peek()))
+                        {
+                            sb.Append((char)sr.Read());
+                        }
+                    }
+                    else
+                    {
+                        sb.Append((char)ch);
                     }
                 }
-                else
+                charsRead += sb.Length;
+                s = sb.ToString();
+                if (isPohnpeianUpdate)
                 {
-                    sb.Append((char)ch);
+                    if (!(s.StartsWith("<") || s.StartsWith("&")))
+                    {
+                        s = s.Replace('j', 's').Replace('J', 'S');
+                    }
                 }
             }
-            charsRead += sb.Length;
-            s = sb.ToString();
-            if (isPohnpeianUpdate)
+            catch (Exception ex)
             {
-                if (!(s.StartsWith("<") || s.StartsWith("&")))
-                {
-                    s = s.Replace('j', 's').Replace('J', 'S');
-                }
+                Console.WriteLine("Error in readToken:");
+                Console.WriteLine(ex.ToString());
             }
             return s;
         }
@@ -176,6 +194,7 @@ namespace phrasetrans
         public void filter(string inFileName, string outFileName, string transFileName)
         {
             string[] choppedLine = { "", "", "", "" };
+            string place = "filter";
             ArrayList al;
             int i, j, linewidth;
             string match;
@@ -190,6 +209,7 @@ namespace phrasetrans
                 Console.WriteLine("Reading phrase translation file {0}", transFileName);
 		        StreamReader sr = new StreamReader(transFileName);
                 string line;
+                place = "Reading " + transFileName;
                 while (!sr.EndOfStream)
                 {
                     line = sr.ReadLine();
@@ -205,6 +225,7 @@ namespace phrasetrans
                     }
                 }
                 sr.Close();
+                place = transFileName + "read.";
                 // Now that the substitution table is in the hash table, process the input file.
                 al = new ArrayList(searchWidth);
                 sr = new StreamReader(inFileName);
@@ -222,6 +243,7 @@ namespace phrasetrans
                         al.Add(readToken(sr));
                     }
                     // Console.Write("{0}/{1}  {2}%   \r", charsRead, fileLen, 100 * charsRead / fileLen);
+                    place = al.Count.ToString()+" tokens are in al array.";
                     j = searchWidth;
                     found = false;
                     do
@@ -229,16 +251,27 @@ namespace phrasetrans
                         match = String.Empty;
                         for (i = 0; i < j; i++)
                         {
-                            match = match + (string)al[i];
+                            if (i >= al.Count)
+                            {
+                                Console.WriteLine("i=" + i.ToString());
+
+                            }
+                            else
+                            {
+                                match = match + (string)al[i];
+                            }
+                            place = "match = " + match;
                         }
                         // Console.WriteLine(match);
                         if (substTable.Contains(match))
                         {
+                            place = "match found.";
                             found = true;
                             np = (newPhrase)substTable[match];
                             sw.Write(np.phrase);
                             np.count++;
                             linewidth += np.phrase.Length;
+                            place = "Removing np.phrase from al.";
                             for (i = 0; i < j; i++)
                             {
                                 al.RemoveAt(0);
@@ -246,6 +279,7 @@ namespace phrasetrans
                             s = String.Format("{0} {1}:{2} {3} -> {4}   ",
                                 currentBook, currentChapter, currentVerse,
                                 match, np.phrase);
+                            place = s;
                             Console.WriteLine(s);
                             log.WriteLine(s);
                         }
@@ -253,31 +287,71 @@ namespace phrasetrans
                     } while ((j > 0) && !found);
                     if (!found)
                     {
+                        place = "not found.";
                         s = (string)al[0];
-                        if (s.Length > 0)
+                        if (!String.IsNullOrEmpty(s))
                         {
+                            place = "not found: '" + s + "'";
                             if (s == " ")
                             {
-                                if ((linewidth > 100) || (((string)al[1])[0] == '<'))
+                                place = "al.Count = "+al.Count.ToString()+"; ";
+                                bool isElement = true;
+                                try
+                                {
+                                    if (al.Count < 2)
+                                    {
+                                        isElement = false;
+                                        place = "tested al.count";
+                                    }
+                                    else if (al[1] == null)
+                                    {
+                                        isElement = false;
+                                        place = "tested al[1] for null.";
+                                    }
+                                    else
+                                    {
+                                        string nextToken = (string)al[1];
+                                        place = "nextToken = "+nextToken.ToString();
+                                        if (String.IsNullOrEmpty(nextToken))
+                                            isElement = false;
+                                        else if (nextToken[0] != '<')
+                                            isElement = false;
+                                        place = "tested al[1][0] for '<'";
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine("Error 417 "+place);
+                                    Console.WriteLine(ex.ToString());
+                                    isElement = false;
+                                }
+                                place = "isElement = " + isElement.ToString();
+                                if ((linewidth > 100) || isElement)
                                 {
                                     sw.WriteLine();
                                     linewidth = 0;
+                                    place = "wrote line";
                                 }
                                 else
                                 {
+                                    place = "writing " + s;
                                     sw.Write(s);
                                     linewidth++;
                                 }
                             }
                             else
                             {
+                                place = "writing s: " + s;
                                 sw.Write(s);
                                 linewidth += s.Length;
                             }
                             al.RemoveAt(0);
+                            place = "al.Count after removal = "+al.Count.ToString();
                         }
                     }
-                } while (((string)al[0]).Length > 0);
+                    place = "just before while al.Count test";
+                }
+                while ((al.Count > 0) && (al[0] != null) && ((string)al[0]).Length > 0);
                 sw.Close();
                 log.Close();
                 sr.Close();
@@ -306,7 +380,9 @@ namespace phrasetrans
 	        }
 	        catch (Exception ex)
 	        {
-		        Console.WriteLine(ex.Message);
+                Console.WriteLine("Error in filter " + place);
+                Console.WriteLine(ex.ToString());
+                Console.WriteLine(ex.Message);
                 Console.WriteLine(ex.StackTrace);
 	        }
         }

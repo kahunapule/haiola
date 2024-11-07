@@ -14,6 +14,9 @@ Logit.GUIWriteString = null;
 clRun processIt = new clRun(globe);
 
 Console.WriteLine(String.Format("Imua Copyright © 2003-2023 SIL, EBT, and eBible.org. Released under Gnu LGPL 3 or later."));
+Console.WriteLine("Syntax:");
+Console.WriteLine("imua [-f] DataRootDirectory Project(s)");
+Console.WriteLine("-f means force rebuild even if the project is already up to date.");
 
 foreach (string s in args)
 {

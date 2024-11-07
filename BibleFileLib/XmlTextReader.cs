@@ -123,10 +123,10 @@ namespace WordSend
         }
 
         /// <summary>
-        /// Copy a node from the current XmlTextReader object to the given XmlTextWriter object.
+        /// Copy a node from the current XmlTextReader object to the given XmlWriter object.
         /// </summary>
-        /// <param name="xw">the XmlTextWriter object to write to</param>
-        public void CopyNode(XmlTextWriter xw)
+        /// <param name="xw">the XmlWriter object to write to</param>
+        public void CopyNode(XmlWriter xw)
         {
             switch (NodeType)
             {
@@ -146,9 +146,7 @@ namespace WordSend
                     xw.WriteWhitespace(Value);
                     break;
                 case XmlNodeType.Whitespace:
-                    // You could insert xw.WriteWhitespace(Value); to preserve
-                    // insignificant white space, but it either adds bloat or
-                    // messes up formatting.
+                    xw.WriteWhitespace(Value);
                     break;
                 case XmlNodeType.Attribute:
                     xw.WriteAttributeString(Name, Value);

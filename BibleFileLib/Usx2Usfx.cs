@@ -103,7 +103,7 @@ namespace WordSend
                                     return false;    // Skipping book because we read it already in another canon set
                                 }
                                 processedUsxBooks += code + " ";    // Keep track of books already processed.
-
+                                scrp.xw.WriteWhitespace(Environment.NewLine);
                                 scrp.xw.WriteStartElement("book");
                                 scrp.xw.WriteAttributeString("id", code);
                                 scrp.xw.WriteStartElement("id");
@@ -115,6 +115,7 @@ namespace WordSend
                             case "chapter":
                                 if (style != String.Empty)
                                 {
+                                    scrp.xw.WriteWhitespace(Environment.NewLine);
                                     scrp.xw.WriteStartElement(style);
                                     scrp.xw.WriteAttributeString("id", number);
                                     thisChapter = number;
@@ -126,6 +127,7 @@ namespace WordSend
                                 if (style != String.Empty)
                                 {
                                     number = number.Replace(',', '-');  // Paratext allows comma or dash as a separator in verse ranges.
+                                    scrp.xw.WriteWhitespace(Environment.NewLine);
                                     scrp.xw.WriteStartElement(style);
                                     scrp.xw.WriteAttributeString("id", number);
                                     thisVerse = number;
@@ -182,6 +184,7 @@ namespace WordSend
                                     level = style.Substring(lastDigitIndex);
                                     sfm = style.Substring(0,lastDigitIndex);
                                 }
+                                scrp.xw.WriteWhitespace(Environment.NewLine);
                                 switch (sfm)
                                 {
                                     case "h":

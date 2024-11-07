@@ -60,7 +60,7 @@ namespace WordSend
                 {
 
                     // Read the source file into a byte array.
-                    byte[] bytes = new byte[fsSource.Length];
+                    byte[] bytes = new byte[fsSource.Length+16];
                     int numBytesToRead = (int)fsSource.Length;
                     int numBytesRead = 0;
                     while (numBytesToRead > 0)
@@ -80,11 +80,11 @@ namespace WordSend
             }
             catch (FileNotFoundException ioEx)
             {
-                Logit.WriteLine("IO Exception in HashFile(" + fileName + "): "+ioEx.Message);
+                Logit.WriteError("IO Exception in HashFile(" + fileName + "): "+ioEx.Message);
             }
             catch (Exception Ex)
             {
-                Logit.WriteLine("Exception in HashFile("+fileName+"): "+Ex.Message);
+                Logit.WriteError("Exception in HashFile("+fileName+"): "+Ex.Message);
             }
         }
 
